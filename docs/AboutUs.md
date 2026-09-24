@@ -17,7 +17,7 @@ You can reach us at the email `seer[at]comp.nus.edu.sg`
 
 [[github](https://github.com/nuggettowin)]
 
-* Role: Project Advisor
+* Role: Team Lead
 
 ### Lim Changshun, Brian
 
