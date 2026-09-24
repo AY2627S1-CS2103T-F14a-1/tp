@@ -11,11 +11,13 @@ You can reach us at the email `seer[at]comp.nus.edu.sg`
 
 ## Project team
 
-### Charis Tan
+### John Doe
 
-<img src="images/plutonaruto.png" width="200px">
+<img src="images/johndoe.png" width="200px">
 
-[[github](https://github.com/plutonaruto)]
+[[homepage](http://www.comp.nus.edu.sg/~damithch)]
+[[github](https://github.com/johndoe)]
+[[portfolio](team/johndoe.md)]
 
 * Role: Project Advisor
 
@@ -29,13 +31,13 @@ You can reach us at the email `seer[at]comp.nus.edu.sg`
 * Role: Team Lead
 * Responsibilities: UI
 
-### Johnny Doe
+### Charis Tan
 
-<img src="images/johndoe.png" width="200px">
+<img src="images/plutonaruto.png" width="200px">
 
-[[github](http://github.com/johndoe)] [[portfolio](team/johndoe.md)]
+[[github](http://github.com/plutonaruto)]
 
-* Role: Developer
+* Role: Documentation
 * Responsibilities: Data
 
 ### Jean Doe
