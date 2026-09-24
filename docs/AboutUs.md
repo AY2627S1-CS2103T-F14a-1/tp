@@ -48,12 +48,11 @@ You can reach us at the email `seer[at]comp.nus.edu.sg`
 * Role: Developer
 * Responsibilities: Coding
 
-### James Doe
+### Zhu Ruihan
 
-<img src="images/johndoe.png" width="200px">
+<img src="images/zrayhhh.png" width="200px">
 
-[[github](http://github.com/johndoe)]
-[[portfolio](team/johndoe.md)]
+[[github](http://github.com/zRayhhh)]
 
-* Role: Developer
-* Responsibilities: UI
+* Role: Developer, Code quality
+* Responsibilities: Coding, ensuring code adheres to course standards
