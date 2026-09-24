@@ -45,8 +45,8 @@ You can reach us at the email `seer[at]comp.nus.edu.sg`
 
 [[github](http://github.com/Ethanjoshleong)]
 
-* Role: Developer
-* Responsibilities: Coding
+* Role: Deliverables and deadlines
+* Responsibilities: Ensures project deliverables are done on time and in the right format.
 
 ### Zhu Ruihan
 
