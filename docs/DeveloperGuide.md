@@ -296,18 +296,18 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
 ### Use cases
 
-(For all use cases below, the **System** is the `AddressBook` and the **Actor** is the `user`, unless specified otherwise)
+(For all use cases below, the **System** is the `AvengerHub` and the **Actor** is the `tutor`, unless specified otherwise)
 
-**Use case: Delete a person**
+**Use case: Mark attendance record**
 
 **MSS**
 
-1.  User requests to list persons
-2.  AddressBook shows a list of persons
-3.  User requests to delete a specific person in the list
-4.  AddressBook deletes the person
+1. Tutor requests to list students.
+2. AvengerHub shows the list of students.
+3. Tutor requests to mark a specific student in the list as Present for a specified tutorial week.
+4. AvengerHub marks the selected student as Present for the specified week, saves the change, and confirms success.
 
-    Use case ends.
+   Use case ends.
 
 **Extensions**
 
@@ -315,11 +315,152 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
   Use case ends.
 
-* 3a. The given index is invalid.
+* 3a. The student index is invalid or does not identify a student in the displayed list.
 
-    * 3a1. AddressBook shows an error message.
+    * 3a1. AvengerHub shows an error message and leaves the records unchanged.
 
-      Use case resumes at step 2.
+      Use case resumes at step 3.
+
+* 3b. The tutorial week is invalid or outside the range 1 to 10.
+
+    * 3b1. AvengerHub shows an error message and leaves the records unchanged.
+
+      Use case resumes at step 3.
+
+* 3c. Required information is missing, the tutorial week is repeated, or the request format is invalid.
+
+    * 3c1. AvengerHub shows an error message and leaves the records unchanged.
+
+      Use case resumes at step 3.
+
+* 3d. The selected student is already marked Present for the specified week.
+
+    * 3d1. AvengerHub informs the tutor that the student is already marked Present and leaves the records unchanged.
+
+      Use case ends.
+
+**Use case: Unmark attendance record**
+
+**MSS**
+
+1. Tutor requests to list students.
+2. AvengerHub shows the list of students.
+3. Tutor requests to unmark a specific student’s attendance for a specified tutorial week.
+4. AvengerHub marks the selected student as Absent for the specified week, saves the change, and confirms success.
+
+   Use case ends.
+
+**Extensions**
+
+* 2a. The list is empty.
+
+  Use case ends.
+
+* 3a. The student index is invalid or does not identify a student in the displayed list.
+
+    * 3a1. AvengerHub shows an error message and leaves the records unchanged.
+
+      Use case resumes at step 3.
+
+* 3b. The tutorial week is invalid or outside the range 1 to 10.
+
+    * 3b1. AvengerHub shows an error message and leaves the records unchanged.
+
+      Use case resumes at step 3.
+
+* 3c. Required information is missing, the tutorial week is repeated, or the request format is invalid.
+
+    * 3c1. AvengerHub shows an error message and leaves the records unchanged.
+
+      Use case resumes at step 3.
+
+* 3d. The selected student is already Absent for the specified week.
+
+    * 3d1. AvengerHub informs the tutor that the student is already Absent and leaves the records unchanged.
+
+      Use case ends.
+
+**Use case: Add mission submission record**
+
+**MSS**
+
+1. Tutor requests to list students.
+2. AvengerHub shows the list of students.
+3. Tutor requests to add a mission submission record for a specific student in the list for a specified tutorial week.
+4. AvengerHub adds the selected student’s mission submission record for the specified week and confirms success.
+
+   Use case ends.
+
+**Extensions**
+
+* 2a. The list is empty.
+
+  Use case ends.
+
+* 3a. The student index is invalid or does not identify a student in the displayed list.
+
+    * 3a1. AvengerHub shows an error message and leaves the records unchanged.
+
+      Use case resumes at step 3.
+
+* 3b. The tutorial week is invalid or outside the range 1 to 10.
+
+    * 3b1. AvengerHub shows an error message and leaves the records unchanged.
+
+      Use case resumes at step 3.
+
+* 3c. Required information is missing, the tutorial week is repeated, or the request format is invalid.
+
+    * 3c1. AvengerHub shows an error message and leaves the records unchanged.
+
+      Use case resumes at step 3.
+
+* 3d. A mission submission record already exists for the selected student and week.
+
+    * 3d1. AvengerHub informs the tutor that the submission has already been recorded and leaves the records unchanged.
+
+      Use case ends.
+
+**Use case: Delete mission submission record**
+
+**MSS**
+
+1. Tutor requests to list students.
+2. AvengerHub shows the list of students.
+3. Tutor requests to delete a mission submission record for a specific student in the list for a specified tutorial week.
+4. AvengerHub removes the selected student’s mission submission record for the specified week and confirms success.
+
+   Use case ends.
+
+**Extensions**
+
+* 2a. The list is empty.
+
+  Use case ends.
+
+* 3a. The student index is invalid or does not identify a student in the displayed list.
+
+    * 3a1. AvengerHub shows an error message and leaves the records unchanged.
+
+      Use case resumes at step 3.
+
+* 3b. The tutorial week is invalid or outside the range 1 to 10.
+
+    * 3b1. AvengerHub shows an error message and leaves the records unchanged.
+
+      Use case resumes at step 3.
+
+* 3c. Required information is missing, the tutorial week is repeated, or the request format is invalid.
+
+    * 3c1. AvengerHub shows an error message and leaves the records unchanged.
+
+      Use case resumes at step 3.
+
+* 3d. No mission submission record exists for the selected student and week.
+
+    * 3d1. AvengerHub informs the tutor that no submission is recorded and leaves the records unchanged.
+
+      Use case ends.
 
 *{More to be added}*
 
