@@ -305,7 +305,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 1. Tutor requests to list students.
 2. AvengerHub shows the list of students.
 3. Tutor requests to mark a specific student in the list as Present for a specified tutorial week.
-4. AvengerHub marks the selected student as Present for the specified week, saves the change, and confirms success.
+4. AvengerHub marks the selected student as Present for the specified week and confirms success.
 
    Use case ends.
 
@@ -327,7 +327,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
       Use case resumes at step 3.
 
-* 3c. Required information is missing, the tutorial week is repeated, or the request format is invalid.
+* 3c. Required information is missing, the request specifies the tutorial week more than once, or the request format is invalid.
 
     * 3c1. AvengerHub shows an error message and leaves the records unchanged.
 
@@ -345,8 +345,8 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
 1. Tutor requests to list students.
 2. AvengerHub shows the list of students.
-3. Tutor requests to unmark a specific student’s attendance for a specified tutorial week.
-4. AvengerHub marks the selected student as Absent for the specified week, saves the change, and confirms success.
+3. Tutor requests to mark a specific student in the list as Absent for a specified tutorial week.
+4. AvengerHub marks the selected student as Absent for the specified week and confirms success.
 
    Use case ends.
 
@@ -368,7 +368,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
       Use case resumes at step 3.
 
-* 3c. Required information is missing, the tutorial week is repeated, or the request format is invalid.
+* 3c. Required information is missing, the request specifies the tutorial week more than once, or the request format is invalid.
 
     * 3c1. AvengerHub shows an error message and leaves the records unchanged.
 
@@ -409,7 +409,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
       Use case resumes at step 3.
 
-* 3c. Required information is missing, the tutorial week is repeated, or the request format is invalid.
+* 3c. Required information is missing, the request specifies the tutorial week more than once, or the request format is invalid.
 
     * 3c1. AvengerHub shows an error message and leaves the records unchanged.
 
@@ -450,7 +450,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
       Use case resumes at step 3.
 
-* 3c. Required information is missing, the tutorial week is repeated, or the request format is invalid.
+* 3c. Required information is missing, the request specifies the tutorial week more than once, or the request format is invalid.
 
     * 3c1. AvengerHub shows an error message and leaves the records unchanged.
 
