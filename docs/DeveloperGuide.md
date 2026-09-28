@@ -298,6 +298,178 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
 (For all use cases below, the **System** is the `AvengerHub` and the **Actor** is the `tutor`, unless specified otherwise)
 
+**Use case: Add Student**
+
+**MSS**
+
+1. Tutor requests to add a student and provides the student's name,
+   phone number, NUS student email, and studio group.
+2. AvengerHub adds the student, displays the student list, and shows
+   the message "New student added: {NAME}".
+
+   Use case ends.
+
+**Extensions**
+
+* 1a. A required detail is missing, empty, or invalid.
+
+    * 1a1. AvengerHub displays an error message explaining the problem.
+      No student is added.
+
+      Use case resumes at step 1.
+
+* 1b. A parameter is specified more than once.
+
+    * 1b1. AvengerHub displays an error message.
+      No student is added.
+
+      Use case resumes at step 1.
+
+* 1c. The student duplicates an existing student.
+
+    * 1c1. AvengerHub displays an error message indicating that the
+      student already exists. No student is added.
+
+      Use case resumes at step 1.
+
+
+**Use case: Edit Student Details**
+
+**MSS**
+
+1. Tutor requests to list students or find students by name.
+2. AvengerHub displays the corresponding student list.
+3. Tutor requests to edit a student using the student's index in the
+   displayed list and provides the details to update.
+4. AvengerHub updates the specified details, retains all other student
+   details and records, displays the edited student, and shows the
+   message "Edited student: <details>".
+
+   Use case ends.
+
+**Extensions**
+
+* 2a. The displayed list is empty.
+
+  Use case ends.
+
+* 3a. The index is missing, is not a positive integer, or does not
+  identify a student in the displayed list.
+
+    * 3a1. AvengerHub displays an error message explaining the problem.
+      No student details are changed.
+
+      Use case resumes at step 2.
+
+* 3b. No details to update are supplied, or a supplied value is empty
+  or invalid.
+
+    * 3b1. AvengerHub displays an error message explaining the problem.
+      No student details are changed.
+
+      Use case resumes at step 2.
+
+* 3c. An unknown field or a repeated parameter is supplied.
+
+    * 3c1. AvengerHub displays an error message.
+      No student details are changed.
+
+      Use case resumes at step 2.
+
+* 3d. The updated student would duplicate another student.
+
+    * 3d1. AvengerHub displays the message
+      "This edit would create a duplicate student."
+      No student details are changed.
+
+      Use case resumes at step 2.
+
+
+**Use case: Delete Student**
+
+**MSS**
+
+1. Tutor requests to list students or find students by name.
+2. AvengerHub displays the corresponding student list.
+3. Tutor requests to delete a student using the student's index in the
+   displayed list.
+4. AvengerHub deletes the student and shows the message
+   "Deleted student: <details>".
+
+   Use case ends.
+
+**Extensions**
+
+* 2a. The displayed list is empty.
+
+  Use case ends.
+
+* 3a. The index is missing, is not a positive integer, or does not
+  identify a student in the displayed list.
+
+    * 3a1. AvengerHub displays an error message explaining the problem.
+      No student is deleted.
+
+      Use case resumes at step 2.
+  
+
+**Use case: View Student Profile**
+
+**MSS**
+
+1. Tutor requests to list students or find students by name.
+2. AvengerHub displays the corresponding student list.
+3. Tutor requests to view a student using the student's index in the
+   displayed list.
+4. AvengerHub displays the student's name, phone number, email,
+   and studio group in the profile panel. It displays weeks 1 to 10
+   in ascending order, with attendance shown as Present or Absent
+   and mission submissions shown as Submitted or Not submitted.
+5. AvengerHub shows the message "Viewing profile of {NAME}."
+   The student list, its ordering, and any existing search filter
+   remain unchanged. AvengerHub clears the command input and returns
+   keyboard focus to it.
+
+   Use case ends. No student data is changed or saved to storage.
+
+**Extensions**
+
+* 2a. The displayed list is empty.
+
+  Use case ends.
+
+* 3a. The index is missing, or the request contains an extra argument
+  or an unexpected prefix.
+
+    * 3a1. AvengerHub displays an invalid command format message.
+      The profile panel remains unchanged.
+
+      Use case resumes at step 2.
+
+* 3b. The index is not a positive base-10 integer, or contains a sign,
+  decimal point, or leading zero.
+
+    * 3b1. AvengerHub displays an error message explaining the required
+      index format. The profile panel remains unchanged.
+
+      Use case resumes at step 2.
+
+* 3c. The index does not identify a student in the displayed list.
+
+    * 3c1. AvengerHub displays the message
+      "The student index provided is invalid."
+      The profile panel remains unchanged.
+
+      Use case resumes at step 2.
+
+* 4a. Some student data loaded from storage is missing or corrupted.
+
+    * 4a1. AvengerHub displays the profile details that can be read
+      without crashing.
+
+      Use case resumes at step 5.
+
+
 **Use case: Mark attendance record**
 
 **MSS**
