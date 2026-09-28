@@ -13,7 +13,7 @@
 
 ## **Acknowledgements**
 
-* _{List the sources of reused or adapted ideas, code, documentation, and third-party libraries here, with links to the originals.}_
+* _This project is based on the AddressBook-Level3 project created by the [SE-EDU initiative](https://se-education.org)._
 
 --------------------------------------------------------------------------------------------------------------------
 
@@ -466,11 +466,21 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
 ### Non-Functional Requirements
 
-1.  Should work on any _mainstream OS_ as long as it has Java `25` or above installed.
-2.  Should be able to hold up to 1000 persons without noticeable sluggishness in performance for typical usage.
-3.  A user with above average typing speed for regular English text (i.e. not code, not system admin commands) should be able to accomplish most of the tasks faster using commands than using the mouse.
-
-*{More to be added}*
+1. Should work on any _mainstream OS_ as long as it has Java `25` or above installed.
+2. Should start within 5 seconds on an average university computer.
+3. Should behave consistently when launched from IDE, command line, or by double-clicking the jar file.
+4. Should be able to hold up to 1000 persons without noticeable sluggishness (no more than 2 seconds delay) in performance for typical usage.
+5. A user with above average typing speed for regular English text (i.e. not code, not system admin commands) should be able to accomplish most of the tasks faster using commands than using the mouse.
+6. GUI should be usable (all functions accessible) from screen resolutions 1280x720 and higher and screen scales of 100%, 125%, and 150%.
+7. No additional installer should be required for the software.
+8. Should function without Internet access.
+9. Character encoding for data saved to disk should be UTF-8.
+10. Commands and error messages should use consistent terminology and clearly identify the invalid field or input.
+11. Dates, times, and identifiers should be displayed in a consistent and unambiguous format.
+12. All commands should be typed into a single interface.
+13. Records should be persistent (i.e. preserved after closing and reopening the application).
+14. Should retain previously saved data even if an operation fails.
+15. If one stored record does not adhere to the defined format, the system should report the problem while loading all other valid records.
 
 ### Glossary
 
