@@ -283,20 +283,21 @@ _{Explain here how the data archiving feature will be implemented}_
 
 Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unlikely to have) - `*`
 
-| Priority | As a …                                    | I want to …                                                               | So that I can…                                                                 |
-|----------|--------------------------------------------|----------------------------------------------------------------------------|--------------------------------------------------------------------------------|
-| `* * *`  | new TA                                     | add a new student to a studio group                                       | start tracking them from day one                                              |
-| `* * *`  | TA                                         | delete a student from a studio group                                      | keep my records accurate if a student drops the module                        |
-| `* * *`  | TA                                         | search for a student by name                                               | quickly find them without scrolling through the whole list                    |
-| `* * *`  | TA with multiple groups                    | see a combined view of all students across my groups                       | get a holistic view of my overall workload                                    |
-| `* * *`  | TA                                         | mark a student as present, absent, or late for a studio                    | maintain an accurate attendance record                                        |
-| `* * *`  | TA                                         | mark whether a student submitted a given mission                           | track completion without cross-checking another system                        |
-| `* * *`  | TA                                         | record a student's mark for a given assessment                             | keep their performance data alongside other student records                   |
-| `* * *`  | TA with multiple studio groups             | see which studio group a student belongs to                                | avoid mixing up students across studio groups                                 |
-| `* *`    | TA with multiple studio groups             | check my scheduled meetings with students for the week                     | prepare adequately and avoid forgetting irregular meetings such as mastery checks |
-| `* *`    | TA                                         | view a summary of a student's attendance, participation, and submissions  | understand their overall engagement without checking multiple records         |
-| `*`      | busy TA                                    | see an indicator when a student's engagement drops                         | identify students who may need attention without manually checking for patterns |
-| `*`      | TA                                         | export a group's engagement data                                            | share or archive records after the semester ends                              |
+| Priority | As a …                         | I want to …                                                              | So that I can…                                                                       |
+|----------|--------------------------------|--------------------------------------------------------------------------|--------------------------------------------------------------------------------------|
+| `* * *`  | TA                             | add a new student to a studio group                                      | start tracking them from day one at the start of the semester                        |
+| `* * *`  | TA                             | delete a student from a studio group                                     | keep my records accurate if a student drops the module or when a new semester begins |
+| `* * *`  | TA                             | search for a student by name                                             | quickly find them without scrolling through the whole list                           |
+| `* * *`  | TA                             | edit a student's information                                             | keep my records accurate when their information changes                              |
+| `* * *`  | TA with multiple studio groups | see a combined view of all students across my groups                     | get a holistic view of my overall workload                                           |
+| `* * *`  | TA                             | mark a student as present, absent, or late for a studio                  | maintain an accurate attendance record                                               |
+| `* * *`  | TA                             | mark whether a student submitted a given mission                         | track completion without cross-checking another system                               |
+| `* * *`  | TA                             | record a student's mark for a given assessment                           | keep their performance data alongside other student records                          |
+| `* * *`  | TA with multiple studio groups | see which studio group a student belongs to                              | avoid mixing up students across studio groups                                        |
+| `* *`    | TA with multiple studio groups | check my scheduled meetings with students for the week                   | prepare adequately and avoid forgetting irregular meetings such as mastery checks    |
+| `* *`    | TA                             | view a summary of a student's attendance, participation, and submissions | understand their overall engagement without checking multiple records                |
+| `*`      | busy TA                        | see an indicator when a student's engagement drops                       | identify students who may need attention without manually checking for patterns      |
+| `*`      | TA                             | export a group's engagement data                                         | share or archive records after the semester ends                                     |
 
 The user stories above represent the main intended functionality and selected future enhancements of the application. Other user stories may be considered as the project develops.
 
