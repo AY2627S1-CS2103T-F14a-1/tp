@@ -1,3 +1,5 @@
+[![Build Status](https://github.com/AY2627S1-CS2103T-F14a-1/tp/actions/workflows/gradle.yml/badge.svg)](https://github.com/AY2627S1-CS2103T-F14a-1/tp/actions/workflows/gradle.yml)
+
 [![codecov](https://codecov.io/gh/AY2627S1-CS2103T-F14a-1/tp/graph/badge.svg?token=28Y82ZVKRM)](https://codecov.io/gh/AY2627S1-CS2103T-F14a-1/tp)
 
 ![Ui](docs/images/Ui.png)
