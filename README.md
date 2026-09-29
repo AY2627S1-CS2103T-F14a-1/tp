@@ -1,19 +1,31 @@
+# AvengerHub
 [![Build Status](https://github.com/AY2627S1-CS2103T-F14a-1/tp/actions/workflows/gradle.yml/badge.svg)](https://github.com/AY2627S1-CS2103T-F14a-1/tp/actions/workflows/gradle.yml)
 
 [![codecov](https://codecov.io/gh/AY2627S1-CS2103T-F14a-1/tp/graph/badge.svg?token=28Y82ZVKRM)](https://codecov.io/gh/AY2627S1-CS2103T-F14a-1/tp)
 
 ![Ui](docs/images/Ui.png)
 
-* This is **a sample project for Software Engineering (SE) students**.<br>
-  Example usage:
-  * as a starting point of a course project (as opposed to writing everything from scratch)
-  * as a case study
-* The project simulates an ongoing software project for a desktop application (called _AddressBook_) used for managing contact details.
-  * It is **written in an object-oriented programming (OOP) style** and provides a **reasonably well-written** codebase of about 6 KLoC. It is **larger** than what students typically write in beginner-level software-engineering modules, without being overwhelming.
-  * It comes with a **reasonable level of user and developer documentation**.
-* It is named `AddressBook Level 3` (`AB3` for short) because it was initially created as a part of a series of `AddressBook` projects (`Level 1`, `Level 2`, `Level 3` ...).
-* For the detailed documentation of this project, see the **[AvengerHub Product Website](https://ay2627s1-cs2103t-f14a-1.github.io/tp/)**.
-* This project is a **part of the se-education.org** initiative. If you would like to contribute code to this project, see [se-education.org](https://se-education.org/#contributing-to-se-edu) for more info.
+AvengerHub is a desktop address book tailored for CS1101S tutors. It combines
+the speed of a command-line interface with the convenience of a graphical user
+interface, helping tutors keep student details from different tutorial groups
+organized in one place.
+
+## Features
+
+- Add, edit, and delete student contact records.
+- Find students by name and view all saved records.
+- Keep track of administrative tutor work, such as grading and attendance.
+- Save data automatically between sessions.
+
+## Documentation
+
+- [User Guide](https://ay2627s1-cs2103t-f14a-1.github.io/tp/UserGuide.html)
+- [Developer Guide](https://ay2627s1-cs2103t-f14a-1.github.io/tp/DeveloperGuide.html)
+
+`AvengerHub` is named for its goal of consolidating a tutor's duties in one
+place.
+
+Made with ❤️ by the AY2627S1-CS2103T-F14a-1 team.
 
 Acknowledgements
 -
