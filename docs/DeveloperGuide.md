@@ -270,13 +270,15 @@ _{Explain here how the data archiving feature will be implemented}_
 
 **Target user profile**:
 
-* has a need to manage a significant number of contacts
+* serves as tutor for CS1101S tutorial(s)
+* has a need to manage students across one or more tutorial groups assigned to them 
+* has a need to keep track of administrative information relevant to conducting and managing their tutorials
 * prefers desktop apps over other types of applications
 * can type fast
 * prefers typing to mouse interactions
 * is reasonably comfortable using CLI apps
 
-**Value proposition**: Manage contacts faster than with a typical mouse-driven GUI application.
+**Value proposition**: Manage and access information about students under their tutelage, supporting the organization and coordination of their assigned tutorial groups.
 
 
 ### User stories
