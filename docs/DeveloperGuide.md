@@ -469,7 +469,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 1. Should work on any _mainstream OS_ as long as it has Java `25` or above installed.
 2. Should start within 5 seconds on an average university student's desktop.
 3. Should behave consistently when launched from IDE, command line, or by double-clicking the jar file.
-4. Should be able to hold up to 1000 persons without noticeable sluggishness (no more than 2 seconds delay) in performance for typical usage.
+4. Should be able to hold up to 1000 students without noticeable sluggishness (no more than 2 seconds delay) in performance for typical usage.
 5. A user with above average typing speed for regular English text (i.e. not code, not system admin commands) should be able to accomplish most of the tasks faster using commands than using the mouse.
 6. GUI should be usable (all functions accessible) from screen resolutions 1280x720 and higher and screen scales of 100%, 125%, and 150%.
 7. No additional installer should be required for the software.
