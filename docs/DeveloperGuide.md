@@ -307,6 +307,115 @@ The user stories above represent the main intended functionality and selected fu
 
 (For all use cases below, the **System** is the `AvengerHub` and the **Actor** is the `tutor`, unless specified otherwise)
 
+**Use case: Add student record**
+
+**MSS**
+
+1. Tutor requests to add a student record and provides the required details.
+2. AvengerHub adds the student record and confirms success.
+
+   Use case ends.
+
+**Extensions**
+
+* 1a. The supplied details are invalid or incomplete.
+
+    * 1a1. AvengerHub explains the error.
+
+      Use case resumes at step 1.
+
+* 1b. The student record duplicates an existing record.
+
+    * 1b1. AvengerHub informs the tutor that the student record already exists.
+
+      Use case resumes at step 1.
+
+
+**Use case: Edit student record**
+
+**MSS**
+
+1. Tutor requests to view or search student records.
+2. AvengerHub displays the corresponding student records.
+3. Tutor selects a student record and supplies the details to update.
+4. AvengerHub updates the student record and confirms success.
+
+   Use case ends.
+
+**Extensions**
+
+* 2a. No student records are displayed.
+
+  Use case ends.
+
+* 3a. The student selection or supplied details are invalid or incomplete.
+
+    * 3a1. AvengerHub explains the error.
+
+      Use case resumes at step 3.
+
+* 3b. The update would duplicate another student record.
+
+    * 3b1. AvengerHub informs the tutor that the update would create a duplicate.
+
+      Use case resumes at step 3.
+
+
+**Use case: Delete student record**
+
+**MSS**
+
+1. Tutor requests to view or search student records.
+2. AvengerHub displays the corresponding student records.
+3. Tutor selects a student record to delete.
+4. AvengerHub deletes the student record and confirms success.
+
+   Use case ends.
+
+**Extensions**
+
+* 2a. No student records are displayed.
+
+  Use case ends.
+
+* 3a. The student selection is invalid or incomplete.
+
+    * 3a1. AvengerHub explains the error.
+
+      Use case resumes at step 3.
+
+
+**Use case: View student profile**
+
+**MSS**
+
+1. Tutor requests to view or search student records.
+2. AvengerHub displays the corresponding student records.
+3. Tutor selects a student record to view.
+4. AvengerHub displays the student's details, attendance records,
+   and mission submission records.
+
+   Use case ends.
+
+**Extensions**
+
+* 2a. No student records are displayed.
+
+  Use case ends.
+
+* 3a. The student selection is invalid or incomplete.
+
+    * 3a1. AvengerHub explains the error.
+
+      Use case resumes at step 3.
+
+* 4a. Some student data is unavailable or corrupted.
+
+    * 4a1. AvengerHub displays the available details.
+
+      Use case ends.
+
+
 **Use case: Mark attendance record**
 
 **MSS**
