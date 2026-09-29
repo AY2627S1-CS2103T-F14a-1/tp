@@ -488,7 +488,8 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 * **Private contact detail**: A contact detail that is not meant to be shared with others
 * **AvengerHub**: The name of the application.
 * **Tutor**: The TAs (teaching assistants) in the CS1101S course that handle the tutorial sessions. Also known as "Avengers" by the course.
-* **Record**: The list of all student information. This is saved on the disk and exists in memory as well when the application is running.
+* **Record(s)**: The list of all student information. This is saved on the disk and exists in memory as well when the application is running.
+* **Storage**: The file containing the list of student information that is saved to disk.
 
 --------------------------------------------------------------------------------------------------------------------
 
