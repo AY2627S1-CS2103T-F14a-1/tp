@@ -12,14 +12,14 @@ import java.util.TreeSet;
  * Represents an immutable collection of a student's mission submission weeks.
  * Each recorded week is between 1 and 10, inclusive.
  */
-public class MissionSubmissions {
+public final class MissionSubmissions {
 
     public static final int MIN_WEEK = 1;
     public static final int MAX_WEEK = 10;
     public static final String MESSAGE_CONSTRAINTS =
             "Tutorial week must be between " + MIN_WEEK + " and " + MAX_WEEK + ".";
 
-    public final Set<Integer> submittedWeeks;
+    private final Set<Integer> submittedWeeks;
 
     /**
      * Creates an empty collection of mission submissions.
@@ -64,6 +64,7 @@ public class MissionSubmissions {
      * @throws IllegalArgumentException If the week is outside the valid range.
      */
     public boolean hasSubmission(int week) {
+        checkArgument(isValidWeek(week), MESSAGE_CONSTRAINTS);
         return submittedWeeks.contains(week);
     }
 
@@ -75,7 +76,7 @@ public class MissionSubmissions {
      * @return Mission submissions containing the existing weeks and given week.
      * @throws IllegalArgumentException If the week is outside the valid range.
      */
-    public MissionSubmissions addSubmission(int week) {
+    public MissionSubmissions withSubmission(int week) {
         if (hasSubmission(week)) {
             return this;
         }
