@@ -172,6 +172,29 @@ public class EditCommandTest {
     }
 
     @Test
+    public void execute_personWithMissionSubmissions_preservesSubmissions() {
+        Person original = model.getFilteredPersonList().get(0);
+        Person student = new PersonBuilder(original).withMissionSubmissions(3, 5).build();
+        model.setPerson(original, student);
+
+        Person editedPerson = new PersonBuilder(student)
+                .withPhone(VALID_PHONE_BOB)
+                .build();
+        EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder()
+                .withPhone(VALID_PHONE_BOB)
+                .build();
+        EditCommand command = new EditCommand(INDEX_FIRST_PERSON, descriptor);
+
+        Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
+        expectedModel.setPerson(student, editedPerson);
+
+        String expectedMessage = String.format(EditCommand.MESSAGE_EDIT_PERSON_SUCCESS,
+                Messages.format(editedPerson));
+
+        assertCommandSuccess(command, model, expectedMessage, expectedModel);
+    }
+
+    @Test
     public void toStringMethod() {
         Index index = Index.fromOneBased(1);
         EditPersonDescriptor editPersonDescriptor = new EditPersonDescriptor();
