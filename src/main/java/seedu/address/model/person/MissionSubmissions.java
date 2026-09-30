@@ -17,7 +17,7 @@ public final class MissionSubmissions {
     public static final int MIN_WEEK = 1;
     public static final int MAX_WEEK = 10;
     public static final String MESSAGE_CONSTRAINTS =
-            "Tutorial week must be between " + MIN_WEEK + " and " + MAX_WEEK + ".";
+            "Tutorial week must be between " + MIN_WEEK + " and " + MAX_WEEK + " inclusive.";
 
     private final Set<Integer> submittedWeeks;
 

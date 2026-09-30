@@ -5,12 +5,14 @@ import static java.util.Objects.requireNonNull;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.StringUtil;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.person.Address;
 import seedu.address.model.person.Email;
+import seedu.address.model.person.MissionSubmissions;
 import seedu.address.model.person.Name;
 import seedu.address.model.person.Phone;
 import seedu.address.model.tag.Tag;
@@ -21,6 +23,13 @@ import seedu.address.model.tag.Tag;
 public class ParserUtil {
 
     public static final String MESSAGE_INVALID_INDEX = "Index must be a positive integer.";
+
+    // Mission submissions
+    public static final String MESSAGE_INVALID_STUDENT_INDEX =
+            "Student index must be a positive integer without a sign, decimal point, or leading zero.";
+    public static final String MESSAGE_INVALID_TUTORIAL_WEEK = MissionSubmissions.MESSAGE_CONSTRAINTS
+            + " Enter an integer without a sign, decimal point, or leading zero.";
+    private static final Pattern POSITIVE_INTEGER = Pattern.compile("[1-9][0-9]*");
 
     /**
      * Parses {@code oneBasedIndex} into an {@code Index} and returns it. Leading and trailing whitespaces will be
@@ -33,6 +42,29 @@ public class ParserUtil {
             throw new ParseException(MESSAGE_INVALID_INDEX);
         }
         return Index.fromOneBased(Integer.parseInt(trimmedIndex));
+    }
+
+    /**
+     * Parses a student index without accepting signs or leading zeros.
+     *
+     * @param oneBasedIndex Student index text.
+     * @return A valid one-based index.
+     * @throws NullPointerException If the text is null.
+     * @throws ParseException If the index syntax or numeric value is invalid.
+     */
+    public static Index parseStudentIndex(String oneBasedIndex) throws ParseException {
+        requireNonNull(oneBasedIndex);
+
+        String trimmedIndex = oneBasedIndex.trim();
+        if (!POSITIVE_INTEGER.matcher(trimmedIndex).matches()) {
+            throw new ParseException(MESSAGE_INVALID_STUDENT_INDEX);
+        }
+
+        try {
+            return parseIndex(trimmedIndex);
+        } catch (ParseException e) {
+            throw new ParseException(MESSAGE_INVALID_STUDENT_INDEX);
+        }
     }
 
     /**
@@ -120,5 +152,32 @@ public class ParserUtil {
             tagSet.add(parseTag(tagName));
         }
         return tagSet;
+    }
+
+    /**
+     * Parses a tutorial week within the model's valid range.
+     *
+     * @param week Tutorial week text.
+     * @return The validated tutorial week.
+     * @throws NullPointerException If the text is null.
+     * @throws ParseException If the week syntax or numeric value is invalid.
+     */
+    public static int parseTutorialWeek(String week) throws ParseException {
+        requireNonNull(week);
+
+        String trimmedWeek = week.trim();
+        if (!POSITIVE_INTEGER.matcher(trimmedWeek).matches()) {
+            throw new ParseException(MESSAGE_INVALID_TUTORIAL_WEEK);
+        }
+
+        try {
+            int parsedWeek = Integer.parseInt(trimmedWeek);
+            if (!MissionSubmissions.isValidWeek(parsedWeek)) {
+                throw new ParseException(MESSAGE_INVALID_TUTORIAL_WEEK);
+            }
+            return parsedWeek;
+        } catch (NumberFormatException e) {
+            throw new ParseException(MESSAGE_INVALID_TUTORIAL_WEEK);
+        }
     }
 }
