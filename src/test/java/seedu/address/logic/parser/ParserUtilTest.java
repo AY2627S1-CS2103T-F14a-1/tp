@@ -191,4 +191,50 @@ public class ParserUtilTest {
 
         assertEquals(expectedTagSet, actualTagSet);
     }
+
+    @Test
+    public void parseStudentIndex_validInput_returnsIndex() throws Exception {
+        assertEquals(INDEX_FIRST_PERSON, ParserUtil.parseStudentIndex("1"));
+        assertEquals(INDEX_FIRST_PERSON, ParserUtil.parseStudentIndex(" \t1 "));
+        assertEquals(12, ParserUtil.parseStudentIndex("12").getOneBased());
+        assertEquals(Integer.MAX_VALUE,
+                ParserUtil.parseStudentIndex(String.valueOf(Integer.MAX_VALUE)).getOneBased());
+    }
+
+    @Test
+    public void parseStudentIndex_invalidInput_throwsParseException() {
+        String[] invalidInputs = {"", " ", "0", "-1", "+1", "01", "1.0", "one", "1 2", "2147483648"};
+
+        for (String input : invalidInputs) {
+            assertThrows(ParseException.class, ParserUtil.MESSAGE_INVALID_STUDENT_INDEX, () ->
+                    ParserUtil.parseStudentIndex(input));
+        }
+    }
+
+    @Test
+    public void parseStudentIndex_nullInput_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> ParserUtil.parseStudentIndex(null));
+    }
+
+    @Test
+    public void parseTutorialWeek_validInput_returnsWeek() throws Exception {
+        assertEquals(1, ParserUtil.parseTutorialWeek("1"));
+        assertEquals(10, ParserUtil.parseTutorialWeek("10"));
+        assertEquals(3, ParserUtil.parseTutorialWeek(" \t3 "));
+    }
+
+    @Test
+    public void parseTutorialWeek_invalidInput_throwsParseException() {
+        String[] invalidInputs = {"", " ", "0", "11", "-1", "+3", "03", "3.0", "three", "3 4", "2147483648"};
+
+        for (String input : invalidInputs) {
+            assertThrows(ParseException.class, ParserUtil.MESSAGE_INVALID_TUTORIAL_WEEK, () ->
+                    ParserUtil.parseTutorialWeek(input));
+        }
+    }
+
+    @Test
+    public void parseTutorialWeek_nullInput_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> ParserUtil.parseTutorialWeek(null));
+    }
 }
