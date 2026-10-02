@@ -422,8 +422,8 @@ The user stories above represent the main intended functionality and selected fu
 
 1. Tutor requests to list students.
 2. AvengerHub shows the list of students.
-3. Tutor requests to mark a specific student in the list as Present for a specified tutorial week.
-4. AvengerHub marks the selected student as Present for the specified week and confirms success.
+3. Tutor requests to mark a specific student in the list as present for a specified tutorial week.
+4. AvengerHub marks the selected student as present for the specified week and confirms success.
 
    Use case ends.
 
@@ -439,9 +439,9 @@ The user stories above represent the main intended functionality and selected fu
 
       Use case resumes from step 3.
 
-* 3b. The selected student is already marked Present for the specified week.
+* 3b. The selected student is already marked present for the specified week.
 
-    * 3b1. AvengerHub informs the tutor that the student is already marked Present and leaves the records unchanged.
+    * 3b1. AvengerHub informs the tutor that the student is already marked present and leaves the records unchanged.
 
       Use case ends.
 
@@ -451,8 +451,8 @@ The user stories above represent the main intended functionality and selected fu
 
 1. Tutor requests to list students.
 2. AvengerHub shows the list of students.
-3. Tutor requests to mark a specific student in the list as Absent for a specified tutorial week.
-4. AvengerHub marks the selected student as Absent for the specified week and confirms success.
+3. Tutor requests to mark a specific student in the list as absent for a specified tutorial week.
+4. AvengerHub marks the selected student as absent for the specified week and confirms success.
 
    Use case ends.
 
@@ -468,9 +468,9 @@ The user stories above represent the main intended functionality and selected fu
 
       Use case resumes from step 3.
 
-* 3b. The selected student is already Absent for the specified week.
+* 3b. The selected student is already absent for the specified week.
 
-    * 3b1. AvengerHub informs the tutor that the student is already Absent and leaves the records unchanged.
+    * 3b1. AvengerHub informs the tutor that the student is already absent and leaves the records unchanged.
 
       Use case ends.
 
