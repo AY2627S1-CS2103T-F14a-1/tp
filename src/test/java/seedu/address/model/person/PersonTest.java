@@ -91,9 +91,47 @@ public class PersonTest {
     }
 
     @Test
+    public void constructor_defaultSubmissions_createsEmptySubmissions() {
+        Person person = new Person(ALICE.getName(), ALICE.getPhone(), ALICE.getEmail(),
+                ALICE.getAddress(), ALICE.getTags());
+
+        assertTrue(person.getMissionSubmissions().getSubmittedWeeks().isEmpty());
+    }
+
+    @Test
+    public void constructor_nullMissionSubmissions_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () ->
+                new Person(ALICE.getName(), ALICE.getPhone(), ALICE.getEmail(),
+                        ALICE.getAddress(), ALICE.getTags(), null));
+    }
+
+    @Test
+    public void equals_differentMissionSubmissions_returnsFalse() {
+        Person original = new PersonBuilder(ALICE).withMissionSubmissions().build();
+        Person updated = new PersonBuilder(original).withMissionSubmissions(3).build();
+
+        assertFalse(original.equals(updated));
+        assertTrue(original.isSamePerson(updated));
+        assertTrue(original.getMissionSubmissions().getSubmittedWeeks().isEmpty());
+        assertTrue(updated.getMissionSubmissions().hasSubmission(3));
+    }
+
+    @Test
+    public void personBuilder_copyPerson_preservesMissionSubmissions() {
+        Person original = new PersonBuilder(ALICE).withMissionSubmissions(3, 5).build();
+
+        Person copy = new PersonBuilder(original).build();
+
+        assertEquals(original, copy);
+        assertEquals(original.hashCode(), copy.hashCode());
+    }
+
+    @Test
     public void toStringMethod() {
-        String expected = Person.class.getCanonicalName() + "{name=" + ALICE.getName() + ", phone=" + ALICE.getPhone()
-                + ", email=" + ALICE.getEmail() + ", address=" + ALICE.getAddress() + ", tags=" + ALICE.getTags() + "}";
-        assertEquals(expected, ALICE.toString());
+        Person person = new PersonBuilder(ALICE).withMissionSubmissions(3).build();
+        String expected = Person.class.getCanonicalName() + "{name=" + person.getName() + ", phone=" + person.getPhone()
+                + ", email=" + person.getEmail() + ", address=" + person.getAddress() + ", tags=" + person.getTags()
+                + ", missionSubmissions=" + person.getMissionSubmissions() + "}";
+        assertEquals(expected, person.toString());
     }
 }

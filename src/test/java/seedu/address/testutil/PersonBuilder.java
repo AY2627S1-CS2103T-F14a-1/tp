@@ -1,10 +1,13 @@
 package seedu.address.testutil;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.HashSet;
 import java.util.Set;
 
 import seedu.address.model.person.Address;
 import seedu.address.model.person.Email;
+import seedu.address.model.person.MissionSubmissions;
 import seedu.address.model.person.Name;
 import seedu.address.model.person.Person;
 import seedu.address.model.person.Phone;
@@ -26,6 +29,7 @@ public class PersonBuilder {
     private Email email;
     private Address address;
     private Set<Tag> tags;
+    private MissionSubmissions missionSubmissions;
 
     /**
      * Creates a {@code PersonBuilder} with the default details.
@@ -36,6 +40,7 @@ public class PersonBuilder {
         email = new Email(DEFAULT_EMAIL);
         address = new Address(DEFAULT_ADDRESS);
         tags = new HashSet<>();
+        missionSubmissions = new MissionSubmissions();
     }
 
     /**
@@ -47,6 +52,7 @@ public class PersonBuilder {
         email = personToCopy.getEmail();
         address = personToCopy.getAddress();
         tags = new HashSet<>(personToCopy.getTags());
+        missionSubmissions = personToCopy.getMissionSubmissions();
     }
 
     /**
@@ -89,8 +95,32 @@ public class PersonBuilder {
         return this;
     }
 
+    /**
+     * Sets the mission submission weeks of the person being built.
+     *
+     * @param weeks Tutorial weeks with recorded submissions.
+     * @return This builder.
+     * @throws NullPointerException If the array is null.
+     * @throws IllegalArgumentException If any week is outside the valid range.
+     */
+    public PersonBuilder withMissionSubmissions(int... weeks) {
+        requireNonNull(weeks);
+
+        Set<Integer> submittedWeeks = new HashSet<>();
+        for (int week : weeks) {
+            submittedWeeks.add(week);
+        }
+        this.missionSubmissions = new MissionSubmissions(submittedWeeks);
+        return this;
+    }
+
+    /**
+     * Builds a person using this builder's current values.
+     *
+     * @return A person with the configured details.
+     */
     public Person build() {
-        return new Person(name, phone, email, address, tags);
+        return new Person(name, phone, email, address, tags, missionSubmissions);
     }
 
 }
