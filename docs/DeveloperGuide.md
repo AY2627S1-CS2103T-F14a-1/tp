@@ -541,9 +541,9 @@ The user stories above represent the main intended functionality and selected fu
 3. Should behave consistently when launched from IDE, command line, or by double-clicking the jar file.
 4. Should be able to hold up to 1000 students without noticeable sluggishness (no more than 2 seconds delay) in performance for typical usage.
 5. A user with _above average typing speed_ for regular English text (i.e. not code, not system admin commands) should be able to accomplish most of the tasks faster using commands than using the mouse.
-6. GUI should be usable (all functions accessible) from screen resolutions 1280x720 and higher and screen scales of 100%, 125%, and 150%.
+6. GUI should be _usable_ from screen resolutions 1280x720 and higher and screen scales of 100%, 125%, and 150%.
 7. No additional installer should be required for the software.
-8. Should function without Internet access.
+8. Should be _usable_ without Internet access.
 9. Character encoding for data saved to disk should be UTF-8.
 10. Commands and error messages should use consistent terminology and clearly identify the invalid field or input.
 11. Dates, times, and identifiers should be displayed in a consistent and unambiguous format.
@@ -565,6 +565,7 @@ The user stories above represent the main intended functionality and selected fu
 * **Storage**: The file containing the list of student information that is saved to disk.
 * **Corrupted**: Any data read from Storage that does not adhere to our expected format will be considered corrupted.
 * **Operation**: The entire sequence of events resulting from a discrete user action.
+* **Usable**: All functional parts of the application are accessible and work as intended.
 * **Average university student's desktop**: We define relevant hardware specifications as such:
   * CPU: Intel Core i5/Ryzen 5/M-series Apple chip equivalent
   * RAM: 8GB
