@@ -90,11 +90,11 @@ public class EditCommand extends Command {
 
     /**
      * Creates and returns a {@code Person} with the details of {@code personToEdit}
-     * edited with {@code editPersonDescriptor}, preserving mission submissions.
+     * edited with {@code editPersonDescriptor}, preserving studio group and mission submissions.
      *
      * @param personToEdit Person whose details are being edited.
      * @param editPersonDescriptor Details to replace on the person.
-     * @return A person with the requested edits and the original mission submissions.
+     * @return A person with the requested edits and the original studio group & mission submissions.
      */
     private static Person createEditedPerson(Person personToEdit, EditPersonDescriptor editPersonDescriptor) {
         assert personToEdit != null;
@@ -106,7 +106,7 @@ public class EditCommand extends Command {
         Set<Tag> updatedTags = editPersonDescriptor.getTags().orElse(personToEdit.getTags());
 
         return new Person(updatedName, updatedPhone, updatedEmail, updatedAddress, updatedTags,
-                personToEdit.getMissionSubmissions());
+                personToEdit.getStudioGroup(), personToEdit.getMissionSubmissions());
     }
 
     @Override
