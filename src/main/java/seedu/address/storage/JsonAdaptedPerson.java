@@ -12,6 +12,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import seedu.address.commons.exceptions.IllegalValueException;
 import seedu.address.model.person.Address;
 import seedu.address.model.person.Email;
+import seedu.address.model.person.MissionSubmissions;
 import seedu.address.model.person.Name;
 import seedu.address.model.person.Person;
 import seedu.address.model.person.Phone;
@@ -31,14 +32,25 @@ class JsonAdaptedPerson {
     private final String address;
     private final List<JsonAdaptedTag> tags = new ArrayList<>();
     private final String studioGroup;
+    private final List<Integer> missionSubmissions = new ArrayList<>();
 
     /**
-     * Constructs a {@code JsonAdaptedPerson} with the given person details.
+     * Constructs a storage representation, deferring validation until model conversion.
+     * Missing or null mission submissions default to an empty collection for older saved files.
+     *
+     * @param name Person's name.
+     * @param phone Person's phone number.
+     * @param email Person's email address.
+     * @param address Person's address.
+     * @param tags Person's tags, or null for no tags.
+     * @param studioGroup Person's studio group.
+     * @param missionSubmissions Recorded tutorial weeks, or null for no submissions.
      */
     @JsonCreator
     public JsonAdaptedPerson(@JsonProperty("name") String name, @JsonProperty("phone") String phone,
             @JsonProperty("email") String email, @JsonProperty("address") String address,
-            @JsonProperty("tags") List<JsonAdaptedTag> tags, @JsonProperty("studioGroup") String studioGroup) {
+            @JsonProperty("tags") List<JsonAdaptedTag> tags, @JsonProperty("studioGroup") String studioGroup,
+            @JsonProperty("missionSubmissions") List<Integer> missionSubmissions) {
         this.name = name;
         this.phone = phone;
         this.email = email;
@@ -47,10 +59,16 @@ class JsonAdaptedPerson {
             this.tags.addAll(tags);
         }
         this.studioGroup = studioGroup;
+        if (missionSubmissions != null) {
+            this.missionSubmissions.addAll(missionSubmissions);
+        }
     }
 
     /**
-     * Converts a given {@code Person} into this class for Jackson use.
+     * Copies a person into a storage representation with submission weeks sorted in ascending order.
+     *
+     * @param source Person to save.
+     * @throws NullPointerException If the source is null.
      */
     public JsonAdaptedPerson(Person source) {
         name = source.getName().fullName;
@@ -61,12 +79,17 @@ class JsonAdaptedPerson {
                 .map(JsonAdaptedTag::new)
                 .collect(Collectors.toList()));
         studioGroup = source.getStudioGroup().studioGroup;
+        missionSubmissions.addAll(source.getMissionSubmissions().getSubmittedWeeks()
+                .stream()
+                .sorted()
+                .collect(Collectors.toList()));
     }
 
     /**
      * Converts this Jackson-friendly adapted person object into the model's {@code Person} object.
      *
-     * @throws IllegalValueException if there were any data constraints violated in the adapted person.
+     * @return A person containing the validated saved details.
+     * @throws IllegalValueException If a required field is missing or a saved value violates model constraints.
      */
     public Person toModelType() throws IllegalValueException {
         final List<Tag> personTags = new ArrayList<>();
@@ -116,7 +139,25 @@ class JsonAdaptedPerson {
         final StudioGroup modelStudioGroup = new StudioGroup(studioGroup);
 
         final Set<Tag> modelTags = new HashSet<>(personTags);
-        return new Person(modelName, modelPhone, modelEmail, modelAddress, modelTags, modelStudioGroup);
+        final MissionSubmissions modelMissionSubmissions = toModelMissionSubmissions();
+        return new Person(modelName, modelPhone, modelEmail, modelAddress, modelTags, modelStudioGroup,
+                modelMissionSubmissions);
     }
 
+    /**
+     * Validates saved tutorial weeks and converts them into immutable mission submissions.
+     * Repeated weeks are represented by a single submission.
+     *
+     * @return Mission submissions containing the unique saved weeks.
+     * @throws IllegalValueException If a saved week is null or outside the valid range.
+     */
+    public MissionSubmissions toModelMissionSubmissions() throws IllegalValueException {
+        for (Integer week : missionSubmissions) {
+            if (week == null || !MissionSubmissions.isValidWeek(week)) {
+                throw new IllegalValueException(MissionSubmissions.MESSAGE_CONSTRAINTS);
+            }
+        }
+
+        return new MissionSubmissions(new HashSet<>(missionSubmissions));
+    }
 }
