@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 
 import seedu.address.logic.commands.AddCommand;
+import seedu.address.logic.commands.AddMissionCommand;
 import seedu.address.logic.commands.ClearCommand;
 import seedu.address.logic.commands.DeleteCommand;
 import seedu.address.logic.commands.EditCommand;
@@ -96,5 +97,27 @@ public class AddressBookParserTest {
     @Test
     public void parseCommand_unknownCommand_throwsParseException() {
         assertThrows(ParseException.class, MESSAGE_UNKNOWN_COMMAND, () -> parser.parseCommand("unknownCommand"));
+    }
+
+    @Test
+    public void parseCommand_addMissionIgnoringCase_returnsCommand() throws Exception {
+        AddMissionCommand expected = new AddMissionCommand(INDEX_FIRST_PERSON, 3);
+
+        assertEquals(expected, parser.parseCommand("addmission 1 w/3"));
+        assertEquals(expected, parser.parseCommand("ADDMISSION 1 w/3"));
+        assertEquals(expected, parser.parseCommand("AddMission 1 W/3"));
+        assertEquals(expected, parser.parseCommand("  addmission\t1\tw/3  "));
+    }
+
+    @Test
+    public void parseCommand_addMissionMissingIndex_reportsMissingIndex() {
+        assertThrows(ParseException.class, AddMissionCommandParser.MESSAGE_MISSING_INDEX, () ->
+                parser.parseCommand("addmission"));
+    }
+
+    @Test
+    public void parseCommand_misspelledAddMission_reportsUnknownCommand() {
+        assertThrows(ParseException.class, MESSAGE_UNKNOWN_COMMAND, () ->
+                parser.parseCommand("addmisson 1 w/3"));
     }
 }
