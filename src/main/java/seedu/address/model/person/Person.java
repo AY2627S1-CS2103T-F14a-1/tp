@@ -24,6 +24,7 @@ public class Person {
     // Data fields
     private final Address address;
     private final Set<Tag> tags = new HashSet<>();
+    private final StudioGroup studioGroup;
     private final MissionSubmissions missionSubmissions;
 
     /**
@@ -36,8 +37,8 @@ public class Person {
      * @param tags Person's tags.
      * @throws NullPointerException If any argument is null.
      */
-    public Person(Name name, Phone phone, Email email, Address address, Set<Tag> tags) {
-        this(name, phone, email, address, tags, new MissionSubmissions());
+    public Person(Name name, Phone phone, Email email, Address address, Set<Tag> tags, StudioGroup studioGroup) {
+        this(name, phone, email, address, tags, studioGroup, new MissionSubmissions());
     }
 
     /**
@@ -52,13 +53,14 @@ public class Person {
      * @throws NullPointerException If any argument is null.
      */
     public Person(Name name, Phone phone, Email email, Address address, Set<Tag> tags,
-            MissionSubmissions missionSubmissions) {
+            StudioGroup studioGroup, MissionSubmissions missionSubmissions) {
         requireAllNonNull(name, phone, email, address, tags, missionSubmissions);
         this.name = name;
         this.phone = phone;
         this.email = email;
         this.address = address;
         this.tags.addAll(tags);
+        this.studioGroup = studioGroup;
         this.missionSubmissions = missionSubmissions;
     }
 
@@ -84,6 +86,10 @@ public class Person {
      */
     public Set<Tag> getTags() {
         return Collections.unmodifiableSet(tags);
+    }
+
+    public StudioGroup getStudioGroup() {
+        return studioGroup;
     }
 
     /**
@@ -128,13 +134,14 @@ public class Person {
                 && email.equals(otherPerson.email)
                 && address.equals(otherPerson.address)
                 && tags.equals(otherPerson.tags)
+                && studioGroup.equals(otherPerson.studioGroup)
                 && missionSubmissions.equals(otherPerson.missionSubmissions);
     }
 
     @Override
     public int hashCode() {
         // use this method for custom fields hashing instead of implementing your own
-        return Objects.hash(name, phone, email, address, tags, missionSubmissions);
+        return Objects.hash(name, phone, email, address, tags, studioGroup, missionSubmissions);
     }
 
     @Override
@@ -145,6 +152,7 @@ public class Person {
                 .add("email", email)
                 .add("address", address)
                 .add("tags", tags)
+                .add("studioGroup", studioGroup)
                 .add("missionSubmissions", missionSubmissions)
                 .toString();
     }

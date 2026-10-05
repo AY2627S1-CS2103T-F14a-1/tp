@@ -11,6 +11,7 @@ import seedu.address.model.person.MissionSubmissions;
 import seedu.address.model.person.Name;
 import seedu.address.model.person.Person;
 import seedu.address.model.person.Phone;
+import seedu.address.model.person.StudioGroup;
 import seedu.address.model.tag.Tag;
 import seedu.address.model.util.SampleDataUtil;
 
@@ -23,12 +24,14 @@ public class PersonBuilder {
     public static final String DEFAULT_PHONE = "85355255";
     public static final String DEFAULT_EMAIL = "amy@gmail.com";
     public static final String DEFAULT_ADDRESS = "123, Jurong West Ave 6, #08-111";
+    public static final String DEFAULT_STUDIO_GROUP = "1A";
 
     private Name name;
     private Phone phone;
     private Email email;
     private Address address;
     private Set<Tag> tags;
+    private StudioGroup studioGroup;
     private MissionSubmissions missionSubmissions;
 
     /**
@@ -40,6 +43,7 @@ public class PersonBuilder {
         email = new Email(DEFAULT_EMAIL);
         address = new Address(DEFAULT_ADDRESS);
         tags = new HashSet<>();
+        studioGroup = new StudioGroup(DEFAULT_STUDIO_GROUP);
         missionSubmissions = new MissionSubmissions();
     }
 
@@ -52,6 +56,7 @@ public class PersonBuilder {
         email = personToCopy.getEmail();
         address = personToCopy.getAddress();
         tags = new HashSet<>(personToCopy.getTags());
+        studioGroup = personToCopy.getStudioGroup();
         missionSubmissions = personToCopy.getMissionSubmissions();
     }
 
@@ -96,6 +101,14 @@ public class PersonBuilder {
     }
 
     /**
+     * Sets the Studio Group of the {@code Person} that we are building.
+     */
+    public PersonBuilder withStudioGroup(String studioGroup) {
+        this.studioGroup = new StudioGroup(studioGroup);
+        return this;
+    }
+
+    /**
      * Sets the mission submission weeks of the person being built.
      *
      * @param weeks Tutorial weeks with recorded submissions.
@@ -120,7 +133,7 @@ public class PersonBuilder {
      * @return A person with the configured details.
      */
     public Person build() {
-        return new Person(name, phone, email, address, tags, missionSubmissions);
+        return new Person(name, phone, email, address, tags, studioGroup, missionSubmissions);
     }
 
 }

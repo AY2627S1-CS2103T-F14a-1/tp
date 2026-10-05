@@ -93,7 +93,7 @@ public class PersonTest {
     @Test
     public void constructor_defaultSubmissions_createsEmptySubmissions() {
         Person person = new Person(ALICE.getName(), ALICE.getPhone(), ALICE.getEmail(),
-                ALICE.getAddress(), ALICE.getTags());
+                ALICE.getAddress(), ALICE.getTags(), ALICE.getStudioGroup());
 
         assertTrue(person.getMissionSubmissions().getSubmittedWeeks().isEmpty());
     }
@@ -102,7 +102,7 @@ public class PersonTest {
     public void constructor_nullMissionSubmissions_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () ->
                 new Person(ALICE.getName(), ALICE.getPhone(), ALICE.getEmail(),
-                        ALICE.getAddress(), ALICE.getTags(), null));
+                        ALICE.getAddress(), ALICE.getTags(), ALICE.getStudioGroup(), null));
     }
 
     @Test
@@ -131,6 +131,7 @@ public class PersonTest {
         Person person = new PersonBuilder(ALICE).withMissionSubmissions(3).build();
         String expected = Person.class.getCanonicalName() + "{name=" + person.getName() + ", phone=" + person.getPhone()
                 + ", email=" + person.getEmail() + ", address=" + person.getAddress() + ", tags=" + person.getTags()
+                + ", studioGroup=" + person.getStudioGroup()
                 + ", missionSubmissions=" + person.getMissionSubmissions() + "}";
         assertEquals(expected, person.toString());
     }
