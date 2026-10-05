@@ -1,13 +1,16 @@
 package seedu.address.logic.parser;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
+import static seedu.address.testutil.Assert.assertThrows;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_PERSON;
 
 import org.junit.jupiter.api.Test;
 
 import seedu.address.logic.commands.AddMissionCommand;
+import seedu.address.logic.parser.exceptions.ParseException;
 
 /**
  * Tests argument structure and value-parser integration for addmission.
@@ -15,6 +18,52 @@ import seedu.address.logic.commands.AddMissionCommand;
 public class AddMissionCommandParserTest {
 
     private final AddMissionCommandParser parser = new AddMissionCommandParser();
+
+    @Test
+    public void parseStudentIndex_validInput_returnsIndex() throws Exception {
+        assertEquals(INDEX_FIRST_PERSON, AddMissionCommandParser.parseStudentIndex("1"));
+        assertEquals(INDEX_FIRST_PERSON, AddMissionCommandParser.parseStudentIndex(" \t1 "));
+        assertEquals(12, AddMissionCommandParser.parseStudentIndex("12").getOneBased());
+        assertEquals(Integer.MAX_VALUE,
+                AddMissionCommandParser.parseStudentIndex(String.valueOf(Integer.MAX_VALUE)).getOneBased());
+    }
+
+    @Test
+    public void parseStudentIndex_invalidInput_throwsParseException() {
+        String[] invalidInputs = {"", " ", "0", "-1", "+1", "01", "1.0", "one", "1 2", "2147483648"};
+
+        for (String input : invalidInputs) {
+            assertThrows(ParseException.class, AddMissionCommandParser.MESSAGE_INVALID_STUDENT_INDEX, () ->
+                    AddMissionCommandParser.parseStudentIndex(input));
+        }
+    }
+
+    @Test
+    public void parseStudentIndex_nullInput_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> AddMissionCommandParser.parseStudentIndex(null));
+    }
+
+    @Test
+    public void parseTutorialWeek_validInput_returnsWeek() throws Exception {
+        assertEquals(1, AddMissionCommandParser.parseTutorialWeek("1"));
+        assertEquals(10, AddMissionCommandParser.parseTutorialWeek("10"));
+        assertEquals(3, AddMissionCommandParser.parseTutorialWeek(" \t3 "));
+    }
+
+    @Test
+    public void parseTutorialWeek_invalidInput_throwsParseException() {
+        String[] invalidInputs = {"", " ", "0", "11", "-1", "+3", "03", "3.0", "three", "3 4", "2147483648"};
+
+        for (String input : invalidInputs) {
+            assertThrows(ParseException.class, AddMissionCommandParser.MESSAGE_INVALID_TUTORIAL_WEEK, () ->
+                    AddMissionCommandParser.parseTutorialWeek(input));
+        }
+    }
+
+    @Test
+    public void parseTutorialWeek_nullInput_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> AddMissionCommandParser.parseTutorialWeek(null));
+    }
 
     @Test
     public void parse_validArguments_returnsCommand() {
@@ -52,16 +101,16 @@ public class AddMissionCommandParserTest {
     }
 
     @Test
-    public void parse_invalidValues_reportsUtilityMessages() {
-        assertParseFailure(parser, "01 w/3", ParserUtil.MESSAGE_INVALID_STUDENT_INDEX);
-        assertParseFailure(parser, "1 w/03", ParserUtil.MESSAGE_INVALID_TUTORIAL_WEEK);
-        assertParseFailure(parser, "1 w/11", ParserUtil.MESSAGE_INVALID_TUTORIAL_WEEK);
+    public void parse_invalidValues_reportsValidationMessages() {
+        assertParseFailure(parser, "01 w/3", AddMissionCommandParser.MESSAGE_INVALID_STUDENT_INDEX);
+        assertParseFailure(parser, "1 w/03", AddMissionCommandParser.MESSAGE_INVALID_TUTORIAL_WEEK);
+        assertParseFailure(parser, "1 w/11", AddMissionCommandParser.MESSAGE_INVALID_TUTORIAL_WEEK);
     }
 
     @Test
     public void parse_invalidIndexAndWeek_reportsIndexFirst() {
-        assertParseFailure(parser, "01 w/11", ParserUtil.MESSAGE_INVALID_STUDENT_INDEX);
-        assertParseFailure(parser, "01", ParserUtil.MESSAGE_INVALID_STUDENT_INDEX);
+        assertParseFailure(parser, "01 w/11", AddMissionCommandParser.MESSAGE_INVALID_STUDENT_INDEX);
+        assertParseFailure(parser, "01", AddMissionCommandParser.MESSAGE_INVALID_STUDENT_INDEX);
     }
 
     @Test

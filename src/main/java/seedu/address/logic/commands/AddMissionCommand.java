@@ -91,7 +91,7 @@ public class AddMissionCommand extends Command {
         assert submissions != null;
 
         return new Person(person.getName(), person.getPhone(), person.getEmail(),
-                person.getAddress(), person.getTags(), submissions);
+                person.getAddress(), person.getTags(), person.getStudioGroup(), submissions);
     }
 
     @Override

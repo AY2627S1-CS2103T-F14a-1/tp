@@ -5,11 +5,13 @@ import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_WEEK;
 
 import java.util.Locale;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.AddMissionCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.model.person.MissionSubmissions;
 
 /**
  * Parses input arguments and creates a new AddCommand object
@@ -19,6 +21,11 @@ public class AddMissionCommandParser implements Parser<AddMissionCommand> {
     public static final String MESSAGE_MISSING_INDEX = "A student index must be provided.";
     public static final String MESSAGE_MISSING_WEEK = "Specify a tutorial week using w/WEEK.";
     public static final String MESSAGE_DUPLICATE_WEEK = "Tutorial week must be specified only once.";
+    public static final String MESSAGE_INVALID_STUDENT_INDEX =
+            "Student index must be a positive integer without a sign, decimal point, or leading zero.";
+    public static final String MESSAGE_INVALID_TUTORIAL_WEEK = MissionSubmissions.MESSAGE_CONSTRAINTS
+            + " Enter an integer without a sign, decimal point, or leading zero.";
+    private static final Pattern POSITIVE_INTEGER = Pattern.compile("[1-9][0-9]*");
 
     /**
      * Parses the student index and tutorial week.
@@ -41,11 +48,61 @@ public class AddMissionCommandParser implements Parser<AddMissionCommand> {
         }
 
         rejectExtraArguments(indexText);
-        Index index = ParserUtil.parseStudentIndex(indexText);
+        Index index = parseStudentIndex(indexText);
         String weekText = extractWeek(argMultimap);
-        int week = ParserUtil.parseTutorialWeek(weekText);
+        int week = parseTutorialWeek(weekText);
 
         return new AddMissionCommand(index, week);
+    }
+
+    /**
+     * Parses a student index without accepting signs or leading zeros.
+     *
+     * @param oneBasedIndex Student index text.
+     * @return A valid one-based index.
+     * @throws NullPointerException If the text is null.
+     * @throws ParseException If the index syntax or numeric value is invalid.
+     */
+    public static Index parseStudentIndex(String oneBasedIndex) throws ParseException {
+        requireNonNull(oneBasedIndex);
+
+        String trimmedIndex = oneBasedIndex.trim();
+        if (!POSITIVE_INTEGER.matcher(trimmedIndex).matches()) {
+            throw new ParseException(MESSAGE_INVALID_STUDENT_INDEX);
+        }
+
+        try {
+            return ParserUtil.parseIndex(trimmedIndex);
+        } catch (ParseException e) {
+            throw new ParseException(MESSAGE_INVALID_STUDENT_INDEX);
+        }
+    }
+
+    /**
+     * Parses a tutorial week within the model's valid range.
+     *
+     * @param week Tutorial week text.
+     * @return The validated tutorial week.
+     * @throws NullPointerException If the text is null.
+     * @throws ParseException If the week syntax or numeric value is invalid.
+     */
+    public static int parseTutorialWeek(String week) throws ParseException {
+        requireNonNull(week);
+
+        String trimmedWeek = week.trim();
+        if (!POSITIVE_INTEGER.matcher(trimmedWeek).matches()) {
+            throw new ParseException(MESSAGE_INVALID_TUTORIAL_WEEK);
+        }
+
+        try {
+            int parsedWeek = Integer.parseInt(trimmedWeek);
+            if (!MissionSubmissions.isValidWeek(parsedWeek)) {
+                throw new ParseException(MESSAGE_INVALID_TUTORIAL_WEEK);
+            }
+            return parsedWeek;
+        } catch (NumberFormatException e) {
+            throw new ParseException(MESSAGE_INVALID_TUTORIAL_WEEK);
+        }
     }
 
     /**
