@@ -140,4 +140,13 @@ public class AddMissionCommandTest {
         assertFalse(command.equals(null));
         assertFalse(command.equals("addmission"));
     }
+
+    @Test
+    public void toString_validCommand_returnsExpectedString() {
+        AddMissionCommand command = new AddMissionCommand(INDEX_FIRST_PERSON, 3);
+        String expected = AddMissionCommand.class.getCanonicalName()
+                + "{targetIndex=" + INDEX_FIRST_PERSON + ", week=3}";
+
+        assertEquals(expected, command.toString());
+    }
 }
