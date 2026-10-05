@@ -10,8 +10,8 @@ import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.Messages;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
-import seedu.address.model.person.MissionSubmissions;
-import seedu.address.model.person.Person;
+import seedu.address.model.student.MissionSubmissions;
+import seedu.address.model.student.Student;
 
 /**
  * Records a mission submission for a student identified by a displayed index.
@@ -62,36 +62,36 @@ public class AddMissionCommand extends Command {
     public CommandResult execute(Model model) throws CommandException {
         requireNonNull(model);
 
-        List<Person> lastShownList = model.getFilteredPersonList();
+        List<Student> lastShownList = model.getFilteredStudentList();
         if (targetIndex.getZeroBased() >= lastShownList.size()) {
             throw new CommandException(Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX);
         }
 
-        Person personToUpdate = lastShownList.get(targetIndex.getZeroBased());
-        MissionSubmissions submissions = personToUpdate.getMissionSubmissions();
+        Student studentToUpdate = lastShownList.get(targetIndex.getZeroBased());
+        MissionSubmissions submissions = studentToUpdate.getMissionSubmissions();
 
         if (submissions.hasSubmission(week)) {
-            return new CommandResult(String.format(MESSAGE_ALREADY_RECORDED, personToUpdate.getName(), week));
+            return new CommandResult(String.format(MESSAGE_ALREADY_RECORDED, studentToUpdate.getName(), week));
         }
 
-        Person updatedPerson = createUpdatedPerson(personToUpdate, submissions.withSubmission(week));
-        model.setPerson(personToUpdate, updatedPerson);
-        return new CommandResult(String.format(MESSAGE_SUCCESS, personToUpdate.getName(), week));
+        Student updatedStudent = createUpdatedStudent(studentToUpdate, submissions.withSubmission(week));
+        model.setStudent(studentToUpdate, updatedStudent);
+        return new CommandResult(String.format(MESSAGE_SUCCESS, studentToUpdate.getName(), week));
     }
 
     /**
-     * Copies a person with updated mission submissions.
+     * Copies a student with updated mission submissions.
      *
-     * @param person Person whose other details are preserved.
+     * @param student Student whose other details are preserved.
      * @param submissions Updated mission submissions.
-     * @return A person containing the updated submissions and original details.
+     * @return A student containing the updated submissions and original details.
      */
-    private Person createUpdatedPerson(Person person, MissionSubmissions submissions) {
-        assert person != null;
+    private Student createUpdatedStudent(Student student, MissionSubmissions submissions) {
+        assert student != null;
         assert submissions != null;
 
-        return new Person(person.getName(), person.getPhone(), person.getEmail(),
-                person.getAddress(), person.getTags(), person.getStudioGroup(), submissions);
+        return new Student(student.getName(), student.getPhone(), student.getEmail(),
+                student.getAddress(), student.getTags(), student.getStudioGroup(), submissions);
     }
 
     @Override
