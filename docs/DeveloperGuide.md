@@ -537,18 +537,18 @@ The user stories above represent the main intended functionality and selected fu
 ### Non-Functional Requirements
 
 1. Should work on any _mainstream OS_ as long as it has Java `25` or above installed.
-2. Should start within 5 seconds on an average university student's desktop.
+2. Should start within 5 seconds on an _average university student's desktop_.
 3. Should behave consistently when launched from IDE, command line, or by double-clicking the jar file.
 4. Should be able to hold up to 1000 students without noticeable sluggishness (no more than 2 seconds delay) in performance for typical usage.
-5. A user with above average typing speed for regular English text (i.e. not code, not system admin commands) should be able to accomplish most of the tasks faster using commands than using the mouse.
-6. GUI should be usable (all functions accessible) from screen resolutions 1280x720 and higher and screen scales of 100%, 125%, and 150%.
+5. A user with _above average typing speed_ for regular English text (i.e. not code, not system admin commands) should be able to accomplish most of the tasks faster using commands than using the mouse.
+6. GUI should be _usable_ from screen resolutions 1280x720 and higher and screen scales of 100%, 125%, and 150%.
 7. No additional installer should be required for the software.
-8. Should function without Internet access.
+8. Should be _usable_ without Internet access.
 9. Character encoding for data saved to disk should be UTF-8.
 10. Commands and error messages should use consistent terminology and clearly identify the invalid field or input.
 11. Dates, times, and identifiers should be displayed in a consistent and unambiguous format.
 12. All commands should be typed into a single interface.
-13. Records should be persistent (i.e. preserved after closing and reopening the application).
+13. Records should be preserved after closing and reopening the application.
 14. Should retain previously saved data even if an operation fails.
 15. If one stored record does not adhere to the defined format, the system should report the problem while loading all other valid records.
 
@@ -558,8 +558,20 @@ The user stories above represent the main intended functionality and selected fu
 * **Private contact detail**: A contact detail that is not meant to be shared with others
 * **AvengerHub**: The name of the application.
 * **Tutor**: The TAs (teaching assistants) in the CS1101S course that handle the tutorial sessions. Also known as "Avengers" by the course.
+* **Mission**: The CS1101S term for homework assignments. A mission submission usually happens via the course website.
+* **Studio group**: The CS110S term for tutorial groups.
+* **Mastery check**: A CS110S assessment where the tutor conducts an oral interview with a pair of students to ensure they have understood the course content. The date and time of the assessment is decided jointly by the students and the tutor.
 * **Record(s)**: The list of all student information. This is saved on the disk and exists in memory as well when the application is running.
 * **Storage**: The file containing the list of student information that is saved to disk.
+* **Corrupted**: Any data read from Storage that does not adhere to our expected format will be considered corrupted.
+* **Operation**: The entire sequence of events resulting from a discrete user action.
+* **Usable**: All functional parts of the application are accessible and work as intended.
+* **Average university student's desktop**: We define relevant hardware specifications as such:
+  * CPU: Intel Core i5/Ryzen 5/M-series Apple chip equivalent
+  * RAM: 8GB
+  * GPU: Integrated graphics
+  * We expect the application to be stored in a SSD. Loading times may be worse with HDDs.
+* **Above average typing speed**: Sustained >=80 WPM with a sequence of random words. 
 
 --------------------------------------------------------------------------------------------------------------------
 
