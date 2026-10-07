@@ -24,7 +24,7 @@ import seedu.address.logic.commands.AddCommand;
 import seedu.address.logic.commands.CommandResult;
 import seedu.address.logic.commands.ListCommand;
 import seedu.address.logic.commands.exceptions.CommandException;
-import seedu.address.logic.parser.AddMissionCommandParser;
+import seedu.address.logic.parser.MissionParser;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
@@ -192,7 +192,7 @@ public class LogicManagerTest {
                 reloadedLogic.execute("addmission 1 w/3").getFeedbackToUser());
 
         String savedJson = Files.readString(filePath);
-        assertThrows(ParseException.class, AddMissionCommandParser.MESSAGE_INVALID_TUTORIAL_WEEK, () ->
+        assertThrows(ParseException.class, MissionParser.MESSAGE_INVALID_TUTORIAL_WEEK, () ->
                 reloadedLogic.execute("addmission 1 w/11"));
         assertEquals(savedJson, Files.readString(filePath));
         assertEquals(Set.of(2, 3), reloadedModel.getFilteredStudentList().get(0)
@@ -206,5 +206,39 @@ public class LogicManagerTest {
         assertEquals(savedJson, Files.readString(filePath));
         assertEquals(Set.of(2, 3, 4), storage.readAddressBook().orElseThrow()
                 .getStudentList().get(0).getMissionSubmissions().getSubmittedWeeks());
+    }
+
+    @Test
+    public void execute_deleteMissionAndReload_preservesDeletionAndRejectsInvalidInput() throws Exception {
+        model.addStudent(new StudentBuilder(AMY).withMissionSubmissions(2, 3).build());
+        assertEquals("Removed Amy Bee’s mission submission for tutorial week 3.",
+                logic.execute("DELMISSION 1 W/3").getFeedbackToUser());
+        Path filePath = temporaryFolder.resolve("addressBook.json");
+        JsonAddressBookStorage storage = new JsonAddressBookStorage(filePath);
+        Model reloadedModel = new ModelManager(storage.readAddressBook().orElseThrow(), new UserPrefs());
+        Logic reloadedLogic = new LogicManager(reloadedModel, new StorageManager(storage,
+                new JsonUserPrefsStorage(temporaryFolder.resolve("reloadedPrefs.json"))));
+        assertEquals(Set.of(2), reloadedModel.getFilteredStudentList().get(0)
+                .getMissionSubmissions().getSubmittedWeeks());
+
+        String savedJson = Files.readString(filePath);
+        assertThrows(ParseException.class, MissionParser.MESSAGE_INVALID_TUTORIAL_WEEK, () ->
+                reloadedLogic.execute("delmission 1 w/11"));
+        assertEquals(savedJson, Files.readString(filePath));
+        assertEquals(Set.of(2), reloadedModel.getFilteredStudentList().get(0)
+                .getMissionSubmissions().getSubmittedWeeks());
+        assertEquals("Amy Bee’s mission submission was already not recorded for tutorial week 3. No changes made.",
+                reloadedLogic.execute("delmission 1 w/3").getFeedbackToUser());
+        assertEquals(savedJson, Files.readString(filePath));
+
+        assertEquals("Removed Amy Bee’s mission submission for tutorial week 2.",
+                reloadedLogic.execute("delmission 1 w/2").getFeedbackToUser());
+        Student expected = new StudentBuilder(AMY).withMissionSubmissions().build();
+        assertEquals(expected, storage.readAddressBook().orElseThrow().getStudentList().get(0));
+        savedJson = Files.readString(filePath);
+        assertThrows(CommandException.class, MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX, () ->
+                reloadedLogic.execute("delmission 2 w/2"));
+        assertEquals(savedJson, Files.readString(filePath));
+        assertEquals(expected, reloadedModel.getFilteredStudentList().get(0));
     }
 }

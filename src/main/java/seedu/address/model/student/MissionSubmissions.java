@@ -87,6 +87,24 @@ public final class MissionSubmissions {
     }
 
     /**
+     * Returns submissions excluding the given week without modifying this object.
+     * Returns this object if the week is not recorded.
+     *
+     * @param week Tutorial week to remove.
+     * @return Submissions containing all existing weeks except the given week.
+     * @throws IllegalArgumentException If the week is outside the valid range.
+     */
+    public MissionSubmissions withoutSubmission(int week) {
+        if (!hasSubmission(week)) {
+            return this;
+        }
+
+        Set<Integer> updatedWeeks = new HashSet<>(submittedWeeks);
+        updatedWeeks.remove(week);
+        return new MissionSubmissions(updatedWeeks);
+    }
+
+    /**
      * Returns an unmodifiable set of recorded tutorial weeks.
      *
      * @return Recorded weeks, with no guaranteed iteration order.

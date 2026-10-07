@@ -126,4 +126,32 @@ public class MissionSubmissionsTest {
         assertNotEquals(first, null);
         assertNotEquals(first, Set.of(3, 5));
     }
+
+    @Test
+    public void withoutSubmission_existingWeek_preservesOriginalAndOtherWeeks() {
+        MissionSubmissions original = new MissionSubmissions(Set.of(1, 3, 10));
+
+        assertEquals(Set.of(1, 10), original.withoutSubmission(3).getSubmittedWeeks());
+        assertEquals(Set.of(1, 3, 10), original.getSubmittedWeeks());
+        assertTrue(original.withoutSubmission(1).withoutSubmission(3).withoutSubmission(10)
+                .getSubmittedWeeks().isEmpty());
+    }
+
+    @Test
+    public void withoutSubmission_missingWeek_preservesSubmissions() {
+        MissionSubmissions original = new MissionSubmissions(Set.of(3));
+
+        assertEquals(original, original.withoutSubmission(2));
+        assertEquals(new MissionSubmissions(), new MissionSubmissions().withoutSubmission(1));
+    }
+
+    @Test
+    public void withoutSubmission_invalidWeek_preservesOriginal() {
+        MissionSubmissions original = new MissionSubmissions(Set.of(3));
+
+        for (int week : new int[] {-1, 0, 11, Integer.MAX_VALUE}) {
+            assertThrows(IllegalArgumentException.class, () -> original.withoutSubmission(week));
+            assertEquals(Set.of(3), original.getSubmittedWeeks());
+        }
+    }
 }
