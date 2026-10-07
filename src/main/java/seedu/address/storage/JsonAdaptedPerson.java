@@ -10,21 +10,21 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import seedu.address.commons.exceptions.IllegalValueException;
-import seedu.address.model.person.Address;
-import seedu.address.model.person.Email;
-import seedu.address.model.person.MissionSubmissions;
-import seedu.address.model.person.Name;
-import seedu.address.model.person.Person;
-import seedu.address.model.person.Phone;
-import seedu.address.model.person.StudioGroup;
+import seedu.address.model.Student.Address;
+import seedu.address.model.Student.Email;
+import seedu.address.model.Student.MissionSubmissions;
+import seedu.address.model.Student.Name;
+import seedu.address.model.Student.Student;
+import seedu.address.model.Student.Phone;
+import seedu.address.model.Student.StudioGroup;
 import seedu.address.model.tag.Tag;
 
 /**
- * Jackson-friendly version of {@link Person}.
+ * Jackson-friendly version of {@link Student}.
  */
-class JsonAdaptedPerson {
+class JsonAdaptedStudent {
 
-    public static final String MISSING_FIELD_MESSAGE_FORMAT = "Person's %s field is missing!";
+    public static final String MISSING_FIELD_MESSAGE_FORMAT = "Student's %s field is missing!";
 
     private final String name;
     private final String phone;
@@ -38,16 +38,16 @@ class JsonAdaptedPerson {
      * Constructs a storage representation, deferring validation until model conversion.
      * Missing or null mission submissions default to an empty collection for older saved files.
      *
-     * @param name Person's name.
-     * @param phone Person's phone number.
-     * @param email Person's email address.
-     * @param address Person's address.
-     * @param tags Person's tags, or null for no tags.
-     * @param studioGroup Person's studio group.
+     * @param name Student's name.
+     * @param phone Student's phone number.
+     * @param email Student's email address.
+     * @param address Student's address.
+     * @param tags Student's tags, or null for no tags.
+     * @param studioGroup Student's studio group.
      * @param missionSubmissions Recorded tutorial weeks, or null for no submissions.
      */
     @JsonCreator
-    public JsonAdaptedPerson(@JsonProperty("name") String name, @JsonProperty("phone") String phone,
+    public JsonAdaptedStudent(@JsonProperty("name") String name, @JsonProperty("phone") String phone,
             @JsonProperty("email") String email, @JsonProperty("address") String address,
             @JsonProperty("tags") List<JsonAdaptedTag> tags, @JsonProperty("studioGroup") String studioGroup,
             @JsonProperty("missionSubmissions") List<Integer> missionSubmissions) {
@@ -65,12 +65,12 @@ class JsonAdaptedPerson {
     }
 
     /**
-     * Copies a person into a storage representation with submission weeks sorted in ascending order.
+     * Copies a Student into a storage representation with submission weeks sorted in ascending order.
      *
-     * @param source Person to save.
+     * @param source Student to save.
      * @throws NullPointerException If the source is null.
      */
-    public JsonAdaptedPerson(Person source) {
+    public JsonAdaptedStudent(Student source) {
         name = source.getName().fullName;
         phone = source.getPhone().value;
         email = source.getEmail().value;
@@ -86,15 +86,15 @@ class JsonAdaptedPerson {
     }
 
     /**
-     * Converts this Jackson-friendly adapted person object into the model's {@code Person} object.
+     * Converts this Jackson-friendly adapted Student object into the model's {@code Student} object.
      *
-     * @return A person containing the validated saved details.
+     * @return A Student containing the validated saved details.
      * @throws IllegalValueException If a required field is missing or a saved value violates model constraints.
      */
-    public Person toModelType() throws IllegalValueException {
-        final List<Tag> personTags = new ArrayList<>();
+    public Student toModelType() throws IllegalValueException {
+        final List<Tag> StudentTags = new ArrayList<>();
         for (JsonAdaptedTag tag : tags) {
-            personTags.add(tag.toModelType());
+            StudentTags.add(tag.toModelType());
         }
 
         if (name == null) {
@@ -138,9 +138,9 @@ class JsonAdaptedPerson {
         }
         final StudioGroup modelStudioGroup = new StudioGroup(studioGroup);
 
-        final Set<Tag> modelTags = new HashSet<>(personTags);
+        final Set<Tag> modelTags = new HashSet<>(StudentTags);
         final MissionSubmissions modelMissionSubmissions = toModelMissionSubmissions();
-        return new Person(modelName, modelPhone, modelEmail, modelAddress, modelTags, modelStudioGroup,
+        return new Student(modelName, modelPhone, modelEmail, modelAddress, modelTags, modelStudioGroup,
                 modelMissionSubmissions);
     }
 
