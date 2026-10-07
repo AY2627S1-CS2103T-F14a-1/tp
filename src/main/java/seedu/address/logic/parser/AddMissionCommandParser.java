@@ -14,7 +14,7 @@ import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.student.MissionSubmissions;
 
 /**
- * Parses input arguments and creates a new AddCommand object
+ * Parses input arguments and creates a new {@code AddMissionCommand}.
  */
 public class AddMissionCommandParser implements Parser<AddMissionCommand> {
 
@@ -38,21 +38,42 @@ public class AddMissionCommandParser implements Parser<AddMissionCommand> {
     public AddMissionCommand parse(String args) throws ParseException {
         requireNonNull(args);
 
-        String normalisedArgs = normaliseArguments(args);
+        String normalizedArgs = normalizeArguments(args);
         ArgumentMultimap argMultimap =
-                ArgumentTokenizer.tokenize(normalisedArgs, PREFIX_WEEK);
+                ArgumentTokenizer.tokenize(normalizedArgs, PREFIX_WEEK);
 
-        String indexText = argMultimap.getPreamble();
-        if (indexText.isEmpty()) {
-            throw new ParseException(MESSAGE_MISSING_INDEX);
-        }
-
-        rejectExtraArguments(indexText);
-        Index index = parseStudentIndex(indexText);
+        Index index = extractIndex(argMultimap);
         String weekText = extractWeek(argMultimap);
         int week = parseTutorialWeek(weekText);
 
         return new AddMissionCommand(index, week);
+    }
+
+    /**
+     * Extracts the index while distinguishing missing inputs from misplaced arguments.
+     *
+     * @param arguments Tokenized command arguments.
+     * @return The validated displayed student index.
+     * @throws ParseException If the index is missing, invalid, or surrounded by extra arguments.
+     */
+    private Index extractIndex(ArgumentMultimap arguments) throws ParseException {
+        String indexText = arguments.getPreamble();
+        if (indexText.isEmpty()) {
+            for (String value : arguments.getAllValues(PREFIX_WEEK)) {
+                rejectExtraArguments(value);
+            }
+            throw new ParseException(MESSAGE_MISSING_INDEX);
+        }
+
+        String[] fields = indexText.split(" ");
+        if (!arePrefixesPresent(arguments, PREFIX_WEEK) && fields.length == 2
+                && POSITIVE_INTEGER.matcher(fields[1]).matches()) {
+            parseStudentIndex(fields[0]);
+            throw new ParseException(MESSAGE_MISSING_WEEK);
+        }
+
+        rejectExtraArguments(indexText);
+        return parseStudentIndex(indexText);
     }
 
     /**
@@ -112,7 +133,7 @@ public class AddMissionCommandParser implements Parser<AddMissionCommand> {
      * @param args Original command arguments.
      * @return Arguments suitable for the existing tokenizer.
      */
-    private String normaliseArguments(String args) {
+    private String normalizeArguments(String args) {
         return " " + args.strip().replaceAll("\\s+", " ").toLowerCase(Locale.ROOT);
     }
 

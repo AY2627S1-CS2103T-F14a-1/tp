@@ -1,7 +1,7 @@
 package seedu.address.logic;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static seedu.address.logic.Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX;
+import static seedu.address.logic.Messages.MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX;
 import static seedu.address.logic.Messages.MESSAGE_UNKNOWN_COMMAND;
 import static seedu.address.logic.commands.CommandTestUtil.ADDRESS_DESC_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.EMAIL_DESC_AMY;
@@ -13,7 +13,9 @@ import static seedu.address.testutil.TypicalStudents.AMY;
 
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,6 +25,7 @@ import seedu.address.logic.commands.AddCommand;
 import seedu.address.logic.commands.CommandResult;
 import seedu.address.logic.commands.ListCommand;
 import seedu.address.logic.commands.exceptions.CommandException;
+import seedu.address.logic.parser.AddMissionCommandParser;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
@@ -62,7 +65,7 @@ public class LogicManagerTest {
     @Test
     public void execute_commandExecutionError_throwsCommandException() {
         String deleteCommand = "delete 9";
-        assertCommandException(deleteCommand, MESSAGE_INVALID_PERSON_DISPLAYED_INDEX);
+        assertCommandException(deleteCommand, MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX);
     }
 
     @Test
@@ -171,5 +174,38 @@ public class LogicManagerTest {
         ModelManager expectedModel = new ModelManager();
         expectedModel.addStudent(expectedStudent);
         assertCommandFailure(addCommand, CommandException.class, expectedMessage, expectedModel);
+    }
+
+    @Test
+    public void execute_addMissionAndReload_preservesSubmissionsAfterRejectedCommands() throws Exception {
+        model.addStudent(new StudentBuilder(AMY).withMissionSubmissions(2).build());
+        assertEquals("Added Amy Bee’s mission submission for tutorial week 3.",
+                logic.execute("ADDMISSION 1 W/3").getFeedbackToUser());
+        Path filePath = temporaryFolder.resolve("addressBook.json");
+        JsonAddressBookStorage storage = new JsonAddressBookStorage(filePath);
+        Model reloadedModel = new ModelManager(storage.readAddressBook().orElseThrow(), new UserPrefs());
+        Logic reloadedLogic = new LogicManager(reloadedModel, new StorageManager(storage,
+                new JsonUserPrefsStorage(temporaryFolder.resolve("reloadedPrefs.json"))));
+
+        assertEquals(Set.of(2, 3), reloadedModel.getFilteredStudentList().get(0)
+                .getMissionSubmissions().getSubmittedWeeks());
+        assertEquals("Amy Bee’s mission submission has already been recorded for tutorial week 3. No changes made.",
+                reloadedLogic.execute("addmission 1 w/3").getFeedbackToUser());
+
+        String savedJson = Files.readString(filePath);
+        assertThrows(ParseException.class, AddMissionCommandParser.MESSAGE_INVALID_TUTORIAL_WEEK, () ->
+                reloadedLogic.execute("addmission 1 w/11"));
+        assertEquals(savedJson, Files.readString(filePath));
+        assertEquals(Set.of(2, 3), reloadedModel.getFilteredStudentList().get(0)
+                .getMissionSubmissions().getSubmittedWeeks());
+
+        assertEquals("Added Amy Bee’s mission submission for tutorial week 4.",
+                reloadedLogic.execute("addmission 1 w/4").getFeedbackToUser());
+        savedJson = Files.readString(filePath);
+        assertThrows(CommandException.class, MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX, () ->
+                reloadedLogic.execute("addmission 2 w/5"));
+        assertEquals(savedJson, Files.readString(filePath));
+        assertEquals(Set.of(2, 3, 4), storage.readAddressBook().orElseThrow()
+                .getStudentList().get(0).getMissionSubmissions().getSubmittedWeeks());
     }
 }

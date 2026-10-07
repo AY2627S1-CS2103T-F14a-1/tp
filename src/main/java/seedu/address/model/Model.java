@@ -11,7 +11,7 @@ import seedu.address.model.student.Student;
  */
 public interface Model {
     /** {@code Predicate} that always evaluates to true */
-    Predicate<Student> PREDICATE_SHOW_ALL_PERSONS = unused -> true;
+    Predicate<Student> PREDICATE_SHOW_ALL_STUDENTS = unused -> true;
 
     /**
      * Returns the user prefs.
