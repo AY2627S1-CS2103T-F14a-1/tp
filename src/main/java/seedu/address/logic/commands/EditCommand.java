@@ -5,6 +5,7 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_ADDRESS;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_EMAIL;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PHONE;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_STUDIO_GROUP;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
 import static seedu.address.model.Model.PREDICATE_SHOW_ALL_PERSONS;
 
@@ -26,6 +27,7 @@ import seedu.address.model.student.Email;
 import seedu.address.model.student.Name;
 import seedu.address.model.student.Phone;
 import seedu.address.model.student.Student;
+import seedu.address.model.student.StudioGroup;
 import seedu.address.model.tag.Tag;
 
 /**
@@ -43,7 +45,8 @@ public class EditCommand extends Command {
             + "[" + PREFIX_PHONE + "PHONE] "
             + "[" + PREFIX_EMAIL + "EMAIL] "
             + "[" + PREFIX_ADDRESS + "ADDRESS] "
-            + "[" + PREFIX_TAG + "TAG]...\n"
+            + "[" + PREFIX_TAG + "TAG]... "
+            + "[" + PREFIX_STUDIO_GROUP + "STUDIO GROUP]\n"
             + "Example: " + COMMAND_WORD + " 1 "
             + PREFIX_PHONE + "91234567 "
             + PREFIX_EMAIL + "johndoe@example.com";
@@ -104,9 +107,10 @@ public class EditCommand extends Command {
         Email updatedEmail = editStudentDescriptor.getEmail().orElse(studentToEdit.getEmail());
         Address updatedAddress = editStudentDescriptor.getAddress().orElse(studentToEdit.getAddress());
         Set<Tag> updatedTags = editStudentDescriptor.getTags().orElse(studentToEdit.getTags());
+        StudioGroup updatedStudioGroup = editStudentDescriptor.getStudioGroup().orElse(studentToEdit.getStudioGroup());
 
         return new Student(updatedName, updatedPhone, updatedEmail, updatedAddress, updatedTags,
-                studentToEdit.getStudioGroup(), studentToEdit.getMissionSubmissions());
+                updatedStudioGroup, studentToEdit.getMissionSubmissions());
     }
 
     @Override
@@ -142,6 +146,7 @@ public class EditCommand extends Command {
         private Email email;
         private Address address;
         private Set<Tag> tags;
+        private StudioGroup studioGroup;
 
         public EditStudentDescriptor() {}
 
@@ -155,6 +160,7 @@ public class EditCommand extends Command {
             setEmail(toCopy.email);
             setAddress(toCopy.address);
             setTags(toCopy.tags);
+            setStudioGroup(toCopy.studioGroup);
         }
 
         /**
@@ -213,6 +219,14 @@ public class EditCommand extends Command {
             return (tags != null) ? Optional.of(Collections.unmodifiableSet(tags)) : Optional.empty();
         }
 
+        public void setStudioGroup(StudioGroup studioGroup) {
+            this.studioGroup = studioGroup;
+        }
+
+        public Optional<StudioGroup> getStudioGroup() {
+            return Optional.ofNullable(studioGroup);
+        }
+
         @Override
         public boolean equals(Object other) {
             if (other == this) {
@@ -228,7 +242,8 @@ public class EditCommand extends Command {
                     && Objects.equals(phone, otherEditStudentDescriptor.phone)
                     && Objects.equals(email, otherEditStudentDescriptor.email)
                     && Objects.equals(address, otherEditStudentDescriptor.address)
-                    && Objects.equals(tags, otherEditStudentDescriptor.tags);
+                    && Objects.equals(tags, otherEditStudentDescriptor.tags)
+                    && Objects.equals(studioGroup, otherEditStudentDescriptor.studioGroup);
         }
 
         @Override
@@ -239,6 +254,7 @@ public class EditCommand extends Command {
                     .add("email", email)
                     .add("address", address)
                     .add("tags", tags)
+                    .add("studio group", studioGroup)
                     .toString();
         }
     }
