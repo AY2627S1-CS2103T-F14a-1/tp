@@ -19,8 +19,8 @@ import org.junit.jupiter.api.io.TempDir;
 import seedu.address.commons.exceptions.DataLoadingException;
 import seedu.address.model.AddressBook;
 import seedu.address.model.ReadOnlyAddressBook;
-import seedu.address.model.person.Person;
-import seedu.address.testutil.PersonBuilder;
+import seedu.address.model.student.Student;
+import seedu.address.testutil.StudentBuilder;
 
 public class JsonAddressBookStorageTest {
     private static final Path TEST_DATA_FOLDER = Paths.get("src", "test", "data", "JsonAddressBookStorageTest");
@@ -115,9 +115,9 @@ public class JsonAddressBookStorageTest {
     public void readAndSaveAddressBook_missionSubmissions_preservesWeeks() throws Exception {
         Path filePath = testFolder.resolve("missionSubmissions.json");
         JsonAddressBookStorage storage = new JsonAddressBookStorage(filePath);
-        Person student = new PersonBuilder(ALICE).withMissionSubmissions(1, 4, 10).build();
+        Student student = new StudentBuilder(ALICE).withMissionSubmissions(1, 4, 10).build();
         AddressBook original = new AddressBook();
-        original.addPerson(student);
+        original.addStudent(student);
 
         storage.saveAddressBook(original);
 
@@ -125,17 +125,17 @@ public class JsonAddressBookStorageTest {
         ReadOnlyAddressBook loaded = reopenedStorage.readAddressBook().orElseThrow();
         assertEquals(original, new AddressBook(loaded));
         assertEquals(student.getMissionSubmissions(),
-                loaded.getPersonList().get(0).getMissionSubmissions());
+                loaded.getStudentList().get(0).getMissionSubmissions());
 
-        Person updatedStudent = new PersonBuilder(student).withMissionSubmissions(1, 4, 7, 10).build();
-        original.setPerson(student, updatedStudent);
+        Student updatedStudent = new StudentBuilder(student).withMissionSubmissions(1, 4, 7, 10).build();
+        original.setStudent(student, updatedStudent);
         reopenedStorage.saveAddressBook(original);
 
         ReadOnlyAddressBook reloaded = new JsonAddressBookStorage(filePath)
                 .readAddressBook().orElseThrow();
         assertEquals(original, new AddressBook(reloaded));
         assertEquals(updatedStudent.getMissionSubmissions(),
-                reloaded.getPersonList().get(0).getMissionSubmissions());
+                reloaded.getStudentList().get(0).getMissionSubmissions());
     }
 
     @Test
@@ -143,7 +143,7 @@ public class JsonAddressBookStorageTest {
         Path filePath = testFolder.resolve("invalidMissionSubmissions.json");
         String json = """
                 {
-                  "persons": [{
+                  "students": [{
                     "name": "Amy Bee",
                     "phone": "85355255",
                     "email": "amy@gmail.com",

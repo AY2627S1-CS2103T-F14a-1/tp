@@ -32,7 +32,8 @@ class JsonAdaptedStudent {
     private final String address;
     private final List<JsonAdaptedTag> tags = new ArrayList<>();
     private final String studioGroup;
-    private final List<Integer> missionSubmissions = new ArrayList<>();
+    // Preserve JSON types until validation so fractional weeks cannot be silently truncated.
+    private final List<Object> missionSubmissions = new ArrayList<>();
 
     /**
      * Constructs a {@code JsonAdaptedStudent} with the given student details.
@@ -51,7 +52,7 @@ class JsonAdaptedStudent {
     public JsonAdaptedStudent(@JsonProperty("name") String name, @JsonProperty("phone") String phone,
             @JsonProperty("email") String email, @JsonProperty("address") String address,
             @JsonProperty("tags") List<JsonAdaptedTag> tags, @JsonProperty("studioGroup") String studioGroup,
-            @JsonProperty("missionSubmissions") List<Integer> missionSubmissions) {
+            @JsonProperty("missionSubmissions") List<?> missionSubmissions) {
         this.name = name;
         this.phone = phone;
         this.email = email;
@@ -150,15 +151,17 @@ class JsonAdaptedStudent {
      * Repeated weeks are represented by a single submission.
      *
      * @return Mission submissions containing the unique saved weeks.
-     * @throws IllegalValueException If a saved week is null or outside the valid range.
+     * @throws IllegalValueException If a saved week is not an integer in the valid range.
      */
     public MissionSubmissions toModelMissionSubmissions() throws IllegalValueException {
-        for (Integer week : missionSubmissions) {
-            if (week == null || !MissionSubmissions.isValidWeek(week)) {
+        Set<Integer> submittedWeeks = new HashSet<>();
+        for (Object value : missionSubmissions) {
+            if (!(value instanceof Integer week) || !MissionSubmissions.isValidWeek(week)) {
                 throw new IllegalValueException(MissionSubmissions.MESSAGE_CONSTRAINTS);
             }
+            submittedWeeks.add(week);
         }
 
-        return new MissionSubmissions(new HashSet<>(missionSubmissions));
+        return new MissionSubmissions(submittedWeeks);
     }
 }

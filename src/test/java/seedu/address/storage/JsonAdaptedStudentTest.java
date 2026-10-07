@@ -192,7 +192,7 @@ public class JsonAdaptedStudentTest {
     }
 
     @Test
-    public void toModelType_missingMissionSubmissionsInJson_returnsPersonWithoutSubmissions() throws Exception {
+    public void toModelType_missingMissionSubmissionsInJson_returnsStudentWithoutSubmissions() throws Exception {
         String json = """
                 {
                   "name": "Amy Bee",
@@ -207,5 +207,18 @@ public class JsonAdaptedStudentTest {
         Student expected = new StudentBuilder().withMissionSubmissions().build();
 
         assertEquals(expected, student.toModelType());
+    }
+
+    @Test
+    public void toModelType_invalidJsonWeekTypes_throwsIllegalValueException() throws Exception {
+        String template = JsonUtil.toJsonString(
+                new JsonAdaptedStudent(new StudentBuilder().withMissionSubmissions(3).build()));
+        for (String value : List.of("3.9", "10.9", "3.0", "3e0", "\"03\"", "true", "null", "2147483648", "{}")) {
+            String json = template.replaceFirst(
+                    "\"missionSubmissions\"\\s*:\\s*\\[[^]]*]", "\"missionSubmissions\": [" + value + "]");
+            JsonAdaptedStudent student = JsonUtil.fromJsonString(json, JsonAdaptedStudent.class);
+
+            assertThrows(IllegalValueException.class, MissionSubmissions.MESSAGE_CONSTRAINTS, student::toModelType);
+        }
     }
 }
