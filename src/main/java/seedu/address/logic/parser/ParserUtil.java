@@ -13,6 +13,7 @@ import seedu.address.model.student.Address;
 import seedu.address.model.student.Email;
 import seedu.address.model.student.Name;
 import seedu.address.model.student.Phone;
+import seedu.address.model.student.StudioGroup;
 import seedu.address.model.tag.Tag;
 
 /**
@@ -120,5 +121,20 @@ public class ParserUtil {
             tagSet.add(parseTag(tagName));
         }
         return tagSet;
+    }
+
+    /**
+     * Parses a {@code String studioGroup} into a {@code StudioGroup}.
+     * Leading and trailing whitespaces will be trimmed.
+     *
+     * @throws ParseException if the given {@code studioGroup} is invalid.
+     */
+    public static StudioGroup parseStudioGroup(String studioGroup) throws ParseException {
+        requireNonNull(studioGroup);
+        String trimmedStudioGroup = studioGroup.trim();
+        if (!StudioGroup.isValidStudioGroup(trimmedStudioGroup)) {
+            throw new ParseException(StudioGroup.MESSAGE_CONSTRAINTS);
+        }
+        return new StudioGroup(trimmedStudioGroup);
     }
 }
