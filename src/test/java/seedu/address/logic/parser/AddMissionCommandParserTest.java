@@ -5,7 +5,7 @@ import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
 import static seedu.address.testutil.Assert.assertThrows;
-import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_PERSON;
+import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_STUDENT;
 
 import org.junit.jupiter.api.Test;
 
@@ -21,8 +21,8 @@ public class AddMissionCommandParserTest {
 
     @Test
     public void parseStudentIndex_validInput_returnsIndex() throws Exception {
-        assertEquals(INDEX_FIRST_PERSON, AddMissionCommandParser.parseStudentIndex("1"));
-        assertEquals(INDEX_FIRST_PERSON, AddMissionCommandParser.parseStudentIndex(" \t1 "));
+        assertEquals(INDEX_FIRST_STUDENT, AddMissionCommandParser.parseStudentIndex("1"));
+        assertEquals(INDEX_FIRST_STUDENT, AddMissionCommandParser.parseStudentIndex(" \t1 "));
         assertEquals(12, AddMissionCommandParser.parseStudentIndex("12").getOneBased());
         assertEquals(Integer.MAX_VALUE,
                 AddMissionCommandParser.parseStudentIndex(String.valueOf(Integer.MAX_VALUE)).getOneBased());
@@ -67,18 +67,18 @@ public class AddMissionCommandParserTest {
 
     @Test
     public void parse_validArguments_returnsCommand() {
-        AddMissionCommand expected = new AddMissionCommand(INDEX_FIRST_PERSON, 3);
+        AddMissionCommand expected = new AddMissionCommand(INDEX_FIRST_STUDENT, 3);
 
         assertParseSuccess(parser, "1 w/3", expected);
         assertParseSuccess(parser, "  1   w/ 3  ", expected);
         assertParseSuccess(parser, "1\tW/3", expected);
-        assertParseSuccess(parser, "1 w/1", new AddMissionCommand(INDEX_FIRST_PERSON, 1));
-        assertParseSuccess(parser, "1 w/10", new AddMissionCommand(INDEX_FIRST_PERSON, 10));
+        assertParseSuccess(parser, "1 w/1", new AddMissionCommand(INDEX_FIRST_STUDENT, 1));
+        assertParseSuccess(parser, "1 w/10", new AddMissionCommand(INDEX_FIRST_STUDENT, 10));
     }
 
     @Test
     public void parse_missingIndex_reportsMissingIndex() {
-        String[] inputs = {"", "   ", "w/", "w/3", "w/ 3", "w/3 1"};
+        String[] inputs = {"", "   ", "w/", "w/3", "w/ 3"};
 
         for (String input : inputs) {
             assertParseFailure(parser, input, AddMissionCommandParser.MESSAGE_MISSING_INDEX);
@@ -88,6 +88,7 @@ public class AddMissionCommandParserTest {
     @Test
     public void parse_missingWeek_reportsMissingWeek() {
         assertParseFailure(parser, "1", AddMissionCommandParser.MESSAGE_MISSING_WEEK);
+        assertParseFailure(parser, "1 3", AddMissionCommandParser.MESSAGE_MISSING_WEEK);
         assertParseFailure(parser, "1 w/", AddMissionCommandParser.MESSAGE_MISSING_WEEK);
     }
 
@@ -111,12 +112,14 @@ public class AddMissionCommandParserTest {
     public void parse_invalidIndexAndWeek_reportsIndexFirst() {
         assertParseFailure(parser, "01 w/11", AddMissionCommandParser.MESSAGE_INVALID_STUDENT_INDEX);
         assertParseFailure(parser, "01", AddMissionCommandParser.MESSAGE_INVALID_STUDENT_INDEX);
+        assertParseFailure(parser, "01 3", AddMissionCommandParser.MESSAGE_INVALID_STUDENT_INDEX);
     }
 
     @Test
     public void parse_extraArgumentsOrUnexpectedPrefixes_reportsInvalidFormat() {
         String expected = String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddMissionCommand.MESSAGE_USAGE);
-        String[] inputs = {"1 3", "1 x/3", "1 extra w/3", "1 w/3 extra", "1 w/3 x/4", "1w/3", "1 w/3w/4"};
+        String[] inputs = {"w/3 1", "W/3 1", "w/3 extra", "1 3 4", "1 x/3",
+            "1 extra w/3", "1 w/3 extra", "1 w/3 x/4", "1w/3", "1 w/3w/4"};
 
         for (String input : inputs) {
             assertParseFailure(parser, input, expected);
