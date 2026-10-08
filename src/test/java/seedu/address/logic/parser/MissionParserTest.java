@@ -39,14 +39,16 @@ public class MissionParserTest {
 
     @Test
     public void parseTutorialWeek_validInput_returnsWeek() throws Exception {
-        assertEquals(1, MissionParser.parseTutorialWeek("1"));
-        assertEquals(10, MissionParser.parseTutorialWeek("10"));
+        assertEquals(3, MissionParser.parseTutorialWeek("3"));
+        assertEquals(11, MissionParser.parseTutorialWeek("11"));
+        assertEquals(12, MissionParser.parseTutorialWeek("12"));
+        assertEquals(13, MissionParser.parseTutorialWeek("13"));
         assertEquals(3, MissionParser.parseTutorialWeek(" \t3 "));
     }
 
     @Test
     public void parseTutorialWeek_invalidInput_throwsParseException() {
-        String[] invalidInputs = {"", " ", "0", "11", "-1", "+3", "03", "3.0", "three", "3 4", "2147483648"};
+        String[] invalidInputs = {"", " ", "0", "1", "2", "14", "-1", "+3", "03", "3.0", "three", "3 4", "2147483648"};
 
         for (String input : invalidInputs) {
             assertThrows(ParseException.class, MissionParser.MESSAGE_INVALID_TUTORIAL_WEEK, () ->

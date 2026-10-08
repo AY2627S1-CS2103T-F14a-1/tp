@@ -26,10 +26,10 @@ public class MissionSubmissionsTest {
 
     @Test
     public void constructor_boundaryWeeks_acceptsWeeks() {
-        MissionSubmissions submissions = new MissionSubmissions(Set.of(1, 10));
+        MissionSubmissions submissions = new MissionSubmissions(Set.of(3, 13));
 
-        assertTrue(submissions.hasSubmission(1));
-        assertTrue(submissions.hasSubmission(10));
+        assertTrue(submissions.hasSubmission(3));
+        assertTrue(submissions.hasSubmission(13));
     }
 
     @Test
@@ -37,7 +37,7 @@ public class MissionSubmissionsTest {
         assertThrows(IllegalArgumentException.class, () ->
                 new MissionSubmissions(Set.of(0)));
         assertThrows(IllegalArgumentException.class, () ->
-                new MissionSubmissions(Set.of(11)));
+                new MissionSubmissions(Set.of(14)));
         assertThrows(IllegalArgumentException.class, () ->
                 new MissionSubmissions(Set.of(-1)));
     }
@@ -65,12 +65,12 @@ public class MissionSubmissionsTest {
 
     @Test
     public void withSubmission_newWeek_preservesOriginal() {
-        MissionSubmissions original = new MissionSubmissions(Set.of(2, 4));
+        MissionSubmissions original = new MissionSubmissions(Set.of(5, 4));
 
         MissionSubmissions updated = original.withSubmission(3);
 
-        assertEquals(Set.of(2, 4), original.getSubmittedWeeks());
-        assertEquals(Set.of(2, 3, 4), updated.getSubmittedWeeks());
+        assertEquals(Set.of(5, 4), original.getSubmittedWeeks());
+        assertEquals(Set.of(5, 3, 4), updated.getSubmittedWeeks());
     }
 
     @Test
@@ -88,9 +88,9 @@ public class MissionSubmissionsTest {
         MissionSubmissions original = new MissionSubmissions(Set.of(3));
 
         assertThrows(IllegalArgumentException.class, () ->
-                original.withSubmission(0));
+                original.withSubmission(2));
         assertThrows(IllegalArgumentException.class, () ->
-                original.withSubmission(11));
+                original.withSubmission(14));
 
         assertEquals(Set.of(3), original.getSubmittedWeeks());
     }
@@ -100,9 +100,9 @@ public class MissionSubmissionsTest {
         MissionSubmissions submissions = new MissionSubmissions();
 
         assertThrows(IllegalArgumentException.class, () ->
-                submissions.hasSubmission(0));
+                submissions.hasSubmission(2));
         assertThrows(IllegalArgumentException.class, () ->
-                submissions.hasSubmission(11));
+                submissions.hasSubmission(14));
     }
 
     @Test
@@ -129,11 +129,11 @@ public class MissionSubmissionsTest {
 
     @Test
     public void withoutSubmission_existingWeek_preservesOriginalAndOtherWeeks() {
-        MissionSubmissions original = new MissionSubmissions(Set.of(1, 3, 10));
+        MissionSubmissions original = new MissionSubmissions(Set.of(4, 3, 13));
 
-        assertEquals(Set.of(1, 10), original.withoutSubmission(3).getSubmittedWeeks());
-        assertEquals(Set.of(1, 3, 10), original.getSubmittedWeeks());
-        assertTrue(original.withoutSubmission(1).withoutSubmission(3).withoutSubmission(10)
+        assertEquals(Set.of(4, 13), original.withoutSubmission(3).getSubmittedWeeks());
+        assertEquals(Set.of(4, 3, 13), original.getSubmittedWeeks());
+        assertTrue(original.withoutSubmission(4).withoutSubmission(3).withoutSubmission(13)
                 .getSubmittedWeeks().isEmpty());
     }
 
@@ -141,17 +141,31 @@ public class MissionSubmissionsTest {
     public void withoutSubmission_missingWeek_preservesSubmissions() {
         MissionSubmissions original = new MissionSubmissions(Set.of(3));
 
-        assertEquals(original, original.withoutSubmission(2));
-        assertEquals(new MissionSubmissions(), new MissionSubmissions().withoutSubmission(1));
+        assertEquals(original, original.withoutSubmission(5));
+        assertEquals(new MissionSubmissions(), new MissionSubmissions().withoutSubmission(4));
     }
 
     @Test
     public void withoutSubmission_invalidWeek_preservesOriginal() {
         MissionSubmissions original = new MissionSubmissions(Set.of(3));
 
-        for (int week : new int[] {-1, 0, 11, Integer.MAX_VALUE}) {
+        for (int week : new int[] {-1, 0, 1, 2, 14, Integer.MAX_VALUE}) {
             assertThrows(IllegalArgumentException.class, () -> original.withoutSubmission(week));
             assertEquals(Set.of(3), original.getSubmittedWeeks());
+        }
+    }
+
+    @Test
+    public void isValidWeek_newRange_acceptsEveryWeekAndRejectsOutsideRange() {
+        for (int week = 3; week <= 13; week++) {
+            assertTrue(MissionSubmissions.isValidWeek(week));
+            MissionSubmissions submissions = new MissionSubmissions().withSubmission(week);
+            assertTrue(submissions.hasSubmission(week));
+            assertTrue(submissions.withoutSubmission(week).getSubmittedWeeks().isEmpty());
+        }
+        for (int week : new int[] {Integer.MIN_VALUE, 0, 1, 2, 14, Integer.MAX_VALUE}) {
+            assertFalse(MissionSubmissions.isValidWeek(week));
+            assertThrows(IllegalArgumentException.class, () -> new MissionSubmissions(Set.of(week)));
         }
     }
 }

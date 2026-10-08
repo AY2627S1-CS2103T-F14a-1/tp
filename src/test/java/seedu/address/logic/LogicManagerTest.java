@@ -177,7 +177,7 @@ public class LogicManagerTest {
 
     @Test
     public void execute_addMissionAndReload_preservesSubmissionsAfterRejectedCommands() throws Exception {
-        model.addStudent(new StudentBuilder(AMY).withMissionSubmissions(2).build());
+        model.addStudent(new StudentBuilder(AMY).withMissionSubmissions(5).build());
         assertEquals("Added Amy Bee’s mission submission for tutorial week 3.",
                 logic.execute("ADDMISSION 1 W/3").getFeedbackToUser());
         Path filePath = temporaryFolder.resolve("addressBook.json");
@@ -186,16 +186,16 @@ public class LogicManagerTest {
         Logic reloadedLogic = new LogicManager(reloadedModel, new StorageManager(storage,
                 new JsonUserPrefsStorage(temporaryFolder.resolve("reloadedPrefs.json"))));
 
-        assertEquals(Set.of(2, 3), reloadedModel.getFilteredStudentList().get(0)
+        assertEquals(Set.of(5, 3), reloadedModel.getFilteredStudentList().get(0)
                 .getMissionSubmissions().getSubmittedWeeks());
         assertEquals("Amy Bee’s mission submission has already been recorded for tutorial week 3. No changes made.",
                 reloadedLogic.execute("addmission 1 w/3").getFeedbackToUser());
 
         String savedJson = Files.readString(filePath);
         assertThrows(ParseException.class, MissionParser.MESSAGE_INVALID_TUTORIAL_WEEK, () ->
-                reloadedLogic.execute("addmission 1 w/11"));
+                reloadedLogic.execute("addmission 1 w/14"));
         assertEquals(savedJson, Files.readString(filePath));
-        assertEquals(Set.of(2, 3), reloadedModel.getFilteredStudentList().get(0)
+        assertEquals(Set.of(5, 3), reloadedModel.getFilteredStudentList().get(0)
                 .getMissionSubmissions().getSubmittedWeeks());
 
         assertEquals("Added Amy Bee’s mission submission for tutorial week 4.",
@@ -204,13 +204,13 @@ public class LogicManagerTest {
         assertThrows(CommandException.class, MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX, () ->
                 reloadedLogic.execute("addmission 2 w/5"));
         assertEquals(savedJson, Files.readString(filePath));
-        assertEquals(Set.of(2, 3, 4), storage.readAddressBook().orElseThrow()
+        assertEquals(Set.of(5, 3, 4), storage.readAddressBook().orElseThrow()
                 .getStudentList().get(0).getMissionSubmissions().getSubmittedWeeks());
     }
 
     @Test
     public void execute_deleteMissionAndReload_preservesDeletionAndRejectsInvalidInput() throws Exception {
-        model.addStudent(new StudentBuilder(AMY).withMissionSubmissions(2, 3).build());
+        model.addStudent(new StudentBuilder(AMY).withMissionSubmissions(3, 13).build());
         assertEquals("Removed Amy Bee’s mission submission for tutorial week 3.",
                 logic.execute("DELMISSION 1 W/3").getFeedbackToUser());
         Path filePath = temporaryFolder.resolve("addressBook.json");
@@ -218,26 +218,26 @@ public class LogicManagerTest {
         Model reloadedModel = new ModelManager(storage.readAddressBook().orElseThrow(), new UserPrefs());
         Logic reloadedLogic = new LogicManager(reloadedModel, new StorageManager(storage,
                 new JsonUserPrefsStorage(temporaryFolder.resolve("reloadedPrefs.json"))));
-        assertEquals(Set.of(2), reloadedModel.getFilteredStudentList().get(0)
+        assertEquals(Set.of(13), reloadedModel.getFilteredStudentList().get(0)
                 .getMissionSubmissions().getSubmittedWeeks());
 
         String savedJson = Files.readString(filePath);
         assertThrows(ParseException.class, MissionParser.MESSAGE_INVALID_TUTORIAL_WEEK, () ->
-                reloadedLogic.execute("delmission 1 w/11"));
+                reloadedLogic.execute("delmission 1 w/14"));
         assertEquals(savedJson, Files.readString(filePath));
-        assertEquals(Set.of(2), reloadedModel.getFilteredStudentList().get(0)
+        assertEquals(Set.of(13), reloadedModel.getFilteredStudentList().get(0)
                 .getMissionSubmissions().getSubmittedWeeks());
         assertEquals("Amy Bee’s mission submission was already not recorded for tutorial week 3. No changes made.",
                 reloadedLogic.execute("delmission 1 w/3").getFeedbackToUser());
         assertEquals(savedJson, Files.readString(filePath));
 
-        assertEquals("Removed Amy Bee’s mission submission for tutorial week 2.",
-                reloadedLogic.execute("delmission 1 w/2").getFeedbackToUser());
+        assertEquals("Removed Amy Bee’s mission submission for tutorial week 13.",
+                reloadedLogic.execute("delmission 1 w/13").getFeedbackToUser());
         Student expected = new StudentBuilder(AMY).withMissionSubmissions().build();
         assertEquals(expected, storage.readAddressBook().orElseThrow().getStudentList().get(0));
         savedJson = Files.readString(filePath);
         assertThrows(CommandException.class, MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX, () ->
-                reloadedLogic.execute("delmission 2 w/2"));
+                reloadedLogic.execute("delmission 2 w/13"));
         assertEquals(savedJson, Files.readString(filePath));
         assertEquals(expected, reloadedModel.getFilteredStudentList().get(0));
     }

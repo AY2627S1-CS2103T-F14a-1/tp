@@ -23,8 +23,8 @@ public class DeleteMissionCommandParserTest {
         assertParseSuccess(parser, "1 w/3", expected);
         assertParseSuccess(parser, "  1   w/ 3  ", expected);
         assertParseSuccess(parser, "1\tW/3", expected);
-        assertParseSuccess(parser, "1 w/1", new DeleteMissionCommand(INDEX_FIRST_STUDENT, 1));
-        assertParseSuccess(parser, "1 w/10", new DeleteMissionCommand(INDEX_FIRST_STUDENT, 10));
+        assertParseSuccess(parser, "1 w/3", new DeleteMissionCommand(INDEX_FIRST_STUDENT, 3));
+        assertParseSuccess(parser, "1 w/13", new DeleteMissionCommand(INDEX_FIRST_STUDENT, 13));
     }
 
     @Test
@@ -56,12 +56,14 @@ public class DeleteMissionCommandParserTest {
     public void parse_invalidValues_reportsValidationMessages() {
         assertParseFailure(parser, "01 w/3", MissionParser.MESSAGE_INVALID_STUDENT_INDEX);
         assertParseFailure(parser, "1 w/03", MissionParser.MESSAGE_INVALID_TUTORIAL_WEEK);
-        assertParseFailure(parser, "1 w/11", MissionParser.MESSAGE_INVALID_TUTORIAL_WEEK);
+        assertParseFailure(parser, "1 w/2", MissionParser.MESSAGE_INVALID_TUTORIAL_WEEK);
+        assertParseFailure(parser, "1 w/1", MissionParser.MESSAGE_INVALID_TUTORIAL_WEEK);
+        assertParseFailure(parser, "1 w/14", MissionParser.MESSAGE_INVALID_TUTORIAL_WEEK);
     }
 
     @Test
     public void parse_invalidIndexAndWeek_reportsIndexFirst() {
-        assertParseFailure(parser, "01 w/11", MissionParser.MESSAGE_INVALID_STUDENT_INDEX);
+        assertParseFailure(parser, "01 w/14", MissionParser.MESSAGE_INVALID_STUDENT_INDEX);
         assertParseFailure(parser, "01", MissionParser.MESSAGE_INVALID_STUDENT_INDEX);
         assertParseFailure(parser, "01 3", MissionParser.MESSAGE_INVALID_STUDENT_INDEX);
     }

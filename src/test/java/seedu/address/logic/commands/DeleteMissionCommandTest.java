@@ -33,16 +33,16 @@ public class DeleteMissionCommandTest {
     public void constructor_invalidArguments_throwsException() {
         assertThrows(NullPointerException.class, () -> new DeleteMissionCommand(null, 3));
         assertThrows(IllegalArgumentException.class, () -> new DeleteMissionCommand(INDEX_FIRST_STUDENT, 0));
-        assertThrows(IllegalArgumentException.class, () -> new DeleteMissionCommand(INDEX_FIRST_STUDENT, 11));
+        assertThrows(IllegalArgumentException.class, () -> new DeleteMissionCommand(INDEX_FIRST_STUDENT, 14));
     }
 
     @Test
     public void execute_validIndex_preservesOtherWeeksAndStudents() {
         Student original = model.getFilteredStudentList().get(0);
-        Student student = new StudentBuilder(original).withMissionSubmissions(2, 3, 4).build();
+        Student student = new StudentBuilder(original).withMissionSubmissions(5, 3, 4).build();
         model.setStudent(original, student);
 
-        Student updated = new StudentBuilder(student).withMissionSubmissions(2, 4).build();
+        Student updated = new StudentBuilder(student).withMissionSubmissions(5, 4).build();
         Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
         expectedModel.setStudent(student, updated);
 
@@ -56,15 +56,15 @@ public class DeleteMissionCommandTest {
     @Test
     public void execute_boundaryWeeks_removesBothWeeks() throws Exception {
         Student original = model.getFilteredStudentList().get(0);
-        Student student = new StudentBuilder(original).withMissionSubmissions(1, 10).build();
+        Student student = new StudentBuilder(original).withMissionSubmissions(3, 13).build();
         model.setStudent(original, student);
 
-        CommandResult firstResult = new DeleteMissionCommand(INDEX_FIRST_STUDENT, 1).execute(model);
-        CommandResult lastResult = new DeleteMissionCommand(INDEX_FIRST_STUDENT, 10).execute(model);
+        CommandResult firstResult = new DeleteMissionCommand(INDEX_FIRST_STUDENT, 3).execute(model);
+        CommandResult lastResult = new DeleteMissionCommand(INDEX_FIRST_STUDENT, 13).execute(model);
 
-        assertEquals(String.format(DeleteMissionCommand.MESSAGE_SUCCESS, student.getName(), 1),
+        assertEquals(String.format(DeleteMissionCommand.MESSAGE_SUCCESS, student.getName(), 3),
                 firstResult.getFeedbackToUser());
-        assertEquals(String.format(DeleteMissionCommand.MESSAGE_SUCCESS, student.getName(), 10),
+        assertEquals(String.format(DeleteMissionCommand.MESSAGE_SUCCESS, student.getName(), 13),
                 lastResult.getFeedbackToUser());
 
         Student expected = new StudentBuilder(student).withMissionSubmissions().build();
@@ -74,7 +74,7 @@ public class DeleteMissionCommandTest {
     @Test
     public void execute_missingSubmission_leavesModelUnchanged() {
         Student original = model.getFilteredStudentList().get(0);
-        Student student = new StudentBuilder(original).withMissionSubmissions(2).build();
+        Student student = new StudentBuilder(original).withMissionSubmissions(5).build();
         model.setStudent(original, student);
 
         Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
@@ -103,14 +103,14 @@ public class DeleteMissionCommandTest {
     @Test
     public void execute_filteredList_updatesDisplayedStudentAndPreservesFilter() {
         Student original = model.getFilteredStudentList().get(INDEX_SECOND_STUDENT.getZeroBased());
-        Student student = new StudentBuilder(original).withMissionSubmissions(2, 3).build();
+        Student student = new StudentBuilder(original).withMissionSubmissions(5, 3).build();
         model.setStudent(original, student);
 
         Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
         showStudentAtIndex(model, INDEX_SECOND_STUDENT);
         showStudentAtIndex(expectedModel, INDEX_SECOND_STUDENT);
 
-        Student updated = new StudentBuilder(student).withMissionSubmissions(2).build();
+        Student updated = new StudentBuilder(student).withMissionSubmissions(5).build();
         expectedModel.setStudent(student, updated);
 
         String feedback = String.format(DeleteMissionCommand.MESSAGE_SUCCESS, student.getName(), 3);
