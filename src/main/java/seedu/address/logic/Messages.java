@@ -48,4 +48,24 @@ public class Messages {
         return builder.toString();
     }
 
+    /**
+     * Formats the details of the given {@code student} for display to the user.
+     *
+     * @param student the student whose details are to be formatted
+     * @return the formatted student details string
+     */
+    public static String formatStudentDetails(Student student) {
+        return String.format(
+                "Name: %s%n"
+                        + "Phone: %s%n"
+                        + "Email: %s%n"
+                        + "Address: %s%n"
+                        + "Studio Group: %s",
+                student.getName(),
+                student.getPhone(),
+                student.getEmail(),
+                student.getAddress(),
+                student.getStudioGroup());
+    }
+
 }
