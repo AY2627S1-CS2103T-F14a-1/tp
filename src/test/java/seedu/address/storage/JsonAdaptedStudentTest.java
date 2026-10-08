@@ -123,7 +123,7 @@ public class JsonAdaptedStudentTest {
     public void toModelType_invalidStudioGroup_throwsIllegalValueException() {
         JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_PHONE, VALID_EMAIL, VALID_ADDRESS,
                 VALID_TAGS, INVALID_STUDIO_GROUP, List.of());
-        String expectedMessage = Name.MESSAGE_CONSTRAINTS;
+        String expectedMessage = StudioGroup.MESSAGE_CONSTRAINTS;
         assertThrows(IllegalValueException.class, expectedMessage, student::toModelType);
     }
 
