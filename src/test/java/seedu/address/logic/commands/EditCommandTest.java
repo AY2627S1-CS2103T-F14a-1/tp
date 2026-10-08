@@ -25,6 +25,7 @@ import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.UserPrefs;
 import seedu.address.model.student.Student;
+import seedu.address.model.student.StudioGroup;
 import seedu.address.testutil.EditStudentDescriptorBuilder;
 import seedu.address.testutil.StudentBuilder;
 
@@ -206,6 +207,26 @@ public class EditCommandTest {
         String expected = EditCommand.class.getCanonicalName() + "{index=" + index + ", editStudentDescriptor="
                 + editStudentDescriptor + "}";
         assertEquals(expected, editCommand.toString());
+    }
+
+    @Test
+    public void execute_onlyStudioGroupSpecified_preservesOtherDetails() {
+        Student original = model.getFilteredStudentList().get(0);
+        Student student = new StudentBuilder(original).withMissionSubmissions(3, 5).build();
+        model.setStudent(original, student);
+
+        Student editedStudent = new StudentBuilder(student).withStudioGroup("2A").build();
+        EditStudentDescriptor descriptor = new EditStudentDescriptor();
+        descriptor.setStudioGroup(new StudioGroup("2A"));
+        EditCommand command = new EditCommand(INDEX_FIRST_STUDENT, descriptor);
+
+        Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
+        expectedModel.setStudent(student, editedStudent);
+
+        String expectedMessage = String.format(EditCommand.MESSAGE_EDIT_STUDENT_SUCCESS,
+                Messages.format(editedStudent));
+
+        assertCommandSuccess(command, model, expectedMessage, expectedModel);
     }
 
 }
