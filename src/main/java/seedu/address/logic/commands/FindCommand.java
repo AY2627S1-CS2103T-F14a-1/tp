@@ -8,17 +8,18 @@ import seedu.address.model.Model;
 import seedu.address.model.student.NameContainsKeywordsPredicate;
 
 /**
- * Finds and lists all students in the address book whose name contains any of the argument keywords.
- * Keyword matching is case insensitive.
+ * Finds and lists students whose names contain any argument keyword.
+ * Matching is case-insensitive and allows partial names.
  */
 public class FindCommand extends Command {
 
     public static final String COMMAND_WORD = "find";
 
-    public static final String MESSAGE_USAGE = COMMAND_WORD + ": Finds all students whose names contain any of "
-            + "the specified keywords (case-insensitive) and displays them as a list with index numbers.\n"
-            + "Parameters: KEYWORD [MORE_KEYWORDS]...\n"
-            + "Example: " + COMMAND_WORD + " alice bob charlie";
+    public static final String MESSAGE_USAGE = COMMAND_WORD
+            + ": Finds students whose names contain any specified keyword "
+            + "(case-insensitive, partial matches allowed).\n"
+            + "Parameters: KEYWORD [MORE_KEYWORDS]\n"
+            + "Example: " + COMMAND_WORD + " david alex";
 
     private final NameContainsKeywordsPredicate predicate;
 
