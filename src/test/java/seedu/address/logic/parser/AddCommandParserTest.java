@@ -47,6 +47,7 @@ import seedu.address.model.student.Email;
 import seedu.address.model.student.Name;
 import seedu.address.model.student.Phone;
 import seedu.address.model.student.Student;
+import seedu.address.model.student.StudioGroup;
 import seedu.address.model.tag.Tag;
 import seedu.address.testutil.StudentBuilder;
 
@@ -216,7 +217,7 @@ public class AddCommandParserTest {
 
         // invalid studio group
         assertParseFailure(parser, NAME_DESC_BOB + PHONE_DESC_BOB + EMAIL_DESC_BOB + ADDRESS_DESC_BOB
-                + INVALID_TAG_DESC + VALID_TAG_FRIEND + INVALID_STUDIO_GROUP_DESC, Tag.MESSAGE_CONSTRAINTS);
+                + TAG_DESC_HUSBAND + TAG_DESC_FRIEND + INVALID_STUDIO_GROUP_DESC, StudioGroup.MESSAGE_CONSTRAINTS);
 
         // two invalid values, only first invalid value reported
         assertParseFailure(parser,

@@ -59,6 +59,8 @@ public class StudentUtil {
                 tags.forEach(s -> sb.append(PREFIX_TAG).append(s.tagName).append(" "));
             }
         }
+        descriptor.getStudioGroup().ifPresent(studioGroup ->
+                sb.append(" ").append(PREFIX_STUDIO_GROUP).append(studioGroup.studioGroup));
         return sb.toString();
     }
 }
