@@ -119,14 +119,15 @@ Finds students whose names contain any of the given keywords.
 
 Format: `find KEYWORD [MORE_KEYWORDS]`
 
-* The search is case-insensitive; for example, `hans` matches `Hans`.
-* Keyword order does not matter; for example, `Hans Bo` matches `Bo Hans`.
-* The search considers only names.
-* Only full words match; for example, `Han` does not match `Hans`.
-* Students matching at least one keyword are returned (an `OR` search); for example, `Hans Bo` returns `Hans Gruber` and `Bo Yang`.
+* The search considers only student names.
+* Matching is case-insensitive.
+* Partial matches count: `ale` matches `Alex`.
+* Students matching at least one keyword are returned (an OR search).
+* Keyword order does not matter.
+* Repeated keywords do not change the results.
 
 Examples:
-* `find John` returns `john` and `John Doe`
+* `find ale` returns `Alex Yeoh` and `Alexander Tan`.
 * `find alex david` returns `Alex Yeoh`, `David Li`<br>
   ![result for 'find alex david'](images/findAlexDavidResult.png)
 
