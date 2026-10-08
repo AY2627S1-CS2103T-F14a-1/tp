@@ -27,7 +27,6 @@ public class RemarkCommand extends Command {
             + "r/ Likes to swim.";
 
     public static final String MESSAGE_ADD_REMARK_SUCCESS = "Added Remark: %1$s";
-    public static final String MESSAGE_ARGUMENTS = "Index: %1$d, Remark: %2$s";
 
     private final Index index;
     private final Remark remark;
