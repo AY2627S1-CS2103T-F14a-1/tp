@@ -42,6 +42,7 @@ import seedu.address.model.student.Address;
 import seedu.address.model.student.Email;
 import seedu.address.model.student.Name;
 import seedu.address.model.student.Phone;
+import seedu.address.model.student.StudioGroup;
 import seedu.address.model.tag.Tag;
 import seedu.address.testutil.EditStudentDescriptorBuilder;
 
@@ -204,5 +205,25 @@ public class EditCommandParserTest {
         EditCommand expectedCommand = new EditCommand(targetIndex, descriptor);
 
         assertParseSuccess(parser, userInput, expectedCommand);
+    }
+
+    @Test
+    public void parse_onlyStudioGroupSpecified_success() {
+        EditStudentDescriptor descriptor = new EditStudentDescriptor();
+        descriptor.setStudioGroup(new StudioGroup("2A"));
+
+        EditCommand expectedCommand = new EditCommand(INDEX_FIRST_STUDENT, descriptor);
+
+        assertParseSuccess(parser, "1 g/2A", expectedCommand);
+    }
+
+    @Test
+    public void parse_emptyStudioGroup_failure() {
+        assertParseFailure(parser, "1 g/", StudioGroup.MESSAGE_CONSTRAINTS);
+    }
+
+    @Test
+    public void parse_invalidStudioGroup_failure() {
+        assertParseFailure(parser, "1 g/2a", StudioGroup.MESSAGE_CONSTRAINTS);
     }
 }
