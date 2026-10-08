@@ -151,7 +151,8 @@ Records that a student has submitted a mission for a tutorial week.
 Format: `addmission INDEX w/WEEK`
 
 * `INDEX` identifies a student in the **currently displayed list**, including results from `find`. It must be a positive integer that corresponds to a displayed student.
-* `WEEK` is a tutorial week from **1 to 10**, inclusive.
+* `WEEK` must be an integer from **3 to 13**, inclusive. AvengerHub uses these week numbers because the tutorial schedule it supports starts in week 3 and ends in week 13. Use the actual week number: the first tutorial week is `3`, not `1`.
+* Weeks outside this range, such as `1`, `2`, or `14`, are rejected with an error message. Existing submission records remain unchanged.
 * Both arguments are required. Put `INDEX` before `w/WEEK`, and specify `w/` exactly once. Extra arguments are rejected.
 * Enter `INDEX` and `WEEK` as integers without signs, decimal points, or leading zeros. For example, use `3`, not `+3`, `3.0`, or `03`.
 * The command word and `w/` prefix are case-insensitive: `ADDMISSION 1 W/3` is also accepted.
@@ -161,7 +162,7 @@ Format: `addmission INDEX w/WEEK`
 Examples:
 
 * `list` followed by `addmission 1 w/3` records a week 3 submission for the first student displayed.
-* `find Betsy` followed by `addmission 1 w/10` records a week 10 submission for the first student in the search results, if any.
+* `find Betsy` followed by `addmission 1 w/13` records a week 13 submission for the first student in the search results, if any.
 
 For example, if the first student is Amy Bee and her week 3 submission is not yet recorded, `addmission 1 w/3` displays:
 
@@ -176,7 +177,8 @@ Removes a student's mission submission record for a tutorial week. The student r
 Format: `delmission INDEX w/WEEK`
 
 * `INDEX` identifies a student in the **currently displayed list**, including results from `find`. It must be a positive integer that corresponds to a displayed student.
-* `WEEK` is a tutorial week from **1 to 10**, inclusive.
+* `WEEK` must be an integer from **3 to 13**, inclusive. AvengerHub uses these week numbers because the tutorial schedule it supports starts in week 3 and ends in week 13. Use the actual week number: the first tutorial week is `3`, not `1`.
+* Weeks outside this range, such as `1`, `2`, or `14`, are rejected with an error message. Existing submission records remain unchanged.
 * Both arguments are required. Put `INDEX` before `w/WEEK`, and specify `w/` exactly once. Extra arguments are rejected.
 * Enter `INDEX` and `WEEK` as integers without signs, decimal points, or leading zeros.
 * The command word and `w/` prefix are case-insensitive: `DELMISSION 1 W/3` is also accepted.
@@ -187,7 +189,7 @@ Format: `delmission INDEX w/WEEK`
 Examples:
 
 * `list` followed by `delmission 1 w/3` removes the first student's week 3 submission record, if recorded.
-* `find Betsy` followed by `delmission 1 w/10` removes the week 10 submission record for the first student in the search results, if both the student and record exist.
+* `find Betsy` followed by `delmission 1 w/13` removes the week 13 submission record for the first student in the search results, if both the student and record exist.
 
 For example, if the first student is Amy Bee and her week 3 submission is recorded, `delmission 1 w/3` displays:
 
