@@ -28,11 +28,11 @@ public class Remark {
         }
 
         // instanceof handles nulls
-        if (!(other instanceof Address otherAddress)) {
+        if (!(other instanceof Remark otherRemark)) {
             return false;
         }
 
-        return value.equals(otherAddress.value);
+        return value.equals(otherRemark.value);
     }
 
     @Override
