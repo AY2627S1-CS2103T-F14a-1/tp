@@ -147,7 +147,7 @@ class JsonAdaptedStudent {
                     MISSING_FIELD_MESSAGE_FORMAT, StudioGroup.class.getSimpleName()));
         }
         if (!StudioGroup.isValidStudioGroup(studioGroup)) {
-            throw new IllegalValueException(Name.MESSAGE_CONSTRAINTS);
+            throw new IllegalValueException(StudioGroup.MESSAGE_CONSTRAINTS);
         }
         final StudioGroup modelStudioGroup = new StudioGroup(studioGroup);
 

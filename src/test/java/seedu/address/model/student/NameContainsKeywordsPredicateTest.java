@@ -73,6 +73,60 @@ public class NameContainsKeywordsPredicateTest {
     }
 
     @Test
+    public void test_partialKeyword_returnsTrue() {
+        Student student = new StudentBuilder().withName("Alex Tan").build();
+
+        assertTrue(new NameContainsKeywordsPredicate(List.of("ale")).test(student));
+    }
+
+    @Test
+    public void test_onlyOnePartialKeywordMatches_returnsTrue() {
+        Student student = new StudentBuilder().withName("Alex Tan").build();
+
+        assertTrue(new NameContainsKeywordsPredicate(List.of("ale", "david")).test(student));
+    }
+
+    @Test
+    public void test_noPartialKeywordsMatch_returnsFalse() {
+        Student student = new StudentBuilder().withName("Alex Tan").build();
+
+        assertFalse(new NameContainsKeywordsPredicate(List.of("dav", "lim")).test(student));
+    }
+
+    @Test
+    public void test_mixedCasePartialKeyword_returnsTrue() {
+        Student student = new StudentBuilder().withName("Alex Tan").build();
+
+        assertTrue(new NameContainsKeywordsPredicate(List.of("aLE", "DAVID")).test(student));
+    }
+
+    @Test
+    public void test_keywordOrderChanged_returnsSameResult() {
+        Student student = new StudentBuilder().withName("Alex Tan").build();
+        NameContainsKeywordsPredicate firstPredicate =
+                new NameContainsKeywordsPredicate(List.of("ale", "david"));
+        NameContainsKeywordsPredicate secondPredicate =
+                new NameContainsKeywordsPredicate(List.of("david", "ale"));
+
+        assertTrue(firstPredicate.test(student));
+        assertEquals(firstPredicate.test(student), secondPredicate.test(student));
+    }
+
+    @Test
+    public void test_repeatedKeywords_returnsTrue() {
+        Student student = new StudentBuilder().withName("Alex Tan").build();
+
+        assertTrue(new NameContainsKeywordsPredicate(List.of("ale", "ale")).test(student));
+    }
+
+    @Test
+    public void test_unusualCharacters_returnsFalse() {
+        Student student = new StudentBuilder().withName("Alex Tan").build();
+
+        assertFalse(new NameContainsKeywordsPredicate(List.of("@#$")).test(student));
+    }
+
+    @Test
     public void toStringMethod() {
         List<String> keywords = List.of("keyword1", "keyword2");
         NameContainsKeywordsPredicate predicate = new NameContainsKeywordsPredicate(keywords);
