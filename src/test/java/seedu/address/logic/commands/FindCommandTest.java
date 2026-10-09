@@ -64,13 +64,47 @@ public class FindCommandTest {
     }
 
     @Test
+    public void execute_multipleKeywords_onlyStudentMatchingEveryKeywordFound() {
+        String expectedMessage = String.format(MESSAGE_STUDENTS_LISTED_OVERVIEW, 1);
+        NameContainsKeywordsPredicate predicate = preparePredicate("kuR kurZ");
+        FindCommand command = new FindCommand(predicate);
+        expectedModel.updateFilteredStudentList(predicate);
+
+        assertCommandSuccess(command, model, expectedMessage, expectedModel);
+        assertEquals(List.of(CARL), model.getFilteredStudentList());
+    }
+
+    @Test
+    public void execute_partialKeywordMatchingMultipleStudents_preservesOrder() {
+        String expectedMessage = String.format(MESSAGE_STUDENTS_LISTED_OVERVIEW, 2);
+        NameContainsKeywordsPredicate predicate = preparePredicate("ku");
+        FindCommand command = new FindCommand(predicate);
+        expectedModel.updateFilteredStudentList(predicate);
+
+        assertCommandSuccess(command, model, expectedMessage, expectedModel);
+        assertEquals(List.of(CARL, FIONA), model.getFilteredStudentList());
+    }
+
+    @Test
     public void execute_multipleKeywords_multipleStudentsFound() {
         String expectedMessage = String.format(MESSAGE_STUDENTS_LISTED_OVERVIEW, 3);
         NameContainsKeywordsPredicate predicate = preparePredicate("Kurz Elle Kunz");
         FindCommand command = new FindCommand(predicate);
         expectedModel.updateFilteredStudentList(predicate);
+
         assertCommandSuccess(command, model, expectedMessage, expectedModel);
         assertEquals(List.of(CARL, ELLE, FIONA), model.getFilteredStudentList());
+    }
+
+    @Test
+    public void execute_noKeywordsMatch_noStudentsFound() {
+        String expectedMessage = String.format(MESSAGE_STUDENTS_LISTED_OVERVIEW, 0);
+        NameContainsKeywordsPredicate predicate = preparePredicate("zzzz yyyy");
+        FindCommand command = new FindCommand(predicate);
+        expectedModel.updateFilteredStudentList(predicate);
+
+        assertCommandSuccess(command, model, expectedMessage, expectedModel);
+        assertEquals(List.of(), model.getFilteredStudentList());
     }
 
     @Test

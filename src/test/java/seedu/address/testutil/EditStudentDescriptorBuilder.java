@@ -10,6 +10,7 @@ import seedu.address.model.student.Email;
 import seedu.address.model.student.Name;
 import seedu.address.model.student.Phone;
 import seedu.address.model.student.Student;
+import seedu.address.model.student.StudioGroup;
 import seedu.address.model.tag.Tag;
 
 /**
@@ -37,6 +38,7 @@ public class EditStudentDescriptorBuilder {
         descriptor.setEmail(student.getEmail());
         descriptor.setAddress(student.getAddress());
         descriptor.setTags(student.getTags());
+        descriptor.setStudioGroup(student.getStudioGroup());
     }
 
     /**
@@ -78,6 +80,14 @@ public class EditStudentDescriptorBuilder {
     public EditStudentDescriptorBuilder withTags(String... tags) {
         Set<Tag> tagSet = Stream.of(tags).map(Tag::new).collect(Collectors.toSet());
         descriptor.setTags(tagSet);
+        return this;
+    }
+
+    /**
+     * Sets the {@code StudioGroup} of the {@code EditStudentDescriptor} that we are building.
+     */
+    public EditStudentDescriptorBuilder withStudioGroup(String studioGroup) {
+        descriptor.setStudioGroup(new StudioGroup(studioGroup));
         return this;
     }
 
