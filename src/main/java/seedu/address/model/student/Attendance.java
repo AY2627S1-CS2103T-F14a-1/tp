@@ -1,6 +1,7 @@
 package seedu.address.model.student;
 
 import static java.util.Objects.requireNonNull;
+import static seedu.address.commons.util.AppUtil.checkArgument;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -27,23 +28,32 @@ public class Attendance {
         requireNonNull(attendedWeeks);
 
         Set<Integer> copiedWeeks = new HashSet<>(attendedWeeks);
+        for (Integer week : copiedWeeks) {
+            requireNonNull(week);
+            checkArgument(isValidWeek(week), MESSAGE_CONSTRAINTS);
+        }
+        this.attendedWeeks = copiedWeeks;
     }
 
     public static boolean isValidWeek(int week) {
         return week >= MIN_WEEK && week <= MAX_WEEK;
     }
 
-    public boolean hasAttendedWeek(int week) {
+    public boolean hasAttendence(int week) {
         return attendedWeeks.contains(week);
     }
 
     public Attendance withAttendedWeek(int week) {
-        if (hasAttendedWeek(week)) {
+        if (hasAttendence(week)) {
             return this;
         }
 
         Set<Integer> updatedWeeks = new HashSet<>(attendedWeeks);
         updatedWeeks.add(week);
         return new Attendance(updatedWeeks);
+    }
+
+    public Set<Integer> getAttendedWeeks() {
+        return attendedWeeks;
     }
 }
