@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import seedu.address.model.student.Address;
+import seedu.address.model.student.Attendance;
 import seedu.address.model.student.Email;
 import seedu.address.model.student.MissionSubmissions;
 import seedu.address.model.student.Name;
@@ -33,6 +34,7 @@ public class StudentBuilder {
     private Set<Tag> tags;
     private StudioGroup studioGroup;
     private MissionSubmissions missionSubmissions;
+    private Attendance attendance;
 
     /**
      * Creates a {@code StudentBuilder} with the default details.
@@ -45,6 +47,7 @@ public class StudentBuilder {
         tags = new HashSet<>();
         studioGroup = new StudioGroup(DEFAULT_STUDIO_GROUP);
         missionSubmissions = new MissionSubmissions();
+        attendance = new Attendance();
     }
 
     /**
@@ -58,6 +61,7 @@ public class StudentBuilder {
         tags = new HashSet<>(studentToCopy.getTags());
         studioGroup = studentToCopy.getStudioGroup();
         missionSubmissions = studentToCopy.getMissionSubmissions();
+        attendance = studentToCopy.getAttendance();
     }
 
     /**
@@ -133,7 +137,7 @@ public class StudentBuilder {
      * @return A student with the configured details.
      */
     public Student build() {
-        return new Student(name, phone, email, address, tags, studioGroup, missionSubmissions);
+        return new Student(name, phone, email, address, tags, studioGroup, missionSubmissions, attendance);
     }
 
 }

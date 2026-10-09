@@ -26,6 +26,7 @@ public class Student {
     private final Set<Tag> tags = new HashSet<>();
     private final StudioGroup studioGroup;
     private final MissionSubmissions missionSubmissions;
+    private final Attendance attendance;
 
     /**
      * Creates a student with no recorded mission submissions.
@@ -37,8 +38,10 @@ public class Student {
      * @param tags Student's tags.
      * @throws NullPointerException If any argument is null.
      */
-    public Student(Name name, Phone phone, Email email, Address address, Set<Tag> tags, StudioGroup studioGroup) {
-        this(name, phone, email, address, tags, studioGroup, new MissionSubmissions());
+    public Student(
+            Name name, Phone phone, Email email, Address address, Set<Tag> tags,
+            StudioGroup studioGroup) {
+        this(name, phone, email, address, tags, studioGroup, new MissionSubmissions(), new Attendance());
     }
 
     /**
@@ -53,7 +56,7 @@ public class Student {
      * @throws NullPointerException If any argument is null.
      */
     public Student(Name name, Phone phone, Email email, Address address, Set<Tag> tags,
-            StudioGroup studioGroup, MissionSubmissions missionSubmissions) {
+            StudioGroup studioGroup, MissionSubmissions missionSubmissions, Attendance attendance) {
         requireAllNonNull(name, phone, email, address, tags, missionSubmissions);
         this.name = name;
         this.phone = phone;
@@ -62,6 +65,7 @@ public class Student {
         this.tags.addAll(tags);
         this.studioGroup = studioGroup;
         this.missionSubmissions = missionSubmissions;
+        this.attendance = attendance;
     }
 
     public Name getName() {
@@ -101,6 +105,10 @@ public class Student {
         return missionSubmissions;
     }
 
+    public Attendance getAttendance() {
+        return attendance;
+    }
+
     /**
      * Returns true if both students have the same name.
      * This defines a weaker notion of equality between two students.
@@ -135,13 +143,14 @@ public class Student {
                 && address.equals(otherStudent.address)
                 && tags.equals(otherStudent.tags)
                 && studioGroup.equals(otherStudent.studioGroup)
-                && missionSubmissions.equals(otherStudent.missionSubmissions);
+                && missionSubmissions.equals(otherStudent.missionSubmissions)
+                && attendance.equals(otherStudent.attendance);
     }
 
     @Override
     public int hashCode() {
         // use this method for custom fields hashing instead of implementing your own
-        return Objects.hash(name, phone, email, address, tags, studioGroup, missionSubmissions);
+        return Objects.hash(name, phone, email, address, tags, studioGroup, missionSubmissions, attendance);
     }
 
     @Override
@@ -154,6 +163,7 @@ public class Student {
                 .add("tags", tags)
                 .add("studioGroup", studioGroup)
                 .add("missionSubmissions", missionSubmissions)
+                .add("attendance", attendance)
                 .toString();
     }
 
