@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import seedu.address.commons.exceptions.IllegalValueException;
 import seedu.address.model.student.Address;
+import seedu.address.model.student.Attendance;
 import seedu.address.model.student.Email;
 import seedu.address.model.student.MissionSubmissions;
 import seedu.address.model.student.Name;
@@ -34,6 +35,7 @@ class JsonAdaptedStudent {
     private final String studioGroup;
     // Preserve JSON types until validation so fractional weeks cannot be silently truncated.
     private final List<Object> missionSubmissions = new ArrayList<>();
+    private final List<Object> attendance = new ArrayList<>();
 
     /**
      * Constructs a {@code JsonAdaptedStudent} with the given student details.
@@ -52,7 +54,8 @@ class JsonAdaptedStudent {
     public JsonAdaptedStudent(@JsonProperty("name") String name, @JsonProperty("phone") String phone,
             @JsonProperty("email") String email, @JsonProperty("address") String address,
             @JsonProperty("tags") List<JsonAdaptedTag> tags, @JsonProperty("studio group") String studioGroup,
-            @JsonProperty("missionSubmissions") List<?> missionSubmissions) {
+            @JsonProperty("missionSubmissions") List<?> missionSubmissions,
+                              @JsonProperty("attendance") List<?> attendance) {
         this.name = name;
         this.phone = phone;
         this.email = email;
@@ -63,6 +66,10 @@ class JsonAdaptedStudent {
         this.studioGroup = studioGroup;
         if (missionSubmissions != null) {
             this.missionSubmissions.addAll(missionSubmissions);
+        }
+
+        if (attendance != null) {
+            this.attendance.addAll(attendance);
         }
     }
 
@@ -142,8 +149,9 @@ class JsonAdaptedStudent {
 
         final Set<Tag> modelTags = new HashSet<>(studentTags);
         final MissionSubmissions modelMissionSubmissions = toModelMissionSubmissions();
+        final Attendance modelAttendance = toModelAttendance();
         return new Student(modelName, modelPhone, modelEmail, modelAddress, modelTags, modelStudioGroup,
-                modelMissionSubmissions);
+                modelMissionSubmissions, modelAttendance);
     }
 
     /**
@@ -163,5 +171,17 @@ class JsonAdaptedStudent {
         }
 
         return new MissionSubmissions(submittedWeeks);
+    }
+
+    public Attendance toModelAttendance() throws IllegalValueException {
+        Set<Integer> attendedWeeks = new HashSet<>();
+        for (Object value : missionSubmissions) {
+            if (!(value instanceof Integer week) || !Attendance.isValidWeek(week)) {
+                throw new IllegalValueException(MissionSubmissions.MESSAGE_CONSTRAINTS);
+            }
+            attendedWeeks.add(week);
+        }
+
+        return new Attendance(attendedWeeks);
     }
 }
