@@ -92,6 +92,10 @@ class JsonAdaptedStudent {
                 .stream()
                 .sorted()
                 .collect(Collectors.toList()));
+        missionSubmissions.addAll(source.getAttendance().getAttendedWeeks()
+                .stream()
+                .sorted()
+                .collect(Collectors.toList()));
     }
 
     /**
@@ -175,9 +179,9 @@ class JsonAdaptedStudent {
 
     public Attendance toModelAttendance() throws IllegalValueException {
         Set<Integer> attendedWeeks = new HashSet<>();
-        for (Object value : missionSubmissions) {
+        for (Object value : attendance) {
             if (!(value instanceof Integer week) || !Attendance.isValidWeek(week)) {
-                throw new IllegalValueException(MissionSubmissions.MESSAGE_CONSTRAINTS);
+                throw new IllegalValueException(Attendance.MESSAGE_CONSTRAINTS);
             }
             attendedWeeks.add(week);
         }
