@@ -14,8 +14,8 @@ import java.util.TreeSet;
  */
 public class Attendance {
 
-    public static final int MIN_WEEK = 1;
-    public static final int MAX_WEEK = 10;
+    public static final int MIN_WEEK = 3;
+    public static final int MAX_WEEK = 13;
     public static final String MESSAGE_CONSTRAINTS =
             "Tutorial week must be between " + MIN_WEEK + " and " + MAX_WEEK + " inclusive.";
 
