@@ -6,12 +6,16 @@ import static seedu.address.commons.util.AppUtil.checkArgument;
 import java.util.List;
 
 import seedu.address.commons.core.index.Index;
+import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.Messages;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 import seedu.address.model.student.Attendance;
 import seedu.address.model.student.Student;
 
+/**
+ * Records a week's tutorial attendance for a student identified by a displayed index.
+ */
 public class AddAttendanceCommand extends Command {
 
     public static final String COMMAND_WORD = "addattendance";
@@ -25,6 +29,11 @@ public class AddAttendanceCommand extends Command {
     private final Index targetIndex;
     private final int week;
 
+    /**
+     * Creates a command to record a week's attendance
+     * @param targetIndex Index of the student in the displayed list.
+     * @param week Tutorial week for the submission
+     */
     public AddAttendanceCommand(Index targetIndex, int week) {
         this.targetIndex = targetIndex;
         checkArgument(Attendance.isValidWeek(week), Attendance.MESSAGE_CONSTRAINTS);
@@ -40,7 +49,7 @@ public class AddAttendanceCommand extends Command {
             throw new CommandException(Messages.MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX);
         }
 
-        Student studentToUpdate =  lastShownList.get(targetIndex.getZeroBased());
+        Student studentToUpdate = lastShownList.get(targetIndex.getZeroBased());
         Attendance attendance = studentToUpdate.getAttendance();
 
         if (attendance.hasAttendence(week)) {
@@ -59,5 +68,28 @@ public class AddAttendanceCommand extends Command {
         return new Student(student.getName(), student.getPhone(), student.getEmail(),
                 student.getAddress(), student.getTags(), student.getStudioGroup(), student.getMissionSubmissions(),
                 attendance);
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other == this) {
+            return true;
+        }
+
+        // instanceof handles nulls
+        if (!(other instanceof AddAttendanceCommand otherAttendanceCommand)) {
+            return false;
+        }
+
+        return targetIndex.equals(otherAttendanceCommand.targetIndex)
+                && week == otherAttendanceCommand.week;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .add("targetIndex", targetIndex)
+                .add("week", week)
+                .toString();
     }
 }

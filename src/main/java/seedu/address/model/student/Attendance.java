@@ -6,6 +6,7 @@ import static seedu.address.commons.util.AppUtil.checkArgument;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Represents an immutable collection of a student's weekly tutorial attendance.
@@ -24,6 +25,11 @@ public class Attendance {
         this.attendedWeeks = Collections.emptySet();
     }
 
+    /**
+     * Creates attendance from the given tutorial weeks.
+     *
+     * @param attendedWeeks Weeks for which submissions have been recorded.
+     */
     public Attendance(Set<Integer> attendedWeeks) {
         requireNonNull(attendedWeeks);
 
@@ -43,6 +49,13 @@ public class Attendance {
         return attendedWeeks.contains(week);
     }
 
+    /**
+     * Returns mission submissions including the given week without changing
+     * this object. Returns this object if the week is already recorded.
+     *
+     * @param week Tutorial week to record.
+     * @return Attendance containing the existing weeks and given week.
+     */
     public Attendance withAttendedWeek(int week) {
         if (hasAttendence(week)) {
             return this;
@@ -55,5 +68,34 @@ public class Attendance {
 
     public Set<Integer> getAttendedWeeks() {
         return attendedWeeks;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other == this) {
+            return true;
+        }
+
+        // instanceof handles nulls
+        if (!(other instanceof Attendance otherAttendance)) {
+            return false;
+        }
+
+        return attendedWeeks.equals(otherAttendance.attendedWeeks);
+    }
+
+    @Override
+    public int hashCode() {
+        return attendedWeeks.hashCode();
+    }
+
+    /**
+     * Returns the submitted weeks in ascending order for diagnostic output.
+     *
+     * @return A string containing the recorded weeks in ascending order.
+     */
+    @Override
+    public String toString() {
+        return new TreeSet<>(attendedWeeks).toString();
     }
 }

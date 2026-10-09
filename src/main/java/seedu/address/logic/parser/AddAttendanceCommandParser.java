@@ -10,10 +10,8 @@ import java.util.stream.Stream;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.AddAttendanceCommand;
-import seedu.address.logic.commands.AddMissionCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.student.Attendance;
-import seedu.address.model.student.MissionSubmissions;
 
 /**
  * Parses input arguments and creates a new {@code AddMissionCommand}.
