@@ -25,7 +25,7 @@ public final class MissionSubmissions {
      * Creates an empty collection of mission submissions.
      */
     public MissionSubmissions() {
-        this.submittedWeeks = Collections.emptySet();
+        submittedWeeks = Collections.emptySet();
     }
 
     /**
