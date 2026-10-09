@@ -18,7 +18,7 @@ public class AddAttendanceCommand extends Command {
 
     public static final String MESSAGE_USAGE = COMMAND_WORD + ": Adds a student to the address book.";
     public static final String MESSAGE_SUCCESS =
-            "Added %1$s's mission submission for tutorial week %2$d.";
+            "Added %1$s's attendance for tutorial week %2$d.";
     public static final String MESSAGE_ALREADY_RECORDED =
             "%1$s’s attendance has already been recorded for tutorial week %2$d. No changes made.";
 
