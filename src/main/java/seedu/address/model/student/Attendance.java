@@ -41,6 +41,11 @@ public class Attendance {
         this.attendedWeeks = copiedWeeks;
     }
 
+    /**
+     * Returns whether the given tutorial week is within the valid range
+     * @param week Tutorial week to check.
+     * @return True if the week is between 3 and 13, inclusive.
+     */
     public static boolean isValidWeek(int week) {
         return week >= MIN_WEEK && week <= MAX_WEEK;
     }
@@ -71,6 +76,10 @@ public class Attendance {
         return new Attendance(updatedWeeks);
     }
 
+    /**
+     * Returns an unmodifiable set of recorded tutorial weeks.
+     * @return Recorded weeks, with no guaranteed iteration order.
+     */
     public Set<Integer> getAttendedWeeks() {
         return attendedWeeks;
     }
