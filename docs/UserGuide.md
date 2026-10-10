@@ -4,9 +4,9 @@
   pageNav: 3
 ---
 
-# AB-3 User Guide
+# AvengerHub User Guide
 
-AddressBook Level 3 (AB3) is a **desktop application for managing contacts, optimized for use through a Command Line Interface (CLI)** while retaining the benefits of a Graphical User Interface (GUI). If you type quickly, AB3 can help you manage contacts faster than traditional GUI applications.
+AvengerHub is a **desktop application for managing contacts, optimized for use through a Command Line Interface (CLI)** while retaining the benefits of a Graphical User Interface (GUI). If you type quickly, AvengerHub can help you manage contacts faster than traditional GUI applications.
 
 <!-- * Table of Contents -->
 <page-nav-print />
@@ -20,7 +20,7 @@ AddressBook Level 3 (AB3) is a **desktop application for managing contacts, opti
 
 1. Download the latest `.jar` file from [here](https://github.com/se-edu/addressbook-level3/releases).
 
-1. Copy the file to the folder you want to use as the _home folder_ for your AddressBook.
+1. Copy the file to the folder you want to use as the _home folder_ for your AvengerHub.
 
 1. Open a terminal, `cd` to the folder containing the JAR file, and run `java -jar addressbook.jar`.<br>
    A GUI similar to the one below should appear in a few seconds. Note how the app contains some sample data.<br>
@@ -58,7 +58,7 @@ AddressBook Level 3 (AB3) is a **desktop application for managing contacts, opti
 * Items followed by `...` can appear zero or more times.<br>
   For example, `[t/TAG]... ` may be omitted, or written as `t/friend` or `t/friend t/family`.
 
-* Parameters can be in any order.<br>
+* Prefixed parameters can be in any order unless a command states otherwise. An `INDEX`, when required, comes first.<br>
   For example, if the command specifies `n/NAME p/PHONE_NUMBER`, `p/PHONE_NUMBER n/NAME` is also acceptable.
 
 * Extraneous parameters for commands that take no parameters, such as `help`, `list`, `exit`, and `clear`, are ignored.<br>
@@ -145,6 +145,64 @@ Examples:
 * `list` followed by `delete 2` deletes the 2nd student in the address book.
 * `find Betsy` followed by `delete 1` deletes the 1st student in the results of the `find` command.
 
+### Adding a mission submission record: `addmission`
+
+Records that a student has submitted a mission for a tutorial week.
+
+Format: `addmission INDEX w/WEEK`
+
+* `INDEX` identifies a student in the **currently displayed list**, including results from `find`. It must be a positive integer that corresponds to a displayed student.
+* `WEEK` must be an integer from **3 to 13**, inclusive. AvengerHub uses these week numbers because the tutorial schedule it supports starts in week 3 and ends in week 13. Use the actual week number: the first tutorial week is `3`, not `1`.
+* Weeks outside this range, such as `1`, `2`, or `14`, are rejected with an error message. Existing submission records remain unchanged.
+* Both arguments are required. Put `INDEX` before `w/WEEK`, and specify `w/` exactly once. Extra arguments are rejected.
+* Enter `INDEX` and `WEEK` as integers without signs, decimal points, or leading zeros. For example, use `3`, not `+3`, `3.0`, or `03`.
+* The command word and `w/` prefix are case-insensitive: `ADDMISSION 1 W/3` is also accepted.
+* Each student can have one submission record per week. Adding an existing record leaves the records unchanged and displays a message explaining that the submission is already recorded.
+* Records for other weeks and students are preserved. The current list filter stays active.
+
+Examples:
+
+* `list` followed by `addmission 1 w/3` records a week 3 submission for the first student displayed.
+* `find Betsy` followed by `addmission 1 w/13` records a week 13 submission for the first student in the search results, if any.
+
+For example, if the first student is Amy Bee and her week 3 submission is not yet recorded, `addmission 1 w/3` displays:
+
+```text
+Added Amy Bee’s mission submission for tutorial week 3.
+```
+
+### Deleting a mission submission record: `delmission`
+
+Removes a student's mission submission record for a tutorial week. The student remains in the address book.
+
+Format: `delmission INDEX w/WEEK`
+
+* `INDEX` identifies a student in the **currently displayed list**, including results from `find`. It must be a positive integer that corresponds to a displayed student.
+* `WEEK` must be an integer from **3 to 13**, inclusive. AvengerHub uses these week numbers because the tutorial schedule it supports starts in week 3 and ends in week 13. Use the actual week number: the first tutorial week is `3`, not `1`.
+* Weeks outside this range, such as `1`, `2`, or `14`, are rejected with an error message. Existing submission records remain unchanged.
+* Both arguments are required. Put `INDEX` before `w/WEEK`, and specify `w/` exactly once. Extra arguments are rejected.
+* Enter `INDEX` and `WEEK` as integers without signs, decimal points, or leading zeros.
+* The command word and `w/` prefix are case-insensitive: `DELMISSION 1 W/3` is also accepted.
+* If the submission was initially not recorded, the records remain unchanged and a message explains that no changes were made.
+* Only the specified week's record is removed. Other weeks, student details, and the current list filter are preserved.
+* Deleting the last submission leaves the student with no recorded mission submissions.
+
+Examples:
+
+* `list` followed by `delmission 1 w/3` removes the first student's week 3 submission record, if recorded.
+* `find Betsy` followed by `delmission 1 w/13` removes the week 13 submission record for the first student in the search results, if both the student and record exist.
+
+For example, if the first student is Amy Bee and her week 3 submission is recorded, `delmission 1 w/3` displays:
+
+```text
+Removed Amy Bee’s mission submission for tutorial week 3.
+```
+
+<box type="tip" seamless>
+
+To correct a submission recorded for the wrong week, use `delmission` to remove the incorrect record, then `addmission` to record the correct week.
+</box>
+
 ### Clearing all entries: `clear`
 
 Clears all entries from the address book.
@@ -159,7 +217,9 @@ Format: `exit`
 
 ### Saving the data
 
-AddressBook automatically saves data after every command. You do not need to save manually.
+AvengerHub automatically saves data after every command. You do not need to save manually.
+
+Mission submission additions and deletions are saved automatically and retained when you reopen the application. Invalid mission commands leave existing records unchanged.
 
 ### Editing the data file
 
@@ -197,8 +257,10 @@ _Details coming soon ..._
 Action     | Format, Examples
 -----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 **Add**    | `add n/NAME p/PHONE_NUMBER e/EMAIL a/ADDRESS [t/TAG]... ` <br> e.g., `add n/James Ho p/22224444 e/jamesho@example.com a/123, Clementi Rd, 1234665 t/friend t/colleague`
+**Add mission submission** | `addmission INDEX w/WEEK`<br> e.g., `addmission 1 w/3`
 **Clear**  | `clear`
 **Delete** | `delete INDEX`<br> e.g., `delete 3`
+**Delete mission submission** | `delmission INDEX w/WEEK`<br> e.g., `delmission 1 w/3`
 **Edit**   | `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [t/TAG]... `<br> e.g.,`edit 2 n/James Lee e/jameslee@example.com`
 **Find**   | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find James Jake`
 **List**   | `list`

@@ -115,7 +115,7 @@ public class JsonAddressBookStorageTest {
     public void readAndSaveAddressBook_missionSubmissions_preservesWeeks() throws Exception {
         Path filePath = testFolder.resolve("missionSubmissions.json");
         JsonAddressBookStorage storage = new JsonAddressBookStorage(filePath);
-        Student student = new StudentBuilder(ALICE).withMissionSubmissions(1, 4, 10).build();
+        Student student = new StudentBuilder(ALICE).withMissionSubmissions(3, 4, 11, 12, 13).build();
         AddressBook original = new AddressBook();
         original.addStudent(student);
 
@@ -127,7 +127,7 @@ public class JsonAddressBookStorageTest {
         assertEquals(student.getMissionSubmissions(),
                 loaded.getStudentList().get(0).getMissionSubmissions());
 
-        Student updatedStudent = new StudentBuilder(student).withMissionSubmissions(1, 4, 7, 10).build();
+        Student updatedStudent = new StudentBuilder(student).withMissionSubmissions(3, 4, 7, 11, 12, 13).build();
         original.setStudent(student, updatedStudent);
         reopenedStorage.saveAddressBook(original);
 
@@ -150,7 +150,7 @@ public class JsonAddressBookStorageTest {
                     "address": "123, Jurong West Ave 6, #08-111",
                     "tags": [],
                     "studioGroup": "1A",
-                    "missionSubmissions": [2, 11]
+                    "missionSubmissions": [3, 14]
                   }]
                 }
                 """;
