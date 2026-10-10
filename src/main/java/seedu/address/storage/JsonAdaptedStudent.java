@@ -49,6 +49,7 @@ class JsonAdaptedStudent {
      * @param tags Student's tags, or null for no tags.
      * @param studioGroup Student's studio group.
      * @param missionSubmissions Recorded tutorial weeks, or null for no submissions.
+     * @param attendance Recorded weekly attendance, or null for no attendance
      */
     @JsonCreator
     public JsonAdaptedStudent(@JsonProperty("name") String name, @JsonProperty("phone") String phone,
@@ -67,7 +68,6 @@ class JsonAdaptedStudent {
         if (missionSubmissions != null) {
             this.missionSubmissions.addAll(missionSubmissions);
         }
-
         if (attendance != null) {
             this.attendance.addAll(attendance);
         }
@@ -177,6 +177,13 @@ class JsonAdaptedStudent {
         return new MissionSubmissions(submittedWeeks);
     }
 
+    /**
+     * Validates attended tutorial weeks and converts them into immutable attendance.
+     * Repeated weeks are represented by a single attendance.
+     *
+     * @return Attendance containing the unique saved weeks.
+     * @throws IllegalValueException If a saved week is not an integer in the valid range.
+     */
     public Attendance toModelAttendance() throws IllegalValueException {
         Set<Integer> attendedWeeks = new HashSet<>();
         for (Object value : attendance) {
