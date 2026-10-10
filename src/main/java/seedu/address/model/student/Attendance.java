@@ -45,7 +45,12 @@ public class Attendance {
         return week >= MIN_WEEK && week <= MAX_WEEK;
     }
 
-    public boolean hasAttendence(int week) {
+    /**
+     * Returns whether attendance has been recorded for the given week.
+     * @param week Tutorial week to check.
+     * @return True if the week is between 3 and 13, inclusive.
+     */
+    public boolean hasAttendance(int week) {
         return attendedWeeks.contains(week);
     }
 
@@ -57,7 +62,7 @@ public class Attendance {
      * @return Attendance containing the existing weeks and given week.
      */
     public Attendance withAttendedWeek(int week) {
-        if (hasAttendence(week)) {
+        if (hasAttendance(week)) {
             return this;
         }
 

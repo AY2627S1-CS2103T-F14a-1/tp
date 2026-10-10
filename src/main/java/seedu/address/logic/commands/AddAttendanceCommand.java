@@ -52,7 +52,7 @@ public class AddAttendanceCommand extends Command {
         Student studentToUpdate = lastShownList.get(targetIndex.getZeroBased());
         Attendance attendance = studentToUpdate.getAttendance();
 
-        if (attendance.hasAttendence(week)) {
+        if (attendance.hasAttendance(week)) {
             return new CommandResult(String.format(MESSAGE_ALREADY_RECORDED, studentToUpdate.getName(), week));
         }
 
