@@ -11,6 +11,7 @@ import seedu.address.logic.Messages;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 import seedu.address.model.student.Attendance;
+import seedu.address.model.student.MissionSubmissions;
 import seedu.address.model.student.Student;
 
 /**
@@ -20,9 +21,17 @@ public class AddAttendanceCommand extends Command {
 
     public static final String COMMAND_WORD = "addattendance";
 
-    public static final String MESSAGE_USAGE = COMMAND_WORD + ": Adds a student to the address book.";
+    public static final String MESSAGE_USAGE = COMMAND_WORD
+            + ": Records a week's attendance for the selected student.\n"
+            + "Parameters: INDEX w/WEEK\n"
+            + "INDEX must be a positive integer identifying a displayed student.\n"
+            + "WEEK must be between " + Attendance.MIN_WEEK
+            + " and " + Attendance.MAX_WEEK + " inclusive.\n"
+            + "Example: " + COMMAND_WORD + " 1 w/3";
+
     public static final String MESSAGE_SUCCESS =
             "Added %1$s's attendance for tutorial week %2$d.";
+
     public static final String MESSAGE_ALREADY_RECORDED =
             "%1$s’s attendance has already been recorded for tutorial week %2$d. No changes made.";
 
@@ -35,11 +44,18 @@ public class AddAttendanceCommand extends Command {
      * @param week Tutorial week for the submission
      */
     public AddAttendanceCommand(Index targetIndex, int week) {
-        this.targetIndex = targetIndex;
+        this.targetIndex = requireNonNull(targetIndex);
         checkArgument(Attendance.isValidWeek(week), Attendance.MESSAGE_CONSTRAINTS);
         this.week = week;
     }
 
+    /**
+     * Records attendance without changing the current list filter.
+     *
+     * @param model Model containing the students.
+     * @return Feedback describing the addition or an existing attendance.
+     * @throws CommandException If the index does not identify a displayed student.
+     */
     @Override
     public CommandResult execute(Model model) throws CommandException {
         requireNonNull(model);
