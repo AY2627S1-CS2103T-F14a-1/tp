@@ -10,9 +10,9 @@ import java.util.TreeSet;
 
 /**
  * Represents an immutable collection of a student's weekly tutorial attendance.
- * Each recorded week is between 1 and 10, inclusive.
+ * Each recorded week is between 3 and 13, inclusive.
  */
-public class Attendance {
+public final class Attendance {
 
     public static final int MIN_WEEK = 3;
     public static final int MAX_WEEK = 13;
@@ -28,7 +28,7 @@ public class Attendance {
     /**
      * Creates attendance from the given tutorial weeks.
      *
-     * @param attendedWeeks Weeks for which submissions have been recorded.
+     * @param attendedWeeks Weeks for which attendance has been recorded.
      */
     public Attendance(Set<Integer> attendedWeeks) {
         requireNonNull(attendedWeeks);
@@ -38,7 +38,7 @@ public class Attendance {
             requireNonNull(week);
             checkArgument(isValidWeek(week), MESSAGE_CONSTRAINTS);
         }
-        this.attendedWeeks = copiedWeeks;
+        this.attendedWeeks = Collections.unmodifiableSet(copiedWeeks);
     }
 
     /**
@@ -53,14 +53,15 @@ public class Attendance {
     /**
      * Returns whether attendance has been recorded for the given week.
      * @param week Tutorial week to check.
-     * @return True if the week is between 3 and 13, inclusive.
+     * @return True if attendance is recorded for the week.
      */
     public boolean hasAttendance(int week) {
+        checkArgument(isValidWeek(week), MESSAGE_CONSTRAINTS);
         return attendedWeeks.contains(week);
     }
 
     /**
-     * Returns mission submissions including the given week without changing
+     * Returns attendance including the given week without changing
      * this object. Returns this object if the week is already recorded.
      *
      * @param week Tutorial week to record.
@@ -104,7 +105,7 @@ public class Attendance {
     }
 
     /**
-     * Returns the submitted weeks in ascending order for diagnostic output.
+     * Returns the attended weeks in ascending order for diagnostic output.
      *
      * @return A string containing the recorded weeks in ascending order.
      */
