@@ -16,6 +16,7 @@ import seedu.address.logic.commands.AddCommand;
 import seedu.address.logic.commands.AddMissionCommand;
 import seedu.address.logic.commands.ClearCommand;
 import seedu.address.logic.commands.DeleteCommand;
+import seedu.address.logic.commands.DeleteMissionCommand;
 import seedu.address.logic.commands.EditCommand;
 import seedu.address.logic.commands.EditCommand.EditStudentDescriptor;
 import seedu.address.logic.commands.ExitCommand;
@@ -119,7 +120,7 @@ public class AddressBookParserTest {
 
     @Test
     public void parseCommand_addMissionMissingIndex_reportsMissingIndex() {
-        assertThrows(ParseException.class, AddMissionCommandParser.MESSAGE_MISSING_INDEX, () ->
+        assertThrows(ParseException.class, MissionParser.MESSAGE_MISSING_INDEX, () ->
                 parser.parseCommand("addmission"));
     }
 
@@ -127,5 +128,27 @@ public class AddressBookParserTest {
     public void parseCommand_misspelledAddMission_reportsUnknownCommand() {
         assertThrows(ParseException.class, MESSAGE_UNKNOWN_COMMAND, () ->
                 parser.parseCommand("addmisson 1 w/3"));
+    }
+
+    @Test
+    public void parseCommand_deleteMissionIgnoringCase_returnsCommand() throws Exception {
+        DeleteMissionCommand expected = new DeleteMissionCommand(INDEX_FIRST_STUDENT, 3);
+
+        assertEquals(expected, parser.parseCommand("delmission 1 w/3"));
+        assertEquals(expected, parser.parseCommand("DELMISSION 1 w/3"));
+        assertEquals(expected, parser.parseCommand("DelMission 1 W/3"));
+        assertEquals(expected, parser.parseCommand("  delmission\t1\tw/3  "));
+    }
+
+    @Test
+    public void parseCommand_deleteMissionMissingIndex_reportsMissingIndex() {
+        assertThrows(ParseException.class, MissionParser.MESSAGE_MISSING_INDEX, () ->
+                parser.parseCommand("delmission"));
+    }
+
+    @Test
+    public void parseCommand_misspelledDeleteMission_reportsUnknownCommand() {
+        assertThrows(ParseException.class, MESSAGE_UNKNOWN_COMMAND, () ->
+                parser.parseCommand("delmisson 1 w/3"));
     }
 }

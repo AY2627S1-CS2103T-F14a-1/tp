@@ -10,12 +10,12 @@ import java.util.TreeSet;
 
 /**
  * Represents an immutable collection of a student's mission submission weeks.
- * Each recorded week is between 1 and 10, inclusive.
+ * Each recorded week is between 3 and 13, inclusive.
  */
 public final class MissionSubmissions {
 
-    public static final int MIN_WEEK = 1;
-    public static final int MAX_WEEK = 10;
+    public static final int MIN_WEEK = 3;
+    public static final int MAX_WEEK = 13;
     public static final String MESSAGE_CONSTRAINTS =
             "Tutorial week must be between " + MIN_WEEK + " and " + MAX_WEEK + " inclusive.";
 
@@ -25,7 +25,7 @@ public final class MissionSubmissions {
      * Creates an empty collection of mission submissions.
      */
     public MissionSubmissions() {
-        this.submittedWeeks = Collections.emptySet();
+        submittedWeeks = Collections.emptySet();
     }
 
     /**
@@ -50,7 +50,7 @@ public final class MissionSubmissions {
      * Returns whether the given tutorial week is within the valid range.
      *
      * @param week Tutorial week to check.
-     * @return True if the week is between 1 and 10, inclusive.
+     * @return True if the week is between 3 and 13, inclusive.
      */
     public static boolean isValidWeek(int week) {
         return week >= MIN_WEEK && week <= MAX_WEEK;
@@ -83,6 +83,24 @@ public final class MissionSubmissions {
 
         Set<Integer> updatedWeeks = new HashSet<>(submittedWeeks);
         updatedWeeks.add(week);
+        return new MissionSubmissions(updatedWeeks);
+    }
+
+    /**
+     * Returns submissions excluding the given week without modifying this object.
+     * Returns this object if the week is not recorded.
+     *
+     * @param week Tutorial week to remove.
+     * @return Submissions containing all existing weeks except the given week.
+     * @throws IllegalArgumentException If the week is outside the valid range.
+     */
+    public MissionSubmissions withoutSubmission(int week) {
+        if (!hasSubmission(week)) {
+            return this;
+        }
+
+        Set<Integer> updatedWeeks = new HashSet<>(submittedWeeks);
+        updatedWeeks.remove(week);
         return new MissionSubmissions(updatedWeeks);
     }
 
