@@ -39,6 +39,7 @@ public class AddAttendanceCommand extends Command {
 
     /**
      * Creates a command to record a week's attendance
+     *
      * @param targetIndex Index of the student in the displayed list.
      * @param week Tutorial week for the submission
      */

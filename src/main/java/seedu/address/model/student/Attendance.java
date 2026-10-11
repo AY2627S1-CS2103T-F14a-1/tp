@@ -17,7 +17,7 @@ public final class Attendance {
     public static final int MIN_WEEK = 3;
     public static final int MAX_WEEK = 13;
     public static final String MESSAGE_CONSTRAINTS =
-            "Tutorial week must be between " + MIN_WEEK + " and " + MAX_WEEK + " inclusive.";
+            "Tutorial week must be between " + MIN_WEEK + " and " + MAX_WEEK + " inclusive";
 
     private final Set<Integer> attendedWeeks;
 
@@ -29,6 +29,7 @@ public final class Attendance {
      * Creates attendance from the given tutorial weeks.
      *
      * @param attendedWeeks Weeks for which attendance has been recorded.
+     * @throws NullPointerException If the set or any of its elements is {@code null}.
      */
     public Attendance(Set<Integer> attendedWeeks) {
         requireNonNull(attendedWeeks);
@@ -43,8 +44,9 @@ public final class Attendance {
 
     /**
      * Returns whether the given tutorial week is within the valid range
+     *
      * @param week Tutorial week to check.
-     * @return True if the week is between 3 and 13, inclusive.
+     * @return True if the week is between {@value #MIN_WEEK} and {@value #MAX_WEEK}, inclusive.
      */
     public static boolean isValidWeek(int week) {
         return week >= MIN_WEEK && week <= MAX_WEEK;
@@ -52,6 +54,7 @@ public final class Attendance {
 
     /**
      * Returns whether attendance has been recorded for the given week.
+     *
      * @param week Tutorial week to check.
      * @return True if attendance is recorded for the week.
      */
@@ -79,6 +82,7 @@ public final class Attendance {
 
     /**
      * Returns an unmodifiable set of recorded tutorial weeks.
+     *
      * @return Recorded weeks, with no guaranteed iteration order.
      */
     public Set<Integer> getAttendedWeeks() {
