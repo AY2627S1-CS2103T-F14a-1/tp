@@ -2,6 +2,7 @@ package seedu.address.model.student;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -32,17 +33,21 @@ public class AttendanceTest {
 
     @Test
     public void constructor_invalidWeeks_throwsIllegalArgumentException() {
-        IllegalArgumentException belowMinimumException = assertThrows(IllegalArgumentException.class, () ->
-                new Attendance(Set.of(Attendance.MIN_WEEK - 1)));
-        IllegalArgumentException aboveMaximumException = assertThrows(IllegalArgumentException.class, () ->
-                new Attendance(Set.of(Attendance.MAX_WEEK + 1)));
 
-        assertEquals(Attendance.MESSAGE_CONSTRAINTS, belowMinimumException.getMessage());
-        assertEquals(Attendance.MESSAGE_CONSTRAINTS, aboveMaximumException.getMessage());
+        assertThrows(IllegalArgumentException.class, () ->
+                new Attendance(Set.of(-1)));
+        assertThrows(IllegalArgumentException.class, () ->
+                new Attendance(Set.of(0)));
+        assertThrows(IllegalArgumentException.class, () ->
+                new Attendance(Set.of(1)));
+        assertThrows(IllegalArgumentException.class, () ->
+                new Attendance(Set.of(2)));
+        assertThrows(IllegalArgumentException.class, () ->
+                new Attendance(Set.of(14)));
     }
 
     @Test
-    public void constructor_nullSet_throwsNullPointerException() {
+    public void constructor_nullAttendanceWeek_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> new Attendance(null));
     }
 
@@ -65,23 +70,57 @@ public class AttendanceTest {
     }
 
     @Test
-    public void isValidWeek_validWeek_returnsTrue() {
-        for (int i = Attendance.MIN_WEEK; i <= Attendance.MAX_WEEK; i++) {
-            assertTrue(attendance.isValidWeek(i));
-        }
+    public void withAttendedWeek_newWeek_preservesOriginal() {
+        Attendance original = new Attendance(Set.of(Attendance.MIN_WEEK));
+
+        Attendance updated = original.withAttendedWeek(Attendance.MAX_WEEK);
+
+        assertEquals(Set.of(Attendance.MIN_WEEK), original.getAttendedWeeks());
+        assertEquals(Set.of(Attendance.MIN_WEEK, Attendance.MAX_WEEK), updated.getAttendedWeeks());
     }
 
     @Test
-    public void isValidWeek_invalidWeek_returnsFalse() {
-        assertFalse(attendance.isValidWeek(-3));
+    public void withAttendedWeek_existingWeek_returnsSameInstance() {
+        Attendance original = new Attendance(Set.of(Attendance.MIN_WEEK));
 
-        assertFalse(attendance.isValidWeek(0));
+        Attendance updated = original.withAttendedWeek(Attendance.MIN_WEEK);
 
-        assertFalse(attendance.isValidWeek(1));
+        assertSame(original, updated);
+    }
 
-        assertFalse(attendance.isValidWeek(2));
+    @Test
+    public void withAttendedWeek_invalidWeek_throwsIllegalArgumentException() {
+        Attendance original = new Attendance(Set.of(Attendance.MIN_WEEK));
 
-        assertFalse(attendance.isValidWeek(14));
+        IllegalArgumentException negativeWeekException = assertThrows(IllegalArgumentException.class, () ->
+                original.withAttendedWeek(-1));
+        IllegalArgumentException belowMinimumException1 = assertThrows(IllegalArgumentException.class, () ->
+                original.withAttendedWeek(0));
+        IllegalArgumentException belowMinimumException2 = assertThrows(IllegalArgumentException.class, () ->
+                original.withAttendedWeek(1));
+        IllegalArgumentException belowMinimumException3 = assertThrows(IllegalArgumentException.class, () ->
+                original.withAttendedWeek(2));
+
+        IllegalArgumentException aboveMaximumException = assertThrows(IllegalArgumentException.class, () ->
+                original.withAttendedWeek(14));
+
+        assertEquals(Attendance.MESSAGE_CONSTRAINTS, negativeWeekException.getMessage());
+        assertEquals(Attendance.MESSAGE_CONSTRAINTS, belowMinimumException1.getMessage());
+        assertEquals(Attendance.MESSAGE_CONSTRAINTS, belowMinimumException2.getMessage());
+        assertEquals(Attendance.MESSAGE_CONSTRAINTS, belowMinimumException3.getMessage());
+        assertEquals(Attendance.MESSAGE_CONSTRAINTS, aboveMaximumException.getMessage());
+    }
+
+    @Test
+    public void withAttendance_invalidWeek_preservesOriginal() {
+        Attendance original = new Attendance(Set.of(3));
+
+        assertThrows(IllegalArgumentException.class, () ->
+                original.withAttendedWeek(2));
+        assertThrows(IllegalArgumentException.class, () ->
+                original.withAttendedWeek(14));
+
+        assertEquals(Set.of(3), original.getAttendedWeeks());
     }
 
     @Test
@@ -118,7 +157,7 @@ public class AttendanceTest {
     }
 
     @Test
-    public void hasAttendance_invalidAttendance_exceptionThrown() {
+    public void hasAttendance_invalidWeek_exceptionThrown() {
         Attendance attendance = new Attendance();
         try {
             attendance.hasAttendance(-1);
@@ -157,45 +196,13 @@ public class AttendanceTest {
     }
 
     @Test
-    public void withAttendedWeek_newWeek_preservesOriginal() {
-        Attendance original = new Attendance(Set.of(Attendance.MIN_WEEK));
+    public void getAttendedWeeks_modifySet_throwsUnsupportedOperationException() {
+        Attendance attendance = new Attendance(Set.of(3));
 
-        Attendance updated = original.withAttendedWeek(Attendance.MAX_WEEK);
+        assertThrows(UnsupportedOperationException.class, () ->
+                attendance.getAttendedWeeks().add(5));
 
-        assertEquals(Set.of(Attendance.MIN_WEEK), original.getAttendedWeeks());
-        assertEquals(Set.of(Attendance.MIN_WEEK, Attendance.MAX_WEEK), updated.getAttendedWeeks());
-    }
-
-    @Test
-    public void withAttendedWeek_existingWeek_returnsSameInstance() {
-        Attendance original = new Attendance(Set.of(Attendance.MIN_WEEK));
-
-        Attendance updated = original.withAttendedWeek(Attendance.MIN_WEEK);
-
-        assertSame(original, updated);
-    }
-
-    @Test
-    public void withAttendedWeek_invalidWeek_throwsIllegalArgumentException() {
-        Attendance original = new Attendance(Set.of(Attendance.MIN_WEEK));
-
-        IllegalArgumentException negativeWeekException = assertThrows(IllegalArgumentException.class, () ->
-                original.withAttendedWeek(-1));
-        IllegalArgumentException belowMinimumException1 = assertThrows(IllegalArgumentException.class, () ->
-                original.withAttendedWeek(0));
-        IllegalArgumentException belowMinimumException2 = assertThrows(IllegalArgumentException.class, () ->
-                original.withAttendedWeek(1));
-        IllegalArgumentException belowMinimumException3 = assertThrows(IllegalArgumentException.class, () ->
-                original.withAttendedWeek(2));
-
-        IllegalArgumentException aboveMaximumException = assertThrows(IllegalArgumentException.class, () ->
-                original.withAttendedWeek(Attendance.MAX_WEEK + 1));
-
-        assertEquals(Attendance.MESSAGE_CONSTRAINTS, negativeWeekException.getMessage());
-        assertEquals(Attendance.MESSAGE_CONSTRAINTS, belowMinimumException1.getMessage());
-        assertEquals(Attendance.MESSAGE_CONSTRAINTS, belowMinimumException2.getMessage());
-        assertEquals(Attendance.MESSAGE_CONSTRAINTS, belowMinimumException3.getMessage());
-        assertEquals(Attendance.MESSAGE_CONSTRAINTS, aboveMaximumException.getMessage());
+        assertEquals(Set.of(3), attendance.getAttendedWeeks());
     }
 
     @Test
@@ -217,11 +224,15 @@ public class AttendanceTest {
     }
 
     @Test
-    public void equals_sameAttendedWeeks_returnsTrue() {
+    public void equals_matchingWeeks_returnsTrue() {
         Attendance firstAttendance = new Attendance(Set.of(Attendance.MIN_WEEK, Attendance.MAX_WEEK));
         Attendance secondAttendance = new Attendance(Set.of(Attendance.MIN_WEEK, Attendance.MAX_WEEK));
 
         assertTrue(firstAttendance.equals(secondAttendance));
+        assertEquals(firstAttendance.hashCode(), secondAttendance.hashCode());
+        assertNotEquals(firstAttendance, new Attendance(Set.of(Attendance.MIN_WEEK)));
+        assertNotEquals(firstAttendance, null);
+        assertNotEquals(firstAttendance, Set.of(3, 5));
     }
 
     @Test
@@ -246,4 +257,23 @@ public class AttendanceTest {
         assertFalse(attendance.equals(Set.of(Attendance.MIN_WEEK)));
     }
 
+    @Test
+    public void isValidWeek_validWeek_returnsTrue() {
+        for (int i = Attendance.MIN_WEEK; i <= Attendance.MAX_WEEK; i++) {
+            assertTrue(attendance.isValidWeek(i));
+        }
+    }
+
+    @Test
+    public void isValidWeek_invalidWeek_returnsFalse() {
+        assertFalse(attendance.isValidWeek(-3));
+
+        assertFalse(attendance.isValidWeek(0));
+
+        assertFalse(attendance.isValidWeek(1));
+
+        assertFalse(attendance.isValidWeek(2));
+
+        assertFalse(attendance.isValidWeek(14));
+    }
 }
