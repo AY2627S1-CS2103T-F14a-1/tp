@@ -120,7 +120,7 @@ public class AddressBookParserTest {
 
     @Test
     public void parseCommand_addMissionMissingIndex_reportsMissingIndex() {
-        assertThrows(ParseException.class, MissionParser.MESSAGE_MISSING_INDEX, () ->
+        assertThrows(ParseException.class, WeeklyTaskParser.MESSAGE_MISSING_INDEX, () ->
                 parser.parseCommand("addmission"));
     }
 
@@ -142,7 +142,7 @@ public class AddressBookParserTest {
 
     @Test
     public void parseCommand_deleteMissionMissingIndex_reportsMissingIndex() {
-        assertThrows(ParseException.class, MissionParser.MESSAGE_MISSING_INDEX, () ->
+        assertThrows(ParseException.class, WeeklyTaskParser.MESSAGE_MISSING_INDEX, () ->
                 parser.parseCommand("delmission"));
     }
 

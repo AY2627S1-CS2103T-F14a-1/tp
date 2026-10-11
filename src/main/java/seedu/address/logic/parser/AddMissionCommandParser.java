@@ -18,7 +18,7 @@ public class AddMissionCommandParser implements Parser<AddMissionCommand> {
      */
     @Override
     public AddMissionCommand parse(String args) throws ParseException {
-        MissionParser arguments = new MissionParser(args, AddMissionCommand.MESSAGE_USAGE);
+        WeeklyTaskParser arguments = new WeeklyTaskParser(args, AddMissionCommand.MESSAGE_USAGE);
         return new AddMissionCommand(arguments.getIndex(), arguments.getWeek());
     }
 }
