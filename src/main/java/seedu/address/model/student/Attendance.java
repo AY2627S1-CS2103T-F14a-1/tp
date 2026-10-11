@@ -10,7 +10,7 @@ import java.util.TreeSet;
 
 /**
  * Represents an immutable collection of a student's weekly tutorial attendance.
- * Each recorded week is between 3 and 13, inclusive.
+ * Each recorded week is between {@value #MIN_WEEK} and {@value #MAX_WEEK}, inclusive.
  */
 public final class Attendance {
 
