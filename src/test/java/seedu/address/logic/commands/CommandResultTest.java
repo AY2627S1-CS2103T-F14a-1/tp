@@ -3,7 +3,10 @@ package seedu.address.logic.commands;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static seedu.address.testutil.TypicalStudents.AMY;
+import static seedu.address.testutil.TypicalStudents.BOB;
 
 import org.junit.jupiter.api.Test;
 
@@ -59,5 +62,21 @@ public class CommandResultTest {
                 + commandResult.getFeedbackToUser() + ", showHelp=" + commandResult.isShowHelp()
                 + ", exit=" + commandResult.isExit() + "}";
         assertEquals(expected, commandResult.toString());
+    }
+
+    @Test
+    public void studentResult_matchingPayload_comparesStudentAndPreservesDefaults() {
+        CommandResult result = new CommandResult("details", AMY);
+        CommandResult same = new CommandResult("details", AMY);
+        assertEquals(AMY, result.getStudentToView().orElseThrow());
+        assertEquals(result, same);
+        assertEquals(result.hashCode(), same.hashCode());
+        assertNotEquals(result, new CommandResult("details"));
+        assertNotEquals(result, new CommandResult("details", BOB));
+        assertFalse(result.isShowHelp());
+        assertFalse(result.isExit());
+        assertTrue(new CommandResult("feedback").getStudentToView().isEmpty());
+        assertThrows(NullPointerException.class, () -> new CommandResult("details", null));
+        assertThrows(NullPointerException.class, () -> new CommandResult(null, AMY));
     }
 }
