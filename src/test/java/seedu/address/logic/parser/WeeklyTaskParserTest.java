@@ -11,7 +11,7 @@ import seedu.address.logic.parser.exceptions.ParseException;
 /**
  * Tests shared mission index and week validation.
  */
-public class MissionParserTest {
+public class WeeklyTaskParserTest {
 
     @Test
     public void parseStudentIndex_validInput_returnsIndex() throws Exception {
