@@ -203,11 +203,12 @@ public class JsonAdaptedStudentTest {
                   "email": "amy@gmail.com",
                   "address": "123, Jurong West Ave 6, #08-111",
                   "tags": [],
-                  "studioGroup": "1A"
+                  "studioGroup": "1A",
+                  "attendance": [3]
                 }
                 """;
         JsonAdaptedStudent student = JsonUtil.fromJsonString(json, JsonAdaptedStudent.class);
-        Student expected = new StudentBuilder().withMissionSubmissions().build();
+        Student expected = new StudentBuilder().withAttendance(3).build();
 
         assertEquals(expected, student.toModelType());
     }
@@ -240,14 +241,14 @@ public class JsonAdaptedStudentTest {
             JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_PHONE, VALID_EMAIL,
                     VALID_ADDRESS, VALID_TAGS, VALID_STUDIO_GROUP, VALID_MISSION_SUBMISSIONS, List.of(5, week));
 
-            assertThrows(IllegalValueException.class, MissionSubmissions.MESSAGE_CONSTRAINTS,
+            assertThrows(IllegalValueException.class, Attendance.MESSAGE_CONSTRAINTS,
                     student::toModelType);
         }
     }
 
     @Test
-    public void toModelType_emptyAttendance_returnsStudentWithoutSubmissions() throws Exception {
-        Student expected = new StudentBuilder(BENSON).withMissionSubmissions().build();
+    public void toModelType_emptyAttendance_returnsStudentWithoutAttendance() throws Exception {
+        Student expected = new StudentBuilder(BENSON).withAttendance().build();
         JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_PHONE, VALID_EMAIL,
                 VALID_ADDRESS, VALID_TAGS, VALID_STUDIO_GROUP, VALID_MISSION_SUBMISSIONS, VALID_ATTENDANCE);
 
@@ -259,13 +260,13 @@ public class JsonAdaptedStudentTest {
         JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_PHONE, VALID_EMAIL,
                 VALID_ADDRESS, VALID_TAGS, VALID_STUDIO_GROUP, VALID_MISSION_SUBMISSIONS, Arrays.asList(5, null));
 
-        assertThrows(IllegalValueException.class, MissionSubmissions.MESSAGE_CONSTRAINTS,
+        assertThrows(IllegalValueException.class, Attendance.MESSAGE_CONSTRAINTS,
                 student::toModelType);
     }
 
     @Test
-    public void toModelType_nullAttendance_returnsStudentWithoutSubmissions() throws Exception {
-        Student expected = new StudentBuilder(BENSON).withMissionSubmissions().build();
+    public void toModelType_nullAttendance_returnsStudentWithoutAttendance() throws Exception {
+        Student expected = new StudentBuilder(BENSON).withAttendance().build();
         JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_PHONE, VALID_EMAIL,
                 VALID_ADDRESS, VALID_TAGS, VALID_STUDIO_GROUP, VALID_MISSION_SUBMISSIONS, null);
 
@@ -273,7 +274,7 @@ public class JsonAdaptedStudentTest {
     }
 
     @Test
-    public void toModelType_duplicateAttendanceWeeks_returnsUniqueSubmissions() throws Exception {
+    public void toModelType_duplicateAttendanceWeeks_returnsUniqueAttendance() throws Exception {
         Student expected = new StudentBuilder(BENSON).withAttendance(5, 4).build();
         JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_PHONE, VALID_EMAIL,
                 VALID_ADDRESS, VALID_TAGS, VALID_STUDIO_GROUP, VALID_MISSION_SUBMISSIONS, List.of(5, 5, 4));
@@ -282,7 +283,7 @@ public class JsonAdaptedStudentTest {
     }
 
     @Test
-    public void toModelType_missingAttendanceInJson_returnsStudentWithoutSubmissions() throws Exception {
+    public void toModelType_missingAttendanceInJson_returnsStudentWithoutAttendance() throws Exception {
         String json = """
                 {
                   "name": "Amy Bee",
@@ -290,11 +291,12 @@ public class JsonAdaptedStudentTest {
                   "email": "amy@gmail.com",
                   "address": "123, Jurong West Ave 6, #08-111",
                   "tags": [],
-                  "studioGroup": "1A"
+                  "studioGroup": "1A",
+                  "missionSubmissions": [3]
                 }
                 """;
         JsonAdaptedStudent student = JsonUtil.fromJsonString(json, JsonAdaptedStudent.class);
-        Student expected = new StudentBuilder().withMissionSubmissions().build();
+        Student expected = new StudentBuilder().withMissionSubmissions(3).withAttendance().build();
 
         assertEquals(expected, student.toModelType());
     }
@@ -311,5 +313,4 @@ public class JsonAdaptedStudentTest {
             assertThrows(IllegalValueException.class, Attendance.MESSAGE_CONSTRAINTS, student::toModelType);
         }
     }
-}
 }
