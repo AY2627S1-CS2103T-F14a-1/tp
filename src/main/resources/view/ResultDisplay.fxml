@@ -1,9 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 
 <StackPane fx:id="placeHolder" styleClass="pane-with-border" xmlns="http://javafx.com/javafx/17"
     xmlns:fx="http://javafx.com/fxml/1">
   <TextArea fx:id="resultDisplay" editable="false" styleClass="result-display"/>
+  <ScrollPane fx:id="studentDetails" fitToWidth="true" visible="false" managed="false"
+              hbarPolicy="NEVER" styleClass="student-details-scroll">
+    <VBox spacing="16" styleClass="student-details-content">
+      <Label fx:id="studentSummary" wrapText="true" maxWidth="Infinity" styleClass="student-summary"/>
+      <Label text="Mission submissions" styleClass="mission-title"/>
+      <GridPane fx:id="missionSubmissions">
+        <columnConstraints>
+          <ColumnConstraints percentWidth="35"/>
+          <ColumnConstraints percentWidth="65"/>
+        </columnConstraints>
+      </GridPane>
+    </VBox>
+  </ScrollPane>
 </StackPane>
