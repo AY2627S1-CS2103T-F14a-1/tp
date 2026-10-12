@@ -14,7 +14,7 @@ import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.student.Attendance;
 
 /**
- * Parses input arguments and creates a new {@code AddMissionCommand}.
+ * Parses input arguments and creates a new {@code AddAttendanceCommand}.
  */
 public class AddAttendanceCommandParser implements Parser<AddAttendanceCommand> {
 
