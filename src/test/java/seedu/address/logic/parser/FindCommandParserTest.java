@@ -111,7 +111,7 @@ public class FindCommandParserTest {
 
     @Test
     public void execute_multipleGroupFilters_returnsMatchingStudents()
-            throws ParseException{
+            throws ParseException {
         Model model = new ModelManager(
                 getTypicalAddressBook(),
                 new UserPrefs());
