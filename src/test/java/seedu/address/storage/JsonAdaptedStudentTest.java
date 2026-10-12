@@ -208,7 +208,7 @@ public class JsonAdaptedStudentTest {
                 }
                 """;
         JsonAdaptedStudent student = JsonUtil.fromJsonString(json, JsonAdaptedStudent.class);
-        Student expected = new StudentBuilder().withAttendance(3).build();
+        Student expected = new StudentBuilder().withMissionSubmissions().withAttendance(3).build();
 
         assertEquals(expected, student.toModelType());
     }
