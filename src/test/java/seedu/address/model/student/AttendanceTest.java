@@ -305,4 +305,11 @@ public class AttendanceTest {
 
         assertFalse(attendance.isValidWeek(14));
     }
+
+    @Test
+    public void toString_unorderedWeeks_returnsAscendingOrder() {
+        Attendance attendance = new Attendance(Set.of(5, 3, 13));
+
+        assertEquals("[3, 5, 13]", attendance.toString());
+    }
 }
