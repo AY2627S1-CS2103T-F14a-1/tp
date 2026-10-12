@@ -10,14 +10,14 @@ import java.util.TreeSet;
 
 /**
  * Represents an immutable collection of a student's weekly tutorial attendance.
- * Each recorded week is between 1 and 10, inclusive.
+ * Each recorded week is between {@value #MIN_WEEK} and {@value #MAX_WEEK}, inclusive.
  */
-public class Attendance {
+public final class Attendance {
 
     public static final int MIN_WEEK = 3;
     public static final int MAX_WEEK = 13;
     public static final String MESSAGE_CONSTRAINTS =
-            "Tutorial week must be between " + MIN_WEEK + " and " + MAX_WEEK + " inclusive.";
+            "Tutorial week must be between " + MIN_WEEK + " and " + MAX_WEEK + " inclusive";
 
     private final Set<Integer> attendedWeeks;
 
@@ -28,7 +28,8 @@ public class Attendance {
     /**
      * Creates attendance from the given tutorial weeks.
      *
-     * @param attendedWeeks Weeks for which submissions have been recorded.
+     * @param attendedWeeks Weeks for which attendance has been recorded.
+     * @throws NullPointerException If the set or any of its elements is {@code null}.
      */
     public Attendance(Set<Integer> attendedWeeks) {
         requireNonNull(attendedWeeks);
@@ -38,26 +39,39 @@ public class Attendance {
             requireNonNull(week);
             checkArgument(isValidWeek(week), MESSAGE_CONSTRAINTS);
         }
-        this.attendedWeeks = copiedWeeks;
+        this.attendedWeeks = Collections.unmodifiableSet(copiedWeeks);
     }
 
+    /**
+     * Returns whether the given tutorial week is within the valid range
+     *
+     * @param week Tutorial week to check.
+     * @return True if the week is between {@value #MIN_WEEK} and {@value #MAX_WEEK}, inclusive.
+     */
     public static boolean isValidWeek(int week) {
         return week >= MIN_WEEK && week <= MAX_WEEK;
     }
 
-    public boolean hasAttendence(int week) {
+    /**
+     * Returns whether attendance has been recorded for the given week.
+     *
+     * @param week Tutorial week to check.
+     * @return True if attendance is recorded for the week.
+     */
+    public boolean hasAttendance(int week) {
+        checkArgument(isValidWeek(week), MESSAGE_CONSTRAINTS);
         return attendedWeeks.contains(week);
     }
 
     /**
-     * Returns mission submissions including the given week without changing
+     * Returns attendance including the given week without changing
      * this object. Returns this object if the week is already recorded.
      *
      * @param week Tutorial week to record.
      * @return Attendance containing the existing weeks and given week.
      */
     public Attendance withAttendedWeek(int week) {
-        if (hasAttendence(week)) {
+        if (hasAttendance(week)) {
             return this;
         }
 
@@ -67,7 +81,7 @@ public class Attendance {
     }
 
     public Attendance withoutAttendedWeek(int week) {
-        if (!hasAttendence(week)) {
+        if (!hasAttendance(week)) {
             return this;
         }
 
@@ -76,6 +90,11 @@ public class Attendance {
         return new Attendance(updatedWeeks);
     }
 
+    /**
+     * Returns an unmodifiable set of recorded tutorial weeks.
+     *
+     * @return Recorded weeks, with no guaranteed iteration order.
+     */
     public Set<Integer> getAttendedWeeks() {
         return attendedWeeks;
     }
@@ -100,7 +119,7 @@ public class Attendance {
     }
 
     /**
-     * Returns the submitted weeks in ascending order for diagnostic output.
+     * Returns the attended weeks in ascending order for diagnostic output.
      *
      * @return A string containing the recorded weeks in ascending order.
      */

@@ -132,6 +132,25 @@ public class StudentBuilder {
     }
 
     /**
+     * Sets the attendance weeks of the student being built.
+     *
+     * @param weeks Tutorial weeks with recorded attendance.
+     * @return This builder.
+     * @throws NullPointerException If the array is null.
+     * @throws IllegalArgumentException If any week is outside the valid range.
+     */
+    public StudentBuilder withAttendance(int... weeks) {
+        requireNonNull(weeks);
+
+        Set<Integer> attendedWeeks = new HashSet<>();
+        for (int week : weeks) {
+            attendedWeeks.add(week);
+        }
+        this.attendance = new Attendance(attendedWeeks);
+        return this;
+    }
+
+    /**
      * Builds a student using this builder's current values.
      *
      * @return A student with the configured details.
