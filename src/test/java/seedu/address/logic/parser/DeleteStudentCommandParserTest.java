@@ -18,10 +18,10 @@ import seedu.address.logic.commands.DeleteStudentCommand;
  */
 public class DeleteStudentCommandParserTest {
 
-    private DeleteCommandParser parser = new DeleteCommandParser();
+    private DeleteStudentCommandParser parser = new DeleteStudentCommandParser();
 
     @Test
-    public void parse_validArgs_returnsDeleteCommand() {
+    public void parse_validArgs_returnsDeleteStudentCommand() {
         assertParseSuccess(parser, "1", new DeleteStudentCommand(INDEX_FIRST_STUDENT));
     }
 
