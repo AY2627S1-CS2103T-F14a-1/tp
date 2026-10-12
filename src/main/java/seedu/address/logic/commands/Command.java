@@ -1,6 +1,7 @@
 package seedu.address.logic.commands;
 
 import java.util.List;
+
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.Messages;
 import seedu.address.logic.commands.exceptions.CommandException;
@@ -22,7 +23,8 @@ public abstract class Command {
     public abstract CommandResult execute(Model model) throws CommandException;
 
 
-    /** Returns the student at the specified index in the currently displayed list.
+    /**
+     * Returns the student at the specified index in the currently displayed list.
      *
      * @param model {@code model} that provides the currently displayed student list.
      * @param targetIndex Zero-based position of the student to retrieve.
