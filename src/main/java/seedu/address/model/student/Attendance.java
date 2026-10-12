@@ -80,6 +80,13 @@ public final class Attendance {
         return new Attendance(updatedWeeks);
     }
 
+    /**
+     * Returns attendance not including the given week without changing
+     * this object. Returns this object if the week is already not recorded.
+     *
+     * @param week Tutorial week to delete.
+     * @return Attendance containing the existing weeks without given week.
+     */
     public Attendance withoutAttendedWeek(int week) {
         if (!hasAttendance(week)) {
             return this;
