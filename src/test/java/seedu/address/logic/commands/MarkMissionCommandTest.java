@@ -53,7 +53,7 @@ public class MarkMissionCommandTest {
     @Test
     public void execute_unknownMission_leavesModelUnchanged() {
         assertCommandFailure(new MarkMissionCommand(INDEX_FIRST_STUDENT, new MissionId("M99")),
-                model, "Mission does not exist: M99");
+                model, "Mission M99 does not exist.");
     }
 
     @Test
