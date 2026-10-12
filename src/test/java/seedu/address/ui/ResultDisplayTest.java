@@ -73,6 +73,34 @@ public class ResultDisplayTest {
     }
 
     @Test
+    public void setCommandResult_wrappedMissionRows_alignsCellBorders() throws Exception {
+        runOnJavaFxThread(() -> {
+            ResultDisplay display = new ResultDisplay();
+            List<Mission> missions = List.of(
+                    new Mission(new MissionId("M01"), "Understanding the Force", LocalDate.of(2026, 10, 15)),
+                    new Mission(new MissionId("M02"), "Beyond the Second Dimension", LocalDate.of(2026, 10, 29)));
+            Student student = new StudentBuilder(AMY).withMissionSubmissions("M01").build();
+            display.setCommandResult(new CommandResult("Student", student, missions));
+            GridPane table = getTable(display);
+            table.getStylesheets().add(ResultDisplay.class.getResource("/view/DarkTheme.css").toExternalForm());
+            table.applyCss();
+            for (double width : new double[] {240, 900}) {
+                table.resize(width, table.prefHeight(width));
+                table.layout();
+                for (int index = 0; index < table.getChildren().size(); index += 2) {
+                    Label description = (Label) table.getChildren().get(index);
+                    Label status = (Label) table.getChildren().get(index + 1);
+                    assertTrue(description.getHeight() > 0);
+                    assertEquals(description.getBoundsInParent().getMinY(),
+                            status.getBoundsInParent().getMinY(), 0.01);
+                    assertEquals(description.getBoundsInParent().getMaxY(),
+                            status.getBoundsInParent().getMaxY(), 0.01);
+                }
+            }
+        });
+    }
+
+    @Test
     public void setCommandResult_emptyCatalogue_displaysEmptyMessage() throws Exception {
         runOnJavaFxThread(() -> {
             ResultDisplay display = new ResultDisplay();

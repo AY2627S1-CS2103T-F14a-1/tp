@@ -89,7 +89,7 @@ public class ResultDisplay extends UiPart<Region> {
     }
 
     /**
-     * Adds a styled, wrapping cell that fills its table column.
+     * Adds a styled, wrapping cell that fills its column and row so cell borders align.
      *
      * @param text Visible cell text.
      * @param column Column index.
@@ -101,6 +101,7 @@ public class ResultDisplay extends UiPart<Region> {
         cell.getStyleClass().addAll("mission-cell", styleClass);
         cell.setWrapText(true);
         cell.setMaxWidth(Double.MAX_VALUE);
+        cell.setMaxHeight(Double.MAX_VALUE);
         missionSubmissions.add(cell, column, row);
     }
 
