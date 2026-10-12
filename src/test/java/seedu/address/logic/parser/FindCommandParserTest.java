@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import seedu.address.logic.commands.FindCommand;
 import seedu.address.model.student.NameContainsKeywordsPredicate;
+import seedu.address.model.student.StudioGroupContainsKeywordsPredicate;
 
 public class FindCommandParserTest {
 
@@ -25,13 +26,24 @@ public class FindCommandParserTest {
 
     @Test
     public void parse_validArgs_returnsFindCommand() {
-        // no leading and trailing whitespaces
-        FindCommand expectedFindCommand =
+        // name-only search
+        FindCommand expectedNameCommand =
                 new FindCommand(new NameContainsKeywordsPredicate(List.of("Alice", "Bob")));
-        assertParseSuccess(parser, "Alice Bob", expectedFindCommand);
+        assertParseSuccess(parser, "Alice Bob", expectedNameCommand);
 
         // multiple whitespaces between keywords
-        assertParseSuccess(parser, " \n Alice \n \t Bob  \t", expectedFindCommand);
+        assertParseSuccess(parser, " \n Alice \n \t Bob  \t", expectedNameCommand);
+
+        // studio group search
+        FindCommand expectedGroupCommand =
+                new FindCommand(new StudioGroupContainsKeywordsPredicate(List.of("1A")));
+        assertParseSuccess(parser, "g/1A", expectedGroupCommand);
+    }
+
+    @Test
+    public void parse_blankGroupValue_throwsParseException() {
+        String expectedMessage = String.format(MESSAGE_INVALID_COMMAND_FORMAT, FindCommand.MESSAGE_USAGE);
+        assertParseFailure(parser, "g/", expectedMessage);
     }
 
 }
