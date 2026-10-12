@@ -152,7 +152,7 @@ Format: `markmission INDEX m/MISSION_ID`
 * `INDEX` identifies a student in the **currently displayed list**, including `find` results.
 * The index must be a positive integer without a sign or leading zeros.
 * `MISSION_ID` must identify a configured mission, for example `M01` or `M105`.
-* Use the lowercase `m/` prefix exactly once and the canonical uppercase mission ID.
+* Use the lowercase `m/` prefix exactly once. Mission IDs are case-insensitive: `m/m01` and `m/M01` both identify `M01`. IDs are displayed and saved in uppercase.
 * Each mission ID identifies one configured assignment.
 * Repeated marking reports that the submission is already recorded and changes nothing.
 * Other students, other submissions, attendance, and the current student filter are preserved.

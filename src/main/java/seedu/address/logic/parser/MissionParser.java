@@ -4,6 +4,8 @@ import static java.util.Objects.requireNonNull;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_MISSION;
 
+import java.util.Locale;
+
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.mission.MissionId;
@@ -16,6 +18,7 @@ public class MissionParser {
 
     /**
      * Parses a mission submission command using its usage message for syntax errors.
+     * Normalizes case-insensitive mission IDs to their canonical uppercase form.
      *
      * @param args Arguments following the command word.
      * @param usage Usage instructions for the calling command.
@@ -33,7 +36,7 @@ public class MissionParser {
         }
         index = ParserUtil.parseIndex(indexText);
         try {
-            missionId = new MissionId(arguments.getValue(PREFIX_MISSION).orElseThrow());
+            missionId = new MissionId(arguments.getValue(PREFIX_MISSION).orElseThrow().toUpperCase(Locale.ROOT));
         } catch (IllegalArgumentException e) {
             throw new ParseException(MissionId.MESSAGE_CONSTRAINTS);
         }
