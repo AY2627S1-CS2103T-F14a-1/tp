@@ -13,18 +13,19 @@ import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 
 import seedu.address.logic.commands.AddCommand;
-import seedu.address.logic.commands.AddMissionCommand;
 import seedu.address.logic.commands.ClearCommand;
 import seedu.address.logic.commands.DeleteCommand;
-import seedu.address.logic.commands.DeleteMissionCommand;
 import seedu.address.logic.commands.EditCommand;
 import seedu.address.logic.commands.EditCommand.EditStudentDescriptor;
 import seedu.address.logic.commands.ExitCommand;
 import seedu.address.logic.commands.FindCommand;
 import seedu.address.logic.commands.HelpCommand;
 import seedu.address.logic.commands.ListCommand;
+import seedu.address.logic.commands.MarkMissionCommand;
+import seedu.address.logic.commands.UnmarkMissionCommand;
 import seedu.address.logic.commands.ViewCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.model.mission.MissionId;
 import seedu.address.model.student.NameContainsKeywordsPredicate;
 import seedu.address.model.student.Student;
 import seedu.address.testutil.EditStudentDescriptorBuilder;
@@ -109,46 +110,46 @@ public class AddressBookParserTest {
     }
 
     @Test
-    public void parseCommand_addMissionIgnoringCase_returnsCommand() throws Exception {
-        AddMissionCommand expected = new AddMissionCommand(INDEX_FIRST_STUDENT, 3);
+    public void parseCommand_markMissionIgnoringCase_returnsCommand() throws Exception {
+        MarkMissionCommand expected = new MarkMissionCommand(INDEX_FIRST_STUDENT, new MissionId("M03"));
 
-        assertEquals(expected, parser.parseCommand("addmission 1 w/3"));
-        assertEquals(expected, parser.parseCommand("ADDMISSION 1 w/3"));
-        assertEquals(expected, parser.parseCommand("AddMission 1 W/3"));
-        assertEquals(expected, parser.parseCommand("  addmission\t1\tw/3  "));
+        assertEquals(expected, parser.parseCommand("markmission 1 m/M03"));
+        assertEquals(expected, parser.parseCommand("MARKMISSION 1 m/M03"));
+        assertEquals(expected, parser.parseCommand("MarkMission 1 m/M03"));
+        assertEquals(expected, parser.parseCommand("  markmission\t1\tm/M03  "));
     }
 
     @Test
-    public void parseCommand_addMissionMissingIndex_reportsMissingIndex() {
-        assertThrows(ParseException.class, MissionParser.MESSAGE_MISSING_INDEX, () ->
-                parser.parseCommand("addmission"));
+    public void parseCommand_markMissionMissingIndex_reportsMissingIndex() {
+        assertThrows(ParseException.class, () ->
+                parser.parseCommand("markmission"));
     }
 
     @Test
-    public void parseCommand_misspelledAddMission_reportsUnknownCommand() {
+    public void parseCommand_misspelledMarkMission_reportsUnknownCommand() {
         assertThrows(ParseException.class, MESSAGE_UNKNOWN_COMMAND, () ->
-                parser.parseCommand("addmisson 1 w/3"));
+                parser.parseCommand("markmisson 1 m/M03"));
     }
 
     @Test
-    public void parseCommand_deleteMissionIgnoringCase_returnsCommand() throws Exception {
-        DeleteMissionCommand expected = new DeleteMissionCommand(INDEX_FIRST_STUDENT, 3);
+    public void parseCommand_unmarkMissionIgnoringCase_returnsCommand() throws Exception {
+        UnmarkMissionCommand expected = new UnmarkMissionCommand(INDEX_FIRST_STUDENT, new MissionId("M03"));
 
-        assertEquals(expected, parser.parseCommand("delmission 1 w/3"));
-        assertEquals(expected, parser.parseCommand("DELMISSION 1 w/3"));
-        assertEquals(expected, parser.parseCommand("DelMission 1 W/3"));
-        assertEquals(expected, parser.parseCommand("  delmission\t1\tw/3  "));
+        assertEquals(expected, parser.parseCommand("unmarkmission 1 m/M03"));
+        assertEquals(expected, parser.parseCommand("UNMARKMISSION 1 m/M03"));
+        assertEquals(expected, parser.parseCommand("UnmarkMission 1 m/M03"));
+        assertEquals(expected, parser.parseCommand("  unmarkmission\t1\tm/M03  "));
     }
 
     @Test
-    public void parseCommand_deleteMissionMissingIndex_reportsMissingIndex() {
-        assertThrows(ParseException.class, MissionParser.MESSAGE_MISSING_INDEX, () ->
-                parser.parseCommand("delmission"));
+    public void parseCommand_unmarkMissionMissingIndex_reportsMissingIndex() {
+        assertThrows(ParseException.class, () ->
+                parser.parseCommand("unmarkmission"));
     }
 
     @Test
-    public void parseCommand_misspelledDeleteMission_reportsUnknownCommand() {
+    public void parseCommand_misspelledUnmarkMission_reportsUnknownCommand() {
         assertThrows(ParseException.class, MESSAGE_UNKNOWN_COMMAND, () ->
-                parser.parseCommand("delmisson 1 w/3"));
+                parser.parseCommand("unmarkmisson 1 m/M03"));
     }
 }
