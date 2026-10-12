@@ -66,6 +66,16 @@ public class Attendance {
         return new Attendance(updatedWeeks);
     }
 
+    public Attendance withoutAttendedWeek(int week) {
+        if (!hasAttendence(week)) {
+            return this;
+        }
+
+        Set<Integer> updatedWeeks = new HashSet<>(attendedWeeks);
+        updatedWeeks.remove(week);
+        return new Attendance(updatedWeeks);
+    }
+
     public Set<Integer> getAttendedWeeks() {
         return attendedWeeks;
     }
