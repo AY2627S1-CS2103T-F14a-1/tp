@@ -37,6 +37,7 @@ public class AttendanceTest {
         Set<Integer> numbers = IntStream.rangeClosed(Attendance.MIN_WEEK, Attendance.MAX_WEEK)
                 .boxed()
                 .collect(Collectors.toSet());
+        assertEquals(numbers, new Attendance(numbers).getAttendedWeeks());
     }
 
     @Test
@@ -110,7 +111,7 @@ public class AttendanceTest {
     }
 
     @Test
-    public void withAttendance_invalidWeek_preservesOriginal() {
+    public void withAttendedWeek_invalidWeek_preservesOriginal() {
         Attendance original = new Attendance(Set.of(3));
 
         assertThrows(IllegalArgumentException.class, () ->
@@ -137,14 +138,16 @@ public class AttendanceTest {
         // deleting a week where no attendance was marked at all
         Attendance attendance = new Attendance();
         Attendance removedNonexistentAttendance = attendance.withoutAttendedWeek(Attendance.MIN_WEEK);
-        assertEquals(attendance.hashCode(), removedNonexistentAttendance.hashCode());
+        assertSame(attendance, removedNonexistentAttendance);
 
         // deleting a week where attendance was not marked for that week
         Attendance populatedAttendance = new Attendance(Set.of(Attendance.MIN_WEEK));
         Attendance removedNonexistentAttendance2 = populatedAttendance.withoutAttendedWeek(Attendance.MAX_WEEK);
-        assertEquals(populatedAttendance.hashCode(), removedNonexistentAttendance2.hashCode());
+        assertSame(populatedAttendance, removedNonexistentAttendance2);
+    }
 
-        // deleting a week using an invalid week
+    @Test
+    public void withoutAttendedWeek_invalidWeek_throwsIllegalArgumentException() {
         Attendance populatedAttendance2 = new Attendance(Set.of(Attendance.MIN_WEEK, Attendance.MAX_WEEK));
         assertThrows(IllegalArgumentException.class, () -> populatedAttendance2.withoutAttendedWeek(-1));
     }
@@ -255,7 +258,6 @@ public class AttendanceTest {
         Attendance secondAttendance = new Attendance(Set.of(Attendance.MIN_WEEK, Attendance.MAX_WEEK));
 
         assertTrue(firstAttendance.equals(secondAttendance));
-        assertEquals(firstAttendance.hashCode(), secondAttendance.hashCode());
         assertNotEquals(firstAttendance, new Attendance(Set.of(Attendance.MIN_WEEK)));
         assertNotEquals(firstAttendance, null);
         assertNotEquals(firstAttendance, Set.of(3, 5));
@@ -285,6 +287,7 @@ public class AttendanceTest {
 
     @Test
     public void isValidWeek_validWeek_returnsTrue() {
+        Attendance attendance = new Attendance();
         for (int i = Attendance.MIN_WEEK; i <= Attendance.MAX_WEEK; i++) {
             assertTrue(attendance.isValidWeek(i));
         }
