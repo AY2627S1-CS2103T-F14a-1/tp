@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandFailure;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandSuccess;
+import static seedu.address.logic.commands.CommandTestUtil.showStudentAtIndex;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_STUDENT;
 import static seedu.address.testutil.TypicalIndexes.INDEX_SECOND_STUDENT;
 import static seedu.address.testutil.TypicalStudents.getTypicalAddressBook;
@@ -28,7 +29,7 @@ public class ViewCommandTest {
         ViewCommand command = new ViewCommand(INDEX_FIRST_STUDENT);
 
         String expectedMessage = Messages.formatStudentDetails(studentToView);
-        assertCommandSuccess(command, model, expectedMessage, model);
+        assertCommandSuccess(command, model, new CommandResult(expectedMessage, studentToView), model);
     }
 
     @Test
@@ -60,5 +61,14 @@ public class ViewCommandTest {
         ViewCommand command = new ViewCommand(targetIndex);
         String expected = ViewCommand.class.getCanonicalName() + "{targetIndex=" + targetIndex + "}";
         assertEquals(expected, command.toString());
+    }
+
+    @Test
+    public void execute_filteredList_returnsDisplayedStudentForGui() throws Exception {
+        Student expected = model.getFilteredStudentList().get(INDEX_SECOND_STUDENT.getZeroBased());
+        showStudentAtIndex(model, INDEX_SECOND_STUDENT);
+        CommandResult result = new ViewCommand(INDEX_FIRST_STUDENT).execute(model);
+        assertEquals(expected, result.getStudentToView().orElseThrow());
+        assertEquals(1, model.getFilteredStudentList().size());
     }
 }
