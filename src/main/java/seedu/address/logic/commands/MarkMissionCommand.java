@@ -23,6 +23,8 @@ public class MarkMissionCommand extends Command {
     public static final String MESSAGE_USAGE = COMMAND_WORD
             + ": Records a mission submission for the selected student.\n"
             + "Parameters: INDEX m/MISSION_ID\n"
+            + "INDEX must be a positive integer identifying a displayed student.\n"
+            + MissionId.MESSAGE_CONSTRAINTS + "\n"
             + "Example: " + COMMAND_WORD + " 1 m/M05";
 
     public static final String MESSAGE_SUCCESS =
@@ -30,6 +32,9 @@ public class MarkMissionCommand extends Command {
 
     public static final String MESSAGE_ALREADY_RECORDED =
             "%1$s’s mission submission has already been recorded for mission %2$s. No changes made.";
+
+    public static final String MESSAGE_MISSION_NOT_FOUND =
+            "Mission %1$s does not exist.";
 
     private final Index targetIndex;
     private final MissionId missionId;
@@ -63,7 +68,7 @@ public class MarkMissionCommand extends Command {
         }
 
         if (model.findMission(missionId).isEmpty()) {
-            throw new CommandException("Mission does not exist: " + missionId);
+            throw new CommandException(String.format(MESSAGE_MISSION_NOT_FOUND, missionId));
         }
 
         Student studentToUpdate = lastShownList.get(targetIndex.getZeroBased());
