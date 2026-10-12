@@ -3,7 +3,7 @@ package seedu.address.logic.parser;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_STUDIO_GROUP;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -26,12 +26,44 @@ public class FindCommandParser implements Parser<FindCommand> {
      */
     @Override
     public FindCommand parse(String args) throws ParseException {
-        String normalizedArgs = normalizeArgs(args);
-        ArgumentMultimap argMultimap =
-                ArgumentTokenizer.tokenize(normalizedArgs, PREFIX_STUDIO_GROUP);
+        String trimmedArgs = args.strip();
+        if (trimmedArgs.isEmpty()) {
+            throw new ParseException(
+                    String.format(MESSAGE_INVALID_COMMAND_FORMAT,
+                            FindCommand.MESSAGE_USAGE));
+        }
 
-        List<String> nameKeywords = extractNameKeywords(argMultimap);
-        List<String> groupKeywords = extractGroupKeywords(argMultimap);
+        String[] tokens = trimmedArgs.split("\\s+");
+        List<String> nameKeywords = new ArrayList<>();
+        List<String> groupKeywords = new ArrayList<>();
+
+        boolean groupPrefixSeen = false;
+
+        for (String token : tokens) {
+            if (token.startsWith(PREFIX_STUDIO_GROUP.getPrefix())) {
+                String groupKeyword = token.substring(
+                        PREFIX_STUDIO_GROUP.getPrefix().length());
+
+                if (groupKeyword.isBlank()) {
+                    throw new ParseException(
+                            String.format(
+                                    MESSAGE_INVALID_COMMAND_FORMAT,
+                                    FindCommand.MESSAGE_USAGE));
+                }
+
+                groupKeywords.add(groupKeyword);
+                groupPrefixSeen = true;
+            } else {
+                if (groupPrefixSeen) {
+                    throw new ParseException(
+                            String.format(
+                                    MESSAGE_INVALID_COMMAND_FORMAT,
+                                    FindCommand.MESSAGE_USAGE));
+                }
+
+                nameKeywords.add(token);
+            }
+        }
 
         if (nameKeywords.isEmpty() && groupKeywords.isEmpty()) {
             throw new ParseException(
@@ -41,27 +73,6 @@ public class FindCommandParser implements Parser<FindCommand> {
 
         Predicate<Student> predicate = buildPredicate(nameKeywords, groupKeywords);
         return new FindCommand(predicate);
-    }
-
-    private String normalizeArgs(String args) {
-        return " " + args.strip();
-    }
-
-    private List<String> extractNameKeywords(ArgumentMultimap argMultimap) {
-        String preamble = argMultimap.getPreamble();
-        return preamble.isBlank()
-                ? List.of()
-                : Arrays.asList(preamble.trim().split("\\s+"));
-    }
-
-    private List<String> extractGroupKeywords(ArgumentMultimap argMultimap) throws ParseException {
-        List<String> groupKeywords = argMultimap.getAllValues(PREFIX_STUDIO_GROUP);
-        if (groupKeywords.stream().anyMatch(String::isBlank)) {
-            throw new ParseException(
-                    String.format(MESSAGE_INVALID_COMMAND_FORMAT,
-                            FindCommand.MESSAGE_USAGE));
-        }
-        return groupKeywords;
     }
 
     private Predicate<Student> buildPredicate(List<String> nameKeywords, List<String> groupKeywords) {
