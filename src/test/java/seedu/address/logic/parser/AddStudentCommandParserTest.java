@@ -41,7 +41,7 @@ import static seedu.address.testutil.TypicalStudents.BOB;
 import org.junit.jupiter.api.Test;
 
 import seedu.address.logic.Messages;
-import seedu.address.logic.commands.AddCommand;
+import seedu.address.logic.commands.AddStudentCommand;
 import seedu.address.model.student.Address;
 import seedu.address.model.student.Email;
 import seedu.address.model.student.Name;
@@ -51,7 +51,7 @@ import seedu.address.model.student.StudioGroup;
 import seedu.address.model.tag.Tag;
 import seedu.address.testutil.StudentBuilder;
 
-public class AddCommandParserTest {
+public class AddStudentCommandParserTest {
     private AddCommandParser parser = new AddCommandParser();
 
     @Test
@@ -60,7 +60,7 @@ public class AddCommandParserTest {
 
         // whitespace only preamble
         assertParseSuccess(parser, PREAMBLE_WHITESPACE + NAME_DESC_BOB + PHONE_DESC_BOB + EMAIL_DESC_BOB
-                + ADDRESS_DESC_BOB + TAG_DESC_FRIEND + STUDIO_GROUP_DESC_BOB, new AddCommand(expectedStudent));
+                + ADDRESS_DESC_BOB + TAG_DESC_FRIEND + STUDIO_GROUP_DESC_BOB, new AddStudentCommand(expectedStudent));
 
 
         // multiple tags - all accepted
@@ -69,7 +69,7 @@ public class AddCommandParserTest {
         assertParseSuccess(parser,
                 NAME_DESC_BOB + PHONE_DESC_BOB + EMAIL_DESC_BOB + ADDRESS_DESC_BOB
                         + TAG_DESC_HUSBAND + TAG_DESC_FRIEND + STUDIO_GROUP_DESC_BOB,
-                new AddCommand(expectedStudentMultipleTags));
+                new AddStudentCommand(expectedStudentMultipleTags));
     }
 
     @Test
@@ -155,12 +155,12 @@ public class AddCommandParserTest {
         Student expectedStudent = new StudentBuilder(AMY).withTags().build();
         assertParseSuccess(parser, NAME_DESC_AMY + PHONE_DESC_AMY + EMAIL_DESC_AMY
                         + ADDRESS_DESC_AMY + STUDIO_GROUP_DESC_AMY,
-                new AddCommand(expectedStudent));
+                new AddStudentCommand(expectedStudent));
     }
 
     @Test
     public void parse_compulsoryFieldMissing_failure() {
-        String expectedMessage = String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddCommand.MESSAGE_USAGE);
+        String expectedMessage = String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddStudentCommand.MESSAGE_USAGE);
 
         // missing name prefix
         assertParseFailure(parser, VALID_NAME_BOB + PHONE_DESC_BOB + EMAIL_DESC_BOB
@@ -227,6 +227,6 @@ public class AddCommandParserTest {
         // non-empty preamble
         assertParseFailure(parser, PREAMBLE_NON_EMPTY + NAME_DESC_BOB + PHONE_DESC_BOB + EMAIL_DESC_BOB
                 + ADDRESS_DESC_BOB + TAG_DESC_HUSBAND + TAG_DESC_FRIEND + STUDIO_GROUP_DESC_BOB,
-                String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddCommand.MESSAGE_USAGE));
+                String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddStudentCommand.MESSAGE_USAGE));
     }
 }
