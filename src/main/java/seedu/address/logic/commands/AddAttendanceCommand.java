@@ -2,6 +2,8 @@ package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.AppUtil.checkArgument;
+import static seedu.address.model.student.Attendance.MESSAGE_CONSTRAINTS;
+import static seedu.address.model.student.Attendance.isValidWeek;
 
 import java.util.List;
 
@@ -44,8 +46,10 @@ public class AddAttendanceCommand extends Command {
      * @param week Tutorial week for the submission
      */
     public AddAttendanceCommand(Index targetIndex, int week) {
+        requireNonNull(targetIndex);
+        requireNonNull(week);
+
         this.targetIndex = requireNonNull(targetIndex);
-        checkArgument(Attendance.isValidWeek(week), Attendance.MESSAGE_CONSTRAINTS);
         this.week = week;
     }
 
@@ -59,10 +63,14 @@ public class AddAttendanceCommand extends Command {
     @Override
     public CommandResult execute(Model model) throws CommandException {
         requireNonNull(model);
-
         List<Student> lastShownList = model.getFilteredStudentList();
+
         if (targetIndex.getZeroBased() >= lastShownList.size()) {
             throw new CommandException(Messages.MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX);
+        }
+
+        if (!isValidWeek(week)) {
+            throw new CommandException(MESSAGE_CONSTRAINTS);
         }
 
         Student studentToUpdate = lastShownList.get(targetIndex.getZeroBased());

@@ -42,7 +42,7 @@ public class WeeklyTaskParser {
         requireNonNull(args);
         this.usage = requireNonNull(usage);
         ArgumentMultimap arguments = ArgumentTokenizer.tokenize(normalizeArguments(args), PREFIX_WEEK);
-        index = extractIndex(arguments);
+        index = parseIndex(arguments);
         week = parseTutorialWeek(extractWeek(arguments));
     }
 
@@ -64,37 +64,15 @@ public class WeeklyTaskParser {
         return week;
     }
 
-    private Index extractIndex(ArgumentMultimap arguments) throws ParseException {
+    private Index parseIndex(ArgumentMultimap arguments) throws ParseException {
         String indexText = arguments.getPreamble();
+
         // if no index detected
         if (indexText.isEmpty()) {
             throw new ParseException(MESSAGE_MISSING_INDEX);
         }
 
         return ParserUtil.parseIndex(indexText);
-    }
-
-    /**
-     * Parses a student index without accepting signs or leading zeros.
-     *
-     * @param oneBasedIndex Student index text.
-     * @return A valid one-based index.
-     * @throws NullPointerException If the text is null.
-     * @throws ParseException If the index syntax or numeric value is invalid.
-     */
-    public static Index parseStudentIndex(String oneBasedIndex) throws ParseException {
-        requireNonNull(oneBasedIndex);
-
-        String trimmedIndex = oneBasedIndex.trim();
-        if (!POSITIVE_INTEGER.matcher(trimmedIndex).matches()) {
-            throw new ParseException(MESSAGE_INVALID_STUDENT_INDEX);
-        }
-
-        try {
-            return ParserUtil.parseIndex(trimmedIndex);
-        } catch (ParseException e) {
-            throw new ParseException(MESSAGE_INVALID_STUDENT_INDEX);
-        }
     }
 
     /**
@@ -107,32 +85,7 @@ public class WeeklyTaskParser {
      */
     public static int parseTutorialWeek(String week) throws ParseException {
         requireNonNull(week);
-
-        String trimmedWeek = week.trim();
-        if (!POSITIVE_INTEGER.matcher(trimmedWeek).matches()) {
-            throw new ParseException(MESSAGE_INVALID_TUTORIAL_WEEK);
-        }
-
-        try {
-            int parsedWeek = Integer.parseInt(trimmedWeek);
-            if (!Attendance.isValidWeek(parsedWeek)) {
-                throw new ParseException(MESSAGE_INVALID_TUTORIAL_WEEK);
-            }
-            return parsedWeek;
-        } catch (NumberFormatException e) {
-            throw new ParseException(MESSAGE_INVALID_TUTORIAL_WEEK);
-        }
-    }
-
-    /**
-     * Normalizes whitespace and prefix case for this numeric-only command.
-     * The leading space allows the tokenizer to detect an initial prefix.
-     *
-     * @param args Original command arguments.
-     * @return Arguments suitable for the existing tokenizer.
-     */
-    private String normalizeArguments(String args) {
-        return " " + args.strip().replaceAll("\\s+", " ").toLowerCase(Locale.ROOT);
+        return Integer.parseInt(week);
     }
 
     /**
