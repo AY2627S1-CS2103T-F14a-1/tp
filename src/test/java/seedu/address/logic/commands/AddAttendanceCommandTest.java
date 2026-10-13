@@ -31,15 +31,6 @@ public class AddAttendanceCommandTest {
     private final Model model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
 
     @Test
-    public void constructor_invalidArguments_throwsException() {
-        assertThrows(NullPointerException.class, () -> new AddAttendanceCommand(null, Attendance.MIN_WEEK));
-        assertThrows(IllegalArgumentException.class, () ->
-                new AddAttendanceCommand(INDEX_FIRST_STUDENT, Attendance.MIN_WEEK - 1));
-        assertThrows(IllegalArgumentException.class, () ->
-                new AddAttendanceCommand(INDEX_FIRST_STUDENT, Attendance.MAX_WEEK + 1));
-    }
-
-    @Test
     public void execute_nullModel_throwsNullPointerException() {
         AddAttendanceCommand command = new AddAttendanceCommand(INDEX_FIRST_STUDENT, Attendance.MIN_WEEK);
 

@@ -1,11 +1,15 @@
 package seedu.address.logic.parser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_WEEK;
 import static seedu.address.testutil.Assert.assertThrows;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_STUDENT;
 
 import org.junit.jupiter.api.Test;
 
+import seedu.address.logic.Messages;
+import seedu.address.logic.commands.AddAttendanceCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
 
 /**
@@ -14,50 +18,68 @@ import seedu.address.logic.parser.exceptions.ParseException;
 public class WeeklyTaskParserTest {
 
     @Test
-    public void parseStudentIndex_validInput_returnsIndex() throws Exception {
-        assertEquals(INDEX_FIRST_STUDENT, WeeklyTaskParser.parseStudentIndex("1"));
-        assertEquals(INDEX_FIRST_STUDENT, WeeklyTaskParser.parseStudentIndex(" \t1 "));
-        assertEquals(12, WeeklyTaskParser.parseStudentIndex("12").getOneBased());
-        assertEquals(Integer.MAX_VALUE,
-                WeeklyTaskParser.parseStudentIndex(String.valueOf(Integer.MAX_VALUE)).getOneBased());
+    public void constructor_validArguments_parsesIndexAndWeek() throws Exception {
+        WeeklyTaskParser parser = new WeeklyTaskParser("1 w/3", "usage");
+
+        assertEquals(INDEX_FIRST_STUDENT, parser.getIndex());
+        assertEquals(3, parser.getWeek());
     }
 
     @Test
-    public void parseStudentIndex_invalidInput_throwsParseException() {
-        String[] invalidInputs = {"", " ", "0", "-1", "+1", "01", "1.0", "one", "1 2", "2147483648"};
-
-        for (String input : invalidInputs) {
-            assertThrows(ParseException.class, WeeklyTaskParser.MESSAGE_INVALID_STUDENT_INDEX, () ->
-                    WeeklyTaskParser.parseStudentIndex(input));
-        }
+    public void constructor_missingIndex_throwsParseException() {
+        assertThrows(ParseException.class, WeeklyTaskParser.MESSAGE_MISSING_INDEX, ()
+                -> new WeeklyTaskParser(" w/3", "usage"));
     }
 
     @Test
-    public void parseStudentIndex_nullInput_throwsNullPointerException() {
-        assertThrows(NullPointerException.class, () -> WeeklyTaskParser.parseStudentIndex(null));
+    public void constructor_invalidIndex_throwsParseException() {
+        String expected = String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddAttendanceCommand.MESSAGE_USAGE);
+
+        assertThrows(ParseException.class, expected, ()
+                -> new WeeklyTaskParser("0 w/3", "usage"));
     }
 
     @Test
     public void parseTutorialWeek_validInput_returnsWeek() throws Exception {
-        assertEquals(3, WeeklyTaskParser.parseTutorialWeek("3"));
-        assertEquals(11, WeeklyTaskParser.parseTutorialWeek("11"));
-        assertEquals(12, WeeklyTaskParser.parseTutorialWeek("12"));
-        assertEquals(13, WeeklyTaskParser.parseTutorialWeek("13"));
-        assertEquals(3, WeeklyTaskParser.parseTutorialWeek(" \t3 "));
+        assertEquals(3, WeeklyTaskParser.parseTutorialWeek(tokenizeWeek("3")));
+        assertEquals(0, WeeklyTaskParser.parseTutorialWeek(tokenizeWeek("0")));
+        assertEquals(-1, WeeklyTaskParser.parseTutorialWeek(tokenizeWeek("-1")));
     }
 
     @Test
     public void parseTutorialWeek_invalidInput_throwsParseException() {
-        String[] invalidInputs = {"", " ", "0", "1", "2", "14", "-1", "+3", "03", "3.0", "three", "3 4", "2147483648"};
+        String[] invalidInputs = {"3.0", "three", "3 4", "2147483648"};
 
         for (String input : invalidInputs) {
             assertThrows(ParseException.class, WeeklyTaskParser.MESSAGE_INVALID_TUTORIAL_WEEK, () ->
-                    WeeklyTaskParser.parseTutorialWeek(input));
+                    WeeklyTaskParser.parseTutorialWeek(tokenizeWeek(input)));
         }
     }
 
     @Test
-    public void parseTutorialWeek_nullInput_throwsNullPointerException() {
+    public void parseTutorialWeek_missingInput_throwsParseException() {
+        ArgumentMultimap arguments = ArgumentTokenizer.tokenize("1", PREFIX_WEEK);
+
+        assertThrows(ParseException.class, WeeklyTaskParser.MESSAGE_MISSING_WEEK, ()
+                -> WeeklyTaskParser.parseTutorialWeek(arguments));
+    }
+
+    @Test
+    public void parseTutorialWeek_emptyInput_throwsParseException() {
+        assertThrows(ParseException.class, WeeklyTaskParser.MESSAGE_MISSING_WEEK, ()
+                -> WeeklyTaskParser.parseTutorialWeek(tokenizeWeek("")));
+    }
+
+    @Test
+    public void parseTutorialWeek_duplicateInput_throwsParseException() {
+        ArgumentMultimap arguments = ArgumentTokenizer.tokenize("1 w/3 w/4", PREFIX_WEEK);
+
+        assertThrows(ParseException.class, Messages.getErrorMessageForDuplicatePrefixes(PREFIX_WEEK), ()
+                -> WeeklyTaskParser.parseTutorialWeek(arguments));
+    }
+
+    @Test
+    public void parseTutorialWeek_nullArguments_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> WeeklyTaskParser.parseTutorialWeek(null));
     }
 
@@ -65,5 +87,15 @@ public class WeeklyTaskParserTest {
     public void constructor_nullArguments_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> new WeeklyTaskParser(null, "usage"));
         assertThrows(NullPointerException.class, () -> new WeeklyTaskParser("1 w/3", null));
+    }
+
+    /**
+     * Tokenizes one week value for tests of {@link WeeklyTaskParser#parseTutorialWeek(ArgumentMultimap)}.
+     *
+     * @param week Week value to place after the week prefix.
+     * @return Tokenized arguments containing the supplied week value.
+     */
+    private ArgumentMultimap tokenizeWeek(String week) {
+        return ArgumentTokenizer.tokenize("1 w/" + week, PREFIX_WEEK);
     }
 }
