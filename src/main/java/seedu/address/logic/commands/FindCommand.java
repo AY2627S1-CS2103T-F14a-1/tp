@@ -18,8 +18,14 @@ public class FindCommand extends Command {
     public static final String COMMAND_WORD = "find";
 
     public static final String MESSAGE_USAGE = COMMAND_WORD
-            + ": Finds students whose names or studio groups contain any specified keyword(s).\n"
-            + "Parameters: [KEYWORD] [MORE_KEYWORDS] [g/STUDIO_GROUP]\n"
+            + ": Finds students by name and/or studio group.\n"
+            + "Parameters: [NAME_KEYWORD]... [g/STUDIO_GROUP]...\n"
+            + "Name keywords match student names. Studio groups are specified using g/.\n"
+            + "If both name keywords and studio groups are provided, students must match "
+            + "both criteria.\n"
+            + "If no name keyword is provided, only the studio group criterion is used.\n"
+            + "If no g/ studio group is provided, the search is performed using only "
+            + "the name keywords.\n"
             + "Example: " + COMMAND_WORD + " david alex g/1A";
 
     private final Predicate<Student> predicate;
