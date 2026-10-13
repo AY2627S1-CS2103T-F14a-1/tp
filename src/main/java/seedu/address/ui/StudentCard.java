@@ -7,6 +7,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
+import seedu.address.model.student.Attendance;
 import seedu.address.model.student.Student;
 
 /**
@@ -60,6 +61,6 @@ public class StudentCard extends UiPart<Region> {
                 .sorted(Comparator.comparing(tag -> tag.tagName))
                 .forEach(tag -> tags.getChildren().add(new Label(tag.tagName)));
         studioGroup.setText(student.getStudioGroup().studioGroup);
-        attendance.setText(student.getAttendance().attendance);
+        attendance.setText(Attendance.ATTENDANCE_MARKER + student.getAttendance().attendance);
     }
 }

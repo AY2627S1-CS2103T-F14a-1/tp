@@ -19,7 +19,7 @@ public final class Attendance {
     public static final String MESSAGE_CONSTRAINTS =
             "Tutorial week must be between " + MIN_WEEK + " and " + MAX_WEEK + " inclusive";
 
-    public final String attendanceMarker = "Attendance: ";
+    public static final String ATTENDANCE_MARKER = "Attendance: ";
     public final String attendance;
 
     private final Set<Integer> attendedWeeks;
@@ -29,7 +29,7 @@ public final class Attendance {
      */
     public Attendance() {
         this.attendedWeeks = Collections.emptySet();
-        this.attendance = attendanceMarker + toString();
+        this.attendance = toString();
     }
 
     /**
@@ -47,7 +47,7 @@ public final class Attendance {
             checkArgument(isValidWeek(week), MESSAGE_CONSTRAINTS);
         }
         this.attendedWeeks = Collections.unmodifiableSet(copiedWeeks);
-        this.attendance = attendanceMarker + toString();
+        this.attendance = toString();
     }
 
     /**
