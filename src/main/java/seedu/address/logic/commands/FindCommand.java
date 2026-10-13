@@ -2,13 +2,15 @@ package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.function.Predicate;
+
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.Messages;
 import seedu.address.model.Model;
-import seedu.address.model.student.NameContainsKeywordsPredicate;
+import seedu.address.model.student.Student;
 
 /**
- * Finds and lists students whose names contain any argument keyword.
+ * Finds and lists students whose names or studio groups contain any argument keyword.
  * Matching is case-insensitive and allows partial names.
  */
 public class FindCommand extends Command {
@@ -16,14 +18,24 @@ public class FindCommand extends Command {
     public static final String COMMAND_WORD = "find";
 
     public static final String MESSAGE_USAGE = COMMAND_WORD
-            + ": Finds students whose names contain any specified keyword "
-            + "(case-insensitive, partial matches allowed).\n"
-            + "Parameters: KEYWORD [MORE_KEYWORDS]\n"
-            + "Example: " + COMMAND_WORD + " david alex";
+            + ": Finds students by name and/or studio group.\n"
+            + "Parameters: [NAME_KEYWORD]... [g/STUDIO_GROUP]...\n"
+            + "Name keywords match student names. Studio groups are specified using g/.\n"
+            + "If both name keywords and studio groups are provided, students must match "
+            + "both criteria.\n"
+            + "If no name keyword is provided, only the studio group criterion is used.\n"
+            + "If no g/ studio group is provided, the search is performed using only "
+            + "the name keywords.\n"
+            + "Example: " + COMMAND_WORD + " david alex g/1A";
 
-    private final NameContainsKeywordsPredicate predicate;
+    private final Predicate<Student> predicate;
 
-    public FindCommand(NameContainsKeywordsPredicate predicate) {
+    /**
+     * Creates a FindCommand that filters students using the given predicate.
+     *
+     * @param predicate the predicate used to select matching students
+     */
+    public FindCommand(Predicate<Student> predicate) {
         this.predicate = predicate;
     }
 
