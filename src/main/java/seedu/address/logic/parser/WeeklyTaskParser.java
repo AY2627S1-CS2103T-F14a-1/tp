@@ -2,7 +2,7 @@ package seedu.address.logic.parser;
 
 import static java.util.Objects.requireNonNull;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_MISSION;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_WEEK;
 
 import java.util.Locale;
 import java.util.regex.Pattern;
@@ -10,24 +10,25 @@ import java.util.stream.Stream;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.parser.exceptions.ParseException;
-import seedu.address.model.mission.MissionId;
+import seedu.address.model.student.Attendance;
 
 /**
- * Validates the shared student index and mission ID arguments for mission commands.
+ * Validates the shared student index and week arguments for mission commands.
  */
 public class WeeklyTaskParser {
 
     public static final String MESSAGE_MISSING_INDEX = "A student index must be provided.";
-    public static final String MESSAGE_MISSING_MISSION = "Specify a mission ID using m/MISSION_ID.";
-    public static final String MESSAGE_DUPLICATE_MISSION = "Mission ID must be specified only once.";
+    public static final String MESSAGE_MISSING_WEEK = "Specify a tutorial week using w/WEEK.";
+    public static final String MESSAGE_DUPLICATE_WEEK = "Tutorial week must be specified only once.";
     public static final String MESSAGE_INVALID_STUDENT_INDEX =
             "Student index must be a positive integer without a sign, decimal point, or leading zero.";
-    public static final String MESSAGE_INVALID_MISSION_ID = MissionId.MESSAGE_CONSTRAINTS;
+    public static final String MESSAGE_INVALID_TUTORIAL_WEEK = Attendance.MESSAGE_CONSTRAINTS
+            + " Enter an integer without a sign, decimal point, or leading zero.";
     private static final Pattern POSITIVE_INTEGER = Pattern.compile("[1-9][0-9]*");
 
     private final String usage;
     private final Index index;
-    private final MissionId missionId;
+    private final int week;
 
     /**
      * Parses arguments using the calling command's usage in format errors.
@@ -40,9 +41,9 @@ public class WeeklyTaskParser {
     public WeeklyTaskParser(String args, String usage) throws ParseException {
         requireNonNull(args);
         this.usage = requireNonNull(usage);
-        ArgumentMultimap arguments = ArgumentTokenizer.tokenize(normalizeArguments(args), PREFIX_MISSION);
+        ArgumentMultimap arguments = ArgumentTokenizer.tokenize(normalizeArguments(args), PREFIX_WEEK);
         index = extractIndex(arguments);
-        missionId = parseMissionId(extractMissionId(arguments));
+        week = parseTutorialWeek(extractWeek(arguments));
     }
 
     /**
@@ -55,12 +56,12 @@ public class WeeklyTaskParser {
     }
 
     /**
-     * Returns the canonical mission ID.
+     * Returns the validated tutorial week.
      *
-     * @return The mission ID.
+     * @return The tutorial week.
      */
-    public MissionId getMissionId() {
-        return missionId;
+    public int getWeek() {
+        return week;
     }
 
     /**
@@ -73,17 +74,17 @@ public class WeeklyTaskParser {
     private Index extractIndex(ArgumentMultimap arguments) throws ParseException {
         String indexText = arguments.getPreamble();
         if (indexText.isEmpty()) {
-            for (String value : arguments.getAllValues(PREFIX_MISSION)) {
+            for (String value : arguments.getAllValues(PREFIX_WEEK)) {
                 rejectExtraArguments(value);
             }
             throw new ParseException(MESSAGE_MISSING_INDEX);
         }
 
         String[] fields = indexText.split(" ");
-        if (!arePrefixesPresent(arguments, PREFIX_MISSION) && fields.length == 2
-                && fields[1].matches("(?i)M[0-9]+")) {
+        if (!arePrefixesPresent(arguments, PREFIX_WEEK) && fields.length == 2
+                && POSITIVE_INTEGER.matcher(fields[1]).matches()) {
             parseStudentIndex(fields[0]);
-            throw new ParseException(MESSAGE_MISSING_MISSION);
+            throw new ParseException(MESSAGE_MISSING_WEEK);
         }
 
         rejectExtraArguments(indexText);
@@ -114,61 +115,70 @@ public class WeeklyTaskParser {
     }
 
     /**
-     * Parses a case-insensitive mission ID into its canonical uppercase form.
+     * Parses a tutorial week within the model's valid range.
      *
-     * @param missionIdText Mission ID text.
-     * @return The validated mission ID.
+     * @param week Tutorial week text.
+     * @return The validated tutorial week.
      * @throws NullPointerException If the text is null.
-     * @throws ParseException If the mission ID is invalid.
+     * @throws ParseException If the week syntax or numeric value is invalid.
      */
-    public static MissionId parseMissionId(String missionIdText) throws ParseException {
-        requireNonNull(missionIdText);
+    public static int parseTutorialWeek(String week) throws ParseException {
+        requireNonNull(week);
+
+        String trimmedWeek = week.trim();
+        if (!POSITIVE_INTEGER.matcher(trimmedWeek).matches()) {
+            throw new ParseException(MESSAGE_INVALID_TUTORIAL_WEEK);
+        }
 
         try {
-            return new MissionId(missionIdText.trim().toUpperCase(Locale.ROOT));
-        } catch (IllegalArgumentException e) {
-            throw new ParseException(MESSAGE_INVALID_MISSION_ID);
+            int parsedWeek = Integer.parseInt(trimmedWeek);
+            if (!Attendance.isValidWeek(parsedWeek)) {
+                throw new ParseException(MESSAGE_INVALID_TUTORIAL_WEEK);
+            }
+            return parsedWeek;
+        } catch (NumberFormatException e) {
+            throw new ParseException(MESSAGE_INVALID_TUTORIAL_WEEK);
         }
     }
 
     /**
-     * Normalizes whitespace while preserving the required lowercase prefix.
+     * Normalizes whitespace and prefix case for this numeric-only command.
      * The leading space allows the tokenizer to detect an initial prefix.
      *
      * @param args Original command arguments.
      * @return Arguments suitable for the existing tokenizer.
      */
     private String normalizeArguments(String args) {
-        return " " + args.strip().replaceAll("\\s+", " ");
+        return " " + args.strip().replaceAll("\\s+", " ").toLowerCase(Locale.ROOT);
     }
 
     /**
-     * Extracts the single required mission ID value.
+     * Extracts the single required tutorial week value.
      *
      * @param argMultimap Tokenized command arguments.
-     * @return The non-empty mission ID text.
-     * @throws ParseException If the mission ID is missing, repeated, or has extra arguments.
+     * @return The non-empty week text.
+     * @throws ParseException If the week is missing, repeated, or has extra arguments.
      */
-    private String extractMissionId(ArgumentMultimap argMultimap) throws ParseException {
-        if (!arePrefixesPresent(argMultimap, PREFIX_MISSION)) {
-            throw new ParseException(MESSAGE_MISSING_MISSION);
+    private String extractWeek(ArgumentMultimap argMultimap) throws ParseException {
+        if (!arePrefixesPresent(argMultimap, PREFIX_WEEK)) {
+            throw new ParseException(MESSAGE_MISSING_WEEK);
         }
 
-        if (argMultimap.getAllValues(PREFIX_MISSION).size() > 1) {
-            throw new ParseException(MESSAGE_DUPLICATE_MISSION);
+        if (argMultimap.getAllValues(PREFIX_WEEK).size() > 1) {
+            throw new ParseException(MESSAGE_DUPLICATE_WEEK);
         }
 
-        String missionIdText = argMultimap.getValue(PREFIX_MISSION).orElseThrow();
-        if (missionIdText.isEmpty()) {
-            throw new ParseException(MESSAGE_MISSING_MISSION);
+        String weekText = argMultimap.getValue(PREFIX_WEEK).orElseThrow();
+        if (weekText.isEmpty()) {
+            throw new ParseException(MESSAGE_MISSING_WEEK);
         }
 
-        rejectExtraArguments(missionIdText);
-        return missionIdText;
+        rejectExtraArguments(weekText);
+        return weekText;
     }
 
     /**
-     * Rejects extra arguments or unexpected prefixes within an index or mission ID field.
+     * Rejects extra arguments or unexpected prefixes within a numeric field.
      *
      * @param text Trimmed, whitespace-normalized field text.
      * @throws ParseException If additional argument structure is present.
