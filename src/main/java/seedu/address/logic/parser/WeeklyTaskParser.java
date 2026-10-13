@@ -15,7 +15,7 @@ import seedu.address.model.mission.MissionId;
 /**
  * Validates the shared student index and mission ID arguments for mission commands.
  */
-public class MissionParser {
+public class WeeklyTaskParser {
 
     public static final String MESSAGE_MISSING_INDEX = "A student index must be provided.";
     public static final String MESSAGE_MISSING_MISSION = "Specify a mission ID using m/MISSION_ID.";
@@ -37,7 +37,7 @@ public class MissionParser {
      * @throws NullPointerException If either argument is null.
      * @throws ParseException If required information is missing or invalid.
      */
-    public MissionParser(String args, String usage) throws ParseException {
+    public WeeklyTaskParser(String args, String usage) throws ParseException {
         requireNonNull(args);
         this.usage = requireNonNull(usage);
         ArgumentMultimap arguments = ArgumentTokenizer.tokenize(normalizeArguments(args), PREFIX_MISSION);
