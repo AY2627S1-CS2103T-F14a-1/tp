@@ -4,11 +4,8 @@ import static java.util.Objects.requireNonNull;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_WEEK;
 
-import java.util.Locale;
-import java.util.regex.Pattern;
-import java.util.stream.Stream;
-
 import seedu.address.commons.core.index.Index;
+import seedu.address.logic.commands.AddAttendanceCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.student.Attendance;
 
@@ -24,7 +21,6 @@ public class WeeklyTaskParser {
             "Student index must be a positive integer without a sign, decimal point, or leading zero.";
     public static final String MESSAGE_INVALID_TUTORIAL_WEEK = Attendance.MESSAGE_CONSTRAINTS
             + " Enter a single integer without a sign, decimal point, or leading zero.";
-    private static final Pattern POSITIVE_INTEGER = Pattern.compile("[1-9][0-9]*");
 
     private final String usage;
     private final Index index;
@@ -73,7 +69,12 @@ public class WeeklyTaskParser {
             throw new ParseException(MESSAGE_MISSING_INDEX);
         }
 
-        return ParserUtil.parseIndex(indexText);
+        try {
+            return ParserUtil.parseIndex(indexText);
+        } catch (ParseException pe) {
+            throw new ParseException(
+                    String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddAttendanceCommand.MESSAGE_USAGE), pe);
+        }
     }
 
     /**
@@ -88,9 +89,7 @@ public class WeeklyTaskParser {
             throw new ParseException(MESSAGE_MISSING_WEEK);
         }
 
-        if (argMultimap.getAllValues(PREFIX_WEEK).size() > 1) {
-            throw new ParseException(MESSAGE_DUPLICATE_WEEK);
-        }
+        argMultimap.verifyNoDuplicatePrefixesFor(PREFIX_WEEK);
 
         String weekText = argMultimap.getValue(PREFIX_WEEK).orElseThrow();
         if (weekText.isEmpty()) {

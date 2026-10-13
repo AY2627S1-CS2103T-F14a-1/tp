@@ -1,7 +1,6 @@
 package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
-import static seedu.address.commons.util.AppUtil.checkArgument;
 import static seedu.address.model.student.Attendance.MESSAGE_CONSTRAINTS;
 import static seedu.address.model.student.Attendance.isValidWeek;
 
