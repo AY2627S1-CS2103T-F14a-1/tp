@@ -41,7 +41,7 @@ public class WeeklyTaskParser {
     public WeeklyTaskParser(String args, String usage) throws ParseException {
         requireNonNull(args);
         this.usage = requireNonNull(usage);
-        ArgumentMultimap arguments = ArgumentTokenizer.tokenize(normalizeArguments(args), PREFIX_WEEK);
+        ArgumentMultimap arguments = ArgumentTokenizer.tokenize(args, PREFIX_WEEK);
         index = parseIndex(arguments);
         week = parseTutorialWeek(extractWeek(arguments));
     }
@@ -96,7 +96,7 @@ public class WeeklyTaskParser {
      * @throws ParseException If the week is missing, repeated, or has extra arguments.
      */
     private String extractWeek(ArgumentMultimap argMultimap) throws ParseException {
-        if (!arePrefixesPresent(argMultimap, PREFIX_WEEK)) {
+        if (argMultimap.getValue(PREFIX_WEEK).isEmpty()) {
             throw new ParseException(MESSAGE_MISSING_WEEK);
         }
 
@@ -125,17 +125,4 @@ public class WeeklyTaskParser {
                     MESSAGE_INVALID_COMMAND_FORMAT, usage));
         }
     }
-
-    /**
-     * Returns whether every specified prefix is present.
-     * A present prefix may still have an empty value.
-     *
-     * @param argumentMultimap Tokenized arguments.
-     * @param prefixes Required prefixes.
-     * @return True if all required prefixes are present.
-     */
-    private static boolean arePrefixesPresent(ArgumentMultimap argumentMultimap, Prefix... prefixes) {
-        return Stream.of(prefixes).allMatch(prefix -> argumentMultimap.getValue(prefix).isPresent());
-    }
-
 }
