@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.parser.exceptions.ParseException;
-import seedu.address.model.student.MissionSubmissions;
+import seedu.address.model.student.Attendance;
 
 /**
  * Validates the shared student index and week arguments for mission commands.
@@ -22,7 +22,7 @@ public class WeeklyTaskParser {
     public static final String MESSAGE_DUPLICATE_WEEK = "Tutorial week must be specified only once.";
     public static final String MESSAGE_INVALID_STUDENT_INDEX =
             "Student index must be a positive integer without a sign, decimal point, or leading zero.";
-    public static final String MESSAGE_INVALID_TUTORIAL_WEEK = MissionSubmissions.MESSAGE_CONSTRAINTS
+    public static final String MESSAGE_INVALID_TUTORIAL_WEEK = Attendance.MESSAGE_CONSTRAINTS
             + " Enter an integer without a sign, decimal point, or leading zero.";
     private static final Pattern POSITIVE_INTEGER = Pattern.compile("[1-9][0-9]*");
 
@@ -64,31 +64,14 @@ public class WeeklyTaskParser {
         return week;
     }
 
-    /**
-     * Extracts the index while distinguishing missing inputs from misplaced arguments.
-     *
-     * @param arguments Tokenized command arguments.
-     * @return The validated displayed student index.
-     * @throws ParseException If the index is missing, invalid, or surrounded by extra arguments.
-     */
     private Index extractIndex(ArgumentMultimap arguments) throws ParseException {
         String indexText = arguments.getPreamble();
+        // if no index detected
         if (indexText.isEmpty()) {
-            for (String value : arguments.getAllValues(PREFIX_WEEK)) {
-                rejectExtraArguments(value);
-            }
             throw new ParseException(MESSAGE_MISSING_INDEX);
         }
 
-        String[] fields = indexText.split(" ");
-        if (!arePrefixesPresent(arguments, PREFIX_WEEK) && fields.length == 2
-                && POSITIVE_INTEGER.matcher(fields[1]).matches()) {
-            parseStudentIndex(fields[0]);
-            throw new ParseException(MESSAGE_MISSING_WEEK);
-        }
-
-        rejectExtraArguments(indexText);
-        return parseStudentIndex(indexText);
+        return ParserUtil.parseIndex(indexText);
     }
 
     /**
@@ -132,7 +115,7 @@ public class WeeklyTaskParser {
 
         try {
             int parsedWeek = Integer.parseInt(trimmedWeek);
-            if (!MissionSubmissions.isValidWeek(parsedWeek)) {
+            if (!Attendance.isValidWeek(parsedWeek)) {
                 throw new ParseException(MESSAGE_INVALID_TUTORIAL_WEEK);
             }
             return parsedWeek;

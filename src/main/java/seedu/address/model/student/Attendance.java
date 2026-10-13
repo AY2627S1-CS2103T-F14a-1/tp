@@ -17,7 +17,7 @@ public final class Attendance {
     public static final int MIN_WEEK = 3;
     public static final int MAX_WEEK = 13;
     public static final String MESSAGE_CONSTRAINTS =
-            "Tutorial week must be between " + MIN_WEEK + " and " + MAX_WEEK + " inclusive";
+            "Tutorial week must be between " + MIN_WEEK + " and " + MAX_WEEK + " inclusive.";
 
     private final Set<Integer> attendedWeeks;
 
