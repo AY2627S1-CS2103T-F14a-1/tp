@@ -35,9 +35,7 @@ public class FindCommandParser implements Parser<FindCommand> {
 
         String preamble = argMultimap.getPreamble();
 
-        List<String> nameKeywords = preamble.isBlank()
-                ? new ArrayList<>()
-                : List.of(preamble.split("\\s+"));
+        List<String> nameKeywords = parseNameAlternatives(preamble);
 
         List<String> groupKeywords =
                 argMultimap.getAllValues(PREFIX_STUDIO_GROUP);
@@ -59,6 +57,33 @@ public class FindCommandParser implements Parser<FindCommand> {
                 buildPredicate(nameKeywords, studioGroups);
 
         return new FindCommand(predicate);
+    }
+
+    /**
+     * Parses comma-separated name alternatives and normalizes their whitespace.
+     * A blank preamble represents a search containing only studio groups.
+     *
+     * @param preamble Name portion before the studio-group prefixes.
+     * @return Name alternatives, with each alternative containing required words.
+     * @throws ParseException If a comma-separated alternative is empty.
+     */
+    private List<String> parseNameAlternatives(String preamble) throws ParseException {
+        if (preamble.isBlank()) {
+            return List.of();
+        }
+
+        List<String> alternatives = new ArrayList<>();
+        for (String alternative : preamble.split(",", -1)) {
+            String normalizedAlternative = alternative.strip().replaceAll("\\s+", " ");
+            if (normalizedAlternative.isEmpty()) {
+                throw new ParseException(
+                        String.format(MESSAGE_INVALID_COMMAND_FORMAT, FindCommand.MESSAGE_USAGE));
+            }
+
+            alternatives.add(normalizedAlternative);
+        }
+
+        return alternatives;
     }
 
     private Predicate<Student> buildPredicate(
