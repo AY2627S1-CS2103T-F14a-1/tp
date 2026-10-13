@@ -1,5 +1,6 @@
 package seedu.address.logic.parser;
 
+import static java.util.Objects.requireNonNull;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_STUDIO_GROUP;
 
@@ -11,6 +12,7 @@ import seedu.address.logic.commands.FindCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.student.NameContainsKeywordsPredicate;
 import seedu.address.model.student.Student;
+import seedu.address.model.student.StudioGroup;
 import seedu.address.model.student.StudioGroupContainsKeywordsPredicate;
 
 /**
@@ -26,65 +28,52 @@ public class FindCommandParser implements Parser<FindCommand> {
      */
     @Override
     public FindCommand parse(String args) throws ParseException {
-        String trimmedArgs = args.strip();
-        if (trimmedArgs.isEmpty()) {
+        requireNonNull(args);
+
+        ArgumentMultimap argMultimap =
+                ArgumentTokenizer.tokenize(args, PREFIX_STUDIO_GROUP);
+
+        String preamble = argMultimap.getPreamble();
+
+        List<String> nameKeywords = preamble.isBlank()
+                ? new ArrayList<>()
+                : List.of(preamble.split("\\s+"));
+
+        List<String> groupKeywords =
+                argMultimap.getAllValues(PREFIX_STUDIO_GROUP);
+
+        List<StudioGroup> studioGroups = new ArrayList<>();
+
+        for (String groupKeyword : groupKeywords) {
+            studioGroups.add(ParserUtil.parseStudioGroup(groupKeyword));
+        }
+
+        if (nameKeywords.isEmpty() && studioGroups.isEmpty()) {
             throw new ParseException(
-                    String.format(MESSAGE_INVALID_COMMAND_FORMAT,
+                    String.format(
+                            MESSAGE_INVALID_COMMAND_FORMAT,
                             FindCommand.MESSAGE_USAGE));
         }
 
-        String[] tokens = trimmedArgs.split("\\s+");
-        List<String> nameKeywords = new ArrayList<>();
-        List<String> groupKeywords = new ArrayList<>();
+        Predicate<Student> predicate =
+                buildPredicate(nameKeywords, studioGroups);
 
-        boolean groupPrefixSeen = false;
-
-        for (String token : tokens) {
-            if (token.startsWith(PREFIX_STUDIO_GROUP.getPrefix())) {
-                String groupKeyword = token.substring(
-                        PREFIX_STUDIO_GROUP.getPrefix().length());
-
-                if (groupKeyword.isBlank()) {
-                    throw new ParseException(
-                            String.format(
-                                    MESSAGE_INVALID_COMMAND_FORMAT,
-                                    FindCommand.MESSAGE_USAGE));
-                }
-
-                groupKeywords.add(groupKeyword);
-                groupPrefixSeen = true;
-            } else {
-                if (groupPrefixSeen) {
-                    throw new ParseException(
-                            String.format(
-                                    MESSAGE_INVALID_COMMAND_FORMAT,
-                                    FindCommand.MESSAGE_USAGE));
-                }
-
-                nameKeywords.add(token);
-            }
-        }
-
-        if (nameKeywords.isEmpty() && groupKeywords.isEmpty()) {
-            throw new ParseException(
-                    String.format(MESSAGE_INVALID_COMMAND_FORMAT,
-                            FindCommand.MESSAGE_USAGE));
-        }
-
-        Predicate<Student> predicate = buildPredicate(nameKeywords, groupKeywords);
         return new FindCommand(predicate);
     }
 
-    private Predicate<Student> buildPredicate(List<String> nameKeywords, List<String> groupKeywords) {
-        if (!nameKeywords.isEmpty() && groupKeywords.isEmpty()) {
+    private Predicate<Student> buildPredicate(
+            List<String> nameKeywords,
+            List<StudioGroup> studioGroups) {
+
+        if (!nameKeywords.isEmpty() && studioGroups.isEmpty()) {
             return new NameContainsKeywordsPredicate(nameKeywords);
         }
 
-        if (nameKeywords.isEmpty() && !groupKeywords.isEmpty()) {
-            return new StudioGroupContainsKeywordsPredicate(groupKeywords);
+        if (nameKeywords.isEmpty() && !studioGroups.isEmpty()) {
+            return new StudioGroupContainsKeywordsPredicate(studioGroups);
         }
 
-        Predicate<Student> predicate = new NameContainsKeywordsPredicate(nameKeywords);
-        return predicate.and(new StudioGroupContainsKeywordsPredicate(groupKeywords));
+        return new NameContainsKeywordsPredicate(nameKeywords)
+                .and(new StudioGroupContainsKeywordsPredicate(studioGroups));
     }
 }
