@@ -175,8 +175,9 @@ so removed IDs need not be reused. `Long.MAX_VALUE` is the exhausted-counter sen
 Student `missionSubmissions` contain canonical mission ID strings, such as `["M01", "M05"]`.
 Loading validates that every submission refers to a configured mission. Missing submission records
 mean Not submitted; no unknown status is stored. The catalogue fields are required, and every
-submission must be a canonical mission ID. Startup stops on invalid saved data to prevent
-accidental replacement of the file with an empty address book.
+submission must be a canonical mission ID. Loading failures reject the entire dataset and are logged. Startup uses an empty address book
+without writing the invalid file. The next successful command, including `list`, saves the current
+in-memory data over that file. A missing file uses sample data instead.
 
 `markmission INDEX m/MISSION_ID` and `unmarkmission INDEX m/MISSION_ID` update one student's
 submission using the currently displayed index. `view INDEX` renders the configured missions,
@@ -573,7 +574,7 @@ The user stories above represent the main intended functionality and selected fu
 12. All commands should be typed into a single interface.
 13. Records should be preserved after closing and reopening the application.
 14. Should retain previously saved data even if an operation fails.
-15. If one stored record does not adhere to the defined format, the system should report the problem while loading all other valid records.
+15. If a stored record is invalid, the system logs the loading error and starts with an empty address book. The saved file remains unchanged until a command executes successfully.
 
 ### Glossary
 

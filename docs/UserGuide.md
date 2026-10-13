@@ -188,7 +188,7 @@ Format: `exit`
 
 ### Saving the data
 
-AvengerHub automatically saves data after every command. You do not need to save manually.
+AvengerHub automatically saves data after every successfully executed command. You do not need to save manually.
 
 Mission submission marking and unmarking are saved automatically and retained when you reopen the application. Invalid mission commands leave existing records unchanged.
 
@@ -199,8 +199,12 @@ AddressBook data is saved automatically as a JSON file `[JAR file location]/data
 <box type="warning" seamless>
 
 **Caution:**
-If your changes make the data file invalid, AddressBook starts with an empty address book at the next run. The invalid file remains on disk until you run a command (AddressBook saves after every command). Still, we recommend backing up the file before editing it.<br>
-Furthermore, certain edits can cause the AddressBook to behave in unexpected ways (e.g., if a value entered is outside of the acceptable range). Therefore, edit the data file only if you are confident that you can update it correctly.
+Back up the file before editing it manually. If loading fails because of malformed JSON,
+invalid student details, or invalid mission catalogue data, AvengerHub logs the error and
+opens an empty address book. The entire dataset is rejected; no partial records are retained.
+Startup leaves the invalid file unchanged. The next successfully executed command, including
+`list`, overwrites that file with the current in-memory address book, which may be empty.
+Failed commands do not save. A missing file instead loads the sample data.
 </box>
 
 ### Archiving data files `[coming in v2.0]`

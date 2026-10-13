@@ -108,6 +108,9 @@ class JsonAdaptedStudent {
     public Student toModelType() throws IllegalValueException {
         final List<Tag> studentTags = new ArrayList<>();
         for (JsonAdaptedTag tag : tags) {
+            if (tag == null) {
+                throw new IllegalValueException("Student tags must not be null.");
+            }
             studentTags.add(tag.toModelType());
         }
 

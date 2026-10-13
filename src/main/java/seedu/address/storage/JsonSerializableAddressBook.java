@@ -22,7 +22,7 @@ class JsonSerializableAddressBook {
 
     public static final String MESSAGE_DUPLICATE_STUDENT = "Students list contains duplicate student(s).";
 
-    private final List<JsonAdaptedStudent> students = new ArrayList<>();
+    private final List<JsonAdaptedStudent> students;
     private final List<JsonAdaptedMission> missions;
     private final Object nextMissionNumber;
 
@@ -38,7 +38,7 @@ class JsonSerializableAddressBook {
     public JsonSerializableAddressBook(@JsonProperty("students") List<JsonAdaptedStudent> students,
             @JsonProperty("missions") List<JsonAdaptedMission> missions,
             @JsonProperty("nextMissionNumber") Object nextMissionNumber) {
-        this.students.addAll(students);
+        this.students = students == null ? null : new ArrayList<>(students);
         this.missions = missions;
         this.nextMissionNumber = nextMissionNumber;
     }
@@ -49,7 +49,7 @@ class JsonSerializableAddressBook {
      * @param source future changes to this will not affect the created {@code JsonSerializableAddressBook}.
      */
     public JsonSerializableAddressBook(ReadOnlyAddressBook source) {
-        students.addAll(source.getStudentList().stream().map(JsonAdaptedStudent::new).collect(Collectors.toList()));
+        students = source.getStudentList().stream().map(JsonAdaptedStudent::new).collect(Collectors.toList());
         missions = source.getMissionList().stream().map(JsonAdaptedMission::new).collect(Collectors.toList());
         nextMissionNumber = source.getNextMissionNumber();
     }
@@ -60,9 +60,15 @@ class JsonSerializableAddressBook {
      * @throws IllegalValueException if there were any data constraints violated.
      */
     public AddressBook toModelType() throws IllegalValueException {
+        if (students == null) {
+            throw new IllegalValueException("Students list is required.");
+        }
         AddressBook addressBook = new AddressBook();
         restoreMissions(addressBook);
         for (JsonAdaptedStudent jsonAdaptedStudent : students) {
+            if (jsonAdaptedStudent == null) {
+                throw new IllegalValueException("Student records must not be null.");
+            }
             Student student = jsonAdaptedStudent.toModelType();
             if (addressBook.hasStudent(student)) {
                 throw new IllegalValueException(MESSAGE_DUPLICATE_STUDENT);
