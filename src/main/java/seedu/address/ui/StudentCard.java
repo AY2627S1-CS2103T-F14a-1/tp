@@ -42,6 +42,8 @@ public class StudentCard extends UiPart<Region> {
     private FlowPane tags;
     @FXML
     private Label studioGroup;
+    @FXML
+    private Label attendance;
 
     /**
      * Creates a {@code StudentCard} with the given {@code Student} and index to display.
@@ -58,5 +60,6 @@ public class StudentCard extends UiPart<Region> {
                 .sorted(Comparator.comparing(tag -> tag.tagName))
                 .forEach(tag -> tags.getChildren().add(new Label(tag.tagName)));
         studioGroup.setText(student.getStudioGroup().studioGroup);
+        attendance.setText(student.getAttendance().attendance);
     }
 }
