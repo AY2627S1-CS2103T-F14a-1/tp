@@ -25,7 +25,7 @@ import seedu.address.logic.commands.AddCommand;
 import seedu.address.logic.commands.CommandResult;
 import seedu.address.logic.commands.ListCommand;
 import seedu.address.logic.commands.exceptions.CommandException;
-import seedu.address.logic.parser.MissionParser;
+import seedu.address.logic.parser.WeeklyTaskParser;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
@@ -193,7 +193,7 @@ public class LogicManagerTest {
                 reloadedLogic.execute("addmission 1 w/3").getFeedbackToUser());
 
         String savedJson = Files.readString(filePath);
-        assertThrows(ParseException.class, MissionParser.MESSAGE_INVALID_TUTORIAL_WEEK, () ->
+        assertThrows(ParseException.class, WeeklyTaskParser.MESSAGE_INVALID_TUTORIAL_WEEK, () ->
                 reloadedLogic.execute("addmission 1 w/14"));
         assertEquals(savedJson, Files.readString(filePath));
         assertEquals(Set.of(5, 3), reloadedModel.getFilteredStudentList().get(0)
@@ -223,7 +223,7 @@ public class LogicManagerTest {
                 .getMissionSubmissions().getSubmittedWeeks());
 
         String savedJson = Files.readString(filePath);
-        assertThrows(ParseException.class, MissionParser.MESSAGE_INVALID_TUTORIAL_WEEK, () ->
+        assertThrows(ParseException.class, WeeklyTaskParser.MESSAGE_INVALID_TUTORIAL_WEEK, () ->
                 reloadedLogic.execute("delmission 1 w/14"));
         assertEquals(savedJson, Files.readString(filePath));
         assertEquals(Set.of(13), reloadedModel.getFilteredStudentList().get(0)

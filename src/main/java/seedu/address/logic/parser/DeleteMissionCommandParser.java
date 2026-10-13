@@ -18,7 +18,7 @@ public class DeleteMissionCommandParser implements Parser<DeleteMissionCommand> 
      */
     @Override
     public DeleteMissionCommand parse(String args) throws ParseException {
-        MissionParser arguments = new MissionParser(args, DeleteMissionCommand.MESSAGE_USAGE);
+        WeeklyTaskParser arguments = new WeeklyTaskParser(args, DeleteMissionCommand.MESSAGE_USAGE);
         return new DeleteMissionCommand(arguments.getIndex(), arguments.getWeek());
     }
 }
