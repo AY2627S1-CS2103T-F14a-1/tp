@@ -1,7 +1,6 @@
 package seedu.address.model.student;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.function.Predicate;
 
 import seedu.address.commons.util.ToStringBuilder;
@@ -10,15 +9,16 @@ import seedu.address.commons.util.ToStringBuilder;
  * Tests that a {@code Student}'s studio group matches any of the given keywords.
  */
 public class StudioGroupContainsKeywordsPredicate implements Predicate<Student> {
-    private final List<String> keywords;
+    private final List<StudioGroup> studioGroups;
 
     /**
      * Creates a predicate that matches students whose studio group contains any keyword.
      *
-     * @param keywords the studio group keywords to match against
+     * @param studioGroups the studio groups to match against
      */
-    public StudioGroupContainsKeywordsPredicate(List<String> keywords) {
-        this.keywords = keywords;
+    public StudioGroupContainsKeywordsPredicate(
+            List<StudioGroup> studioGroups) {
+        this.studioGroups = studioGroups;
     }
 
     /**
@@ -29,10 +29,9 @@ public class StudioGroupContainsKeywordsPredicate implements Predicate<Student> 
      */
     @Override
     public boolean test(Student student) {
-        return keywords.stream()
-                .anyMatch(keyword ->
-                        student.getStudioGroup()
-                                .equals(new StudioGroup(keyword.toUpperCase(Locale.ROOT))));
+        return studioGroups.stream()
+                .anyMatch(group ->
+                        student.getStudioGroup().equals(group));
     }
 
     @Override
@@ -41,16 +40,17 @@ public class StudioGroupContainsKeywordsPredicate implements Predicate<Student> 
             return true;
         }
 
-        // instanceof handles nulls
-        if (!(other instanceof StudioGroupContainsKeywordsPredicate otherTagContainsKeywordsPredicate)) {
+        if (!(other instanceof StudioGroupContainsKeywordsPredicate otherPredicate)) {
             return false;
         }
 
-        return keywords.equals(otherTagContainsKeywordsPredicate.keywords);
+        return studioGroups.equals(otherPredicate.studioGroups);
     }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).add("keywords", keywords).toString();
+        return new ToStringBuilder(this)
+                .add("studioGroups", studioGroups)
+                .toString();
     }
 }

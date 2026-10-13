@@ -2,6 +2,7 @@ package seedu.address.logic.parser;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
@@ -18,111 +19,172 @@ import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.UserPrefs;
 import seedu.address.model.student.NameContainsKeywordsPredicate;
+import seedu.address.model.student.StudioGroup;
 import seedu.address.model.student.StudioGroupContainsKeywordsPredicate;
 
 public class FindCommandParserTest {
 
-    private FindCommandParser parser = new FindCommandParser();
+    private final FindCommandParser parser = new FindCommandParser();
+
+    @Test
+    public void parse_nullArgs_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> parser.parse(null));
+    }
 
     @Test
     public void parse_emptyArgs_throwsParseException() {
-        String expectedMessage = String.format(MESSAGE_INVALID_COMMAND_FORMAT, FindCommand.MESSAGE_USAGE);
+        String expectedMessage =
+                String.format(
+                        MESSAGE_INVALID_COMMAND_FORMAT,
+                        FindCommand.MESSAGE_USAGE);
 
         assertParseFailure(parser, "", expectedMessage);
         assertParseFailure(parser, "     ", expectedMessage);
+        assertParseFailure(parser, "\n\t", expectedMessage);
     }
 
     @Test
-    public void parse_validArgs_returnsFindCommand() {
-        // name-only search
-        FindCommand expectedNameCommand =
-                new FindCommand(new NameContainsKeywordsPredicate(List.of("Alice", "Bob")));
-        assertParseSuccess(parser, "Alice Bob", expectedNameCommand);
+    public void parse_nameOnly_returnsFindCommand() {
+        FindCommand expectedCommand =
+                new FindCommand(
+                        new NameContainsKeywordsPredicate(
+                                List.of("Alice", "Bob")));
 
-        // multiple whitespaces between keywords
-        assertParseSuccess(parser, " \n Alice \n \t Bob  \t", expectedNameCommand);
-
-        // studio group search
-        FindCommand expectedGroupCommand =
-                new FindCommand(new StudioGroupContainsKeywordsPredicate(List.of("1A")));
-        assertParseSuccess(parser, "g/1A", expectedGroupCommand);
+        assertParseSuccess(parser, "Alice Bob", expectedCommand);
     }
 
     @Test
-    public void parse_nameAndGroupFilters_returnsMatchingStudents() throws Exception {
-        Model model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
+    public void parse_nameOnlyWithExtraWhitespace_returnsFindCommand() {
+        FindCommand expectedCommand =
+                new FindCommand(
+                        new NameContainsKeywordsPredicate(
+                                List.of("Alice", "Bob")));
 
-        FindCommand matchingCommand = parser.parse("Alice g/1A");
-        CommandResult matchingResult = matchingCommand.execute(model);
-        assertEquals("1 student(s) listed!", matchingResult.getFeedbackToUser());
-
-        FindCommand nonMatchingCommand = parser.parse("Alice g/2B");
-        CommandResult nonMatchingResult = nonMatchingCommand.execute(model);
-        assertEquals("0 student(s) listed!", nonMatchingResult.getFeedbackToUser());
+        assertParseSuccess(
+                parser,
+                " \n Alice \n \t Bob  \t",
+                expectedCommand);
     }
 
+    @Test
+    public void parse_groupOnly_returnsFindCommand() {
+        FindCommand expectedCommand =
+                new FindCommand(
+                        new StudioGroupContainsKeywordsPredicate(
+                                List.of(new StudioGroup("1A"))));
+
+        assertParseSuccess(parser, "g/1A", expectedCommand);
+    }
 
     @Test
-    public void parse_nameAfterGroup_throwsParseException() {
-        String expectedMessage = String.format(
-                MESSAGE_INVALID_COMMAND_FORMAT,
-                FindCommand.MESSAGE_USAGE);
+    public void parse_multipleGroups_returnsFindCommand() {
+        FindCommand expectedCommand =
+                new FindCommand(
+                        new StudioGroupContainsKeywordsPredicate(
+                                List.of(
+                                        new StudioGroup("1A"),
+                                        new StudioGroup("1B"))));
 
-        assertParseFailure(parser, "g/1A Alice", expectedMessage);
+        assertParseSuccess(
+                parser,
+                "g/1A g/1B",
+                expectedCommand);
+    }
+
+    @Test
+    public void parse_nameAndGroup_returnsFindCommand() {
+        assertDoesNotThrow(() -> parser.parse("Alice g/1A"));
+    }
+
+    @Test
+    public void parse_lowercaseGroupValue_throwsParseException() {
+        assertParseFailure(
+                parser,
+                "g/1a",
+                StudioGroup.MESSAGE_CONSTRAINTS);
+    }
+
+    @Test
+    public void parse_invalidGroupValue_throwsParseException() {
+        assertParseFailure(
+                parser,
+                "g/abc",
+                StudioGroup.MESSAGE_CONSTRAINTS);
+
+        assertParseFailure(
+                parser,
+                "g/1",
+                StudioGroup.MESSAGE_CONSTRAINTS);
     }
 
     @Test
     public void parse_blankGroupValue_throwsParseException() {
-        String expectedMessage = String.format(MESSAGE_INVALID_COMMAND_FORMAT, FindCommand.MESSAGE_USAGE);
-        assertParseFailure(parser, "g/", expectedMessage);
-    }
-
-    @Test
-    public void parse_multipleGroupKeywords_returnsFindCommand() {
-        assertDoesNotThrow(() ->
-                parser.parse("Alice g/1A g/1B"));
+        assertParseFailure(
+                parser,
+                "g/",
+                StudioGroup.MESSAGE_CONSTRAINTS);
     }
 
     @Test
     public void parse_groupValueWithWhitespace_throwsParseException() {
-        String expectedMessage = String.format(
-                MESSAGE_INVALID_COMMAND_FORMAT,
-                FindCommand.MESSAGE_USAGE);
+        assertParseFailure(
+                parser,
+                "g/1A Alice",
+                StudioGroup.MESSAGE_CONSTRAINTS);
 
-        assertParseFailure(parser, "g/1A Alice", expectedMessage);
-        assertParseFailure(parser, "g/1A   Bob", expectedMessage);
+        assertParseFailure(
+                parser,
+                "g/1A 1B",
+                StudioGroup.MESSAGE_CONSTRAINTS);
     }
 
     @Test
-    public void parse_groupPrefixOnly_throwsParseException() {
-        String expectedMessage = String.format(
-                MESSAGE_INVALID_COMMAND_FORMAT,
-                FindCommand.MESSAGE_USAGE);
+    public void execute_nameAndGroupFilters_returnsMatchingStudents()
+            throws ParseException {
 
-        assertParseFailure(parser, "g/", expectedMessage);
-        assertParseFailure(parser, "Alice g/", expectedMessage);
-    }
+        Model model =
+                new ModelManager(
+                        getTypicalAddressBook(),
+                        new UserPrefs());
 
-    @Test
-    public void parse_nameAndMultipleGroups_returnsFindCommand() {
-        assertDoesNotThrow(() ->
-                parser.parse("Alice g/1A g/1B"));
+        FindCommand matchingCommand =
+                parser.parse("Alice g/1A");
+
+        CommandResult matchingResult =
+                matchingCommand.execute(model);
+
+        assertEquals(
+                "1 student(s) listed!",
+                matchingResult.getFeedbackToUser());
+
+        FindCommand nonMatchingCommand =
+                parser.parse("Alice g/2B");
+
+        CommandResult nonMatchingResult =
+                nonMatchingCommand.execute(model);
+
+        assertEquals(
+                "0 student(s) listed!",
+                nonMatchingResult.getFeedbackToUser());
     }
 
     @Test
     public void execute_multipleGroupFilters_returnsMatchingStudents()
             throws ParseException {
-        Model model = new ModelManager(
-                getTypicalAddressBook(),
-                new UserPrefs());
 
-        FindCommand command = parser.parse("g/1A g/1B");
+        Model model =
+                new ModelManager(
+                        getTypicalAddressBook(),
+                        new UserPrefs());
 
-        CommandResult result = command.execute(model);
+        FindCommand command =
+                parser.parse("g/1A g/1B");
+
+        CommandResult result =
+                command.execute(model);
 
         assertEquals(
                 "7 student(s) listed!",
                 result.getFeedbackToUser());
     }
-
 }
