@@ -23,7 +23,7 @@ public class WeeklyTaskParser {
     public static final String MESSAGE_INVALID_STUDENT_INDEX =
             "Student index must be a positive integer without a sign, decimal point, or leading zero.";
     public static final String MESSAGE_INVALID_TUTORIAL_WEEK = Attendance.MESSAGE_CONSTRAINTS
-            + " Enter an integer without a sign, decimal point, or leading zero.";
+            + " Enter a single integer without a sign, decimal point, or leading zero.";
     private static final Pattern POSITIVE_INTEGER = Pattern.compile("[1-9][0-9]*");
 
     private final String usage;
@@ -43,7 +43,7 @@ public class WeeklyTaskParser {
         this.usage = requireNonNull(usage);
         ArgumentMultimap arguments = ArgumentTokenizer.tokenize(args, PREFIX_WEEK);
         index = parseIndex(arguments);
-        week = parseTutorialWeek(extractWeek(arguments));
+        week = parseTutorialWeek(arguments);
     }
 
     /**
@@ -65,6 +65,7 @@ public class WeeklyTaskParser {
     }
 
     private Index parseIndex(ArgumentMultimap arguments) throws ParseException {
+        requireNonNull(arguments);
         String indexText = arguments.getPreamble();
 
         // if no index detected
@@ -78,24 +79,11 @@ public class WeeklyTaskParser {
     /**
      * Parses a tutorial week within the model's valid range.
      *
-     * @param week Tutorial week text.
      * @return The validated tutorial week.
      * @throws NullPointerException If the text is null.
-     * @throws ParseException If the week syntax or numeric value is invalid.
      */
-    public static int parseTutorialWeek(String week) throws ParseException {
-        requireNonNull(week);
-        return Integer.parseInt(week);
-    }
-
-    /**
-     * Extracts the single required tutorial week value.
-     *
-     * @param argMultimap Tokenized command arguments.
-     * @return The non-empty week text.
-     * @throws ParseException If the week is missing, repeated, or has extra arguments.
-     */
-    private String extractWeek(ArgumentMultimap argMultimap) throws ParseException {
+    public static int parseTutorialWeek(ArgumentMultimap argMultimap) throws ParseException {
+        requireNonNull(argMultimap);
         if (argMultimap.getValue(PREFIX_WEEK).isEmpty()) {
             throw new ParseException(MESSAGE_MISSING_WEEK);
         }
@@ -109,20 +97,10 @@ public class WeeklyTaskParser {
             throw new ParseException(MESSAGE_MISSING_WEEK);
         }
 
-        rejectExtraArguments(weekText);
-        return weekText;
-    }
-
-    /**
-     * Rejects extra arguments or unexpected prefixes within a numeric field.
-     *
-     * @param text Trimmed, whitespace-normalized field text.
-     * @throws ParseException If additional argument structure is present.
-     */
-    private void rejectExtraArguments(String text) throws ParseException {
-        if (text.contains(" ") || text.contains("/")) {
-            throw new ParseException(String.format(
-                    MESSAGE_INVALID_COMMAND_FORMAT, usage));
+        try {
+            return Integer.parseInt(weekText);
+        } catch (NumberFormatException e) {
+            throw new ParseException(MESSAGE_INVALID_TUTORIAL_WEEK);
         }
     }
 }
