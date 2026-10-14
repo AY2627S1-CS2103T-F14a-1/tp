@@ -153,63 +153,34 @@ Examples:
 * `list` followed by `delete 2` deletes the 2nd student in the address book.
 * `find Betsy` followed by `delete 1` deletes the 1st student in the results of the `find` command.
 
-### Adding a mission submission record: `addmission`
+### Recording a mission submission: `markmission`
 
-Records that a student has submitted a mission for a tutorial week.
+Format: `markmission INDEX m/MISSION_ID`
 
-Format: `addmission INDEX w/WEEK`
+* `INDEX` identifies a student in the **currently displayed list**, including `find` results.
+* The index must be a positive integer without a sign or leading zeros.
+* `MISSION_ID` must identify a configured mission, for example `M01` or `M105`.
+* Use the lowercase `m/` prefix exactly once. Mission IDs are case-insensitive: `m/m01` and `m/M01` both identify `M01`. IDs are displayed and saved in uppercase.
+* Each mission ID identifies one configured assignment.
+* Repeated marking reports that the submission is already recorded and changes nothing.
+* Other students, other submissions, attendance, and the current student filter are preserved.
+* Records are maintained manually. Not submitted means no submission is recorded in AvengerHub.
 
-* `INDEX` identifies a student in the **currently displayed list**, including results from `find`. It must be a positive integer that corresponds to a displayed student.
-* `WEEK` must be an integer from **3 to 13**, inclusive. AvengerHub uses these week numbers because the tutorial schedule it supports starts in week 3 and ends in week 13. Use the actual week number: the first tutorial week is `3`, not `1`.
-* Weeks outside this range, such as `1`, `2`, or `14`, are rejected with an error message. Existing submission records remain unchanged.
-* Both arguments are required. Put `INDEX` before `w/WEEK`, and specify `w/` exactly once. Extra arguments are rejected.
-* Enter `INDEX` and `WEEK` as integers without signs, decimal points, or leading zeros. For example, use `3`, not `+3`, `3.0`, or `03`.
-* The command word and `w/` prefix are case-insensitive: `ADDMISSION 1 W/3` is also accepted.
-* Each student can have one submission record per week. Adding an existing record leaves the records unchanged and displays a message explaining that the submission is already recorded.
-* Records for other weeks and students are preserved. The current list filter stays active.
+Example: `markmission 1 m/M01`, followed by `view 1`, displays M01 as Submitted.
+An unknown mission ID or invalid command leaves existing records unchanged.
 
-Examples:
+### Removing a submission record: `unmarkmission`
 
-* `list` followed by `addmission 1 w/3` records a week 3 submission for the first student displayed.
-* `find Betsy` followed by `addmission 1 w/13` records a week 13 submission for the first student in the search results, if any.
+Format: `unmarkmission INDEX m/MISSION_ID`
 
-For example, if the first student is Amy Bee and her week 3 submission is not yet recorded, `addmission 1 w/3` displays:
+Uses the same index and mission ID rules as `markmission`. This removes only the selected student's
+submission record; it does not delete the student or the mission. Unmarking an unrecorded submission
+reports that no changes were made.
 
-```text
-Added Amy Bee’s mission submission for tutorial week 3.
-```
+Example: `unmarkmission 1 m/M01`, followed by `view 1`, displays M01 as Not submitted.
 
-### Deleting a mission submission record: `delmission`
-
-Removes a student's mission submission record for a tutorial week. The student remains in the address book.
-
-Format: `delmission INDEX w/WEEK`
-
-* `INDEX` identifies a student in the **currently displayed list**, including results from `find`. It must be a positive integer that corresponds to a displayed student.
-* `WEEK` must be an integer from **3 to 13**, inclusive. AvengerHub uses these week numbers because the tutorial schedule it supports starts in week 3 and ends in week 13. Use the actual week number: the first tutorial week is `3`, not `1`.
-* Weeks outside this range, such as `1`, `2`, or `14`, are rejected with an error message. Existing submission records remain unchanged.
-* Both arguments are required. Put `INDEX` before `w/WEEK`, and specify `w/` exactly once. Extra arguments are rejected.
-* Enter `INDEX` and `WEEK` as integers without signs, decimal points, or leading zeros.
-* The command word and `w/` prefix are case-insensitive: `DELMISSION 1 W/3` is also accepted.
-* If the submission was initially not recorded, the records remain unchanged and a message explains that no changes were made.
-* Only the specified week's record is removed. Other weeks, student details, and the current list filter are preserved.
-* Deleting the last submission leaves the student with no recorded mission submissions.
-
-Examples:
-
-* `list` followed by `delmission 1 w/3` removes the first student's week 3 submission record, if recorded.
-* `find Betsy` followed by `delmission 1 w/13` removes the week 13 submission record for the first student in the search results, if both the student and record exist.
-
-For example, if the first student is Amy Bee and her week 3 submission is recorded, `delmission 1 w/3` displays:
-
-```text
-Removed Amy Bee’s mission submission for tutorial week 3.
-```
-
-<box type="tip" seamless>
-
-To correct a submission recorded for the wrong week, use `delmission` to remove the incorrect record, then `addmission` to record the correct week.
-</box>
+The profile displays configured mission descriptions and deadlines. An empty catalogue shows
+“No missions configured.”
 
 ### Clearing all entries: `clear`
 
@@ -225,9 +196,9 @@ Format: `exit`
 
 ### Saving the data
 
-AvengerHub automatically saves data after every command. You do not need to save manually.
+AvengerHub automatically saves data after every successfully executed command. You do not need to save manually.
 
-Mission submission additions and deletions are saved automatically and retained when you reopen the application. Invalid mission commands leave existing records unchanged.
+Mission submission marking and unmarking are saved automatically and retained when you reopen the application. Invalid mission commands leave existing records unchanged.
 
 ### Editing the data file
 
@@ -236,8 +207,12 @@ AddressBook data is saved automatically as a JSON file `[JAR file location]/data
 <box type="warning" seamless>
 
 **Caution:**
-If your changes make the data file invalid, AddressBook starts with an empty address book at the next run. The invalid file remains on disk until you run a command (AddressBook saves after every command). Still, we recommend backing up the file before editing it.<br>
-Furthermore, certain edits can cause the AddressBook to behave in unexpected ways (e.g., if a value entered is outside of the acceptable range). Therefore, edit the data file only if you are confident that you can update it correctly.
+Back up the file before editing it manually. If loading fails because of malformed JSON,
+invalid student details, or invalid mission catalogue data, AvengerHub logs the error and
+opens an empty address book. The entire dataset is rejected; no partial records are retained.
+Startup leaves the invalid file unchanged. The next successfully executed command, including
+`list`, overwrites that file with the current in-memory address book, which may be empty.
+Failed commands do not save. A missing file instead loads the sample data.
 </box>
 
 ### Archiving data files `[coming in v2.0]`
@@ -265,10 +240,10 @@ _Details coming soon ..._
 Action     | Format, Examples
 -----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 **Add**    | `add n/NAME p/PHONE_NUMBER e/EMAIL a/ADDRESS [t/TAG]... ` <br> e.g., `add n/James Ho p/22224444 e/jamesho@example.com a/123, Clementi Rd, 1234665 t/friend t/colleague`
-**Add mission submission** | `addmission INDEX w/WEEK`<br> e.g., `addmission 1 w/3`
+**Record mission submission** | `markmission INDEX m/MISSION_ID`<br> e.g., `markmission 1 m/M01`
 **Clear**  | `clear`
 **Delete** | `delete INDEX`<br> e.g., `delete 3`
-**Delete mission submission** | `delmission INDEX w/WEEK`<br> e.g., `delmission 1 w/3`
+**Remove mission submission** | `unmarkmission INDEX m/MISSION_ID`<br> e.g., `unmarkmission 1 m/M01`
 **Edit**   | `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [t/TAG]... `<br> e.g.,`edit 2 n/James Lee e/jameslee@example.com`
 **Find**   | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find James Jake`
 **List**   | `list`

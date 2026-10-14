@@ -14,10 +14,10 @@ import org.junit.jupiter.api.Test;
 
 import seedu.address.commons.exceptions.IllegalValueException;
 import seedu.address.commons.util.JsonUtil;
+import seedu.address.model.mission.MissionId;
 import seedu.address.model.student.Address;
 import seedu.address.model.student.Attendance;
 import seedu.address.model.student.Email;
-import seedu.address.model.student.MissionSubmissions;
 import seedu.address.model.student.Name;
 import seedu.address.model.student.Phone;
 import seedu.address.model.student.Student;
@@ -140,20 +140,21 @@ public class JsonAdaptedStudentTest {
 
     @Test
     public void toModelType_validMissionSubmissions_returnsStudent() throws Exception {
-        Student expected = new StudentBuilder(BENSON).withMissionSubmissions(3, 4, 11, 12, 13).build();
+        Student expected = new StudentBuilder(BENSON).withMissionSubmissions("M03", "M04", "M11", "M12", "M13").build();
         JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_PHONE, VALID_EMAIL,
-                VALID_ADDRESS, VALID_TAGS, VALID_STUDIO_GROUP, List.of(3, 4, 11, 12, 13), VALID_ATTENDANCE);
+                VALID_ADDRESS, VALID_TAGS, VALID_STUDIO_GROUP,
+                List.of("M03", "M04", "M11", "M12", "M13"), VALID_ATTENDANCE);
 
         assertEquals(expected, student.toModelType());
     }
 
     @Test
     public void toModelType_invalidMissionSubmissions_throwsIllegalValueException() {
-        for (int week : new int[] {-1, 0, 1, 2, 14}) {
+        for (String invalidId : List.of("", "M00", "M1", "m01", "M001")) {
             JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_PHONE, VALID_EMAIL,
-                    VALID_ADDRESS, VALID_TAGS, VALID_STUDIO_GROUP, List.of(5, week), VALID_ATTENDANCE);
+                    VALID_ADDRESS, VALID_TAGS, VALID_STUDIO_GROUP, List.of("M05", invalidId), VALID_ATTENDANCE);
 
-            assertThrows(IllegalValueException.class, MissionSubmissions.MESSAGE_CONSTRAINTS,
+            assertThrows(IllegalValueException.class, MissionId.MESSAGE_CONSTRAINTS,
                     student::toModelType);
         }
     }
@@ -168,11 +169,11 @@ public class JsonAdaptedStudentTest {
     }
 
     @Test
-    public void toModelType_nullMissionSubmissionWeek_throwsIllegalValueException() {
+    public void toModelType_nullMissionSubmissionId_throwsIllegalValueException() {
         JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_PHONE, VALID_EMAIL,
-                VALID_ADDRESS, VALID_TAGS, VALID_STUDIO_GROUP, Arrays.asList(5, null), VALID_ATTENDANCE);
+                VALID_ADDRESS, VALID_TAGS, VALID_STUDIO_GROUP, Arrays.asList("M05", null), VALID_ATTENDANCE);
 
-        assertThrows(IllegalValueException.class, MissionSubmissions.MESSAGE_CONSTRAINTS,
+        assertThrows(IllegalValueException.class, MissionId.MESSAGE_CONSTRAINTS,
                 student::toModelType);
     }
 
@@ -186,10 +187,10 @@ public class JsonAdaptedStudentTest {
     }
 
     @Test
-    public void toModelType_duplicateMissionSubmissionWeeks_returnsUniqueSubmissions() throws Exception {
-        Student expected = new StudentBuilder(BENSON).withMissionSubmissions(5, 4).build();
+    public void toModelType_duplicateMissionSubmissionIds_returnsUniqueSubmissions() throws Exception {
+        Student expected = new StudentBuilder(BENSON).withMissionSubmissions("M05", "M04").build();
         JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_PHONE, VALID_EMAIL,
-                VALID_ADDRESS, VALID_TAGS, VALID_STUDIO_GROUP, List.of(5, 5, 4), VALID_ATTENDANCE);
+                VALID_ADDRESS, VALID_TAGS, VALID_STUDIO_GROUP, List.of("M05", "M05", "M04"), VALID_ATTENDANCE);
 
         assertEquals(expected, student.toModelType());
     }
@@ -214,15 +215,15 @@ public class JsonAdaptedStudentTest {
     }
 
     @Test
-    public void toModelType_invalidJsonMissionSubmissionWeekTypes_throwsIllegalValueException() throws Exception {
+    public void toModelType_invalidJsonMissionSubmissionIdTypes_throwsIllegalValueException() throws Exception {
         String template = JsonUtil.toJsonString(
-                new JsonAdaptedStudent(new StudentBuilder().withMissionSubmissions(3).build()));
+                new JsonAdaptedStudent(new StudentBuilder().withMissionSubmissions("M03").build()));
         for (String value : List.of("3.9", "13.9", "3.0", "3e0", "\"03\"", "true", "null", "2147483648", "{}")) {
             String json = template.replaceFirst(
                     "\"missionSubmissions\"\\s*:\\s*\\[[^]]*]", "\"missionSubmissions\": [" + value + "]");
             JsonAdaptedStudent student = JsonUtil.fromJsonString(json, JsonAdaptedStudent.class);
 
-            assertThrows(IllegalValueException.class, MissionSubmissions.MESSAGE_CONSTRAINTS, student::toModelType);
+            assertThrows(IllegalValueException.class, MissionId.MESSAGE_CONSTRAINTS, student::toModelType);
         }
     }
 
@@ -292,11 +293,11 @@ public class JsonAdaptedStudentTest {
                   "address": "123, Jurong West Ave 6, #08-111",
                   "tags": [],
                   "studioGroup": "1A",
-                  "missionSubmissions": [3]
+                  "missionSubmissions": ["M03"]
                 }
                 """;
         JsonAdaptedStudent student = JsonUtil.fromJsonString(json, JsonAdaptedStudent.class);
-        Student expected = new StudentBuilder().withMissionSubmissions(3).withAttendance().build();
+        Student expected = new StudentBuilder().withMissionSubmissions("M03").withAttendance().build();
 
         assertEquals(expected, student.toModelType());
     }
