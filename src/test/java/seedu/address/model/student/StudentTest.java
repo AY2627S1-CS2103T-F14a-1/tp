@@ -103,7 +103,7 @@ public class StudentTest {
         Student student = new Student(ALICE.getName(), ALICE.getPhone(), ALICE.getEmail(),
                 ALICE.getAddress(), ALICE.getTags(), ALICE.getStudioGroup());
 
-        assertTrue(student.getMissionSubmissions().getSubmittedMissionIds().isEmpty());
+        assertTrue(student.getMissionSubmissions().getSubmittedWeeks().isEmpty());
     }
 
     @Test
@@ -116,17 +116,17 @@ public class StudentTest {
     @Test
     public void equals_differentMissionSubmissions_returnsFalse() {
         Student original = new StudentBuilder(ALICE).withMissionSubmissions().build();
-        Student updated = new StudentBuilder(original).withMissionSubmissions("M03").build();
+        Student updated = new StudentBuilder(original).withMissionSubmissions(3).build();
 
         assertFalse(original.equals(updated));
         assertTrue(original.isSameStudent(updated));
-        assertTrue(original.getMissionSubmissions().getSubmittedMissionIds().isEmpty());
-        assertTrue(updated.getMissionSubmissions().hasSubmission(new seedu.address.model.mission.MissionId("M03")));
+        assertTrue(original.getMissionSubmissions().getSubmittedWeeks().isEmpty());
+        assertTrue(updated.getMissionSubmissions().hasSubmission(3));
     }
 
     @Test
     public void studentBuilder_copyStudent_preservesMissionSubmissions() {
-        Student original = new StudentBuilder(ALICE).withMissionSubmissions("M03", "M05").build();
+        Student original = new StudentBuilder(ALICE).withMissionSubmissions(3, 5).build();
 
         Student copy = new StudentBuilder(original).build();
 
@@ -152,7 +152,7 @@ public class StudentTest {
 
     @Test
     public void toStringMethod() {
-        Student student = new StudentBuilder(ALICE).withMissionSubmissions("M03").build();
+        Student student = new StudentBuilder(ALICE).withMissionSubmissions(3).build();
         String expected = Student.class.getCanonicalName()
                 + "{name=" + student.getName() + ", phone=" + student.getPhone()
                 + ", email=" + student.getEmail() + ", address=" + student.getAddress() + ", tags=" + student.getTags()

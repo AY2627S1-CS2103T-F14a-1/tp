@@ -112,15 +112,12 @@ public class JsonAddressBookStorageTest {
     }
 
     @Test
-    public void readAndSaveAddressBook_missionSubmissions_preservesMissionIds() throws Exception {
+    public void readAndSaveAddressBook_missionSubmissions_preservesWeeks() throws Exception {
         Path filePath = testFolder.resolve("missionSubmissions.json");
         JsonAddressBookStorage storage = new JsonAddressBookStorage(filePath);
-        Student student = new StudentBuilder(ALICE).withMissionSubmissions("M03", "M04", "M11", "M12", "M13").build();
+        Student student = new StudentBuilder(ALICE).withMissionSubmissions(3, 4, 11, 12, 13).build();
         AddressBook original = new AddressBook();
         original.addStudent(student);
-        for (int number = 1; number <= 13; number++) {
-            original.addMission("Mission " + number, java.time.LocalDate.of(2026, 10, 15));
-        }
 
         storage.saveAddressBook(original);
 
@@ -130,8 +127,7 @@ public class JsonAddressBookStorageTest {
         assertEquals(student.getMissionSubmissions(),
                 loaded.getStudentList().get(0).getMissionSubmissions());
 
-        Student updatedStudent = new StudentBuilder(student)
-                .withMissionSubmissions("M03", "M04", "M07", "M11", "M12", "M13").build();
+        Student updatedStudent = new StudentBuilder(student).withMissionSubmissions(3, 4, 7, 11, 12, 13).build();
         original.setStudent(student, updatedStudent);
         reopenedStorage.saveAddressBook(original);
 

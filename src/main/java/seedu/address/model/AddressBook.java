@@ -2,16 +2,10 @@ package seedu.address.model;
 
 import static java.util.Objects.requireNonNull;
 
-import java.time.LocalDate;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 import javafx.collections.ObservableList;
 import seedu.address.commons.util.ToStringBuilder;
-import seedu.address.model.mission.Mission;
-import seedu.address.model.mission.MissionCatalogue;
-import seedu.address.model.mission.MissionId;
 import seedu.address.model.student.Student;
 import seedu.address.model.student.UniqueStudentList;
 
@@ -22,7 +16,6 @@ import seedu.address.model.student.UniqueStudentList;
 public class AddressBook implements ReadOnlyAddressBook {
 
     private final UniqueStudentList students = new UniqueStudentList();
-    private final MissionCatalogue missions = new MissionCatalogue();
 
     public AddressBook() {}
 
@@ -50,60 +43,7 @@ public class AddressBook implements ReadOnlyAddressBook {
     public void resetData(ReadOnlyAddressBook newData) {
         requireNonNull(newData);
 
-        UniqueStudentList replacementStudents = new UniqueStudentList();
-        replacementStudents.setStudents(newData.getStudentList());
-        MissionCatalogue replacementMissions = new MissionCatalogue();
-        replacementMissions.restore(newData.getMissionList(), newData.getNextMissionNumber());
-
-        students.setStudents(replacementStudents);
-        missions.restore(replacementMissions.getMissions(), replacementMissions.getNextMissionNumber());
-    }
-
-    /**
-     * Creates a mission without changing existing student records.
-     *
-     * @param description Nonblank assignment description.
-     * @param deadline Assignment deadline.
-     * @return Newly allocated mission.
-     * @throws IllegalArgumentException If the description is blank.
-     * @throws NullPointerException If either argument is null.
-     * @throws IllegalStateException If mission IDs are exhausted.
-     */
-    public Mission addMission(String description, LocalDate deadline) {
-        return missions.add(description, deadline);
-    }
-
-    /**
-     * Finds a configured mission by its stable ID.
-     *
-     * @param id Mission identifier.
-     * @return Matching mission, if present.
-     * @throws NullPointerException If the ID is null.
-     */
-    public Optional<Mission> findMission(MissionId id) {
-        return missions.find(id);
-    }
-
-    /**
-     * Restores the catalogue after validating all records and allocation state.
-     *
-     * @param records Saved missions.
-     * @param nextNumber Next unused mission number.
-     * @throws IllegalArgumentException If IDs are duplicated or the counter is invalid.
-     * @throws NullPointerException If the list or a mission is null.
-     */
-    public void restoreMissions(List<Mission> records, long nextNumber) {
-        missions.restore(records, nextNumber);
-    }
-
-    @Override
-    public ObservableList<Mission> getMissionList() {
-        return missions.getMissions();
-    }
-
-    @Override
-    public long getNextMissionNumber() {
-        return missions.getNextMissionNumber();
+        setStudents(newData.getStudentList());
     }
 
     //// student-level operations
@@ -169,13 +109,11 @@ public class AddressBook implements ReadOnlyAddressBook {
             return false;
         }
 
-        return students.equals(otherAddressBook.students)
-                && getMissionList().equals(otherAddressBook.getMissionList())
-                && getNextMissionNumber() == otherAddressBook.getNextMissionNumber();
+        return students.equals(otherAddressBook.students);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(students, getMissionList(), getNextMissionNumber());
+        return students.hashCode();
     }
 }

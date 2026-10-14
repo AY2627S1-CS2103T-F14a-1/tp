@@ -25,12 +25,12 @@ import seedu.address.logic.commands.AddStudentCommand;
 import seedu.address.logic.commands.CommandResult;
 import seedu.address.logic.commands.ListCommand;
 import seedu.address.logic.commands.exceptions.CommandException;
+import seedu.address.logic.parser.WeeklyTaskParser;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.ReadOnlyAddressBook;
 import seedu.address.model.UserPrefs;
-import seedu.address.model.mission.MissionId;
 import seedu.address.model.student.Student;
 import seedu.address.storage.JsonAddressBookStorage;
 import seedu.address.storage.JsonUserPrefsStorage;
@@ -177,75 +177,68 @@ public class LogicManagerTest {
     }
 
     @Test
-    public void execute_markMissionAndReload_preservesSubmissionsAfterRejectedCommands() throws Exception {
-        for (int number = 1; number <= 13; number++) {
-            model.addMission("Mission " + number, java.time.LocalDate.of(2026, 10, 15));
-        }
-        model.addStudent(new StudentBuilder(AMY).withMissionSubmissions("M05").build());
-        assertEquals("Added Amy Bee’s mission submission for mission M03.",
-                logic.execute("MARKMISSION 1 m/M03").getFeedbackToUser());
+    public void execute_addMissionAndReload_preservesSubmissionsAfterRejectedCommands() throws Exception {
+        model.addStudent(new StudentBuilder(AMY).withMissionSubmissions(5).build());
+        assertEquals("Added Amy Bee’s mission submission for tutorial week 3.",
+                logic.execute("ADDMISSION 1 W/3").getFeedbackToUser());
         Path filePath = temporaryFolder.resolve("addressBook.json");
         JsonAddressBookStorage storage = new JsonAddressBookStorage(filePath);
         Model reloadedModel = new ModelManager(storage.readAddressBook().orElseThrow(), new UserPrefs());
         Logic reloadedLogic = new LogicManager(reloadedModel, new StorageManager(storage,
                 new JsonUserPrefsStorage(temporaryFolder.resolve("reloadedPrefs.json"))));
 
-        assertEquals(Set.of(new MissionId("M05"), new MissionId("M03")), reloadedModel.getFilteredStudentList().get(0)
-                .getMissionSubmissions().getSubmittedMissionIds());
-        assertEquals("Amy Bee’s mission submission has already been recorded for mission M03. No changes made.",
-                reloadedLogic.execute("markmission 1 m/M03").getFeedbackToUser());
+        assertEquals(Set.of(5, 3), reloadedModel.getFilteredStudentList().get(0)
+                .getMissionSubmissions().getSubmittedWeeks());
+        assertEquals("Amy Bee’s mission submission has already been recorded for tutorial week 3. No changes made.",
+                reloadedLogic.execute("addmission 1 w/3").getFeedbackToUser());
 
         String savedJson = Files.readString(filePath);
-        assertThrows(ParseException.class, MissionId.MESSAGE_CONSTRAINTS, () ->
-                reloadedLogic.execute("markmission 1 m/invalid"));
+        assertThrows(ParseException.class, WeeklyTaskParser.MESSAGE_INVALID_TUTORIAL_WEEK, () ->
+                reloadedLogic.execute("addmission 1 w/14"));
         assertEquals(savedJson, Files.readString(filePath));
-        assertEquals(Set.of(new MissionId("M05"), new MissionId("M03")), reloadedModel.getFilteredStudentList().get(0)
-                .getMissionSubmissions().getSubmittedMissionIds());
+        assertEquals(Set.of(5, 3), reloadedModel.getFilteredStudentList().get(0)
+                .getMissionSubmissions().getSubmittedWeeks());
 
-        assertEquals("Added Amy Bee’s mission submission for mission M04.",
-                reloadedLogic.execute("markmission 1 m/M04").getFeedbackToUser());
+        assertEquals("Added Amy Bee’s mission submission for tutorial week 4.",
+                reloadedLogic.execute("addmission 1 w/4").getFeedbackToUser());
         savedJson = Files.readString(filePath);
         assertThrows(CommandException.class, MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX, () ->
-                reloadedLogic.execute("markmission 2 m/M05"));
+                reloadedLogic.execute("addmission 2 w/5"));
         assertEquals(savedJson, Files.readString(filePath));
-        assertEquals(Set.of(new MissionId("M05"), new MissionId("M03"), new MissionId("M04")),
-                storage.readAddressBook().orElseThrow()
-                .getStudentList().get(0).getMissionSubmissions().getSubmittedMissionIds());
+        assertEquals(Set.of(5, 3, 4), storage.readAddressBook().orElseThrow()
+                .getStudentList().get(0).getMissionSubmissions().getSubmittedWeeks());
     }
 
     @Test
-    public void execute_unmarkMissionAndReload_preservesDeletionAndRejectsInvalidInput() throws Exception {
-        for (int number = 1; number <= 13; number++) {
-            model.addMission("Mission " + number, java.time.LocalDate.of(2026, 10, 15));
-        }
-        model.addStudent(new StudentBuilder(AMY).withMissionSubmissions("M03", "M13").build());
-        assertEquals("Removed Amy Bee’s mission submission for mission M03.",
-                logic.execute("UNMARKMISSION 1 m/M03").getFeedbackToUser());
+    public void execute_deleteMissionAndReload_preservesDeletionAndRejectsInvalidInput() throws Exception {
+        model.addStudent(new StudentBuilder(AMY).withMissionSubmissions(3, 13).build());
+        assertEquals("Removed Amy Bee’s mission submission for tutorial week 3.",
+                logic.execute("DELMISSION 1 W/3").getFeedbackToUser());
         Path filePath = temporaryFolder.resolve("addressBook.json");
         JsonAddressBookStorage storage = new JsonAddressBookStorage(filePath);
         Model reloadedModel = new ModelManager(storage.readAddressBook().orElseThrow(), new UserPrefs());
         Logic reloadedLogic = new LogicManager(reloadedModel, new StorageManager(storage,
                 new JsonUserPrefsStorage(temporaryFolder.resolve("reloadedPrefs.json"))));
-        assertEquals(Set.of(new MissionId("M13")), reloadedModel.getFilteredStudentList().get(0)
-                .getMissionSubmissions().getSubmittedMissionIds());
+        assertEquals(Set.of(13), reloadedModel.getFilteredStudentList().get(0)
+                .getMissionSubmissions().getSubmittedWeeks());
 
         String savedJson = Files.readString(filePath);
-        assertThrows(ParseException.class, MissionId.MESSAGE_CONSTRAINTS, () ->
-                reloadedLogic.execute("unmarkmission 1 m/invalid"));
+        assertThrows(ParseException.class, WeeklyTaskParser.MESSAGE_INVALID_TUTORIAL_WEEK, () ->
+                reloadedLogic.execute("delmission 1 w/14"));
         assertEquals(savedJson, Files.readString(filePath));
-        assertEquals(Set.of(new MissionId("M13")), reloadedModel.getFilteredStudentList().get(0)
-                .getMissionSubmissions().getSubmittedMissionIds());
-        assertEquals("Amy Bee’s mission submission was already not recorded for mission M03. No changes made.",
-                reloadedLogic.execute("unmarkmission 1 m/M03").getFeedbackToUser());
+        assertEquals(Set.of(13), reloadedModel.getFilteredStudentList().get(0)
+                .getMissionSubmissions().getSubmittedWeeks());
+        assertEquals("Amy Bee’s mission submission was already not recorded for tutorial week 3. No changes made.",
+                reloadedLogic.execute("delmission 1 w/3").getFeedbackToUser());
         assertEquals(savedJson, Files.readString(filePath));
 
-        assertEquals("Removed Amy Bee’s mission submission for mission M13.",
-                reloadedLogic.execute("unmarkmission 1 m/M13").getFeedbackToUser());
+        assertEquals("Removed Amy Bee’s mission submission for tutorial week 13.",
+                reloadedLogic.execute("delmission 1 w/13").getFeedbackToUser());
         Student expected = new StudentBuilder(AMY).withMissionSubmissions().build();
         assertEquals(expected, storage.readAddressBook().orElseThrow().getStudentList().get(0));
         savedJson = Files.readString(filePath);
         assertThrows(CommandException.class, MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX, () ->
-                reloadedLogic.execute("unmarkmission 2 m/M13"));
+                reloadedLogic.execute("delmission 2 w/13"));
         assertEquals(savedJson, Files.readString(filePath));
         assertEquals(expected, reloadedModel.getFilteredStudentList().get(0));
     }

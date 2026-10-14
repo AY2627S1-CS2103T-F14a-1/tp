@@ -18,8 +18,8 @@
       <Label text="Mission submissions" styleClass="mission-title"/>
       <GridPane fx:id="missionSubmissions">
         <columnConstraints>
-          <ColumnConstraints percentWidth="70"/>
-          <ColumnConstraints percentWidth="30"/>
+          <ColumnConstraints percentWidth="35"/>
+          <ColumnConstraints percentWidth="65"/>
         </columnConstraints>
       </GridPane>
     </VBox>
