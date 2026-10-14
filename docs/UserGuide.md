@@ -171,31 +171,30 @@ For example, if the first student is Amy Bee and her week 3 attendance is not ye
 Added Amy Bee’s attendance for tutorial week 3.
 ```
 
-### Deleting a mission submission record: `delmission`
+### Deleting attendance: `delattendance`
 
 Removes a student's mission submission record for a tutorial week. The student remains in the address book.
 
-Format: `delmission INDEX w/WEEK`
+Format: `delattendance INDEX w/WEEK`
 
 * `INDEX` identifies a student in the **currently displayed list**, including results from `find`. It must be a positive integer that corresponds to a displayed student.
-* `WEEK` must be an integer from **3 to 13**, inclusive. AvengerHub uses these week numbers because the tutorial schedule it supports starts in week 3 and ends in week 13. Use the actual week number: the first tutorial week is `3`, not `1`.
-* Weeks outside this range, such as `1`, `2`, or `14`, are rejected with an error message. Existing submission records remain unchanged.
+* `WEEK` must be an integer from **0 to 13**, inclusive. AvengerHub uses these week numbers to allow tutors to flexibly mark attendance across the semester's 13 weeks. Use the actual week number as defined in the NUS student calendar, where week 0 is the orientation week of semester 1.
+* Weeks outside this range, such as `-1` or `14`, are rejected with an error message. The existing attendance record remains unchanged.
 * Both arguments are required. Put `INDEX` before `w/WEEK`, and specify `w/` exactly once. Extra arguments are rejected.
 * Enter `INDEX` and `WEEK` as integers without signs, decimal points, or leading zeros.
 * The command word and `w/` prefix are case-insensitive: `DELMISSION 1 W/3` is also accepted.
 * If the submission was initially not recorded, the records remain unchanged and a message explains that no changes were made.
-* Only the specified week's record is removed. Other weeks, student details, and the current list filter are preserved.
-* Deleting the last submission leaves the student with no recorded mission submissions.
+* The current list filter stays active.
 
 Examples:
 
-* `list` followed by `delmission 1 w/3` removes the first student's week 3 submission record, if recorded.
-* `find Betsy` followed by `delmission 1 w/13` removes the week 13 submission record for the first student in the search results, if both the student and record exist.
+* `list` followed by `delattendance 1 w/3` removes the first student's week 3 attendance, if recorded, if any.
+* `find Betsy` followed by `delattendance 1 w/13` removes the week 13 attendance for the first student in the search results, if any.
 
-For example, if the first student is Amy Bee and her week 3 submission is recorded, `delmission 1 w/3` displays:
+For example, if the first student is Amy Bee and her week 3 attendance is recorded, `delattendance 1 w/3` displays:
 
 ```text
-Removed Amy Bee’s mission submission for tutorial week 3.
+Removed Amy Bee’s attendance for tutorial week 3.
 ```
 
 ### Adding a mission submission record: `addmission`
