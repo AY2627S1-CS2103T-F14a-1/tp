@@ -1,5 +1,6 @@
 package seedu.address.model.util;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -41,11 +42,20 @@ public class SampleDataUtil {
         };
     }
 
+    /**
+     * Creates sample students and missions with illustrative deadlines, not an official course schedule.
+     * All student submissions start unrecorded. Existing saved address books are loaded separately.
+     *
+     * @return A fresh address book ready for trying mission submission commands.
+     */
     public static ReadOnlyAddressBook getSampleAddressBook() {
         AddressBook sampleAb = new AddressBook();
         for (Student sampleStudent : getSampleStudents()) {
             sampleAb.addStudent(sampleStudent);
         }
+        sampleAb.addMission("Understanding the Force", LocalDate.of(2026, 10, 15));
+        sampleAb.addMission("Rune Reading", LocalDate.of(2026, 10, 22));
+        sampleAb.addMission("Beyond the Second Dimension", LocalDate.of(2026, 10, 29));
         return sampleAb;
     }
 

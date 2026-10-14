@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import seedu.address.commons.exceptions.IllegalValueException;
+import seedu.address.model.mission.MissionId;
 import seedu.address.model.student.Address;
 import seedu.address.model.student.Attendance;
 import seedu.address.model.student.Email;
@@ -33,14 +34,13 @@ class JsonAdaptedStudent {
     private final String address;
     private final List<JsonAdaptedTag> tags = new ArrayList<>();
     private final String studioGroup;
-    // Preserve JSON types until validation so fractional weeks cannot be silently truncated.
     private final List<Object> missionSubmissions = new ArrayList<>();
     private final List<Object> attendance = new ArrayList<>();
 
     /**
      * Constructs a {@code JsonAdaptedStudent} with the given student details.
      * Constructs a storage representation, deferring validation until model conversion.
-     * Missing or null mission submissions default to an empty collection for older saved files.
+     * Missing or null mission submissions represent no recorded submissions.
      *
      * @param name Student's name.
      * @param phone Student's phone number.
@@ -48,7 +48,7 @@ class JsonAdaptedStudent {
      * @param address Student's address.
      * @param tags Student's tags, or null for no tags.
      * @param studioGroup Student's studio group.
-     * @param missionSubmissions Recorded tutorial weeks, or null for no submissions.
+     * @param missionSubmissions Recorded mission IDs, or null for no submissions.
      * @param attendance Recorded weekly attendance, or null for no attendance
      */
     @JsonCreator
@@ -74,7 +74,7 @@ class JsonAdaptedStudent {
     }
 
     /**
-     * Copies a student into a storage representation with submission weeks sorted in ascending order.
+     * Copies a student into a storage representation with mission IDs sorted in numeric order.
      *
      * @param source Student to save.
      * @throws NullPointerException If the source is null.
@@ -88,9 +88,10 @@ class JsonAdaptedStudent {
                 .map(JsonAdaptedTag::new)
                 .collect(Collectors.toList()));
         studioGroup = source.getStudioGroup().studioGroup;
-        missionSubmissions.addAll(source.getMissionSubmissions().getSubmittedWeeks()
+        missionSubmissions.addAll(source.getMissionSubmissions().getSubmittedMissionIds()
                 .stream()
-                .sorted()
+                .sorted(java.util.Comparator.comparingLong(MissionId::getNumber))
+                .map(MissionId::toString)
                 .collect(Collectors.toList()));
         attendance.addAll(source.getAttendance().getAttendedWeeks()
                 .stream()
@@ -107,6 +108,9 @@ class JsonAdaptedStudent {
     public Student toModelType() throws IllegalValueException {
         final List<Tag> studentTags = new ArrayList<>();
         for (JsonAdaptedTag tag : tags) {
+            if (tag == null) {
+                throw new IllegalValueException("Student tags must not be null.");
+            }
             studentTags.add(tag.toModelType());
         }
 
@@ -159,22 +163,24 @@ class JsonAdaptedStudent {
     }
 
     /**
-     * Validates saved tutorial weeks and converts them into immutable mission submissions.
-     * Repeated weeks are represented by a single submission.
+     * Validates saved mission IDs and creates immutable submission records.
      *
-     * @return Mission submissions containing the unique saved weeks.
-     * @throws IllegalValueException If a saved week is not an integer in the valid range.
+     * @return Unique submitted mission IDs.
+     * @throws IllegalValueException If a saved value is not a canonical mission ID string.
      */
     public MissionSubmissions toModelMissionSubmissions() throws IllegalValueException {
-        Set<Integer> submittedWeeks = new HashSet<>();
+        Set<MissionId> submittedIds = new HashSet<>();
         for (Object value : missionSubmissions) {
-            if (!(value instanceof Integer week) || !MissionSubmissions.isValidWeek(week)) {
-                throw new IllegalValueException(MissionSubmissions.MESSAGE_CONSTRAINTS);
+            if (!(value instanceof String id)) {
+                throw new IllegalValueException(MissionId.MESSAGE_CONSTRAINTS);
             }
-            submittedWeeks.add(week);
+            try {
+                submittedIds.add(new MissionId(id));
+            } catch (IllegalArgumentException e) {
+                throw new IllegalValueException(MissionId.MESSAGE_CONSTRAINTS);
+            }
         }
-
-        return new MissionSubmissions(submittedWeeks);
+        return new MissionSubmissions(submittedIds);
     }
 
     /**
