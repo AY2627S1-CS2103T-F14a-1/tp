@@ -15,7 +15,7 @@ import seedu.address.model.student.MissionSubmissions;
 /**
  * Validates the shared student index and week arguments for mission commands.
  */
-public class MissionParser {
+public class WeeklyTaskParser {
 
     public static final String MESSAGE_MISSING_INDEX = "A student index must be provided.";
     public static final String MESSAGE_MISSING_WEEK = "Specify a tutorial week using w/WEEK.";
@@ -38,7 +38,7 @@ public class MissionParser {
      * @throws NullPointerException If either argument is null.
      * @throws ParseException If required information is missing or invalid.
      */
-    public MissionParser(String args, String usage) throws ParseException {
+    public WeeklyTaskParser(String args, String usage) throws ParseException {
         requireNonNull(args);
         this.usage = requireNonNull(usage);
         ArgumentMultimap arguments = ArgumentTokenizer.tokenize(normalizeArguments(args), PREFIX_WEEK);

@@ -21,11 +21,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import seedu.address.logic.commands.AddCommand;
+import seedu.address.logic.commands.AddStudentCommand;
 import seedu.address.logic.commands.CommandResult;
 import seedu.address.logic.commands.ListCommand;
 import seedu.address.logic.commands.exceptions.CommandException;
-import seedu.address.logic.parser.MissionParser;
+import seedu.address.logic.parser.WeeklyTaskParser;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
@@ -64,8 +64,8 @@ public class LogicManagerTest {
 
     @Test
     public void execute_commandExecutionError_throwsCommandException() {
-        String deleteCommand = "delete 9";
-        assertCommandException(deleteCommand, MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX);
+        String deleteStudentCommand = "delstudent 9";
+        assertCommandException(deleteStudentCommand, MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX);
     }
 
     @Test
@@ -168,12 +168,12 @@ public class LogicManagerTest {
         logic = new LogicManager(model, storage);
 
         // Triggers the saveAddressBook method by executing an add command
-        String addCommand = AddCommand.COMMAND_WORD + NAME_DESC_AMY + PHONE_DESC_AMY
+        String addStudentCommand = AddStudentCommand.COMMAND_WORD + NAME_DESC_AMY + PHONE_DESC_AMY
                 + EMAIL_DESC_AMY + ADDRESS_DESC_AMY + STUDIO_GROUP_DESC_AMY;
         Student expectedStudent = new StudentBuilder(AMY).withTags().build();
         ModelManager expectedModel = new ModelManager();
         expectedModel.addStudent(expectedStudent);
-        assertCommandFailure(addCommand, CommandException.class, expectedMessage, expectedModel);
+        assertCommandFailure(addStudentCommand, CommandException.class, expectedMessage, expectedModel);
     }
 
     @Test
@@ -193,7 +193,7 @@ public class LogicManagerTest {
                 reloadedLogic.execute("addmission 1 w/3").getFeedbackToUser());
 
         String savedJson = Files.readString(filePath);
-        assertThrows(ParseException.class, MissionParser.MESSAGE_INVALID_TUTORIAL_WEEK, () ->
+        assertThrows(ParseException.class, WeeklyTaskParser.MESSAGE_INVALID_TUTORIAL_WEEK, () ->
                 reloadedLogic.execute("addmission 1 w/14"));
         assertEquals(savedJson, Files.readString(filePath));
         assertEquals(Set.of(5, 3), reloadedModel.getFilteredStudentList().get(0)
@@ -223,7 +223,7 @@ public class LogicManagerTest {
                 .getMissionSubmissions().getSubmittedWeeks());
 
         String savedJson = Files.readString(filePath);
-        assertThrows(ParseException.class, MissionParser.MESSAGE_INVALID_TUTORIAL_WEEK, () ->
+        assertThrows(ParseException.class, WeeklyTaskParser.MESSAGE_INVALID_TUTORIAL_WEEK, () ->
                 reloadedLogic.execute("delmission 1 w/14"));
         assertEquals(savedJson, Files.readString(filePath));
         assertEquals(Set.of(13), reloadedModel.getFilteredStudentList().get(0)

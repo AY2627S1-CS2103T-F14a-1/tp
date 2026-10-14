@@ -88,7 +88,7 @@ public class FindCommandTest {
     @Test
     public void execute_multipleKeywords_multipleStudentsFound() {
         String expectedMessage = String.format(MESSAGE_STUDENTS_LISTED_OVERVIEW, 3);
-        NameContainsKeywordsPredicate predicate = preparePredicate("Kurz Elle Kunz");
+        NameContainsKeywordsPredicate predicate = preparePredicate("Kurz, Elle, Kunz");
         FindCommand command = new FindCommand(predicate);
         expectedModel.updateFilteredStudentList(predicate);
 
@@ -116,9 +116,15 @@ public class FindCommandTest {
     }
 
     /**
-     * Parses {@code userInput} into a {@code NameContainsKeywordsPredicate}.
+     * Parses comma-separated {@code userInput} into a {@code NameContainsKeywordsPredicate}.
+     *
+     * @param userInput Search text containing optional commas.
+     * @return Predicate containing the trimmed name alternatives.
      */
     private NameContainsKeywordsPredicate preparePredicate(String userInput) {
-        return new NameContainsKeywordsPredicate(List.of(userInput.split("\\s+")));
+        return new NameContainsKeywordsPredicate(
+                java.util.Arrays.stream(userInput.split(",", -1))
+                        .map(String::strip)
+                        .toList());
     }
 }

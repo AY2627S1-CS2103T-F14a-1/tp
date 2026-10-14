@@ -1,5 +1,6 @@
 package seedu.address.model.student;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.function.Predicate;
@@ -7,7 +8,8 @@ import java.util.function.Predicate;
 import seedu.address.commons.util.ToStringBuilder;
 
 /**
- * Tests that a {@code Student}'s {@code Name} contains any of the keywords given.
+ * Tests that a {@code Student}'s {@code Name} contains all keywords in at least one
+ * comma-separated alternative. Matching is case-insensitive and allows partial names.
  */
 public class NameContainsKeywordsPredicate implements Predicate<Student> {
     private final List<String> keywords;
@@ -17,17 +19,20 @@ public class NameContainsKeywordsPredicate implements Predicate<Student> {
     }
 
     /**
-     * Tests whether the student's name contains any search keyword.
+     * Tests whether the student's name matches any search alternative.
+     * Every word within a matching alternative must occur in the name.
      *
      * @param student Student whose name is searched.
-     * @return True if any keyword matches; false if the keyword list is empty.
+     * @return True if an alternative matches; false if none match.
      */
     @Override
     public boolean test(Student student) {
         String normalizedName = student.getName().fullName.toLowerCase(Locale.ROOT);
 
         return keywords.stream()
-                .anyMatch(keyword -> normalizedName.contains(keyword.toLowerCase(Locale.ROOT)));
+                .filter(alternative -> !alternative.isBlank())
+                .anyMatch(alternative -> Arrays.stream(alternative.strip().split("\\s+"))
+                        .allMatch(keyword -> normalizedName.contains(keyword.toLowerCase(Locale.ROOT))));
     }
 
     @Override

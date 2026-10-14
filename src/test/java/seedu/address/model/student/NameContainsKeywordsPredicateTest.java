@@ -127,6 +127,36 @@ public class NameContainsKeywordsPredicateTest {
     }
 
     @Test
+    public void test_wordsWithinAlternative_allWordsRequired() {
+        Student student = new StudentBuilder().withName("Alex Tan").build();
+
+        assertTrue(new NameContainsKeywordsPredicate(List.of("ale tan")).test(student));
+        assertFalse(new NameContainsKeywordsPredicate(List.of("alex lim")).test(student));
+    }
+
+    @Test
+    public void test_multipleAlternatives_anyCompleteAlternativeMatches() {
+        Student student = new StudentBuilder().withName("Brian Lim").build();
+
+        assertTrue(new NameContainsKeywordsPredicate(List.of("alex tan", "bri lim")).test(student));
+        assertFalse(new NameContainsKeywordsPredicate(List.of("alex lim", "brian tan")).test(student));
+    }
+
+    @Test
+    public void test_reversedMixedCaseWords_returnsTrue() {
+        Student student = new StudentBuilder().withName("Alex Tan").build();
+
+        assertTrue(new NameContainsKeywordsPredicate(List.of("TAN aLE")).test(student));
+    }
+
+    @Test
+    public void test_blankAlternative_returnsFalse() {
+        Student student = new StudentBuilder().withName("Alex Tan").build();
+
+        assertFalse(new NameContainsKeywordsPredicate(List.of(" ")).test(student));
+    }
+
+    @Test
     public void toStringMethod() {
         List<String> keywords = List.of("keyword1", "keyword2");
         NameContainsKeywordsPredicate predicate = new NameContainsKeywordsPredicate(keywords);
