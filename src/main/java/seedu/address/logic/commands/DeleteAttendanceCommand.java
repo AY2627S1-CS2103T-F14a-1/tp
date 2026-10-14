@@ -29,7 +29,7 @@ public class DeleteAttendanceCommand extends Command {
             + "Example: " + COMMAND_WORD + " 1 w/3";
 
     public static final String MESSAGE_SUCCESS =
-            "Removed %1$s's attendance for tutorial week %2$d";
+            "Removed %1$s's attendance for tutorial week %2$d.";
 
     public static final String MESSAGE_ALREADY_RECORDED =
             "%1$s’s attendance was already not marked for tutorial week %2$d. No changes made.";
