@@ -5,10 +5,14 @@ import java.util.logging.Logger;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import seedu.address.commons.core.GuiSettings;
@@ -34,6 +38,7 @@ public class MainWindow extends UiPart<Stage> {
 
     // Independent Ui parts residing in this Ui container
     private StudentListPanel studentListPanel;
+    private StudentDetailsPanel studentDetailsPanel;
     private ResultDisplay resultDisplay;
     private HelpWindow helpWindow;
 
@@ -52,6 +57,15 @@ public class MainWindow extends UiPart<Stage> {
     @FXML
     private StackPane statusbarPlaceholder;
 
+    @FXML
+    private StackPane studentDetailsPanelPlaceholder;
+
+    @FXML
+    private Label lastCommandLabel;
+
+    @FXML
+    private SplitPane mainSplitPane;
+
     /**
      * Creates a {@code MainWindow} with the given {@code Stage}, {@code Logic},
      * and the data file path to show in the status bar.
@@ -66,6 +80,8 @@ public class MainWindow extends UiPart<Stage> {
 
         // Configure the UI
         setWindowDefaultSize(logic.getGuiSettings());
+
+        mainSplitPane.setDividerPositions(0.30);
 
         setAccelerators();
 
@@ -114,17 +130,48 @@ public class MainWindow extends UiPart<Stage> {
      * Fills up all the placeholders of this window.
      */
     void fillInnerParts() {
-        studentListPanel = new StudentListPanel(logic.getFilteredStudentList());
-        studentListPanelPlaceholder.getChildren().add(studentListPanel.getRoot());
+        studentListPanel = new StudentListPanel(
+                logic.getFilteredStudentList());
+
+        studentListPanelPlaceholder.getChildren()
+                .add(studentListPanel.getRoot());
+
+        studentDetailsPanel = new StudentDetailsPanel();
+
+        Region studentDetailsRoot = studentDetailsPanel.getRoot();
+
+        studentDetailsRoot.setMaxSize(
+                Double.MAX_VALUE,
+                Double.MAX_VALUE);
+
+        StackPane.setAlignment(
+                studentDetailsRoot,
+                Pos.TOP_LEFT);
+
+        studentDetailsPanelPlaceholder.getChildren()
+                .add(studentDetailsRoot);
+
+        studentListPanel.getStudentListView()
+                .getSelectionModel()
+                .selectedItemProperty()
+                .addListener((observable, oldStudent, newStudent) ->
+                        studentDetailsPanel.showStudent(newStudent));
 
         resultDisplay = new ResultDisplay();
-        resultDisplayPlaceholder.getChildren().add(resultDisplay.getRoot());
+        resultDisplayPlaceholder.getChildren()
+                .add(resultDisplay.getRoot());
 
-        StatusBarFooter statusBarFooter = new StatusBarFooter(dataFilePath);
-        statusbarPlaceholder.getChildren().add(statusBarFooter.getRoot());
+        StatusBarFooter statusBarFooter =
+                new StatusBarFooter(dataFilePath);
 
-        CommandBox commandBox = new CommandBox(this::executeCommand);
-        commandBoxPlaceholder.getChildren().add(commandBox.getRoot());
+        statusbarPlaceholder.getChildren()
+                .add(statusBarFooter.getRoot());
+
+        CommandBox commandBox =
+                new CommandBox(this::executeCommand);
+
+        commandBoxPlaceholder.getChildren()
+                .add(commandBox.getRoot());
     }
 
     /**
@@ -178,9 +225,26 @@ public class MainWindow extends UiPart<Stage> {
      */
     private CommandResult executeCommand(String commandText) throws CommandException, ParseException {
         try {
+            lastCommandLabel.setText(commandText);
             CommandResult commandResult = logic.execute(commandText);
+
             logger.info("Result: " + commandResult.getFeedbackToUser());
-            resultDisplay.setFeedbackToUser(commandResult.getFeedbackToUser());
+
+            studentDetailsPanel.clearStudent();
+
+            studentListPanel.getStudentListView()
+                    .getSelectionModel()
+                    .clearSelection();
+
+            resultDisplay.setFeedbackToUser(
+                    commandResult.getFeedbackToUser());
+
+            commandResult.getStudentToView().ifPresent(student -> {
+                studentDetailsPanel.showStudent(student);
+                studentListPanel.getStudentListView()
+                        .getSelectionModel()
+                        .select(student);
+            });
 
             if (commandResult.isShowHelp()) {
                 handleHelp();
