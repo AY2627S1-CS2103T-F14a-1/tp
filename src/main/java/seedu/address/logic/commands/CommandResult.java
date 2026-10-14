@@ -3,14 +3,24 @@ package seedu.address.logic.commands;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Objects;
+import java.util.Optional;
 
 import seedu.address.commons.util.ToStringBuilder;
+import seedu.address.model.student.Student;
 
 /**
- * Represents the result of a command execution.
+ * Represents the result of executing a command.
+ *
+ * <p>A command result contains feedback for the user and optional
+ * control information, such as whether help should be shown, whether
+ * the application should exit, or which student should be displayed
+ * in the profile panel.</p>
  */
 public class CommandResult {
 
+    /**
+     * Student to display in the profile panel, if any.
+     */
     private final String feedbackToUser;
 
     /** Help information should be shown to the user. */
@@ -19,31 +29,92 @@ public class CommandResult {
     /** The application should exit. */
     private final boolean exit;
 
+    private final Student studentToView;
+
     /**
-     * Constructs a {@code CommandResult} with the specified fields.
+     * Creates a {@code CommandResult} with the specified fields.
+     *
+     * @param feedbackToUser feedback message displayed to the user
+     * @param showHelp whether the help window should be shown
+     * @param exit whether the application should exit
+     * @param studentToView student to display in the profile panel,
+     *                      or {@code null} if no profile should be displayed
      */
-    public CommandResult(String feedbackToUser, boolean showHelp, boolean exit) {
+    public CommandResult(String feedbackToUser, boolean showHelp, boolean exit, Student studentToView) {
         this.feedbackToUser = requireNonNull(feedbackToUser);
         this.showHelp = showHelp;
         this.exit = exit;
+        this.studentToView = studentToView;
     }
 
     /**
-     * Constructs a {@code CommandResult} with the specified {@code feedbackToUser},
-     * and other fields set to their default value.
+     * Creates a {@code CommandResult} without a student profile target.
+     *
+     * @param feedbackToUser feedback message displayed to the user
+     * @param showHelp whether the help window should be shown
+     * @param exit whether the application should exit
      */
-    public CommandResult(String feedbackToUser) {
-        this(feedbackToUser, false, false);
+    public CommandResult(
+            String feedbackToUser,
+            boolean showHelp,
+            boolean exit) {
+
+        this(feedbackToUser, showHelp, exit, null);
     }
 
+    /**
+     * Creates a basic {@code CommandResult} with no help, exit,
+     * or student-profile action.
+     *
+     * @param feedbackToUser feedback message displayed to the user
+     */
+    public CommandResult(String feedbackToUser) {
+        this(feedbackToUser, false, false, null);
+    }
+
+    /**
+     * Creates a {@code CommandResult} that displays the specified student
+     * in the profile panel.
+     *
+     * @param feedbackToUser feedback message displayed to the user
+     * @param studentToView student to display in the profile panel
+     */
+    public CommandResult(String feedbackToUser, Student studentToView) {
+        this(feedbackToUser, false, false, studentToView);
+    }
+
+    /**
+     * Returns the feedback message for the user.
+     *
+     * @return feedback message
+     */
     public String getFeedbackToUser() {
         return feedbackToUser;
     }
 
+    /**
+     * Returns the student to display in the profile panel, if one was supplied.
+     *
+     * @return optional student profile target
+     */
+    public Optional<Student> getStudentToView() {
+        return Optional.ofNullable(studentToView);
+    }
+
+    /**
+     * Returns whether the help window should be shown.
+     *
+     * @return {@code true} if help should be shown
+     */
     public boolean isShowHelp() {
         return showHelp;
     }
 
+    /**
+     * Returns whether the application should exit.
+     *
+     * @return {@code true} if the application should exit
+     */
     public boolean isExit() {
         return exit;
     }
