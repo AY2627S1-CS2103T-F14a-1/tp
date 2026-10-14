@@ -19,10 +19,17 @@ public final class Attendance {
     public static final String MESSAGE_CONSTRAINTS =
             "Tutorial week must be between " + MIN_WEEK + " and " + MAX_WEEK + " inclusive";
 
+    public static final String ATTENDANCE_MARKER = "Attendance: ";
+    public final String attendance;
+
     private final Set<Integer> attendedWeeks;
 
+    /**
+     * Creates attendance with no attended weeks.
+     */
     public Attendance() {
         this.attendedWeeks = Collections.emptySet();
+        this.attendance = toString();
     }
 
     /**
@@ -40,6 +47,7 @@ public final class Attendance {
             checkArgument(isValidWeek(week), MESSAGE_CONSTRAINTS);
         }
         this.attendedWeeks = Collections.unmodifiableSet(copiedWeeks);
+        this.attendance = toString();
     }
 
     /**
@@ -77,6 +85,23 @@ public final class Attendance {
 
         Set<Integer> updatedWeeks = new HashSet<>(attendedWeeks);
         updatedWeeks.add(week);
+        return new Attendance(updatedWeeks);
+    }
+
+    /**
+     * Returns attendance not including the given week without changing
+     * this object. Returns this object if the week is already not recorded.
+     *
+     * @param week Tutorial week to delete.
+     * @return Attendance containing the existing weeks without given week.
+     */
+    public Attendance withoutAttendedWeek(int week) {
+        if (!hasAttendance(week)) {
+            return this;
+        }
+
+        Set<Integer> updatedWeeks = new HashSet<>(attendedWeeks);
+        updatedWeeks.remove(week);
         return new Attendance(updatedWeeks);
     }
 
