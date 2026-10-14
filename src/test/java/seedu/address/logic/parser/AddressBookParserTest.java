@@ -12,9 +12,11 @@ import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
+import seedu.address.logic.commands.AddAttendanceCommand;
 import seedu.address.logic.commands.AddMissionCommand;
 import seedu.address.logic.commands.AddStudentCommand;
 import seedu.address.logic.commands.ClearCommand;
+import seedu.address.logic.commands.DeleteAttendanceCommand;
 import seedu.address.logic.commands.DeleteMissionCommand;
 import seedu.address.logic.commands.DeleteStudentCommand;
 import seedu.address.logic.commands.EditCommand;
@@ -150,5 +152,49 @@ public class AddressBookParserTest {
     public void parseCommand_misspelledDeleteMission_reportsUnknownCommand() {
         assertThrows(ParseException.class, MESSAGE_UNKNOWN_COMMAND, () ->
                 parser.parseCommand("delmisson 1 w/3"));
+    }
+
+    @Test
+    public void parseCommand_addAttendanceIgnoringCase_returnsCommand() throws Exception {
+        AddAttendanceCommand expected = new AddAttendanceCommand(INDEX_FIRST_STUDENT, 3);
+
+        assertEquals(expected, parser.parseCommand("addattendance 1 w/3"));
+        assertEquals(expected, parser.parseCommand("ADDATTENDANCE 1 w/3"));
+        assertEquals(expected, parser.parseCommand("AddAttendance 1 W/3"));
+        assertEquals(expected, parser.parseCommand("  addattendance\t1\tw/3  "));
+    }
+
+    @Test
+    public void parseCommand_addAttendanceMissingIndex_reportsMissingIndex() {
+        assertThrows(ParseException.class, WeeklyTaskParser.MESSAGE_MISSING_INDEX, () ->
+                parser.parseCommand("addattendance"));
+    }
+
+    @Test
+    public void parseCommand_misspelledAddAttendance_reportsUnknownCommand() {
+        assertThrows(ParseException.class, MESSAGE_UNKNOWN_COMMAND, () ->
+                parser.parseCommand("addattendence 1 w/3"));
+    }
+
+    @Test
+    public void parseCommand_deleteAttendanceIgnoringCase_returnsCommand() throws Exception {
+        DeleteAttendanceCommand expected = new DeleteAttendanceCommand(INDEX_FIRST_STUDENT, 3);
+
+        assertEquals(expected, parser.parseCommand("delattendance 1 w/3"));
+        assertEquals(expected, parser.parseCommand("DELATTENDANCE 1 w/3"));
+        assertEquals(expected, parser.parseCommand("DelAttendance 1 W/3"));
+        assertEquals(expected, parser.parseCommand("  delattendance\t1\tw/3  "));
+    }
+
+    @Test
+    public void parseCommand_deleteAttendanceMissingIndex_reportsMissingIndex() {
+        assertThrows(ParseException.class, WeeklyTaskParser.MESSAGE_MISSING_INDEX, () ->
+                parser.parseCommand("delattendance"));
+    }
+
+    @Test
+    public void parseCommand_misspelledDeleteAttendance_reportsUnknownCommand() {
+        assertThrows(ParseException.class, MESSAGE_UNKNOWN_COMMAND, () ->
+                parser.parseCommand("delattendence 1 w/3"));
     }
 }

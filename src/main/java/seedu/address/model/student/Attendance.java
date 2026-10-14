@@ -89,6 +89,23 @@ public final class Attendance {
     }
 
     /**
+     * Returns attendance not including the given week without changing
+     * this object. Returns this object if the week is already not recorded.
+     *
+     * @param week Tutorial week to delete.
+     * @return Attendance containing the existing weeks without given week.
+     */
+    public Attendance withoutAttendedWeek(int week) {
+        if (!hasAttendance(week)) {
+            return this;
+        }
+
+        Set<Integer> updatedWeeks = new HashSet<>(attendedWeeks);
+        updatedWeeks.remove(week);
+        return new Attendance(updatedWeeks);
+    }
+
+    /**
      * Returns an unmodifiable set of recorded tutorial weeks.
      *
      * @return Recorded weeks, with no guaranteed iteration order.
