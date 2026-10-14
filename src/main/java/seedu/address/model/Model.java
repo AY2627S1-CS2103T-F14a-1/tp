@@ -1,13 +1,9 @@
 package seedu.address.model;
 
-import java.time.LocalDate;
-import java.util.Optional;
 import java.util.function.Predicate;
 
 import javafx.collections.ObservableList;
 import seedu.address.commons.core.GuiSettings;
-import seedu.address.model.mission.Mission;
-import seedu.address.model.mission.MissionId;
 import seedu.address.model.student.Student;
 
 /**
@@ -73,32 +69,4 @@ public interface Model {
      * @throws NullPointerException if {@code predicate} is null.
      */
     void updateFilteredStudentList(Predicate<Student> predicate);
-
-    /**
-     * Creates a configured mission with an automatically allocated ID.
-     *
-     * @param description Nonblank mission description.
-     * @param deadline Submission deadline.
-     * @return Newly created mission.
-     * @throws NullPointerException If either argument is null.
-     * @throws IllegalArgumentException If the description is blank.
-     * @throws IllegalStateException If mission IDs are exhausted.
-     */
-    Mission addMission(String description, LocalDate deadline);
-
-    /**
-     * Finds a mission by its stable ID.
-     *
-     * @param id Mission identifier.
-     * @return Matching mission, if present.
-     * @throws NullPointerException If the ID is null.
-     */
-    Optional<Mission> findMission(MissionId id);
-
-    /**
-     * Returns the read-only mission catalogue.
-     *
-     * @return Configured missions.
-     */
-    ObservableList<Mission> getMissionList();
 }

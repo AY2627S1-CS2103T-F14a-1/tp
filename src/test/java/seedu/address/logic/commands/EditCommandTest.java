@@ -180,7 +180,7 @@ public class EditCommandTest {
     @Test
     public void execute_studentWithMissionSubmissions_preservesSubmissions() {
         Student original = model.getFilteredStudentList().get(0);
-        Student student = new StudentBuilder(original).withMissionSubmissions("M03", "M05").build();
+        Student student = new StudentBuilder(original).withMissionSubmissions(3, 5).build();
         model.setStudent(original, student);
 
         Student editedStudent = new StudentBuilder(student)
@@ -213,7 +213,7 @@ public class EditCommandTest {
     @Test
     public void execute_onlyStudioGroupSpecified_preservesOtherDetails() {
         Student original = model.getFilteredStudentList().get(0);
-        Student student = new StudentBuilder(original).withMissionSubmissions("M03", "M05").build();
+        Student student = new StudentBuilder(original).withMissionSubmissions(3, 5).build();
         model.setStudent(original, student);
 
         Student editedStudent = new StudentBuilder(student).withStudioGroup("2A").build();

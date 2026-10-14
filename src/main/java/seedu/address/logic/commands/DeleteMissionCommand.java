@@ -1,6 +1,7 @@
 package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
+import static seedu.address.commons.util.AppUtil.checkArgument;
 
 import java.util.List;
 
@@ -9,54 +10,53 @@ import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.Messages;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
-import seedu.address.model.mission.MissionId;
 import seedu.address.model.student.MissionSubmissions;
 import seedu.address.model.student.Student;
 
 /**
- * Records a mission submission for a student identified by a displayed index.
+ * Removes a mission submission for a student identified by a displayed index.
  */
-public class MarkMissionCommand extends Command {
+public class DeleteMissionCommand extends Command {
 
-    public static final String COMMAND_WORD = "markmission";
+    public static final String COMMAND_WORD = "delmission";
 
     public static final String MESSAGE_USAGE = COMMAND_WORD
-            + ": Records a mission submission for the selected student.\n"
-            + "Parameters: INDEX m/MISSION_ID\n"
+            + ": Removes record of a mission submission for the selected student.\n"
+            + "Parameters: INDEX w/WEEK\n"
             + "INDEX must be a positive integer identifying a displayed student.\n"
-            + MissionId.MESSAGE_CONSTRAINTS + "\n"
-            + "Example: " + COMMAND_WORD + " 1 m/M05";
+            + "WEEK must be between " + MissionSubmissions.MIN_WEEK
+            + " and " + MissionSubmissions.MAX_WEEK + " inclusive.\n"
+            + "Example: " + COMMAND_WORD + " 1 w/3";
 
     public static final String MESSAGE_SUCCESS =
-            "Added %1$s’s mission submission for mission %2$s.";
+            "Removed %1$s’s mission submission for tutorial week %2$d.";
 
-    public static final String MESSAGE_ALREADY_RECORDED =
-            "%1$s’s mission submission has already been recorded for mission %2$s. No changes made.";
-
-    public static final String MESSAGE_MISSION_NOT_FOUND =
-            "Mission %1$s does not exist.";
+    public static final String MESSAGE_NOT_RECORDED =
+            "%1$s’s mission submission was already not recorded for tutorial week %2$d. No changes made.";
 
     private final Index targetIndex;
-    private final MissionId missionId;
+    private final int week;
 
     /**
-     * Creates a command to record a mission submission.
+     * Creates a command to remove a mission submission.
      *
      * @param targetIndex Index of the student in the displayed list.
-     * @param missionId Configured mission identifier.
-     * @throws NullPointerException If the index or mission ID is null.
+     * @param week Tutorial week for the submission.
+     * @throws NullPointerException If the index is null.
+     * @throws IllegalArgumentException If the week is outside the valid range.
      */
-    public MarkMissionCommand(Index targetIndex, MissionId missionId) {
+    public DeleteMissionCommand(Index targetIndex, int week) {
         this.targetIndex = requireNonNull(targetIndex);
-        this.missionId = requireNonNull(missionId);
+        checkArgument(MissionSubmissions.isValidWeek(week), MissionSubmissions.MESSAGE_CONSTRAINTS);
+        this.week = week;
     }
 
     /**
-     * Records the submission without changing the current list filter.
+     * Removes the submission without changing the current list filter.
      *
      * @param model Model containing the students.
-     * @return Feedback describing the addition or an existing submission.
-     * @throws CommandException If the index is invalid or the mission does not exist.
+     * @return Feedback describing the removal or an absent submission.
+     * @throws CommandException If the index does not identify a displayed student.
      */
     @Override
     public CommandResult execute(Model model) throws CommandException {
@@ -67,20 +67,16 @@ public class MarkMissionCommand extends Command {
             throw new CommandException(Messages.MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX);
         }
 
-        if (model.findMission(missionId).isEmpty()) {
-            throw new CommandException(String.format(MESSAGE_MISSION_NOT_FOUND, missionId));
-        }
-
         Student studentToUpdate = lastShownList.get(targetIndex.getZeroBased());
         MissionSubmissions submissions = studentToUpdate.getMissionSubmissions();
 
-        if (submissions.hasSubmission(missionId)) {
-            return new CommandResult(String.format(MESSAGE_ALREADY_RECORDED, studentToUpdate.getName(), missionId));
+        if (!submissions.hasSubmission(week)) {
+            return new CommandResult(String.format(MESSAGE_NOT_RECORDED, studentToUpdate.getName(), week));
         }
 
-        Student updatedStudent = createUpdatedStudent(studentToUpdate, submissions.withSubmission(missionId));
+        Student updatedStudent = createUpdatedStudent(studentToUpdate, submissions.withoutSubmission(week));
         model.setStudent(studentToUpdate, updatedStudent);
-        return new CommandResult(String.format(MESSAGE_SUCCESS, studentToUpdate.getName(), missionId));
+        return new CommandResult(String.format(MESSAGE_SUCCESS, studentToUpdate.getName(), week));
     }
 
     /**
@@ -95,8 +91,8 @@ public class MarkMissionCommand extends Command {
         assert submissions != null;
 
         return new Student(student.getName(), student.getPhone(), student.getEmail(),
-                student.getAddress(), student.getTags(), student.getStudioGroup(),
-                submissions, student.getAttendance());
+                student.getAddress(), student.getTags(), student.getStudioGroup(), submissions,
+                student.getAttendance());
     }
 
     @Override
@@ -106,19 +102,19 @@ public class MarkMissionCommand extends Command {
         }
 
         // instanceof handles nulls
-        if (!(other instanceof MarkMissionCommand otherMissionCommand)) {
+        if (!(other instanceof DeleteMissionCommand otherMissionCommand)) {
             return false;
         }
 
         return targetIndex.equals(otherMissionCommand.targetIndex)
-                && missionId.equals(otherMissionCommand.missionId);
+                && week == otherMissionCommand.week;
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
                 .add("targetIndex", targetIndex)
-                .add("missionId", missionId)
+                .add("week", week)
                 .toString();
     }
 }

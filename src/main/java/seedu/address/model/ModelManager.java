@@ -3,8 +3,6 @@ package seedu.address.model;
 import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 
-import java.time.LocalDate;
-import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
 
@@ -12,8 +10,6 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import seedu.address.commons.core.GuiSettings;
 import seedu.address.commons.core.LogsCenter;
-import seedu.address.model.mission.Mission;
-import seedu.address.model.mission.MissionId;
 import seedu.address.model.student.Student;
 
 /**
@@ -130,18 +126,4 @@ public class ModelManager implements Model {
                 && filteredStudents.equals(otherModelManager.filteredStudents);
     }
 
-    @Override
-    public Mission addMission(String description, LocalDate deadline) {
-        return addressBook.addMission(description, deadline);
-    }
-
-    @Override
-    public Optional<Mission> findMission(MissionId id) {
-        return addressBook.findMission(id);
-    }
-
-    @Override
-    public ObservableList<Mission> getMissionList() {
-        return addressBook.getMissionList();
-    }
 }

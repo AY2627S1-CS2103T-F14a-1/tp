@@ -5,7 +5,6 @@ import static java.util.Objects.requireNonNull;
 import java.util.HashSet;
 import java.util.Set;
 
-import seedu.address.model.mission.MissionId;
 import seedu.address.model.student.Address;
 import seedu.address.model.student.Attendance;
 import seedu.address.model.student.Email;
@@ -114,20 +113,21 @@ public class StudentBuilder {
     }
 
     /**
-     * Sets the student's submitted mission IDs.
+     * Sets the mission submission weeks of the student being built.
      *
-     * @param ids Canonical mission ID strings.
+     * @param weeks Tutorial weeks with recorded submissions.
      * @return This builder.
-     * @throws NullPointerException If the array or an ID is null.
-     * @throws IllegalArgumentException If an ID is invalid.
+     * @throws NullPointerException If the array is null.
+     * @throws IllegalArgumentException If any week is outside the valid range.
      */
-    public StudentBuilder withMissionSubmissions(String... ids) {
-        requireNonNull(ids);
-        Set<MissionId> submittedIds = new HashSet<>();
-        for (String id : ids) {
-            submittedIds.add(new MissionId(id));
+    public StudentBuilder withMissionSubmissions(int... weeks) {
+        requireNonNull(weeks);
+
+        Set<Integer> submittedWeeks = new HashSet<>();
+        for (int week : weeks) {
+            submittedWeeks.add(week);
         }
-        this.missionSubmissions = new MissionSubmissions(submittedIds);
+        this.missionSubmissions = new MissionSubmissions(submittedWeeks);
         return this;
     }
 
