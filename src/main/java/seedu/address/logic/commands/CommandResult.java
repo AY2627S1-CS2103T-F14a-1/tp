@@ -2,12 +2,10 @@ package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
 import seedu.address.commons.util.ToStringBuilder;
-import seedu.address.model.mission.Mission;
 import seedu.address.model.student.Student;
 
 /**
@@ -25,7 +23,6 @@ public class CommandResult {
 
     /** Student details requested by a view command, or null for ordinary feedback. */
     private final Student studentToView;
-    private final List<Mission> missions;
 
     /**
      * Constructs a {@code CommandResult} with the specified fields.
@@ -35,7 +32,6 @@ public class CommandResult {
         this.showHelp = showHelp;
         this.exit = exit;
         this.studentToView = null;
-        this.missions = List.of();
     }
 
     /**
@@ -54,21 +50,8 @@ public class CommandResult {
      * @throws NullPointerException If either argument is null.
      */
     public CommandResult(String feedbackToUser, Student studentToView) {
-        this(feedbackToUser, studentToView, List.of());
-    }
-
-    /**
-     * Constructs a student view with a snapshot of configured assignments.
-     *
-     * @param feedbackToUser Student summary.
-     * @param studentToView Student to display.
-     * @param missions Missions whose submission status should be displayed.
-     * @throws NullPointerException If any argument or mission is null.
-     */
-    public CommandResult(String feedbackToUser, Student studentToView, List<Mission> missions) {
         this.feedbackToUser = requireNonNull(feedbackToUser);
         this.studentToView = requireNonNull(studentToView);
-        this.missions = List.copyOf(missions);
         this.showHelp = false;
         this.exit = false;
     }
@@ -80,15 +63,6 @@ public class CommandResult {
      */
     public Optional<Student> getStudentToView() {
         return Optional.ofNullable(studentToView);
-    }
-
-    /**
-     * Returns the immutable catalogue snapshot for the student view.
-     *
-     * @return Missions to display.
-     */
-    public List<Mission> getMissions() {
-        return missions;
     }
 
     public String getFeedbackToUser() {
@@ -117,13 +91,12 @@ public class CommandResult {
         return feedbackToUser.equals(otherCommandResult.feedbackToUser)
                 && showHelp == otherCommandResult.showHelp
                 && exit == otherCommandResult.exit
-                && Objects.equals(studentToView, otherCommandResult.studentToView)
-                && missions.equals(otherCommandResult.missions);
+                && Objects.equals(studentToView, otherCommandResult.studentToView);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(feedbackToUser, showHelp, exit, studentToView, missions);
+        return Objects.hash(feedbackToUser, showHelp, exit, studentToView);
     }
 
     @Override

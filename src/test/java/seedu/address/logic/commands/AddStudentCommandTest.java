@@ -7,10 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.testutil.Assert.assertThrows;
 import static seedu.address.testutil.TypicalStudents.ALICE;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Predicate;
 
 import org.junit.jupiter.api.Test;
@@ -23,8 +21,6 @@ import seedu.address.model.AddressBook;
 import seedu.address.model.Model;
 import seedu.address.model.ReadOnlyAddressBook;
 import seedu.address.model.ReadOnlyUserPrefs;
-import seedu.address.model.mission.Mission;
-import seedu.address.model.mission.MissionId;
 import seedu.address.model.student.Student;
 import seedu.address.testutil.StudentBuilder;
 
@@ -92,21 +88,6 @@ public class AddStudentCommandTest {
      * A default model stub that has all of the methods failing.
      */
     private class ModelStub implements Model {
-        @Override
-        public Mission addMission(String description, LocalDate deadline) {
-            throw new AssertionError("Unexpected mission creation");
-        }
-
-        @Override
-        public Optional<Mission> findMission(MissionId id) {
-            throw new AssertionError("Unexpected mission lookup");
-        }
-
-        @Override
-        public ObservableList<Mission> getMissionList() {
-            throw new AssertionError("Unexpected mission lookup");
-        }
-
         @Override
         public ReadOnlyUserPrefs getUserPrefs() {
             throw new AssertionError("This method should not be called.");

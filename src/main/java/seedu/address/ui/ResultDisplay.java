@@ -2,8 +2,6 @@ package seedu.address.ui;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.List;
-
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -11,7 +9,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 import seedu.address.logic.commands.CommandResult;
-import seedu.address.model.mission.Mission;
+import seedu.address.model.student.MissionSubmissions;
 import seedu.address.model.student.Student;
 
 /**
@@ -54,42 +52,34 @@ public class ResultDisplay extends UiPart<Region> {
         setFeedbackToUser(result.getFeedbackToUser());
         result.getStudentToView().ifPresent(student -> {
             studentSummary.setText(result.getFeedbackToUser());
-            populateMissionSubmissions(student, result.getMissions());
+            populateMissionSubmissions(student);
             showStudentDetails(true);
             studentDetails.setVvalue(0);
         });
     }
 
     /**
-     * Rebuilds the table with configured missions and their submission statuses.
+     * Rebuilds the table with every supported week in ascending order.
      *
-     * @param student Student whose submissions are displayed.
-     * @param missions Catalogue snapshot supplied by the view command.
+     * @param student Student whose submission status is displayed.
      */
-    private void populateMissionSubmissions(Student student, List<Mission> missions) {
+    private void populateMissionSubmissions(Student student) {
         assert student != null;
-        assert missions != null;
 
         missionSubmissions.getChildren().clear();
-        if (missions.isEmpty()) {
-            addMissionCell("No missions configured.", 0, 0, "mission-header");
-            return;
-        }
-        addMissionCell("Mission", 0, 0, "mission-header");
+        addMissionCell("Week", 0, 0, "mission-header");
         addMissionCell("Status", 1, 0, "mission-header");
-        int row = 1;
-        for (Mission mission : missions) {
-            boolean isSubmitted = student.getMissionSubmissions().hasSubmission(mission.getId());
-            addMissionCell(mission.getId() + " · " + mission.getDescription() + "\nDue: " + mission.getDeadline(),
-                    0, row, "mission-description");
+        for (int week = MissionSubmissions.MIN_WEEK; week <= MissionSubmissions.MAX_WEEK; week++) {
+            int row = week - MissionSubmissions.MIN_WEEK + 1;
+            boolean isSubmitted = student.getMissionSubmissions().hasSubmission(week);
+            addMissionCell(String.valueOf(week), 0, row, "mission-week");
             addMissionCell(isSubmitted ? "Submitted" : "Not submitted", 1, row,
                     isSubmitted ? "mission-submitted" : "mission-not-submitted");
-            row++;
         }
     }
 
     /**
-     * Adds a styled, wrapping cell that fills its column and row so cell borders align.
+     * Adds a styled, wrapping cell that fills its table column.
      *
      * @param text Visible cell text.
      * @param column Column index.
@@ -101,7 +91,6 @@ public class ResultDisplay extends UiPart<Region> {
         cell.getStyleClass().addAll("mission-cell", styleClass);
         cell.setWrapText(true);
         cell.setMaxWidth(Double.MAX_VALUE);
-        cell.setMaxHeight(Double.MAX_VALUE);
         missionSubmissions.add(cell, column, row);
     }
 

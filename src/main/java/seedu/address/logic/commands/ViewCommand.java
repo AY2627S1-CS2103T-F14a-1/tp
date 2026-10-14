@@ -46,7 +46,7 @@ public class ViewCommand extends Command {
                 lastShownList.get(targetIndex.getZeroBased());
 
         return new CommandResult(
-                Messages.formatStudentDetails(studentToView), studentToView, model.getMissionList());
+                Messages.formatStudentDetails(studentToView), studentToView);
     }
 
     @Override
