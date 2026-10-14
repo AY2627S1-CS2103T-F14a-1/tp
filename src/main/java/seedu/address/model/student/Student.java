@@ -1,5 +1,6 @@
 package seedu.address.model.student;
 
+import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 
 import java.util.Collections;
@@ -107,6 +108,18 @@ public class Student {
 
     public Attendance getAttendance() {
         return attendance;
+    }
+
+    /**
+     * Returns student including the new attendance record.
+     *
+     * @param updatedAttendance {@code Attendance} to update.
+     * @return {@code Student} containing the updated attendance record.
+     */
+    public Student withAttendance(Attendance updatedAttendance) {
+        requireNonNull(updatedAttendance);
+
+        return new Student(name, phone, email, address, tags, studioGroup, missionSubmissions, updatedAttendance);
     }
 
     /**
