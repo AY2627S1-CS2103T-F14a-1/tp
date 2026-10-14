@@ -153,7 +153,7 @@ Format: `addattendance INDEX w/WEEK`
 
 * `INDEX` identifies a student in the **currently displayed list**, including results from `find`. It must be a positive integer that corresponds to a displayed student.
 * `WEEK` must be an integer from **0 to 13**, inclusive. AvengerHub uses these week numbers to allow tutors to flexibly mark attendance across the semester's 13 weeks. Use the actual week number as defined in the NUS student calendar, where week 0 is the orientation week of semester 1.
-* Weeks outside this range, such as `-1` or `14` are rejected with an error message. Existing submission records remain unchanged.
+* Weeks outside this range, such as `-1` or `14`, are rejected with an error message. The existing attendance record remains unchanged.
 * Both arguments are required. Put `INDEX` before `w/WEEK`, and specify `w/` exactly once. Extra arguments are rejected.
 * Enter `INDEX` and `WEEK` as integers without signs, decimal points, or leading zeros. For example, use `3`, not `+3`, `3.0`, or `03`.
 * The command word and `w/` prefix are case-insensitive: `ADDMISSION 1 W/3` is also accepted.
@@ -162,8 +162,8 @@ Format: `addattendance INDEX w/WEEK`
 
 Examples:
 
-* `list` followed by `addattendance 1 w/3` records a week 3 submission for the first student displayed, if any.
-* `find Betsy` followed by `addattendance 1 w/13` records a week 13 submission for the first student in the search results, if any.
+* `list` followed by `addattendance 1 w/3` records a week 3 attendance for the first student displayed, if any.
+* `find Betsy` followed by `addattendance 1 w/13` records a week 13 attendance for the first student in the search results, if any.
 
 For example, if the first student is Amy Bee and her week 3 attendance is not yet recorded, `addattendance 1 w/3` displays:
 
