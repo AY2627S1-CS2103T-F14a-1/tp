@@ -10,8 +10,9 @@ import seedu.address.model.Model;
 import seedu.address.model.student.Student;
 
 /**
- * Finds and lists students whose names or studio groups contain any argument keyword.
- * Matching is case-insensitive and allows partial names.
+ * Finds students using name alternatives and optional studio-group filters.
+ * Spaces require all name keywords to match; commas separate alternatives.
+ * When both names and groups are supplied, both filters must match.
  */
 public class FindCommand extends Command {
 
@@ -19,14 +20,17 @@ public class FindCommand extends Command {
 
     public static final String MESSAGE_USAGE = COMMAND_WORD
             + ": Finds students by name and/or studio group.\n"
-            + "Parameters: [NAME_KEYWORD]... [g/STUDIO_GROUP]...\n"
+            + "Name matching is case-insensitive and allows partial matches. "
+            + "Parameters: [NAME_WORDS [, MORE_NAME_WORDS]...] [g/STUDIO_GROUP]...\n"
+            + "Spaces mean AND; commas mean OR between name alternatives. "
             + "Name keywords match student names. Studio groups are specified using g/.\n"
             + "If both name keywords and studio groups are provided, students must match "
             + "both criteria.\n"
             + "If no name keyword is provided, only the studio group criterion is used.\n"
             + "If no g/ studio group is provided, the search is performed using only "
             + "the name keywords.\n"
-            + "Example: " + COMMAND_WORD + " david alex g/1A";
+            + "Place name alternatives before group filters.\n"
+            + "Example: " + COMMAND_WORD + " david, alex g/1A";
 
     private final Predicate<Student> predicate;
 

@@ -117,19 +117,27 @@ Examples:
 
 Finds students whose names contain any of the given keywords.
 
-Format: `find KEYWORD [MORE_KEYWORDS]`
+Format: `find [NAME_WORDS [, MORE_NAME_WORDS]...] [g/STUDIO_GROUP]...`
 
-* The search considers only student names.
-* Matching is case-insensitive.
-* Partial matches count: `ale` matches `Alex`.
-* Students matching at least one keyword are returned (an OR search).
-* Keyword order does not matter.
-* Repeated keywords do not change the results.
+* Provide at least one name alternative or studio group.
+* Name matching is case-insensitive and allows partial matches.
+* Spaces mean AND: `alex lee` requires both words, in any order.
+* Commas mean OR: `alex lee, brian` matches both `alex` and `lee`,
+  or matches `brian`.
+* Spaces around commas are optional.
+* Empty alternatives are invalid: do not begin or end the name search
+  with a comma, or use consecutive commas.
+* Studio groups match exactly.
+* Repeated group filters mean OR: `g/1A g/1B` matches either group.
+* When names and groups are supplied, both filters must match.
+* Place name alternatives before studio-group filters.
 
 Examples:
-* `find ale` returns `Alex Yeoh` and `Alexander Tan`.
-* `find alex david` returns `Alex Yeoh`, `David Li`<br>
-  ![result for 'find alex david'](images/findAlexDavidResult.png)
+* `find ale lee` matches `Alex Lee`, but not `Alex Lim`.
+* `find alex, david` matches `Alex Lee` and `David Li`.
+* `find alex, brian g/1A` matches Alex or Brian within studio group 1A.
+* `find g/1A g/1B` finds students in either studio group.
+  ![result for 'find alex, david'](images/findAlexDavidResult.png)
 
 ### Deleting a student: `delete`
 
