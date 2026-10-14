@@ -5,7 +5,7 @@
 
 ![Ui](docs/images/Ui.png)
 
-AvengerHub is a desktop address book tailored for CS1101S tutors. It combines
+AvengerHub is a desktop address book application tailored for CS1101S tutors. It combines
 the speed of a command-line interface with the convenience of a graphical user
 interface, helping tutors keep student details from different tutorial groups
 organized in one place.
