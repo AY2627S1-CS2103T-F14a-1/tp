@@ -5,7 +5,6 @@ import static java.util.Objects.requireNonNull;
 import java.util.HashSet;
 import java.util.Set;
 
-import seedu.address.model.student.Address;
 import seedu.address.model.student.Attendance;
 import seedu.address.model.student.Email;
 import seedu.address.model.student.MissionSubmissions;
@@ -24,13 +23,11 @@ public class StudentBuilder {
     public static final String DEFAULT_NAME = "Amy Bee";
     public static final String DEFAULT_PHONE = "85355255";
     public static final String DEFAULT_EMAIL = "amy@gmail.com";
-    public static final String DEFAULT_ADDRESS = "123, Jurong West Ave 6, #08-111";
     public static final String DEFAULT_STUDIO_GROUP = "1A";
 
     private Name name;
     private Phone phone;
     private Email email;
-    private Address address;
     private Set<Tag> tags;
     private StudioGroup studioGroup;
     private MissionSubmissions missionSubmissions;
@@ -43,7 +40,6 @@ public class StudentBuilder {
         name = new Name(DEFAULT_NAME);
         phone = new Phone(DEFAULT_PHONE);
         email = new Email(DEFAULT_EMAIL);
-        address = new Address(DEFAULT_ADDRESS);
         tags = new HashSet<>();
         studioGroup = new StudioGroup(DEFAULT_STUDIO_GROUP);
         missionSubmissions = new MissionSubmissions();
@@ -57,7 +53,6 @@ public class StudentBuilder {
         name = studentToCopy.getName();
         phone = studentToCopy.getPhone();
         email = studentToCopy.getEmail();
-        address = studentToCopy.getAddress();
         tags = new HashSet<>(studentToCopy.getTags());
         studioGroup = studentToCopy.getStudioGroup();
         missionSubmissions = studentToCopy.getMissionSubmissions();
@@ -77,14 +72,6 @@ public class StudentBuilder {
      */
     public StudentBuilder withTags(String ... tags) {
         this.tags = SampleDataUtil.getTagSet(tags);
-        return this;
-    }
-
-    /**
-     * Sets the {@code Address} of the {@code Student} that we are building.
-     */
-    public StudentBuilder withAddress(String address) {
-        this.address = new Address(address);
         return this;
     }
 
@@ -156,7 +143,7 @@ public class StudentBuilder {
      * @return A student with the configured details.
      */
     public Student build() {
-        return new Student(name, phone, email, address, tags, studioGroup, missionSubmissions, attendance);
+        return new Student(name, phone, email, tags, studioGroup, missionSubmissions, attendance);
     }
 
 }

@@ -10,7 +10,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import seedu.address.commons.exceptions.IllegalValueException;
-import seedu.address.model.student.Address;
 import seedu.address.model.student.Attendance;
 import seedu.address.model.student.Email;
 import seedu.address.model.student.MissionSubmissions;
@@ -30,7 +29,6 @@ class JsonAdaptedStudent {
     private final String name;
     private final String phone;
     private final String email;
-    private final String address;
     private final List<JsonAdaptedTag> tags = new ArrayList<>();
     private final String studioGroup;
     // Preserve JSON types until validation so fractional weeks cannot be silently truncated.
@@ -45,7 +43,6 @@ class JsonAdaptedStudent {
      * @param name Student's name.
      * @param phone Student's phone number.
      * @param email Student's email address.
-     * @param address Student's address.
      * @param tags Student's tags, or null for no tags.
      * @param studioGroup Student's studio group.
      * @param missionSubmissions Recorded tutorial weeks, or null for no submissions.
@@ -53,14 +50,13 @@ class JsonAdaptedStudent {
      */
     @JsonCreator
     public JsonAdaptedStudent(@JsonProperty("name") String name, @JsonProperty("phone") String phone,
-            @JsonProperty("email") String email, @JsonProperty("address") String address,
+            @JsonProperty("email") String email,
             @JsonProperty("tags") List<JsonAdaptedTag> tags, @JsonProperty("studio group") String studioGroup,
             @JsonProperty("missionSubmissions") List<?> missionSubmissions,
-                              @JsonProperty("attendance") List<?> attendance) {
+            @JsonProperty("attendance") List<?> attendance) {
         this.name = name;
         this.phone = phone;
         this.email = email;
-        this.address = address;
         if (tags != null) {
             this.tags.addAll(tags);
         }
@@ -83,7 +79,6 @@ class JsonAdaptedStudent {
         name = source.getName().fullName;
         phone = source.getPhone().value;
         email = source.getEmail().value;
-        address = source.getAddress().value;
         tags.addAll(source.getTags().stream()
                 .map(JsonAdaptedTag::new)
                 .collect(Collectors.toList()));
@@ -134,14 +129,6 @@ class JsonAdaptedStudent {
         }
         final Email modelEmail = new Email(email);
 
-        if (address == null) {
-            throw new IllegalValueException(String.format(MISSING_FIELD_MESSAGE_FORMAT, Address.class.getSimpleName()));
-        }
-        if (!Address.isValidAddress(address)) {
-            throw new IllegalValueException(Address.MESSAGE_CONSTRAINTS);
-        }
-        final Address modelAddress = new Address(address);
-
         if (studioGroup == null) {
             throw new IllegalValueException(String.format(
                     MISSING_FIELD_MESSAGE_FORMAT, StudioGroup.class.getSimpleName()));
@@ -154,7 +141,7 @@ class JsonAdaptedStudent {
         final Set<Tag> modelTags = new HashSet<>(studentTags);
         final MissionSubmissions modelMissionSubmissions = toModelMissionSubmissions();
         final Attendance modelAttendance = toModelAttendance();
-        return new Student(modelName, modelPhone, modelEmail, modelAddress, modelTags, modelStudioGroup,
+        return new Student(modelName, modelPhone, modelEmail, modelTags, modelStudioGroup,
                 modelMissionSubmissions, modelAttendance);
     }
 

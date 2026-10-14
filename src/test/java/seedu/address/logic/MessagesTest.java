@@ -13,12 +13,10 @@ public class MessagesTest {
                 "Name: %s%n"
                         + "Phone: %s%n"
                         + "Email: %s%n"
-                        + "Address: %s%n"
                         + "Studio Group: %s",
                 ALICE.getName(),
                 ALICE.getPhone(),
                 ALICE.getEmail(),
-                ALICE.getAddress(),
                 ALICE.getStudioGroup());
 
         assertEquals(expected, Messages.formatStudentDetails(ALICE));
