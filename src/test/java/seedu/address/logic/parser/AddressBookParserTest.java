@@ -166,7 +166,7 @@ public class AddressBookParserTest {
 
     @Test
     public void parseCommand_addAttendanceMissingIndex_reportsMissingIndex() {
-        assertThrows(ParseException.class, MissionParser.MESSAGE_MISSING_INDEX, () ->
+        assertThrows(ParseException.class, WeeklyTaskParser.MESSAGE_MISSING_INDEX, () ->
                 parser.parseCommand("addattendance"));
     }
 
@@ -188,7 +188,7 @@ public class AddressBookParserTest {
 
     @Test
     public void parseCommand_deleteAttendanceMissingIndex_reportsMissingIndex() {
-        assertThrows(ParseException.class, MissionParser.MESSAGE_MISSING_INDEX, () ->
+        assertThrows(ParseException.class, WeeklyTaskParser.MESSAGE_MISSING_INDEX, () ->
                 parser.parseCommand("delattendance"));
     }
 
