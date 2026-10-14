@@ -153,6 +153,58 @@ Examples:
 * `list` followed by `delete 2` deletes the 2nd student in the address book.
 * `find Betsy` followed by `delete 1` deletes the 1st student in the results of the `find` command.
 
+### Adding attendance: `addattendance`
+
+Records that a student has attended the tutorial for a tutorial week.
+
+Format: `addattendance INDEX w/WEEK`
+
+* `INDEX` identifies a student in the **currently displayed list**, including results from `find`. It must be a positive integer that corresponds to a displayed student.
+* `WEEK` must be an integer from **0 to 13**, inclusive. AvengerHub uses these week numbers to allow tutors to flexibly mark attendance across the semester's 13 weeks. Use the actual week number as defined in the NUS student calendar, where week 0 is the orientation week of semester 1.
+* Weeks outside this range, such as `-1` or `14`, are rejected with an error message. The existing attendance record remains unchanged.
+* Both arguments are required. Put `INDEX` before `w/WEEK`, and specify `w/` exactly once. Extra arguments are rejected.
+* Enter `INDEX` and `WEEK` as integers without signs, decimal points, or leading zeros. For example, use `3`, not `+3`, `3.0`, or `03`.
+* The command word and `w/` prefix are case-insensitive: `ADDMISSION 1 W/3` is also accepted.
+* Each student can have one attendance recorded per week. Adding an existing record leaves the records unchanged and displays a message explaining that the submission is already recorded.
+* The current list filter stays active.
+
+Examples:
+
+* `list` followed by `addattendance 1 w/3` records a week 3 attendance for the first student displayed, if any.
+* `find Betsy` followed by `addattendance 1 w/13` records a week 13 attendance for the first student in the search results, if any.
+
+For example, if the first student is Amy Bee and her week 3 attendance is not yet recorded, `addattendance 1 w/3` displays:
+
+```text
+Added Amy Bee’s attendance for tutorial week 3.
+```
+
+### Deleting attendance: `delattendance`
+
+Removes a student's mission submission record for a tutorial week. The student remains in the address book.
+
+Format: `delattendance INDEX w/WEEK`
+
+* `INDEX` identifies a student in the **currently displayed list**, including results from `find`. It must be a positive integer that corresponds to a displayed student.
+* `WEEK` must be an integer from **0 to 13**, inclusive. AvengerHub uses these week numbers to allow tutors to flexibly mark attendance across the semester's 13 weeks. Use the actual week number as defined in the NUS student calendar, where week 0 is the orientation week of semester 1.
+* Weeks outside this range, such as `-1` or `14`, are rejected with an error message. The existing attendance record remains unchanged.
+* Both arguments are required. Put `INDEX` before `w/WEEK`, and specify `w/` exactly once. Extra arguments are rejected.
+* Enter `INDEX` and `WEEK` as integers without signs, decimal points, or leading zeros.
+* The command word and `w/` prefix are case-insensitive: `DELMISSION 1 W/3` is also accepted.
+* If the submission was initially not recorded, the records remain unchanged and a message explains that no changes were made.
+* The current list filter stays active.
+
+Examples:
+
+* `list` followed by `delattendance 1 w/3` removes the first student's week 3 attendance, if recorded, if any.
+* `find Betsy` followed by `delattendance 1 w/13` removes the week 13 attendance for the first student in the search results, if any.
+
+For example, if the first student is Amy Bee and her week 3 attendance is recorded, `delattendance 1 w/3` displays:
+
+```text
+Removed Amy Bee’s attendance for tutorial week 3.
+```
+
 ### Adding a mission submission record: `addmission`
 
 Records that a student has submitted a mission for a tutorial week.
