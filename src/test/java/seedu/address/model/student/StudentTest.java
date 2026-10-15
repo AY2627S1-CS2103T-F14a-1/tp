@@ -103,7 +103,7 @@ public class StudentTest {
     public void constructor_nullMissionSubmissions_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () ->
                 new Student(ALICE.getName(), ALICE.getPhone(), ALICE.getEmail(),
-                        ALICE.getTags(), ALICE.getStudioGroup(), null, ALICE.getAttendance()));
+                        ALICE.getTags(), ALICE.getStudioGroup(), null, ALICE.getStudioRecords()));
     }
 
     @Test

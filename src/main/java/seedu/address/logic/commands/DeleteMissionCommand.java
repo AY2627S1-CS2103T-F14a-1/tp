@@ -92,7 +92,7 @@ public class DeleteMissionCommand extends Command {
 
         return new Student(student.getName(), student.getPhone(), student.getEmail(),
                 student.getTags(), student.getStudioGroup(), submissions,
-                student.getAttendance());
+                student.getStudioRecords());
     }
 
     @Override

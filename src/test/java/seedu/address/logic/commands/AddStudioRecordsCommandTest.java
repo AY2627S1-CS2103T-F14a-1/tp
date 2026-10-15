@@ -60,7 +60,7 @@ public class AddStudioRecordsCommandTest {
 
         assertCommandSuccess(new AddStudioRecordCommand(INDEX_FIRST_STUDENT, 3),
                 model, feedback, expectedModel);
-        assertFalse(student.getAttendance().hasAttendance(3));
+        assertFalse(student.getStudioRecords().hasAttendance(3));
     }
 
     @Test

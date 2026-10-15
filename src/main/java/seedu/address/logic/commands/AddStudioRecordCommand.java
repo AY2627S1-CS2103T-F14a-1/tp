@@ -70,7 +70,7 @@ public class AddStudioRecordCommand extends Command {
         }
 
         Student studentToUpdate = lastShownList.get(targetIndex.getZeroBased());
-        StudioRecords studioRecords = studentToUpdate.getStudioRecord();
+        StudioRecords studioRecords = studentToUpdate.getStudioRecords();
 
         if (studioRecords.hasStudioRecord(week)) {
             return new CommandResult(String.format(MESSAGE_ALREADY_RECORDED, studentToUpdate.getName(), week));

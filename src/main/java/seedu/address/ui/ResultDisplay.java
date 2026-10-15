@@ -111,7 +111,7 @@ public class ResultDisplay extends UiPart<Region> {
         addAttendanceCell("Status", 1, 0, "mission-header");
         for (int week = StudioRecords.MIN_WEEK; week <= StudioRecords.MAX_WEEK; week++) {
             int row = week - StudioRecords.MIN_WEEK + 1;
-            boolean hasAttended = student.getAttendance().hasAttendance(week);
+            boolean hasAttended = student.getStudioRecords().hasAttendance(week);
             addAttendanceCell(String.valueOf(week), 0, row, "mission-week");
             addAttendanceCell(hasAttended ? "Present" : "Absent", 1, row,
                     hasAttended ? "present" : "absent");

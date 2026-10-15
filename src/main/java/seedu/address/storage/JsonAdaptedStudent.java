@@ -87,7 +87,7 @@ class JsonAdaptedStudent {
                 .stream()
                 .sorted()
                 .collect(Collectors.toList()));
-        attendance.addAll(source.getAttendance().getAttendedWeeks()
+        attendance.addAll(source.getStudioRecords().getAttendedWeeks()
                 .stream()
                 .sorted()
                 .collect(Collectors.toList()));

@@ -62,7 +62,7 @@ public class DeleteStudioRecordsCommandTest {
 
         assertCommandSuccess(new DeleteStudioRecordCommand(INDEX_FIRST_STUDENT, 3),
                 model, feedback, expectedModel);
-        assertTrue(student.getAttendance().hasAttendance(3));
+        assertTrue(student.getStudioRecords().hasAttendance(3));
     }
 
     @Test

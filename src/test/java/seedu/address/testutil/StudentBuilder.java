@@ -56,7 +56,7 @@ public class StudentBuilder {
         tags = new HashSet<>(studentToCopy.getTags());
         studioGroup = studentToCopy.getStudioGroup();
         missionSubmissions = studentToCopy.getMissionSubmissions();
-        studioRecords = studentToCopy.getAttendance();
+        studioRecords = studentToCopy.getStudioRecords();
     }
 
     /**

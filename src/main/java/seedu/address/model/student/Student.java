@@ -97,7 +97,7 @@ public class Student {
         return missionSubmissions;
     }
 
-    public StudioRecords getAttendance() {
+    public StudioRecords getStudioRecords() {
         return studioRecords;
     }
 
