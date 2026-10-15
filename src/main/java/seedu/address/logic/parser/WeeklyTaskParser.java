@@ -2,15 +2,18 @@ package seedu.address.logic.parser;
 
 import static java.util.Objects.requireNonNull;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_STUDIO_EFFORT;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_WEEK;
 
 import java.util.Locale;
+import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.student.MissionSubmissions;
+import seedu.address.model.student.StudioRecord;
 
 /**
  * Validates the shared student index and week arguments for mission commands.
@@ -29,6 +32,7 @@ public class WeeklyTaskParser {
     private final String usage;
     private final Index index;
     private final int week;
+    private final StudioRecord studioRecord;
 
     /**
      * Parses arguments using the calling command's usage in format errors.
@@ -41,9 +45,12 @@ public class WeeklyTaskParser {
     public WeeklyTaskParser(String args, String usage) throws ParseException {
         requireNonNull(args);
         this.usage = requireNonNull(usage);
-        ArgumentMultimap arguments = ArgumentTokenizer.tokenize(normalizeArguments(args), PREFIX_WEEK);
+        ArgumentMultimap arguments = ArgumentTokenizer.tokenize(normalizeArguments(args),
+                PREFIX_WEEK, PREFIX_STUDIO_EFFORT);
         index = extractIndex(arguments);
         week = parseTutorialWeek(extractWeek(arguments));
+        // TODO: dirty line of of code
+        studioRecord = new StudioRecord(Integer.parseInt(arguments.getValue(PREFIX_STUDIO_EFFORT).orElse(null)));
     }
 
     /**
@@ -62,6 +69,10 @@ public class WeeklyTaskParser {
      */
     public int getWeek() {
         return week;
+    }
+
+    public StudioRecord getStudioRecord() {
+        return studioRecord;
     }
 
     /**

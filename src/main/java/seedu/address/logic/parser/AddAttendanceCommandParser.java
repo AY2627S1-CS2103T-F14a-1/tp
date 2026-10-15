@@ -20,6 +20,6 @@ public class AddAttendanceCommandParser implements Parser<AddStudioRecordCommand
     @Override
     public AddStudioRecordCommand parse(String args) throws ParseException {
         WeeklyTaskParser arguments = new WeeklyTaskParser(args, AddMissionCommand.MESSAGE_USAGE);
-        return new AddStudioRecordCommand(arguments.getIndex(), arguments.getWeek());
+        return new AddStudioRecordCommand(arguments.getIndex(), arguments.getWeek(), arguments.getStudioRecord);
     }
 }
