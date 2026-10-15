@@ -111,7 +111,7 @@ public class Student {
     public Student withAttendance(Attendance updatedAttendance) {
         requireNonNull(updatedAttendance);
 
-        return new Student(name, phone, email, address, tags, studioGroup, missionSubmissions, updatedAttendance);
+        return new Student(name, phone, email, tags, studioGroup, missionSubmissions, updatedAttendance);
     }
 
     /**
