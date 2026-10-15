@@ -8,17 +8,20 @@ import static seedu.address.model.student.StudioRecord.isValidWeek;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * Represents an immutable collection of a student's weekly studio status.
- * Each recorded week is between {@value StudioRecord#MIN_WEEK} and {@value StudioRecord#MAX_WEEK}, inclusive.
+ * Each recorded week is between {@value MIN_WEEK} and {@value MAX_WEEK}, inclusive.
  */
 public final class StudioRecords {
 
-    public static final String STUDIORECORD_MARKER = "StudioRecords: ";
-
+    public static final int MIN_WEEK = 3;
+    public static final int MAX_WEEK = 13;
     private final Map<Integer, StudioRecord> studioRecords;
+
+    public static final String STUDIORECORD_MARKER = "StudioRecords: ";
+    public static final String MESSAGE_CONSTRAINTS =
+            "Tutorial week must be between " + MIN_WEEK + " and " + MAX_WEEK + " inclusive";
 
     /**
      * Creates {@code StudioRecords} with no recorded weeks.
@@ -50,7 +53,7 @@ public final class StudioRecords {
      * @param week Studio week to check.
      * @return True if studio status is recorded for the week.
      */
-    public boolean hasStudioStatus(int week) {
+    public boolean hasStudioRecord(int week) {
         checkArgument(isValidWeek(week), MESSAGE_CONSTRAINTS);
         return studioRecords.containsKey(week);
     }
@@ -62,9 +65,9 @@ public final class StudioRecords {
      * @param week Tutorial week to record.
      * @return StudioRecords containing the existing weeks and given week.
      */
-    public StudioRecords withStudioStatus(int week, StudioRecord studioRecord) {
+    public StudioRecords withStudioRecord(int week, StudioRecord studioRecord) {
         requireNonNull(studioRecord);
-        if (hasStudioStatus(week)) {
+        if (hasStudioRecord(week)) {
             return this;
         }
 
@@ -81,8 +84,8 @@ public final class StudioRecords {
      * @param week Tutorial week to delete.
      * @return StudioRecords containing the existing weeks without given week.
      */
-    public StudioRecords withoutStudioStatus(int week, StudioRecord studioRecord) {
-        if (!hasStudioStatus(week)) {
+    public StudioRecords withoutStudioRecord(int week, StudioRecord studioRecord) {
+        if (!hasStudioRecord(week)) {
             return this;
         }
 
@@ -101,6 +104,16 @@ public final class StudioRecords {
         return studioRecords;
     }
 
+    /**
+     * Returns whether the given tutorial week is within the valid range
+     *
+     * @param week Tutorial week to check.
+     * @return True if the week is between {@value #MIN_WEEK} and {@value #MAX_WEEK}, inclusive.
+     */
+    public static boolean isValidWeek(int week) {
+        return week >= MIN_WEEK && week <= MAX_WEEK;
+    }
+
     @Override
     public boolean equals(Object other) {
         if (other == this) {
@@ -116,12 +129,25 @@ public final class StudioRecords {
     }
 
     /**
-     * Returns the studio records in ascending week order for diagnostic output.
+     * Returns the studio records in ascending week order.
      *
      * @return A string containing the recorded studio records in ascending week order.
      */
     @Override
     public String toString() {
-        return new TreeMap<>(studioRecords).toString();
+        StringBuilder summary = new StringBuilder();
+        for (int week = MIN_WEEK; week <= MAX_WEEK; week++) {
+            StudioRecord studioRecord = studioRecords.get(week);
+            boolean attended = studioRecord != null;
+            int effortScore = attended ? studioRecord.getEffortScore() : 0;
+
+            summary.append(week)
+                    .append(": ").append(attended ? "A" : "X")
+                    .append(" | ").append(effortScore);
+            if (week < MAX_WEEK) {
+                summary.append(", ");
+            }
+        }
+        return summary.toString();
     }
 }
