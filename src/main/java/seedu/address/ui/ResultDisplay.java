@@ -11,8 +11,8 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 import seedu.address.logic.commands.CommandResult;
-import seedu.address.model.student.Attendance;
 import seedu.address.model.mission.Mission;
+import seedu.address.model.student.Attendance;
 import seedu.address.model.student.Student;
 
 /**

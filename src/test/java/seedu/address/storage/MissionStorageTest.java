@@ -30,7 +30,7 @@ public class MissionStorageTest {
     @Test
     public void saveAndLoad_catalogueWithMissionSubmissions_preservesAllRecords() throws Exception {
         AddressBook original = new AddressBook();
-        Student student = new Student(ALICE.getName(), ALICE.getPhone(), ALICE.getEmail(), ALICE.getAddress(),
+        Student student = new Student(ALICE.getName(), ALICE.getPhone(), ALICE.getEmail(),
                 ALICE.getTags(), ALICE.getStudioGroup(), new MissionSubmissions(Set.of(new MissionId("M105"))),
                 ALICE.getAttendance());
         original.addStudent(student);
@@ -58,7 +58,7 @@ public class MissionStorageTest {
 
     @Test
     public void readAddressBook_danglingSubmission_rejectsWithoutChangingFile() throws Exception {
-        Student student = new Student(ALICE.getName(), ALICE.getPhone(), ALICE.getEmail(), ALICE.getAddress(),
+        Student student = new Student(ALICE.getName(), ALICE.getPhone(), ALICE.getEmail(),
                 ALICE.getTags(), ALICE.getStudioGroup(), new MissionSubmissions(Set.of(new MissionId("M05"))),
                 ALICE.getAttendance());
         String json = "{\"students\":[" + JsonUtil.toJsonString(new JsonAdaptedStudent(student))

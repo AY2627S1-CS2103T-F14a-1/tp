@@ -62,7 +62,7 @@ public class MainAppMissionStorageTest {
         Storage storage = createStorage(file);
         Model model = initialize(storage);
         new LogicManager(model, storage).execute(
-                "addstudent n/New Student p/91234567 e/new@example.com a/Clementi g/1A");
+                "addstudent n/New Student p/91234567 e/new@example.com g/1A");
         assertEquals(1, model.getAddressBook().getStudentList().size());
         assertEquals(model.getAddressBook(), storage.readAddressBook().orElseThrow());
     }
