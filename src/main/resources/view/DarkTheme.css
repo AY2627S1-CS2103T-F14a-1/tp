@@ -436,4 +436,41 @@ SplitPane,
 .student-name,
 .student-group {
     -fx-text-fill: white;
+
+/* Student details displayed by the view command. */
+.student-details-scroll, .student-details-scroll > .viewport, .student-details-content {
+    -fx-background-color: #383838;
+}
+
+.student-details-content {
+    -fx-padding: 12 18 12 12;
+}
+
+.student-summary, .mission-title, .mission-cell {
+    -fx-text-fill: #eeeeee;
+    -fx-opacity: 1;
+}
+
+.mission-title {
+    -fx-font-size: 18pt;
+    -fx-font-weight: bold;
+}
+
+.mission-cell {
+    -fx-padding: 8 10 8 10;
+    -fx-border-color: transparent transparent #606060 transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.mission-header {
+    -fx-font-weight: bold;
+    -fx-text-fill: #cccccc;
+}
+
+.mission-submitted {
+    -fx-text-fill: #a4dfb3;
+}
+
+.mission-not-submitted {
+    -fx-text-fill: #dddddd;
 }

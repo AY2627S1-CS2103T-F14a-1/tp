@@ -12,11 +12,13 @@ import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
-import seedu.address.logic.commands.AddCommand;
+import seedu.address.logic.commands.AddAttendanceCommand;
 import seedu.address.logic.commands.AddMissionCommand;
+import seedu.address.logic.commands.AddStudentCommand;
 import seedu.address.logic.commands.ClearCommand;
-import seedu.address.logic.commands.DeleteCommand;
+import seedu.address.logic.commands.DeleteAttendanceCommand;
 import seedu.address.logic.commands.DeleteMissionCommand;
+import seedu.address.logic.commands.DeleteStudentCommand;
 import seedu.address.logic.commands.EditCommand;
 import seedu.address.logic.commands.EditCommand.EditStudentDescriptor;
 import seedu.address.logic.commands.ExitCommand;
@@ -36,10 +38,10 @@ public class AddressBookParserTest {
     private final AddressBookParser parser = new AddressBookParser();
 
     @Test
-    public void parseCommand_add() throws Exception {
+    public void parseCommand_addStudent() throws Exception {
         Student student = new StudentBuilder().build();
-        AddCommand command = (AddCommand) parser.parseCommand(StudentUtil.getAddCommand(student));
-        assertEquals(new AddCommand(student), command);
+        AddStudentCommand command = (AddStudentCommand) parser.parseCommand(StudentUtil.getAddStudentCommand(student));
+        assertEquals(new AddStudentCommand(student), command);
     }
 
     @Test
@@ -49,10 +51,10 @@ public class AddressBookParserTest {
     }
 
     @Test
-    public void parseCommand_delete() throws Exception {
-        DeleteCommand command = (DeleteCommand) parser.parseCommand(
-                DeleteCommand.COMMAND_WORD + " " + INDEX_FIRST_STUDENT.getOneBased());
-        assertEquals(new DeleteCommand(INDEX_FIRST_STUDENT), command);
+    public void parseCommand_deleteStudent() throws Exception {
+        DeleteStudentCommand command = (DeleteStudentCommand) parser.parseCommand(
+                DeleteStudentCommand.COMMAND_WORD + " " + INDEX_FIRST_STUDENT.getOneBased());
+        assertEquals(new DeleteStudentCommand(INDEX_FIRST_STUDENT), command);
     }
 
     @Test
@@ -74,7 +76,7 @@ public class AddressBookParserTest {
     public void parseCommand_find() throws Exception {
         List<String> keywords = List.of("foo", "bar", "baz");
         FindCommand command = (FindCommand) parser.parseCommand(
-                FindCommand.COMMAND_WORD + " " + keywords.stream().collect(Collectors.joining(" ")));
+                FindCommand.COMMAND_WORD + " " + keywords.stream().collect(Collectors.joining(", ")));
         assertEquals(new FindCommand(new NameContainsKeywordsPredicate(keywords)), command);
     }
 
@@ -120,7 +122,7 @@ public class AddressBookParserTest {
 
     @Test
     public void parseCommand_addMissionMissingIndex_reportsMissingIndex() {
-        assertThrows(ParseException.class, MissionParser.MESSAGE_MISSING_INDEX, () ->
+        assertThrows(ParseException.class, WeeklyTaskParser.MESSAGE_MISSING_INDEX, () ->
                 parser.parseCommand("addmission"));
     }
 
@@ -142,7 +144,7 @@ public class AddressBookParserTest {
 
     @Test
     public void parseCommand_deleteMissionMissingIndex_reportsMissingIndex() {
-        assertThrows(ParseException.class, MissionParser.MESSAGE_MISSING_INDEX, () ->
+        assertThrows(ParseException.class, WeeklyTaskParser.MESSAGE_MISSING_INDEX, () ->
                 parser.parseCommand("delmission"));
     }
 
@@ -150,5 +152,49 @@ public class AddressBookParserTest {
     public void parseCommand_misspelledDeleteMission_reportsUnknownCommand() {
         assertThrows(ParseException.class, MESSAGE_UNKNOWN_COMMAND, () ->
                 parser.parseCommand("delmisson 1 w/3"));
+    }
+
+    @Test
+    public void parseCommand_addAttendanceIgnoringCase_returnsCommand() throws Exception {
+        AddAttendanceCommand expected = new AddAttendanceCommand(INDEX_FIRST_STUDENT, 3);
+
+        assertEquals(expected, parser.parseCommand("addattendance 1 w/3"));
+        assertEquals(expected, parser.parseCommand("ADDATTENDANCE 1 w/3"));
+        assertEquals(expected, parser.parseCommand("AddAttendance 1 W/3"));
+        assertEquals(expected, parser.parseCommand("  addattendance\t1\tw/3  "));
+    }
+
+    @Test
+    public void parseCommand_addAttendanceMissingIndex_reportsMissingIndex() {
+        assertThrows(ParseException.class, WeeklyTaskParser.MESSAGE_MISSING_INDEX, () ->
+                parser.parseCommand("addattendance"));
+    }
+
+    @Test
+    public void parseCommand_misspelledAddAttendance_reportsUnknownCommand() {
+        assertThrows(ParseException.class, MESSAGE_UNKNOWN_COMMAND, () ->
+                parser.parseCommand("addattendence 1 w/3"));
+    }
+
+    @Test
+    public void parseCommand_deleteAttendanceIgnoringCase_returnsCommand() throws Exception {
+        DeleteAttendanceCommand expected = new DeleteAttendanceCommand(INDEX_FIRST_STUDENT, 3);
+
+        assertEquals(expected, parser.parseCommand("delattendance 1 w/3"));
+        assertEquals(expected, parser.parseCommand("DELATTENDANCE 1 w/3"));
+        assertEquals(expected, parser.parseCommand("DelAttendance 1 W/3"));
+        assertEquals(expected, parser.parseCommand("  delattendance\t1\tw/3  "));
+    }
+
+    @Test
+    public void parseCommand_deleteAttendanceMissingIndex_reportsMissingIndex() {
+        assertThrows(ParseException.class, WeeklyTaskParser.MESSAGE_MISSING_INDEX, () ->
+                parser.parseCommand("delattendance"));
+    }
+
+    @Test
+    public void parseCommand_misspelledDeleteAttendance_reportsUnknownCommand() {
+        assertThrows(ParseException.class, MESSAGE_UNKNOWN_COMMAND, () ->
+                parser.parseCommand("delattendence 1 w/3"));
     }
 }

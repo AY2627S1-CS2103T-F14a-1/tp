@@ -29,6 +29,7 @@ public class CommandResult {
     /** The application should exit. */
     private final boolean exit;
 
+    /** Student details requested by a view command, or null for ordinary feedback. */
     private final Student studentToView;
 
     /**
@@ -88,6 +89,7 @@ public class CommandResult {
      *
      * @return feedback message
      */
+
     public String getFeedbackToUser() {
         return feedbackToUser;
     }
@@ -132,12 +134,13 @@ public class CommandResult {
 
         return feedbackToUser.equals(otherCommandResult.feedbackToUser)
                 && showHelp == otherCommandResult.showHelp
-                && exit == otherCommandResult.exit;
+                && exit == otherCommandResult.exit
+                && Objects.equals(studentToView, otherCommandResult.studentToView);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(feedbackToUser, showHelp, exit);
+        return Objects.hash(feedbackToUser, showHelp, exit, studentToView);
     }
 
     @Override

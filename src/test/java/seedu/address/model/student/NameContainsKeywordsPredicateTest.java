@@ -69,7 +69,7 @@ public class NameContainsKeywordsPredicateTest {
         // Keywords match phone, email and address, but do not match name
         predicate = new NameContainsKeywordsPredicate(List.of("12345", "alice@email.com", "Main", "Street"));
         assertFalse(predicate.test(new StudentBuilder().withName("Alice").withPhone("12345")
-                .withEmail("alice@email.com").withAddress("Main Street").build()));
+                .withEmail("alice@email.com").build()));
     }
 
     @Test
@@ -124,6 +124,36 @@ public class NameContainsKeywordsPredicateTest {
         Student student = new StudentBuilder().withName("Alex Tan").build();
 
         assertFalse(new NameContainsKeywordsPredicate(List.of("@#$")).test(student));
+    }
+
+    @Test
+    public void test_wordsWithinAlternative_allWordsRequired() {
+        Student student = new StudentBuilder().withName("Alex Tan").build();
+
+        assertTrue(new NameContainsKeywordsPredicate(List.of("ale tan")).test(student));
+        assertFalse(new NameContainsKeywordsPredicate(List.of("alex lim")).test(student));
+    }
+
+    @Test
+    public void test_multipleAlternatives_anyCompleteAlternativeMatches() {
+        Student student = new StudentBuilder().withName("Brian Lim").build();
+
+        assertTrue(new NameContainsKeywordsPredicate(List.of("alex tan", "bri lim")).test(student));
+        assertFalse(new NameContainsKeywordsPredicate(List.of("alex lim", "brian tan")).test(student));
+    }
+
+    @Test
+    public void test_reversedMixedCaseWords_returnsTrue() {
+        Student student = new StudentBuilder().withName("Alex Tan").build();
+
+        assertTrue(new NameContainsKeywordsPredicate(List.of("TAN aLE")).test(student));
+    }
+
+    @Test
+    public void test_blankAlternative_returnsFalse() {
+        Student student = new StudentBuilder().withName("Alex Tan").build();
+
+        assertFalse(new NameContainsKeywordsPredicate(List.of(" ")).test(student));
     }
 
     @Test
