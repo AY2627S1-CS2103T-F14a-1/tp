@@ -73,7 +73,7 @@ dependencies {
 }
 
 shadowJar {
-    archiveFileName = 'addressbook.jar'
+    archiveFileName = 'avengerhub.jar'
 }
 
 defaultTasks 'clean', 'test'

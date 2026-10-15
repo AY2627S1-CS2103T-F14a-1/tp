@@ -6,7 +6,7 @@
 
 # AvengerHub User Guide
 
-AvengerHub is a **desktop application for managing contacts, optimized for use through a Command Line Interface (CLI)** while retaining the benefits of a Graphical User Interface (GUI). If you type quickly, AvengerHub can help you manage contacts faster than traditional GUI applications.
+AvengerHub is a **desktop address book application for managing contacts, optimized for use through a Command Line Interface (CLI)** while retaining the benefits of a Graphical User Interface (GUI). If you type quickly, AvengerHub can help you manage contacts faster than traditional GUI applications.
 
 <!-- * Table of Contents -->
 <page-nav-print />
@@ -18,12 +18,12 @@ AvengerHub is a **desktop application for managing contacts, optimized for use t
 1. Ensure that Java `25` or later is installed on your computer.<br>
    **Mac users:** Ensure you have the precise JDK version prescribed [here](https://se-education.org/guides/tutorials/javaInstallationMac.html).
 
-1. Download the latest `.jar` file from [here](https://github.com/se-edu/addressbook-level3/releases).
+1. Download the latest `.jar` file from [here](https://github.com/AY2627S1-CS2103T-F14a-1/tp/releases).
 
 1. Copy the file to the folder you want to use as the _home folder_ for your AvengerHub.
 
-1. Open a terminal, `cd` to the folder containing the JAR file, and run `java -jar addressbook.jar`.<br>
-   A GUI similar to the one below should appear in a few seconds. Note how the app contains some sample data.<br>
+1. Open a terminal, `cd` to the folder containing the JAR file, and run `java -jar avengerhub.jar`.<br>
+   A GUI similar to the one below should appear in a few seconds. Note how the app contains some sample data in its address book.<br>
    ![Ui](images/Ui.png)
 
 1. Type a command in the command box and press Enter to execute it. For example, type **`help`** and press Enter to open the help window.<br>
@@ -31,9 +31,9 @@ AvengerHub is a **desktop application for managing contacts, optimized for use t
 
    * `list` : Lists all students.
 
-   * `add n/John Doe p/98765432 e/johnd@example.com a/John street, block 123, #01-01` : Adds a contact named `John Doe` to the Address Book.
+   * `addstudent n/John Doe p/98765432 e/johnd@example.com g/1A` : Adds a student named `John Doe` to the Address Book.
 
-   * `delete 3` : Deletes the 3rd student shown in the current list.
+   * `delstudent 3` : Deletes the 3rd student shown in the current list.
 
    * `clear` : Deletes all students.
 
@@ -80,7 +80,7 @@ Format: `help`
 
 Adds a student to the address book.
 
-Format: `add n/NAME p/PHONE_NUMBER e/EMAIL a/ADDRESS [t/TAG]... `
+Format: `add n/NAME p/PHONE_NUMBER e/EMAIL [t/TAG]... g/STUDIO_GROUP`
 
 <box type="tip" seamless>
 
@@ -88,8 +88,8 @@ Format: `add n/NAME p/PHONE_NUMBER e/EMAIL a/ADDRESS [t/TAG]... `
 </box>
 
 Examples:
-* `add n/John Doe p/98765432 e/johnd@example.com a/John street, block 123, #01-01`
-* `add n/Betsy Crowe t/friend e/betsycrowe@example.com a/Newgate Prison p/1234567 t/criminal`
+* `add n/John Doe p/98765432 e/johnd@example.com g/1A`
+* `add n/Betsy Crowe t/talkative e/betsycrowe@example.com p/1234567 t/smart g/1A`
 
 ### Listing all students: `list`
 
@@ -101,7 +101,7 @@ Format: `list`
 
 Edits an existing student in the address book.
 
-Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [t/TAG]... `
+Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [t/TAG]... [g/STUDIO_GROUP]`
 
 * Edits the student at the specified `INDEX`. The index refers to the index number shown in the displayed student list. The index **must be a positive integer** 1, 2, 3, ...
 * At least one of the optional fields must be provided.
@@ -139,7 +139,7 @@ Examples:
 * `find g/1A g/1B` finds students in either studio group.
   ![result for 'find alex, david'](images/findAlexDavidResult.png)
 
-### Deleting a student: `delete`
+### Deleting a student: `delstudent`
 
 Deletes the specified student from the address book.
 
@@ -164,7 +164,7 @@ Format: `addattendance INDEX w/WEEK`
 * Weeks outside this range, such as `-1` or `14`, are rejected with an error message. The existing attendance record remains unchanged.
 * Both arguments are required. Put `INDEX` before `w/WEEK`, and specify `w/` exactly once. Extra arguments are rejected.
 * Enter `INDEX` and `WEEK` as integers without signs, decimal points, or leading zeros. For example, use `3`, not `+3`, `3.0`, or `03`.
-* The command word and `w/` prefix are case-insensitive: `ADDMISSION 1 W/3` is also accepted.
+* The command word and `w/` prefix are case-insensitive: `ADDATTENDANCE 1 W/3` is also accepted.
 * Each student can have one attendance recorded per week. Adding an existing record leaves the records unchanged and displays a message explaining that the submission is already recorded.
 * The current list filter stays active.
 
@@ -190,7 +190,7 @@ Format: `delattendance INDEX w/WEEK`
 * Weeks outside this range, such as `-1` or `14`, are rejected with an error message. The existing attendance record remains unchanged.
 * Both arguments are required. Put `INDEX` before `w/WEEK`, and specify `w/` exactly once. Extra arguments are rejected.
 * Enter `INDEX` and `WEEK` as integers without signs, decimal points, or leading zeros.
-* The command word and `w/` prefix are case-insensitive: `DELMISSION 1 W/3` is also accepted.
+* The command word and `w/` prefix are case-insensitive: `DELATTENDANCE 1 W/3` is also accepted.
 * If the submission was initially not recorded, the records remain unchanged and a message explains that no changes were made.
 * The current list filter stays active.
 
@@ -283,25 +283,21 @@ Mission submission additions and deletions are saved automatically and retained 
 
 ### Editing the data file
 
-AddressBook data is saved automatically as a JSON file `[JAR file location]/data/addressbook.json`. Advanced users are welcome to update data directly by editing that data file.
+AvengerHub's address book data is saved automatically as a JSON file `[JAR file location]/data/addressbook.json`. Advanced users are welcome to update data directly by editing that data file.
 
 <box type="warning" seamless>
 
 **Caution:**
-If your changes make the data file invalid, AddressBook starts with an empty address book at the next run. The invalid file remains on disk until you run a command (AddressBook saves after every command). Still, we recommend backing up the file before editing it.<br>
-Furthermore, certain edits can cause the AddressBook to behave in unexpected ways (e.g., if a value entered is outside of the acceptable range). Therefore, edit the data file only if you are confident that you can update it correctly.
+If your changes make the data file invalid, AvengerHub starts with an empty address book at the next run. The invalid file remains on disk until you run a command (AvengerHub saves after every command). Still, we recommend backing up the file before editing it.<br>
+Furthermore, certain edits can cause the AvengerHub to behave in unexpected ways (e.g., if a value entered is outside of the acceptable range). Therefore, edit the data file only if you are confident that you can update it correctly.
 </box>
-
-### Archiving data files `[coming in v2.0]`
-
-_Details coming soon ..._
 
 --------------------------------------------------------------------------------------------------------------------
 
 ## FAQ
 
 **Q**: How do I transfer my data to another computer?<br>
-**A**: Install the app on the other computer and overwrite the data file it creates with the data file from your previous AddressBook home folder.
+**A**: Install the app on the other computer and overwrite the data file it creates with the data file from your previous AvengerHub home folder.
 
 --------------------------------------------------------------------------------------------------------------------
 
@@ -316,12 +312,14 @@ _Details coming soon ..._
 
 Action     | Format, Examples
 -----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-**Add**    | `add n/NAME p/PHONE_NUMBER e/EMAIL a/ADDRESS [t/TAG]... ` <br> e.g., `add n/James Ho p/22224444 e/jamesho@example.com a/123, Clementi Rd, 1234665 t/friend t/colleague`
+**Add**    | `add n/NAME p/PHONE_NUMBER e/EMAIL [t/TAG]... g/STUIO_GROUP` <br> e.g., `add n/James Ho p/22224444 e/jamesho@example.com  t/smart t/talkative g/1A`
 **Add mission submission** | `addmission INDEX w/WEEK`<br> e.g., `addmission 1 w/3`
+**Delete mission submission** | `delmission INDEX w/WEEK`<br> e.g., `delmission 1 w/3`
+**Add attendance** | `addattendance INDEX w/WEEK`<br> e.g., `addattendance 1 w/3`
+**Delete mission submission** | `delattendance INDEX w/WEEK`<br> e.g., `delattendance 1 w/3`
 **Clear**  | `clear`
 **Delete** | `delete INDEX`<br> e.g., `delete 3`
-**Delete mission submission** | `delmission INDEX w/WEEK`<br> e.g., `delmission 1 w/3`
-**Edit**   | `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [t/TAG]... `<br> e.g.,`edit 2 n/James Lee e/jameslee@example.com`
+**Edit**   | `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [t/TAG]... [g/STUDIO_GROUP]`<br> e.g.,`edit 2 n/James Lee e/jameslee@example.com g/1A`
 **Find**   | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find James Jake`
 **List**   | `list`
 **Help**   | `help`
