@@ -16,7 +16,7 @@ import seedu.address.logic.commands.AddStudioRecordCommand;
 import seedu.address.logic.commands.AddMissionCommand;
 import seedu.address.logic.commands.AddStudentCommand;
 import seedu.address.logic.commands.ClearCommand;
-import seedu.address.logic.commands.DeleteAttendanceCommand;
+import seedu.address.logic.commands.DeleteStudioRecordCommand;
 import seedu.address.logic.commands.DeleteMissionCommand;
 import seedu.address.logic.commands.DeleteStudentCommand;
 import seedu.address.logic.commands.EditCommand;
@@ -178,7 +178,7 @@ public class AddressBookParserTest {
 
     @Test
     public void parseCommand_deleteAttendanceIgnoringCase_returnsCommand() throws Exception {
-        DeleteAttendanceCommand expected = new DeleteAttendanceCommand(INDEX_FIRST_STUDENT, 3);
+        DeleteStudioRecordCommand expected = new DeleteStudioRecordCommand(INDEX_FIRST_STUDENT, 3);
 
         assertEquals(expected, parser.parseCommand("delattendance 1 w/3"));
         assertEquals(expected, parser.parseCommand("DELATTENDANCE 1 w/3"));

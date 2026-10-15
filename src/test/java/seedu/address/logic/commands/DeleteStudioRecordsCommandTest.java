@@ -33,17 +33,17 @@ public class DeleteStudioRecordsCommandTest {
     @Test
     public void constructor_invalidArguments_throwsException() {
         assertThrows(NullPointerException.class, () ->
-                new DeleteAttendanceCommand(null, StudioRecords.MIN_WEEK));
+                new DeleteStudioRecordCommand(null, StudioRecords.MIN_WEEK));
         assertThrows(IllegalArgumentException.class, () ->
-                new DeleteAttendanceCommand(INDEX_FIRST_STUDENT, StudioRecords.MIN_WEEK - 1));
+                new DeleteStudioRecordCommand(INDEX_FIRST_STUDENT, StudioRecords.MIN_WEEK - 1));
         assertThrows(IllegalArgumentException.class, () ->
-                new DeleteAttendanceCommand(INDEX_FIRST_STUDENT, StudioRecords.MAX_WEEK + 1));
+                new DeleteStudioRecordCommand(INDEX_FIRST_STUDENT, StudioRecords.MAX_WEEK + 1));
     }
 
     @Test
     public void execute_nullModel_throwsNullPointerException() {
-        DeleteAttendanceCommand command =
-                new DeleteAttendanceCommand(INDEX_FIRST_STUDENT, StudioRecords.MIN_WEEK);
+        DeleteStudioRecordCommand command =
+                new DeleteStudioRecordCommand(INDEX_FIRST_STUDENT, StudioRecords.MIN_WEEK);
 
         assertThrows(NullPointerException.class, () -> command.execute(null));
     }
@@ -58,9 +58,9 @@ public class DeleteStudioRecordsCommandTest {
         Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
         expectedModel.setStudent(student, updated);
 
-        String feedback = String.format(DeleteAttendanceCommand.MESSAGE_SUCCESS, student.getName(), 3);
+        String feedback = String.format(DeleteStudioRecordCommand.MESSAGE_SUCCESS, student.getName(), 3);
 
-        assertCommandSuccess(new DeleteAttendanceCommand(INDEX_FIRST_STUDENT, 3),
+        assertCommandSuccess(new DeleteStudioRecordCommand(INDEX_FIRST_STUDENT, 3),
                 model, feedback, expectedModel);
         assertTrue(student.getAttendance().hasAttendance(3));
     }
@@ -73,14 +73,14 @@ public class DeleteStudioRecordsCommandTest {
                 .build();
         model.setStudent(original, student);
 
-        CommandResult firstResult = new DeleteAttendanceCommand(INDEX_FIRST_STUDENT, StudioRecords.MIN_WEEK)
+        CommandResult firstResult = new DeleteStudioRecordCommand(INDEX_FIRST_STUDENT, StudioRecords.MIN_WEEK)
                 .execute(model);
-        CommandResult lastResult = new DeleteAttendanceCommand(INDEX_FIRST_STUDENT, StudioRecords.MAX_WEEK)
+        CommandResult lastResult = new DeleteStudioRecordCommand(INDEX_FIRST_STUDENT, StudioRecords.MAX_WEEK)
                 .execute(model);
 
-        assertEquals(String.format(DeleteAttendanceCommand.MESSAGE_SUCCESS,
+        assertEquals(String.format(DeleteStudioRecordCommand.MESSAGE_SUCCESS,
                 student.getName(), StudioRecords.MIN_WEEK), firstResult.getFeedbackToUser());
-        assertEquals(String.format(DeleteAttendanceCommand.MESSAGE_SUCCESS,
+        assertEquals(String.format(DeleteStudioRecordCommand.MESSAGE_SUCCESS,
                 student.getName(), StudioRecords.MAX_WEEK), lastResult.getFeedbackToUser());
 
         Student expected = new StudentBuilder(student).withAttendance().build();
@@ -94,10 +94,10 @@ public class DeleteStudioRecordsCommandTest {
         model.setStudent(original, student);
 
         Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
-        String feedback = String.format(DeleteAttendanceCommand.MESSAGE_ALREADY_RECORDED,
+        String feedback = String.format(DeleteStudioRecordCommand.MESSAGE_ALREADY_RECORDED,
                 student.getName(), 3);
 
-        assertCommandSuccess(new DeleteAttendanceCommand(INDEX_FIRST_STUDENT, 3),
+        assertCommandSuccess(new DeleteStudioRecordCommand(INDEX_FIRST_STUDENT, 3),
                 model, feedback, expectedModel);
     }
 
@@ -105,7 +105,7 @@ public class DeleteStudioRecordsCommandTest {
     public void execute_invalidIndex_leavesModelUnchanged() {
         Index invalidIndex = Index.fromOneBased(model.getFilteredStudentList().size() + 1);
 
-        assertCommandFailure(new DeleteAttendanceCommand(invalidIndex, 3),
+        assertCommandFailure(new DeleteStudioRecordCommand(invalidIndex, 3),
                 model, Messages.MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX);
     }
 
@@ -113,7 +113,7 @@ public class DeleteStudioRecordsCommandTest {
     public void execute_emptyList_reportsInvalidIndex() {
         Model emptyModel = new ModelManager(new AddressBook(), new UserPrefs());
 
-        assertCommandFailure(new DeleteAttendanceCommand(INDEX_FIRST_STUDENT, 3),
+        assertCommandFailure(new DeleteStudioRecordCommand(INDEX_FIRST_STUDENT, 3),
                 emptyModel, Messages.MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX);
     }
 
@@ -130,9 +130,9 @@ public class DeleteStudioRecordsCommandTest {
         Student updated = new StudentBuilder(student).withAttendance(5).build();
         expectedModel.setStudent(student, updated);
 
-        String feedback = String.format(DeleteAttendanceCommand.MESSAGE_SUCCESS, student.getName(), 3);
+        String feedback = String.format(DeleteStudioRecordCommand.MESSAGE_SUCCESS, student.getName(), 3);
 
-        assertCommandSuccess(new DeleteAttendanceCommand(INDEX_FIRST_STUDENT, 3),
+        assertCommandSuccess(new DeleteStudioRecordCommand(INDEX_FIRST_STUDENT, 3),
                 model, feedback, expectedModel);
         assertEquals(1, model.getFilteredStudentList().size());
         assertEquals(updated, model.getFilteredStudentList().get(0));
@@ -142,26 +142,26 @@ public class DeleteStudioRecordsCommandTest {
     public void execute_indexOutsideFilteredList_leavesModelUnchanged() {
         showStudentAtIndex(model, INDEX_FIRST_STUDENT);
 
-        assertCommandFailure(new DeleteAttendanceCommand(INDEX_SECOND_STUDENT, 3),
+        assertCommandFailure(new DeleteStudioRecordCommand(INDEX_SECOND_STUDENT, 3),
                 model, Messages.MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX);
     }
 
     @Test
     public void equals_sameIndexAndWeek_returnsTrue() {
-        DeleteAttendanceCommand command = new DeleteAttendanceCommand(INDEX_FIRST_STUDENT, 3);
+        DeleteStudioRecordCommand command = new DeleteStudioRecordCommand(INDEX_FIRST_STUDENT, 3);
 
         assertTrue(command.equals(command));
-        assertTrue(command.equals(new DeleteAttendanceCommand(INDEX_FIRST_STUDENT, 3)));
-        assertFalse(command.equals(new DeleteAttendanceCommand(INDEX_SECOND_STUDENT, 3)));
-        assertFalse(command.equals(new DeleteAttendanceCommand(INDEX_FIRST_STUDENT, 4)));
+        assertTrue(command.equals(new DeleteStudioRecordCommand(INDEX_FIRST_STUDENT, 3)));
+        assertFalse(command.equals(new DeleteStudioRecordCommand(INDEX_SECOND_STUDENT, 3)));
+        assertFalse(command.equals(new DeleteStudioRecordCommand(INDEX_FIRST_STUDENT, 4)));
         assertFalse(command.equals(null));
         assertFalse(command.equals("delattendance"));
     }
 
     @Test
     public void toString_validCommand_returnsExpectedString() {
-        DeleteAttendanceCommand command = new DeleteAttendanceCommand(INDEX_FIRST_STUDENT, 3);
-        String expected = DeleteAttendanceCommand.class.getCanonicalName()
+        DeleteStudioRecordCommand command = new DeleteStudioRecordCommand(INDEX_FIRST_STUDENT, 3);
+        String expected = DeleteStudioRecordCommand.class.getCanonicalName()
                 + "{targetIndex=" + INDEX_FIRST_STUDENT + ", week=3}";
 
         assertEquals(expected, command.toString());

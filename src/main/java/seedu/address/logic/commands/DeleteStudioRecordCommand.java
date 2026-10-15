@@ -16,7 +16,7 @@ import seedu.address.model.student.Student;
 /**
  * Removes a week's tutorial attendance for a student identified by a displayed index.
  */
-public class DeleteAttendanceCommand extends Command {
+public class DeleteStudioRecordCommand extends Command {
 
     public static final String COMMAND_WORD = "delattendance";
 
@@ -43,7 +43,7 @@ public class DeleteAttendanceCommand extends Command {
      * @param targetIndex Index of the student in the displayed list.
      * @param week Tutorial week for the deletion.
      */
-    public DeleteAttendanceCommand(Index targetIndex, int week) {
+    public DeleteStudioRecordCommand(Index targetIndex, int week) {
         this.targetIndex = requireNonNull(targetIndex);
         checkArgument(StudioRecords.isValidWeek(week), StudioRecords.MESSAGE_CONSTRAINTS);
         this.week = week;
@@ -93,7 +93,7 @@ public class DeleteAttendanceCommand extends Command {
         }
 
         // instanceof handles nulls
-        if (!(other instanceof DeleteAttendanceCommand otherAttendanceCommand)) {
+        if (!(other instanceof DeleteStudioRecordCommand otherAttendanceCommand)) {
             return false;
         }
 

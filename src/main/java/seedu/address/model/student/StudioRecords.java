@@ -82,7 +82,7 @@ public final class StudioRecords {
      * @param week Tutorial week to delete.
      * @return StudioRecords containing the existing weeks without given week.
      */
-    public StudioRecords withoutStudioRecord(int week, StudioRecord studioRecord) {
+    public StudioRecords withoutStudioRecord(int week) {
         if (!hasStudioRecord(week)) {
             return this;
         }
