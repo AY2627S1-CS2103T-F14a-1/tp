@@ -66,13 +66,13 @@ public class DeleteStudioRecordCommand extends Command {
         }
 
         Student studentToUpdate = lastShownList.get(targetIndex.getZeroBased());
-        StudioRecords studioRecords = studentToUpdate.getAttendance();
+        StudioRecords studioRecords = studentToUpdate.getStudioRecords();
 
-        if (!studioRecords.hasAttendance(week)) {
+        if (!studioRecords.hasStudioRecord(week)) {
             return new CommandResult(String.format(MESSAGE_ALREADY_RECORDED, studentToUpdate.getName(), week));
         }
 
-        Student updatedStudent = createUpdatedStudent(studentToUpdate, studioRecords.withoutAttendedWeek(week));
+        Student updatedStudent = createUpdatedStudent(studentToUpdate, studioRecords.withoutStudioRecord(week));
         model.setStudent(studentToUpdate, updatedStudent);
         return new CommandResult(String.format(MESSAGE_SUCCESS, studentToUpdate.getName(), week));
     }

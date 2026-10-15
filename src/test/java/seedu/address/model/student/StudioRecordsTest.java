@@ -134,7 +134,7 @@ public class StudioRecordsTest {
                 StudioRecords.MAX_WEEK, FULL_EFFORT_RECORD));
 
         StudioRecords updated = original.withoutStudioRecord(
-                StudioRecords.MIN_WEEK, ZERO_EFFORT_RECORD);
+                StudioRecords.MIN_WEEK);
 
         assertEquals(Map.of(
                 StudioRecords.MIN_WEEK, ZERO_EFFORT_RECORD,
@@ -150,7 +150,7 @@ public class StudioRecordsTest {
                 Map.of(StudioRecords.MIN_WEEK, ZERO_EFFORT_RECORD));
 
         StudioRecords updated = studioRecords.withoutStudioRecord(
-                StudioRecords.MAX_WEEK, FULL_EFFORT_RECORD);
+                StudioRecords.MAX_WEEK);
 
         assertSame(studioRecords, updated);
     }
@@ -160,9 +160,9 @@ public class StudioRecordsTest {
         StudioRecords studioRecords = new StudioRecords();
 
         assertThrows(IllegalArgumentException.class, () -> studioRecords.withoutStudioRecord(
-                StudioRecords.MIN_WEEK - 1, ZERO_EFFORT_RECORD));
+                StudioRecords.MIN_WEEK - 1));
         assertThrows(IllegalArgumentException.class, () -> studioRecords.withoutStudioRecord(
-                StudioRecords.MAX_WEEK + 1, ZERO_EFFORT_RECORD));
+                StudioRecords.MAX_WEEK + 1));
     }
 
     @Test
