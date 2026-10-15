@@ -15,14 +15,14 @@ import seedu.address.model.student.StudioRecords;
 import seedu.address.model.student.Student;
 
 /**
- * Records a week's tutorial attendance for a student identified by a displayed index.
+ * Records a week's tutorial studio for a student identified by a displayed index.
  */
 public class AddStudioRecordCommand extends Command {
 
-    public static final String COMMAND_WORD = "addattendance";
+    public static final String COMMAND_WORD = "addstudiorecord";
 
     public static final String MESSAGE_USAGE = COMMAND_WORD
-            + ": Records a week's attendance for the selected student.\n"
+            + ": Records a week's studio record for the selected student.\n"
             + "Parameters: INDEX w/WEEK\n"
             + "INDEX must be a positive integer identifying a displayed student.\n"
             + "WEEK must be between " + StudioRecords.MIN_WEEK
@@ -30,17 +30,17 @@ public class AddStudioRecordCommand extends Command {
             + "Example: " + COMMAND_WORD + " 1 w/3";
 
     public static final String MESSAGE_SUCCESS =
-            "Added %1$s's attendance for tutorial week %2$d.";
+            "Added %1$s's studio record for tutorial week %2$d.";
 
     public static final String MESSAGE_ALREADY_RECORDED =
-            "%1$s’s attendance has already been recorded for tutorial week %2$d. No changes made.";
+            "%1$s’s studio has already been recorded for tutorial week %2$d. No changes made.";
 
     private final Index targetIndex;
     private final int week;
     private final StudioRecord studioRecord;
 
     /**
-     * Creates a command to record a week's attendance
+     * Creates a command to record a week's studio.
      *
      * @param targetIndex Index of the student in the displayed list.
      * @param week Studio week for the record.
@@ -54,10 +54,10 @@ public class AddStudioRecordCommand extends Command {
     }
 
     /**
-     * Records attendance without changing the current list filter.
+     * Records studio without changing the current list filter.
      *
      * @param model Model containing the students.
-     * @return Feedback describing the addition or an existing attendance.
+     * @return Feedback describing the addition or an existing studio.
      * @throws CommandException If the index does not identify a displayed student.
      */
     @Override
