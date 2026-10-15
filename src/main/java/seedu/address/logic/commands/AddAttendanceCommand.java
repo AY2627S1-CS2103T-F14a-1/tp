@@ -10,7 +10,7 @@ import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.Messages;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
-import seedu.address.model.student.Attendance;
+import seedu.address.model.student.StudioRecords;
 import seedu.address.model.student.Student;
 
 /**
@@ -24,8 +24,8 @@ public class AddAttendanceCommand extends Command {
             + ": Records a week's attendance for the selected student.\n"
             + "Parameters: INDEX w/WEEK\n"
             + "INDEX must be a positive integer identifying a displayed student.\n"
-            + "WEEK must be between " + Attendance.MIN_WEEK
-            + " and " + Attendance.MAX_WEEK + " inclusive.\n"
+            + "WEEK must be between " + StudioRecords.MIN_WEEK
+            + " and " + StudioRecords.MAX_WEEK + " inclusive.\n"
             + "Example: " + COMMAND_WORD + " 1 w/3";
 
     public static final String MESSAGE_SUCCESS =
@@ -45,7 +45,7 @@ public class AddAttendanceCommand extends Command {
      */
     public AddAttendanceCommand(Index targetIndex, int week) {
         this.targetIndex = requireNonNull(targetIndex);
-        checkArgument(Attendance.isValidWeek(week), Attendance.MESSAGE_CONSTRAINTS);
+        checkArgument(StudioRecords.isValidWeek(week), StudioRecords.MESSAGE_CONSTRAINTS);
         this.week = week;
     }
 
@@ -66,24 +66,24 @@ public class AddAttendanceCommand extends Command {
         }
 
         Student studentToUpdate = lastShownList.get(targetIndex.getZeroBased());
-        Attendance attendance = studentToUpdate.getAttendance();
+        StudioRecords studioRecords = studentToUpdate.getAttendance();
 
-        if (attendance.hasAttendance(week)) {
+        if (studioRecords.hasAttendance(week)) {
             return new CommandResult(String.format(MESSAGE_ALREADY_RECORDED, studentToUpdate.getName(), week));
         }
 
-        Student updatedStudent = createUpdatedStudent(studentToUpdate, attendance.withAttendedWeek(week));
+        Student updatedStudent = createUpdatedStudent(studentToUpdate, studioRecords.withAttendedWeek(week));
         model.setStudent(studentToUpdate, updatedStudent);
         return new CommandResult(String.format(MESSAGE_SUCCESS, studentToUpdate.getName(), week));
     }
 
-    private Student createUpdatedStudent(Student student, Attendance attendance) {
+    private Student createUpdatedStudent(Student student, StudioRecords studioRecords) {
         assert student != null;
-        assert attendance != null;
+        assert studioRecords != null;
 
         return new Student(student.getName(), student.getPhone(), student.getEmail(),
                 student.getTags(), student.getStudioGroup(), student.getMissionSubmissions(),
-                attendance);
+                studioRecords);
     }
 
     @Override

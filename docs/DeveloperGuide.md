@@ -198,11 +198,11 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 | `* * *`  | TA                             | search for a student by name                                             | quickly find them without scrolling through the whole list                           |
 | `* * *`  | TA                             | edit a student's information                                             | keep my records accurate when their information changes                              |
 | `* * *`  | TA with multiple studio groups | see a combined view of all students across my groups                     | get a holistic view of my overall workload                                           |
-| `* * *`  | TA                             | mark a student as present or absent for a studio                  | maintain an accurate attendance record                                               |
+| `* * *`  | TA                             | mark a student as present or absent for a studio                  | maintain an accurate studioRecords record                                               |
 | `* * *`  | TA                             | mark whether a student submitted a given mission                         | track completion without cross-checking another system                               |
 | `* * *`  | TA                             | record a student's mark for a given assessment                           | keep their performance data alongside other student records                          |
 | `* * *`  | TA with multiple studio groups | see which studio group a student belongs to                              | avoid mixing up students across studio groups                                        |
-| `* *`    | TA                             | view a summary of a student's attendance, participation, and submissions | understand their overall engagement without checking multiple records                |
+| `* *`    | TA                             | view a summary of a student's studioRecords, participation, and submissions | understand their overall engagement without checking multiple records                |
 
 The user stories above represent the main intended functionality and selected future enhancements of the application. Other user stories may be considered as the project develops.
 
@@ -295,7 +295,7 @@ The user stories above represent the main intended functionality and selected fu
 1. Tutor requests to view or search student records.
 2. AvengerHub displays the corresponding student records.
 3. Tutor selects a student record to view.
-4. AvengerHub displays the student's details, attendance records,
+4. AvengerHub displays the student's details, studioRecords records,
    and mission submission records.
 
    Use case ends.
@@ -319,7 +319,7 @@ The user stories above represent the main intended functionality and selected fu
       Use case ends.
 
 
-**Use case: Mark attendance record**
+**Use case: Mark studioRecords record**
 
 **MSS**
 
@@ -348,7 +348,7 @@ The user stories above represent the main intended functionality and selected fu
 
       Use case ends.
 
-**Use case: Unmark attendance record**
+**Use case: Unmark studioRecords record**
 
 **MSS**
 

@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import seedu.address.commons.exceptions.IllegalValueException;
-import seedu.address.model.student.Attendance;
+import seedu.address.model.student.StudioRecords;
 import seedu.address.model.student.Email;
 import seedu.address.model.student.MissionSubmissions;
 import seedu.address.model.student.Name;
@@ -140,9 +140,9 @@ class JsonAdaptedStudent {
 
         final Set<Tag> modelTags = new HashSet<>(studentTags);
         final MissionSubmissions modelMissionSubmissions = toModelMissionSubmissions();
-        final Attendance modelAttendance = toModelAttendance();
+        final StudioRecords modelStudioRecords = toModelAttendance();
         return new Student(modelName, modelPhone, modelEmail, modelTags, modelStudioGroup,
-                modelMissionSubmissions, modelAttendance);
+                modelMissionSubmissions, modelStudioRecords);
     }
 
     /**
@@ -168,18 +168,18 @@ class JsonAdaptedStudent {
      * Validates attended tutorial weeks and converts them into immutable attendance.
      * Repeated weeks are represented by a single attendance.
      *
-     * @return Attendance containing the unique saved weeks.
+     * @return StudioRecords containing the unique saved weeks.
      * @throws IllegalValueException If a saved week is not an integer in the valid range.
      */
-    public Attendance toModelAttendance() throws IllegalValueException {
+    public StudioRecords toModelAttendance() throws IllegalValueException {
         Set<Integer> attendedWeeks = new HashSet<>();
         for (Object value : attendance) {
-            if (!(value instanceof Integer week) || !Attendance.isValidWeek(week)) {
-                throw new IllegalValueException(Attendance.MESSAGE_CONSTRAINTS);
+            if (!(value instanceof Integer week) || !StudioRecords.isValidWeek(week)) {
+                throw new IllegalValueException(StudioRecords.MESSAGE_CONSTRAINTS);
             }
             attendedWeeks.add(week);
         }
 
-        return new Attendance(attendedWeeks);
+        return new StudioRecords(attendedWeeks);
     }
 }

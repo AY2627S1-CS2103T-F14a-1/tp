@@ -12,7 +12,7 @@ import seedu.address.logic.commands.DeleteAttendanceCommand;
 /**
  * Tests argument structure and value-parser integration for delattendance.
  */
-public class DeleteAttendanceCommandParserTest {
+public class DeleteStudioRecordsCommandParserTest {
 
     private final DeleteAttendanceCommandParser parser = new DeleteAttendanceCommandParser();
 

@@ -9,7 +9,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 import seedu.address.logic.commands.CommandResult;
-import seedu.address.model.student.Attendance;
+import seedu.address.model.student.StudioRecords;
 import seedu.address.model.student.MissionSubmissions;
 import seedu.address.model.student.Student;
 
@@ -109,8 +109,8 @@ public class ResultDisplay extends UiPart<Region> {
         attendance.getChildren().clear();
         addAttendanceCell("Week", 0, 0, "mission-header");
         addAttendanceCell("Status", 1, 0, "mission-header");
-        for (int week = Attendance.MIN_WEEK; week <= Attendance.MAX_WEEK; week++) {
-            int row = week - Attendance.MIN_WEEK + 1;
+        for (int week = StudioRecords.MIN_WEEK; week <= StudioRecords.MAX_WEEK; week++) {
+            int row = week - StudioRecords.MIN_WEEK + 1;
             boolean hasAttended = student.getAttendance().hasAttendance(week);
             addAttendanceCell(String.valueOf(week), 0, row, "mission-week");
             addAttendanceCell(hasAttended ? "Present" : "Absent", 1, row,

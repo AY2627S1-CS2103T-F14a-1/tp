@@ -12,14 +12,14 @@ import java.util.TreeSet;
  * Represents an immutable collection of a student's weekly tutorial attendance.
  * Each recorded week is between {@value #MIN_WEEK} and {@value #MAX_WEEK}, inclusive.
  */
-public final class Attendance {
+public final class StudioRecords {
 
     public static final int MIN_WEEK = 3;
     public static final int MAX_WEEK = 13;
     public static final String MESSAGE_CONSTRAINTS =
             "Tutorial week must be between " + MIN_WEEK + " and " + MAX_WEEK + " inclusive";
 
-    public static final String ATTENDANCE_MARKER = "Attendance: ";
+    public static final String ATTENDANCE_MARKER = "StudioRecords: ";
     public final String attendance;
 
     private final Set<Integer> attendedWeeks;
@@ -27,7 +27,7 @@ public final class Attendance {
     /**
      * Creates attendance with no attended weeks.
      */
-    public Attendance() {
+    public StudioRecords() {
         this.attendedWeeks = Collections.emptySet();
         this.attendance = toString();
     }
@@ -38,7 +38,7 @@ public final class Attendance {
      * @param attendedWeeks Weeks for which attendance has been recorded.
      * @throws NullPointerException If the set or any of its elements is {@code null}.
      */
-    public Attendance(Set<Integer> attendedWeeks) {
+    public StudioRecords(Set<Integer> attendedWeeks) {
         requireNonNull(attendedWeeks);
 
         Set<Integer> copiedWeeks = new HashSet<>(attendedWeeks);
@@ -76,16 +76,16 @@ public final class Attendance {
      * this object. Returns this object if the week is already recorded.
      *
      * @param week Tutorial week to record.
-     * @return Attendance containing the existing weeks and given week.
+     * @return StudioRecords containing the existing weeks and given week.
      */
-    public Attendance withAttendedWeek(int week) {
+    public StudioRecords withAttendedWeek(int week) {
         if (hasAttendance(week)) {
             return this;
         }
 
         Set<Integer> updatedWeeks = new HashSet<>(attendedWeeks);
         updatedWeeks.add(week);
-        return new Attendance(updatedWeeks);
+        return new StudioRecords(updatedWeeks);
     }
 
     /**
@@ -93,16 +93,16 @@ public final class Attendance {
      * this object. Returns this object if the week is already not recorded.
      *
      * @param week Tutorial week to delete.
-     * @return Attendance containing the existing weeks without given week.
+     * @return StudioRecords containing the existing weeks without given week.
      */
-    public Attendance withoutAttendedWeek(int week) {
+    public StudioRecords withoutAttendedWeek(int week) {
         if (!hasAttendance(week)) {
             return this;
         }
 
         Set<Integer> updatedWeeks = new HashSet<>(attendedWeeks);
         updatedWeeks.remove(week);
-        return new Attendance(updatedWeeks);
+        return new StudioRecords(updatedWeeks);
     }
 
     /**
@@ -121,11 +121,11 @@ public final class Attendance {
         }
 
         // instanceof handles nulls
-        if (!(other instanceof Attendance otherAttendance)) {
+        if (!(other instanceof StudioRecords otherStudioRecords)) {
             return false;
         }
 
-        return attendedWeeks.equals(otherAttendance.attendedWeeks);
+        return attendedWeeks.equals(otherStudioRecords.attendedWeeks);
     }
 
     @Override

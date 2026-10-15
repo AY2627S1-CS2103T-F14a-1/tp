@@ -5,7 +5,7 @@ import static java.util.Objects.requireNonNull;
 import java.util.HashSet;
 import java.util.Set;
 
-import seedu.address.model.student.Attendance;
+import seedu.address.model.student.StudioRecords;
 import seedu.address.model.student.Email;
 import seedu.address.model.student.MissionSubmissions;
 import seedu.address.model.student.Name;
@@ -31,7 +31,7 @@ public class StudentBuilder {
     private Set<Tag> tags;
     private StudioGroup studioGroup;
     private MissionSubmissions missionSubmissions;
-    private Attendance attendance;
+    private StudioRecords studioRecords;
 
     /**
      * Creates a {@code StudentBuilder} with the default details.
@@ -43,7 +43,7 @@ public class StudentBuilder {
         tags = new HashSet<>();
         studioGroup = new StudioGroup(DEFAULT_STUDIO_GROUP);
         missionSubmissions = new MissionSubmissions();
-        attendance = new Attendance();
+        studioRecords = new StudioRecords();
     }
 
     /**
@@ -56,7 +56,7 @@ public class StudentBuilder {
         tags = new HashSet<>(studentToCopy.getTags());
         studioGroup = studentToCopy.getStudioGroup();
         missionSubmissions = studentToCopy.getMissionSubmissions();
-        attendance = studentToCopy.getAttendance();
+        studioRecords = studentToCopy.getAttendance();
     }
 
     /**
@@ -119,9 +119,9 @@ public class StudentBuilder {
     }
 
     /**
-     * Sets the attendance weeks of the student being built.
+     * Sets the studioRecords weeks of the student being built.
      *
-     * @param weeks Tutorial weeks with recorded attendance.
+     * @param weeks Tutorial weeks with recorded studioRecords.
      * @return This builder.
      * @throws NullPointerException If the array is null.
      * @throws IllegalArgumentException If any week is outside the valid range.
@@ -133,7 +133,7 @@ public class StudentBuilder {
         for (int week : weeks) {
             attendedWeeks.add(week);
         }
-        this.attendance = new Attendance(attendedWeeks);
+        this.studioRecords = new StudioRecords(attendedWeeks);
         return this;
     }
 
@@ -143,7 +143,7 @@ public class StudentBuilder {
      * @return A student with the configured details.
      */
     public Student build() {
-        return new Student(name, phone, email, tags, studioGroup, missionSubmissions, attendance);
+        return new Student(name, phone, email, tags, studioGroup, missionSubmissions, studioRecords);
     }
 
 }

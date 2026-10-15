@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 
 import seedu.address.commons.exceptions.IllegalValueException;
 import seedu.address.commons.util.JsonUtil;
-import seedu.address.model.student.Attendance;
+import seedu.address.model.student.StudioRecords;
 import seedu.address.model.student.Email;
 import seedu.address.model.student.MissionSubmissions;
 import seedu.address.model.student.Name;
@@ -184,7 +184,7 @@ public class JsonAdaptedStudentTest {
                   "email": "amy@gmail.com",
                   "tags": [],
                   "studioGroup": "1A",
-                  "attendance": [3]
+                  "studioRecords": [3]
                 }
                 """;
         JsonAdaptedStudent student = JsonUtil.fromJsonString(json, JsonAdaptedStudent.class);
@@ -221,7 +221,7 @@ public class JsonAdaptedStudentTest {
             JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_PHONE, VALID_EMAIL,
                     VALID_TAGS, VALID_STUDIO_GROUP, VALID_MISSION_SUBMISSIONS, List.of(5, week));
 
-            assertThrows(IllegalValueException.class, Attendance.MESSAGE_CONSTRAINTS,
+            assertThrows(IllegalValueException.class, StudioRecords.MESSAGE_CONSTRAINTS,
                     student::toModelType);
         }
     }
@@ -240,7 +240,7 @@ public class JsonAdaptedStudentTest {
         JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_PHONE, VALID_EMAIL,
                 VALID_TAGS, VALID_STUDIO_GROUP, VALID_MISSION_SUBMISSIONS, Arrays.asList(5, null));
 
-        assertThrows(IllegalValueException.class, Attendance.MESSAGE_CONSTRAINTS,
+        assertThrows(IllegalValueException.class, StudioRecords.MESSAGE_CONSTRAINTS,
                 student::toModelType);
     }
 
@@ -286,10 +286,10 @@ public class JsonAdaptedStudentTest {
                 new JsonAdaptedStudent(new StudentBuilder().withAttendance(3).build()));
         for (String value : List.of("3.9", "13.9", "3.0", "3e0", "\"03\"", "true", "null", "2147483648", "{}")) {
             String json = template.replaceFirst(
-                    "\"attendance\"\\s*:\\s*\\[[^]]*]", "\"attendance\": [" + value + "]");
+                    "\"studioRecords\"\\s*:\\s*\\[[^]]*]", "\"studioRecords\": [" + value + "]");
             JsonAdaptedStudent student = JsonUtil.fromJsonString(json, JsonAdaptedStudent.class);
 
-            assertThrows(IllegalValueException.class, Attendance.MESSAGE_CONSTRAINTS, student::toModelType);
+            assertThrows(IllegalValueException.class, StudioRecords.MESSAGE_CONSTRAINTS, student::toModelType);
         }
     }
 }
