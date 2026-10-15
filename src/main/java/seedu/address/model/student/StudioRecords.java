@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * Represents an immutable collection of a student's weekly studio attendance.
+ * Represents an immutable collection of a student's weekly studio status.
  * Each recorded week is between {@value StudioRecord#MIN_WEEK} and {@value StudioRecord#MAX_WEEK}, inclusive.
  */
 public final class StudioRecords {
@@ -21,7 +21,7 @@ public final class StudioRecords {
     private final Map<Integer, StudioRecord> studioRecords;
 
     /**
-     * Creates attendance with no attended weeks.
+     * Creates {@code StudioRecords} with no recorded weeks.
      */
     public StudioRecords() {
         this.studioRecords = Collections.emptyMap();
@@ -30,7 +30,7 @@ public final class StudioRecords {
     /**
      * Creates studio records from the given studio records.
      *
-     * @param studioRecords Weeks for which attendance has been recorded.
+     * @param studioRecords Weeks for which studio status has been recorded.
      * @throws NullPointerException If the set or any of its elements is {@code null}.
      */
     public StudioRecords(Map<Integer, StudioRecord> studioRecords) {
@@ -50,7 +50,7 @@ public final class StudioRecords {
      * @param week Studio week to check.
      * @return True if studio status is recorded for the week.
      */
-    public boolean hasAttendance(int week) {
+    public boolean hasStudioStatus(int week) {
         checkArgument(isValidWeek(week), MESSAGE_CONSTRAINTS);
         return studioRecords.containsKey(week);
     }
@@ -62,9 +62,9 @@ public final class StudioRecords {
      * @param week Tutorial week to record.
      * @return StudioRecords containing the existing weeks and given week.
      */
-    public StudioRecords withAttendedWeek(int week, StudioRecord studioRecord) {
+    public StudioRecords withStudioStatus(int week, StudioRecord studioRecord) {
         requireNonNull(studioRecord);
-        if (hasAttendance(week)) {
+        if (hasStudioStatus(week)) {
             return this;
         }
 
@@ -75,14 +75,14 @@ public final class StudioRecords {
     }
 
     /**
-     * Returns attendance not including the given week without changing
+     * Returns studio records not including the given week without changing
      * this object. Returns this object if the week is already not recorded.
      *
      * @param week Tutorial week to delete.
      * @return StudioRecords containing the existing weeks without given week.
      */
-    public StudioRecords withoutAttendedWeek(int week, StudioRecord studioRecord) {
-        if (!hasAttendance(week)) {
+    public StudioRecords withoutStudioStatus(int week, StudioRecord studioRecord) {
+        if (!hasStudioStatus(week)) {
             return this;
         }
 
