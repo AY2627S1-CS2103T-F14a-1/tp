@@ -1,13 +1,13 @@
 package seedu.address.logic.parser;
 
-import seedu.address.logic.commands.AddAttendanceCommand;
+import seedu.address.logic.commands.AddStudioRecordCommand;
 import seedu.address.logic.commands.AddMissionCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
 
 /**
  * Parses input arguments and creates a new {@code AddMissionCommand}.
  */
-public class AddAttendanceCommandParser implements Parser<AddAttendanceCommand> {
+public class AddAttendanceCommandParser implements Parser<AddStudioRecordCommand> {
 
     /**
      * Parses the student index and tutorial week.
@@ -18,8 +18,8 @@ public class AddAttendanceCommandParser implements Parser<AddAttendanceCommand> 
      * @throws ParseException If required information is missing or invalid.
      */
     @Override
-    public AddAttendanceCommand parse(String args) throws ParseException {
+    public AddStudioRecordCommand parse(String args) throws ParseException {
         WeeklyTaskParser arguments = new WeeklyTaskParser(args, AddMissionCommand.MESSAGE_USAGE);
-        return new AddAttendanceCommand(arguments.getIndex(), arguments.getWeek());
+        return new AddStudioRecordCommand(arguments.getIndex(), arguments.getWeek());
     }
 }

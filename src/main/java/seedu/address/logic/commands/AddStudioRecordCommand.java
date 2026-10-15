@@ -10,13 +10,14 @@ import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.Messages;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
+import seedu.address.model.student.StudioRecord;
 import seedu.address.model.student.StudioRecords;
 import seedu.address.model.student.Student;
 
 /**
  * Records a week's tutorial attendance for a student identified by a displayed index.
  */
-public class AddAttendanceCommand extends Command {
+public class AddStudioRecordCommand extends Command {
 
     public static final String COMMAND_WORD = "addattendance";
 
@@ -36,6 +37,7 @@ public class AddAttendanceCommand extends Command {
 
     private final Index targetIndex;
     private final int week;
+    private final StudioRecord studioRecord;
 
     /**
      * Creates a command to record a week's attendance
@@ -43,10 +45,11 @@ public class AddAttendanceCommand extends Command {
      * @param targetIndex Index of the student in the displayed list.
      * @param week Tutorial week for the submission
      */
-    public AddAttendanceCommand(Index targetIndex, int week) {
+    public AddStudioRecordCommand(Index targetIndex, int week, StudioRecord studioRecord) {
         this.targetIndex = requireNonNull(targetIndex);
         checkArgument(StudioRecords.isValidWeek(week), StudioRecords.MESSAGE_CONSTRAINTS);
         this.week = week;
+        this.studioRecord = studioRecord;
     }
 
     /**
@@ -66,13 +69,14 @@ public class AddAttendanceCommand extends Command {
         }
 
         Student studentToUpdate = lastShownList.get(targetIndex.getZeroBased());
-        StudioRecords studioRecords = studentToUpdate.getAttendance();
+        StudioRecords studioRecords = studentToUpdate.getStudioRecord();
 
-        if (studioRecords.hasAttendance(week)) {
+        if (studioRecords.hasStudioRecord(week)) {
             return new CommandResult(String.format(MESSAGE_ALREADY_RECORDED, studentToUpdate.getName(), week));
         }
 
-        Student updatedStudent = createUpdatedStudent(studentToUpdate, studioRecords.withAttendedWeek(week));
+        Student updatedStudent = createUpdatedStudent(
+                studentToUpdate, studioRecords.withStudioRecord(week, studioRecord));
         model.setStudent(studentToUpdate, updatedStudent);
         return new CommandResult(String.format(MESSAGE_SUCCESS, studentToUpdate.getName(), week));
     }
@@ -93,12 +97,13 @@ public class AddAttendanceCommand extends Command {
         }
 
         // instanceof handles nulls
-        if (!(other instanceof AddAttendanceCommand otherAttendanceCommand)) {
+        if (!(other instanceof AddStudioRecordCommand otherAttendanceCommand)) {
             return false;
         }
 
         return targetIndex.equals(otherAttendanceCommand.targetIndex)
-                && week == otherAttendanceCommand.week;
+                && week == otherAttendanceCommand.week
+                && studioRecord.equals(otherAttendanceCommand.studioRecord);
     }
 
     @Override
@@ -106,6 +111,7 @@ public class AddAttendanceCommand extends Command {
         return new ToStringBuilder(this)
                 .add("targetIndex", targetIndex)
                 .add("week", week)
+                .add("studioRecord", studioRecord)
                 .toString();
     }
 }

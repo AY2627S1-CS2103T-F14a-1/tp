@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
-import seedu.address.logic.commands.AddAttendanceCommand;
+import seedu.address.logic.commands.AddStudioRecordCommand;
 import seedu.address.logic.commands.AddMissionCommand;
 import seedu.address.logic.commands.AddStudentCommand;
 import seedu.address.logic.commands.ClearCommand;
@@ -156,7 +156,7 @@ public class AddressBookParserTest {
 
     @Test
     public void parseCommand_addAttendanceIgnoringCase_returnsCommand() throws Exception {
-        AddAttendanceCommand expected = new AddAttendanceCommand(INDEX_FIRST_STUDENT, 3);
+        AddStudioRecordCommand expected = new AddStudioRecordCommand(INDEX_FIRST_STUDENT, 3);
 
         assertEquals(expected, parser.parseCommand("addattendance 1 w/3"));
         assertEquals(expected, parser.parseCommand("ADDATTENDANCE 1 w/3"));

@@ -7,7 +7,7 @@ import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_STUDENT;
 
 import org.junit.jupiter.api.Test;
 
-import seedu.address.logic.commands.AddAttendanceCommand;
+import seedu.address.logic.commands.AddStudioRecordCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
 
 public class AddStudioRecordsCommandParserTest {
@@ -16,7 +16,7 @@ public class AddStudioRecordsCommandParserTest {
     void parse_validArgs_returnsAddAttendanceCommand() throws ParseException {
         AddAttendanceCommandParser parser = new AddAttendanceCommandParser();
         assertParseSuccess(parser, "1 " + PREFIX_WEEK + MIN_WEEK,
-                new AddAttendanceCommand(INDEX_FIRST_STUDENT, MIN_WEEK)
+                new AddStudioRecordCommand(INDEX_FIRST_STUDENT, MIN_WEEK)
         );
     }
 }
