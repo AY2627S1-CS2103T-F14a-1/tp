@@ -2,8 +2,6 @@ package seedu.address.model.student;
 
 import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.AppUtil.checkArgument;
-import static seedu.address.model.student.StudioRecord.MESSAGE_CONSTRAINTS;
-import static seedu.address.model.student.StudioRecord.isValidWeek;
 
 import java.util.Collections;
 import java.util.HashMap;
