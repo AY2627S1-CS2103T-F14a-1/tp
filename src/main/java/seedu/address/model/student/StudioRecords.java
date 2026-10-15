@@ -2,26 +2,21 @@ package seedu.address.model.student;
 
 import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.AppUtil.checkArgument;
+import static seedu.address.model.student.StudioRecord.MESSAGE_CONSTRAINTS;
+import static seedu.address.model.student.StudioRecord.isValidWeek;
 
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.TreeMap;
 
 /**
- * Represents an immutable collection of a student's weekly tutorial attendance.
- * Each recorded week is between {@value #MIN_WEEK} and {@value #MAX_WEEK}, inclusive.
+ * Represents an immutable collection of a student's weekly studio attendance.
+ * Each recorded week is between {@value StudioRecord#MIN_WEEK} and {@value StudioRecord#MAX_WEEK}, inclusive.
  */
 public final class StudioRecords {
 
-    public static final int MIN_WEEK = 3;
-    public static final int MAX_WEEK = 13;
-    public static final String MESSAGE_CONSTRAINTS =
-            "Tutorial week must be between " + MIN_WEEK + " and " + MAX_WEEK + " inclusive";
-
-    public static final String ATTENDANCE_MARKER = "StudioRecords: ";
-    public final String attendance;
+    public static final String STUDIORECORD_MARKER = "StudioRecords: ";
 
     private final Map<Integer, StudioRecord> studioRecords;
 
@@ -29,64 +24,54 @@ public final class StudioRecords {
      * Creates attendance with no attended weeks.
      */
     public StudioRecords() {
-        this.attendedWeeks = Collections.emptySet();
-        this.attendance = toString();
+        this.studioRecords = Collections.emptyMap();
     }
 
     /**
-     * Creates attendance from the given tutorial weeks.
+     * Creates studio records from the given studio records.
      *
-     * @param attendedWeeks Weeks for which attendance has been recorded.
+     * @param studioRecords Weeks for which attendance has been recorded.
      * @throws NullPointerException If the set or any of its elements is {@code null}.
      */
-    public StudioRecords(Set<Integer> attendedWeeks) {
-        requireNonNull(attendedWeeks);
+    public StudioRecords(Map<Integer, StudioRecord> studioRecords) {
+        requireNonNull(studioRecords);
 
-        Set<Integer> copiedWeeks = new HashSet<>(attendedWeeks);
-        for (Integer week : copiedWeeks) {
+        Map<Integer, StudioRecord> copiedStudioRecords = new HashMap<>(studioRecords);
+        for (Integer week : copiedStudioRecords.keySet()) {
             requireNonNull(week);
             checkArgument(isValidWeek(week), MESSAGE_CONSTRAINTS);
         }
-        this.attendedWeeks = Collections.unmodifiableSet(copiedWeeks);
-        this.attendance = toString();
+        this.studioRecords = Collections.unmodifiableMap(copiedStudioRecords);
     }
 
     /**
-     * Returns whether the given tutorial week is within the valid range
+     * Returns whether studio status has been recorded for the given week.
      *
-     * @param week Tutorial week to check.
-     * @return True if the week is between {@value #MIN_WEEK} and {@value #MAX_WEEK}, inclusive.
-     */
-    public static boolean isValidWeek(int week) {
-        return week >= MIN_WEEK && week <= MAX_WEEK;
-    }
-
-    /**
-     * Returns whether attendance has been recorded for the given week.
-     *
-     * @param week Tutorial week to check.
-     * @return True if attendance is recorded for the week.
+     * @param week Studio week to check.
+     * @return True if studio status is recorded for the week.
      */
     public boolean hasAttendance(int week) {
         checkArgument(isValidWeek(week), MESSAGE_CONSTRAINTS);
-        return attendedWeeks.contains(week);
+        return studioRecords.containsKey(week);
     }
 
     /**
-     * Returns attendance including the given week without changing
+     * Returns studio records including the given week without changing
      * this object. Returns this object if the week is already recorded.
      *
      * @param week Tutorial week to record.
      * @return StudioRecords containing the existing weeks and given week.
      */
-    public StudioRecords withAttendedWeek(int week) {
+    public StudioRecords withAttendedWeek(int week, StudioRecord studioRecord) {
+        requireNonNull(studioRecord);
         if (hasAttendance(week)) {
             return this;
         }
 
-        Set<Integer> updatedWeeks = new HashSet<>(attendedWeeks);
-        updatedWeeks.add(week);
-        return new StudioRecords(updatedWeeks);
+        Map<Integer, StudioRecord> updatedRecords = new HashMap<>(studioRecords);
+        updatedRecords.put(week, studioRecord);
+
+        return new StudioRecords(updatedRecords);
     }
 
     /**
@@ -96,14 +81,15 @@ public final class StudioRecords {
      * @param week Tutorial week to delete.
      * @return StudioRecords containing the existing weeks without given week.
      */
-    public StudioRecords withoutAttendedWeek(int week) {
+    public StudioRecords withoutAttendedWeek(int week, StudioRecord studioRecord) {
         if (!hasAttendance(week)) {
             return this;
         }
 
-        Set<Integer> updatedWeeks = new HashSet<>(attendedWeeks);
-        updatedWeeks.remove(week);
-        return new StudioRecords(updatedWeeks);
+        Map<Integer, StudioRecord> updatedRecords = new HashMap<>(studioRecords);
+        updatedRecords.remove(week);
+
+        return new StudioRecords(updatedRecords);
     }
 
     /**
@@ -111,8 +97,8 @@ public final class StudioRecords {
      *
      * @return Recorded weeks, with no guaranteed iteration order.
      */
-    public Set<Integer> getAttendedWeeks() {
-        return attendedWeeks;
+    public Map<Integer, StudioRecord> getStudioRecords() {
+        return studioRecords;
     }
 
     @Override
@@ -126,21 +112,16 @@ public final class StudioRecords {
             return false;
         }
 
-        return attendedWeeks.equals(otherStudioRecords.attendedWeeks);
-    }
-
-    @Override
-    public int hashCode() {
-        return attendedWeeks.hashCode();
+        return studioRecords.equals(otherStudioRecords.studioRecords);
     }
 
     /**
-     * Returns the attended weeks in ascending order for diagnostic output.
+     * Returns the studio records in ascending week order for diagnostic output.
      *
-     * @return A string containing the recorded weeks in ascending order.
+     * @return A string containing the recorded studio records in ascending week order.
      */
     @Override
     public String toString() {
-        return new TreeSet<>(attendedWeeks).toString();
+        return new TreeMap<>(studioRecords).toString();
     }
 }
