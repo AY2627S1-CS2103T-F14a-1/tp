@@ -5,6 +5,7 @@ import static seedu.address.commons.util.AppUtil.checkArgument;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -22,7 +23,7 @@ public final class StudioRecords {
     public static final String ATTENDANCE_MARKER = "StudioRecords: ";
     public final String attendance;
 
-    private final Set<Integer> attendedWeeks;
+    private final Map<Integer, StudioRecord> studioRecords;
 
     /**
      * Creates attendance with no attended weeks.
