@@ -88,36 +88,16 @@
 }
 
 .list-view {
-    -fx-background-insets: 0;
-    -fx-padding: 0;
-    -fx-background-color: derive(#1d1d1d, 20%);
+    -fx-background-color: white;
 }
 
-.list-cell {
-    -fx-label-padding: 0 0 0 0;
-    -fx-graphic-text-gap : 0;
-    -fx-padding: 0 0 0 0;
-}
-
-.list-cell:filled:even {
-    -fx-background-color: #3c3e3f;
-}
-
+.list-cell:filled:even,
 .list-cell:filled:odd {
-    -fx-background-color: #515658;
-}
-
-.list-cell:filled:selected {
-    -fx-background-color: #424d5f;
-}
-
-.list-cell:filled:selected #cardPane {
-    -fx-border-color: #3e7b91;
-    -fx-border-width: 1;
+    -fx-background-color: white;
 }
 
 .list-cell .label {
-    -fx-text-fill: white;
+    -fx-text-fill: #1d2b3a;
 }
 
 .cell_big_label {
@@ -154,7 +134,7 @@
 }
 
 .result-display .label {
-    -fx-text-fill: black !important;
+    -fx-text-fill: white !important;
 }
 
 .status-bar .label {
@@ -349,6 +329,113 @@
     -fx-border-radius: 2;
     -fx-background-radius: 2;
     -fx-font-size: 11;
+}
+
+/* Dark theme application layout */
+
+.root,
+.scene,
+VBox,
+HBox,
+StackPane,
+SplitPane,
+.student-list-container,
+.student-list-panel,
+.student-details-container,
+.student-details-panel,
+.student-profile {
+    -fx-background-color: #383838;
+}
+
+.menu-bar,
+.menu,
+.menu-item,
+.command-section,
+.command-input,
+.pane-with-border,
+.status-bar,
+.result-display,
+.command-result,
+.student-details-scroll-pane,
+.student-details-scroll-pane > .viewport {
+    -fx-background-color: #383838;
+}
+
+.label,
+.menu-bar .label,
+.menu .label,
+.menu-item .label,
+.command-label,
+.student-list-title,
+.student-details-panel .label,
+.student-details-container .label,
+.student-details-name,
+.field-value,
+.student-name,
+.student-index,
+.student-group,
+.empty-details-message,
+.section-heading,
+.grid-header,
+.grid-value {
+    -fx-text-fill: white;
+}
+
+#commandTextField {
+    -fx-background-color: #383838;
+    -fx-text-fill: white;
+    -fx-prompt-text-fill: #b7c7d9;
+    -fx-border-color: #9fb1c5;
+}
+
+.command-prompt {
+    -fx-text-fill: white;
+}
+
+.list-view,
+.list-cell,
+.list-cell:filled:even,
+.list-cell:filled:odd,
+.list-cell:empty,
+.student-row {
+    -fx-background-color: #383838;
+}
+
+.list-cell:filled:selected,
+.list-cell:filled:selected .student-row {
+    -fx-background-color: #4d6478;
+}
+
+.list-cell:filled:hover .student-row {
+    -fx-background-color: #46515c;
+}
+
+.separator *.line {
+    -fx-background-color: #6f7f8f;
+}
+
+.scroll-bar,
+.scroll-bar .track {
+    -fx-background-color: #383838;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: #697887;
+}
+
+.status-bar .label,
+.result-display .label {
+    -fx-text-fill: white;
+}
+
+/* Student list text */
+
+.list-cell .label,
+.student-row .label,
+.student-index,
+.student-name,
+.student-group {
+    -fx-text-fill: white;
 }
 
 /* Student details displayed by the view command. */

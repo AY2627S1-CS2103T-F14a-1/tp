@@ -18,3 +18,231 @@
 .tooltip-text {
     -fx-text-fill: white;
 }
+
+.command-section {
+    -fx-padding: 10;
+    -fx-spacing: 5;
+    -fx-background-color: white;
+}
+
+.command-label {
+    -fx-font-size: 12px;
+    -fx-text-fill: #526579;
+}
+
+.command-input {
+    -fx-padding: 6 10 6 10;
+    -fx-background-color: white;
+    -fx-border-color: #cbd5df;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+}
+
+.command-prompt {
+    -fx-text-fill: #1769aa;
+    -fx-font-weight: bold;
+}
+
+.command-result {
+    -fx-padding: 6;
+    -fx-background-color: #eef1f4;
+    -fx-text-fill: #56697d;
+}
+
+.student-list-container,
+.student-list-panel {
+    -fx-background-color: white;
+}
+
+.student-list-header {
+    -fx-padding: 12;
+    -fx-background-color: white;
+    -fx-border-color: #e1e7ed;
+    -fx-border-width: 0 0 1 0;
+}
+
+.student-list-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1d2b3a;
+}
+
+.student-row {
+    -fx-padding: 12 10 12 10;
+    -fx-background-color: white;
+    -fx-border-color: #e4e9ee;
+    -fx-border-width: 0 0 1 0;
+}
+
+.student-index,
+.student-group {
+    -fx-text-fill: #728399;
+}
+
+.student-name {
+    -fx-text-fill: #1d2b3a;
+    -fx-font-size: 14px;
+}
+
+.list-cell:filled:selected .student-row {
+    -fx-background-color: #e6f0fa;
+}
+
+.list-cell:filled:hover .student-row {
+    -fx-background-color: #f3f7fb;
+}
+
+.student-details-container,
+.student-details-panel {
+    -fx-padding: 35;
+    -fx-background-color: white;
+}
+
+.student-details-name {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1d2b3a;
+}
+
+.field-label {
+    -fx-font-weight: bold;
+    -fx-text-fill: #728399;
+}
+
+.field-value {
+    -fx-text-fill: #1d2b3a;
+}
+
+#commandTextField {
+    -fx-text-fill: #1d2b3a;
+    -fx-prompt-text-fill: #8a9bad;
+    -fx-background-color: white;
+    -fx-border-color: #cbd5df;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-font-size: 14px;
+}
+
+#commandTextField:focused {
+    -fx-border-color: #4c91c9;
+}
+
+.student-row {
+    -fx-padding: 12 8 12 8;
+    -fx-background-color: white;
+    -fx-border-color: #e4e9ee;
+    -fx-border-width: 0 0 1 0;
+}
+
+.student-name {
+    -fx-wrap-text: true;
+    -fx-text-fill: #1d2b3a;
+}
+
+.student-group {
+    -fx-wrap-text: true;
+    -fx-text-fill: #728399;
+}
+
+.student-details-panel {
+    -fx-padding: 35;
+    -fx-background-color: white;
+}
+
+.empty-details-message {
+    -fx-text-fill: #728399;
+    -fx-font-size: 15px;
+}
+
+.student-profile {
+    -fx-alignment: TOP_LEFT;
+    -fx-max-width: infinity;
+    -fx-max-height: infinity;
+}
+
+.student-details-name {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1d2b3a;
+}
+
+.field-value {
+    -fx-text-fill: #1d2b3a;
+    -fx-font-size: 14px;
+}
+
+.result-display {
+    -fx-alignment: CENTER-LEFT;
+    -fx-text-alignment: left;
+    -fx-padding: 6 10 6 10;
+    -fx-background-color: #383838;
+    -fx-text-fill: white;
+}
+
+.command-result {
+    -fx-alignment: CENTER-LEFT;
+    -fx-text-alignment: left;
+    -fx-padding: 6 10 6 10;
+}
+
+.student-row {
+    -fx-padding: 10 8 10 8;
+    -fx-background-color: white;
+}
+
+.student-name {
+    -fx-wrap-text: true;
+    -fx-max-width: 150px;
+}
+
+.student-group {
+    -fx-min-width: 40px;
+    -fx-max-width: 50px;
+}
+
+.command-result {
+    -fx-alignment: CENTER_LEFT;
+    -fx-text-alignment: left;
+    -fx-padding: 6 10 6 10;
+    -fx-text-fill: white;
+}
+
+.student-details-container,
+.student-details-panel {
+    -fx-padding: 24;
+    -fx-background-color: white;
+    -fx-alignment: top-left;
+}
+
+.student-details-scroll-pane {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+    -fx-max-width: infinity;
+    -fx-max-height: infinity;
+}
+
+.student-details-scroll-pane > .viewport {
+    -fx-background-color: white;
+}
+
+.student-details-name {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.empty-details-message {
+    -fx-text-fill: #b7c7d9;
+    -fx-font-size: 15px;
+}
+
+.field-label {
+    -fx-font-weight: bold;
+    -fx-text-fill: #9fb1c5;
+}
+
+.field-value {
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+}

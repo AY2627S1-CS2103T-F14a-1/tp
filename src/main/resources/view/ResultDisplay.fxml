@@ -10,6 +10,10 @@
 
 <StackPane fx:id="placeHolder" styleClass="pane-with-border" xmlns="http://javafx.com/javafx/17"
     xmlns:fx="http://javafx.com/fxml/1">
+  <Label fx:id="resultDisplay"
+         maxWidth="Infinity"
+         wrapText="true"
+         styleClass="command-result"/>
   <TextArea fx:id="resultDisplay" editable="false" styleClass="result-display"/>
   <ScrollPane fx:id="studentDetails" fitToWidth="true" visible="false" managed="false"
               hbarPolicy="NEVER" styleClass="student-details-scroll">

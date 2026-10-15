@@ -22,6 +22,9 @@ public class ViewCommand extends Command {
             + "Parameters: INDEX (must be a positive integer)\n"
             + "Example: " + COMMAND_WORD + " 1";
 
+    public static final String MESSAGE_VIEW_STUDENT_SUCCESS =
+            "Showing profile of %1$s";
+
     private final Index targetIndex;
 
     /**
@@ -35,7 +38,8 @@ public class ViewCommand extends Command {
 
     @Override
     public CommandResult execute(Model model) throws CommandException {
-        List<Student> lastShownList = model.getFilteredStudentList();
+        List<Student> lastShownList =
+                model.getFilteredStudentList();
 
         if (targetIndex.getZeroBased() >= lastShownList.size()) {
             throw new CommandException(
@@ -46,7 +50,10 @@ public class ViewCommand extends Command {
                 lastShownList.get(targetIndex.getZeroBased());
 
         return new CommandResult(
-                Messages.formatStudentDetails(studentToView), studentToView);
+                String.format(
+                        MESSAGE_VIEW_STUDENT_SUCCESS,
+                        studentToView.getName().fullName),
+                studentToView);
     }
 
     @Override
