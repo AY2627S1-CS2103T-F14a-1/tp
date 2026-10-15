@@ -26,7 +26,7 @@ You can reach the course's team at the email `seer[at]comp.nus.edu.sg`
 [[github](http://github.com/brianlim35)]
 
 * Role: Code quality
-* Responsibilities: Checking of codes readability
+* Responsibilities: Checking of code readability
 
 ### Charis Tan
 
