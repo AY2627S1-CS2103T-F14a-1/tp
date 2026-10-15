@@ -30,9 +30,6 @@ public class StudentDetailsPanel extends UiPart<Region> {
     private Label email;
 
     @FXML
-    private Label address;
-
-    @FXML
     private Label tags;
 
     @FXML
@@ -82,7 +79,6 @@ public class StudentDetailsPanel extends UiPart<Region> {
                 "Studio group: " + student.getStudioGroup().studioGroup);
         phone.setText("Phone: " + student.getPhone().value);
         email.setText("Email: " + student.getEmail().value);
-        address.setText("Address: " + student.getAddress().value);
         tags.setText("Tags: " + student.getTags());
 
         populateMissionSubmissions(student);

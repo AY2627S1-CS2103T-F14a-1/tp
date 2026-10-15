@@ -436,6 +436,7 @@ SplitPane,
 .student-name,
 .student-group {
     -fx-text-fill: white;
+}
 
 /* Student details displayed by the view command. */
 .student-details-scroll, .student-details-scroll > .viewport, .student-details-content {
