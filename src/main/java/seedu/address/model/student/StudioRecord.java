@@ -1,35 +1,42 @@
 package seedu.address.model.student;
 
+import static seedu.address.commons.util.AppUtil.checkArgument;
+
 /**
  * Represents an immutable record of a student's weekly studio status.
  */
 public final class StudioRecord {
 
-    private final boolean isPresent;
-    private final int participation;
+    private final int effortScore;
     private final String studioRecord;
 
-    public static final int MIN_WEEK = 3;
-    public static final int MAX_WEEK = 13;
     private static final String PRESENT_MARKER = "A: ";
     private static final String PARTICIPATION_MARKER = "P: ";
-    public static final String MESSAGE_CONSTRAINTS =
-            "Tutorial week must be between " + MIN_WEEK + " and " + MAX_WEEK + " inclusive";
+    public static final String MESSAGE_CONSTRAINTS = "Effort score must be a non-negative integer";
 
-    public StudioRecord(boolean isPresent, int participation) {
-        this.isPresent = isPresent;
-        this.participation = participation;
+    public StudioRecord(int effortScore) {
+        checkArgument(isValidEffortScore(effortScore), MESSAGE_CONSTRAINTS);
+        this.effortScore = effortScore;
         this.studioRecord = toString();
     }
 
     /**
-     * Returns whether the given tutorial week is within the valid range
+     * Returns the student's effort score for the tutorial week.
      *
-     * @param week Tutorial week to check.
-     * @return True if the week is between {@value #MIN_WEEK} and {@value #MAX_WEEK}, inclusive.
+     * @return The effort score.
      */
-    public static boolean isValidWeek(int week) {
-        return week >= MIN_WEEK && week <= MAX_WEEK;
+    public int getEffortScore() {
+        return effortScore;
+    }
+
+    /**
+     * Returns whether the given studio is within the valid range
+     *
+     * @param effortScore Studio week to check.
+     * @return True if the effort score is a non-negative integer.
+     */
+    public static boolean isValidEffortScore(int effortScore) {
+        return effortScore >= 0;
     }
 
     @Override
@@ -42,11 +49,11 @@ public final class StudioRecord {
             return false;
         }
 
-        return isPresent == otherStudioRecord.isPresent && participation == otherStudioRecord.participation;
+        return effortScore == otherStudioRecord.effortScore;
     }
 
     @Override
     public String toString() {
-        return "(" + PRESENT_MARKER + isPresent + " | " + PARTICIPATION_MARKER + participation + ")";
+        return PARTICIPATION_MARKER + effortScore;
     }
 }
