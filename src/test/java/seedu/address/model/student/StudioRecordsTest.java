@@ -6,310 +6,249 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
+/**
+ * Tests the behavior of {@link StudioRecords}.
+ */
 public class StudioRecordsTest {
 
-    private StudioRecords studioRecords = new StudioRecords();
+    private static final StudioRecord ZERO_EFFORT_RECORD = new StudioRecord(0);
+    private static final StudioRecord PARTIAL_EFFORT_RECORD = new StudioRecord(50);
+    private static final StudioRecord FULL_EFFORT_RECORD = new StudioRecord(100);
 
     @Test
-    public void constructor_noArguments_createsEmptyAttendance() {
+    public void constructor_noArguments_createsEmptyStudioRecords() {
         StudioRecords studioRecords = new StudioRecords();
 
-        assertTrue(studioRecords.getAttendedWeeks().isEmpty());
+        assertTrue(studioRecords.getStudioRecords().isEmpty());
     }
 
     @Test
-    public void constructor_validWeeks_recordsAttendance() {
-        for (int i = StudioRecords.MIN_WEEK; i <= StudioRecords.MAX_WEEK; i++) {
-            StudioRecords studioRecords = new StudioRecords(Set.of(i));
-            assertEquals(Set.of(i), studioRecords.getAttendedWeeks());
-        }
+    public void constructor_validRecords_storesAllRecords() {
+        Map<Integer, StudioRecord> records = Map.of(
+                StudioRecords.MIN_WEEK, ZERO_EFFORT_RECORD,
+                StudioRecords.MAX_WEEK, FULL_EFFORT_RECORD);
 
-        // multiple valid weeks
-        Set<Integer> numbers = IntStream.rangeClosed(StudioRecords.MIN_WEEK, StudioRecords.MAX_WEEK)
-                .boxed()
-                .collect(Collectors.toSet());
-        assertEquals(numbers, new StudioRecords(numbers).getAttendedWeeks());
+        StudioRecords studioRecords = new StudioRecords(records);
+
+        assertEquals(records, studioRecords.getStudioRecords());
     }
 
     @Test
-    public void constructor_invalidWeeks_throwsIllegalArgumentException() {
-
-        for (int i = -1; i < StudioRecords.MIN_WEEK; i++) {
-            int week = i;
-            assertThrows(IllegalArgumentException.class, () ->
-                    new StudioRecords(Set.of(week)));
-        }
-        assertThrows(IllegalArgumentException.class, () ->
-                new StudioRecords(Set.of(StudioRecords.MAX_WEEK + 1)));
+    public void constructor_invalidWeek_throwsIllegalArgumentException() {
+        assertThrows(IllegalArgumentException.class, () -> new StudioRecords(
+                Map.of(StudioRecords.MIN_WEEK - 1, ZERO_EFFORT_RECORD)));
+        assertThrows(IllegalArgumentException.class, () -> new StudioRecords(
+                Map.of(StudioRecords.MAX_WEEK + 1, ZERO_EFFORT_RECORD)));
     }
 
     @Test
-    public void constructor_nullAttendanceWeek_throwsNullPointerException() {
+    public void constructor_nullMap_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> new StudioRecords(null));
     }
 
     @Test
-    public void constructor_setContainingNull_throwsNullPointerException() {
-        Set<Integer> attendedWeeks = new HashSet<>();
-        attendedWeeks.add(null);
+    public void constructor_nullWeek_throwsNullPointerException() {
+        Map<Integer, StudioRecord> records = new HashMap<>();
+        records.put(null, ZERO_EFFORT_RECORD);
 
-        assertThrows(NullPointerException.class, () -> new StudioRecords(attendedWeeks));
+        assertThrows(NullPointerException.class, () -> new StudioRecords(records));
     }
 
     @Test
-    public void constructor_inputSetModified_preservesRecordedWeeks() {
-        Set<Integer> attendedWeeks = new HashSet<>(Set.of(StudioRecords.MIN_WEEK));
-        StudioRecords studioRecords = new StudioRecords(attendedWeeks);
+    public void constructor_nullStudioRecord_throwsNullPointerException() {
+        Map<Integer, StudioRecord> records = new HashMap<>();
+        records.put(StudioRecords.MIN_WEEK, null);
 
-        attendedWeeks.add(StudioRecords.MAX_WEEK);
-
-        assertEquals(Set.of(StudioRecords.MIN_WEEK), studioRecords.getAttendedWeeks());
+        assertThrows(NullPointerException.class, () -> new StudioRecords(records));
     }
 
     @Test
-    public void withAttendedWeek_newWeek_preservesOriginal() {
-        StudioRecords original = new StudioRecords(Set.of(StudioRecords.MIN_WEEK));
+    public void constructor_inputMapModified_preservesOriginalRecords() {
+        Map<Integer, StudioRecord> records = new HashMap<>();
+        records.put(StudioRecords.MIN_WEEK, ZERO_EFFORT_RECORD);
+        StudioRecords studioRecords = new StudioRecords(records);
 
-        StudioRecords updated = original.withAttendedWeek(StudioRecords.MAX_WEEK);
+        records.put(StudioRecords.MAX_WEEK, FULL_EFFORT_RECORD);
 
-        assertEquals(Set.of(StudioRecords.MIN_WEEK), original.getAttendedWeeks());
-        assertEquals(Set.of(StudioRecords.MIN_WEEK, StudioRecords.MAX_WEEK), updated.getAttendedWeeks());
+        assertEquals(Map.of(StudioRecords.MIN_WEEK, ZERO_EFFORT_RECORD),
+                studioRecords.getStudioRecords());
     }
 
     @Test
-    public void withAttendedWeek_existingWeek_returnsSameInstance() {
-        StudioRecords original = new StudioRecords(Set.of(StudioRecords.MIN_WEEK));
+    public void withStudioRecord_newWeek_returnsUpdatedCopy() {
+        StudioRecords original = new StudioRecords(
+                Map.of(StudioRecords.MIN_WEEK, ZERO_EFFORT_RECORD));
 
-        StudioRecords updated = original.withAttendedWeek(StudioRecords.MIN_WEEK);
+        StudioRecords updated = original.withStudioRecord(
+                StudioRecords.MAX_WEEK, FULL_EFFORT_RECORD);
+
+        assertEquals(Map.of(StudioRecords.MIN_WEEK, ZERO_EFFORT_RECORD),
+                original.getStudioRecords());
+        assertEquals(Map.of(
+                StudioRecords.MIN_WEEK, ZERO_EFFORT_RECORD,
+                StudioRecords.MAX_WEEK, FULL_EFFORT_RECORD),
+                updated.getStudioRecords());
+    }
+
+    @Test
+    public void withStudioRecord_existingWeek_returnsSameInstance() {
+        StudioRecords original = new StudioRecords(
+                Map.of(StudioRecords.MIN_WEEK, ZERO_EFFORT_RECORD));
+
+        StudioRecords updated = original.withStudioRecord(
+                StudioRecords.MIN_WEEK, FULL_EFFORT_RECORD);
 
         assertSame(original, updated);
+        assertEquals(ZERO_EFFORT_RECORD,
+                updated.getStudioRecords().get(StudioRecords.MIN_WEEK));
     }
 
     @Test
-    public void withAttendedWeek_invalidWeek_throwsIllegalArgumentException() {
-        StudioRecords original = new StudioRecords(Set.of(StudioRecords.MIN_WEEK));
+    public void withStudioRecord_nullRecord_throwsNullPointerException() {
+        StudioRecords studioRecords = new StudioRecords();
 
-        for (int i = -1; i < StudioRecords.MIN_WEEK; i++) {
-            int week = i;
-            IllegalArgumentException invalidWeekException = assertThrows(IllegalArgumentException.class, () ->
-                    original.withAttendedWeek(week));
-            assertEquals(StudioRecords.MESSAGE_CONSTRAINTS, invalidWeekException.getMessage());
-        }
-
-        IllegalArgumentException invalidWeekException = assertThrows(IllegalArgumentException.class, () ->
-                original.withAttendedWeek(StudioRecords.MAX_WEEK + 1));
-        assertEquals(StudioRecords.MESSAGE_CONSTRAINTS, invalidWeekException.getMessage());
+        assertThrows(NullPointerException.class, () ->
+                studioRecords.withStudioRecord(StudioRecords.MIN_WEEK, null));
     }
 
     @Test
-    public void withAttendedWeek_invalidWeek_preservesOriginal() {
-        StudioRecords original = new StudioRecords(Set.of(3));
+    public void withStudioRecord_invalidWeek_throwsIllegalArgumentException() {
+        StudioRecords studioRecords = new StudioRecords();
+
+        assertThrows(IllegalArgumentException.class, () -> studioRecords.withStudioRecord(
+                StudioRecords.MIN_WEEK - 1, ZERO_EFFORT_RECORD));
+        assertThrows(IllegalArgumentException.class, () -> studioRecords.withStudioRecord(
+                StudioRecords.MAX_WEEK + 1, ZERO_EFFORT_RECORD));
+    }
+
+    @Test
+    public void withoutStudioRecord_existingWeek_returnsUpdatedCopy() {
+        StudioRecords original = new StudioRecords(Map.of(
+                StudioRecords.MIN_WEEK, ZERO_EFFORT_RECORD,
+                StudioRecords.MAX_WEEK, FULL_EFFORT_RECORD));
+
+        StudioRecords updated = original.withoutStudioRecord(
+                StudioRecords.MIN_WEEK, ZERO_EFFORT_RECORD);
+
+        assertEquals(Map.of(
+                StudioRecords.MIN_WEEK, ZERO_EFFORT_RECORD,
+                StudioRecords.MAX_WEEK, FULL_EFFORT_RECORD),
+                original.getStudioRecords());
+        assertEquals(Map.of(StudioRecords.MAX_WEEK, FULL_EFFORT_RECORD),
+                updated.getStudioRecords());
+    }
+
+    @Test
+    public void withoutStudioRecord_missingWeek_returnsSameInstance() {
+        StudioRecords studioRecords = new StudioRecords(
+                Map.of(StudioRecords.MIN_WEEK, ZERO_EFFORT_RECORD));
+
+        StudioRecords updated = studioRecords.withoutStudioRecord(
+                StudioRecords.MAX_WEEK, FULL_EFFORT_RECORD);
+
+        assertSame(studioRecords, updated);
+    }
+
+    @Test
+    public void withoutStudioRecord_invalidWeek_throwsIllegalArgumentException() {
+        StudioRecords studioRecords = new StudioRecords();
+
+        assertThrows(IllegalArgumentException.class, () -> studioRecords.withoutStudioRecord(
+                StudioRecords.MIN_WEEK - 1, ZERO_EFFORT_RECORD));
+        assertThrows(IllegalArgumentException.class, () -> studioRecords.withoutStudioRecord(
+                StudioRecords.MAX_WEEK + 1, ZERO_EFFORT_RECORD));
+    }
+
+    @Test
+    public void hasStudioRecord_recordExists_returnsTrue() {
+        StudioRecords studioRecords = new StudioRecords(
+                Map.of(StudioRecords.MIN_WEEK, ZERO_EFFORT_RECORD));
+
+        assertTrue(studioRecords.hasStudioRecord(StudioRecords.MIN_WEEK));
+    }
+
+    @Test
+    public void hasStudioRecord_recordDoesNotExist_returnsFalse() {
+        StudioRecords studioRecords = new StudioRecords(
+                Map.of(StudioRecords.MIN_WEEK, ZERO_EFFORT_RECORD));
+
+        assertFalse(studioRecords.hasStudioRecord(StudioRecords.MAX_WEEK));
+    }
+
+    @Test
+    public void hasStudioRecord_invalidWeek_throwsIllegalArgumentException() {
+        StudioRecords studioRecords = new StudioRecords();
 
         assertThrows(IllegalArgumentException.class, () ->
-                original.withAttendedWeek(2));
+                studioRecords.hasStudioRecord(StudioRecords.MIN_WEEK - 1));
         assertThrows(IllegalArgumentException.class, () ->
-                original.withAttendedWeek(14));
-
-        assertEquals(Set.of(3), original.getAttendedWeeks());
+                studioRecords.hasStudioRecord(StudioRecords.MAX_WEEK + 1));
     }
 
     @Test
-    public void withoutAttendance_weekExists_returnsWithoutWeek() {
-        StudioRecords studioRecords = new StudioRecords(Set.of(StudioRecords.MIN_WEEK));
-        StudioRecords removedStudioRecords = studioRecords.withoutAttendedWeek(StudioRecords.MIN_WEEK);
-        assertEquals(removedStudioRecords, new StudioRecords());
-
-        StudioRecords multipleStudioRecords = new StudioRecords(Set.of(StudioRecords.MIN_WEEK, StudioRecords.MAX_WEEK));
-        StudioRecords removedOneStudioRecords = multipleStudioRecords.withoutAttendedWeek(StudioRecords.MIN_WEEK);
-        assertEquals(removedOneStudioRecords, new StudioRecords(Set.of(StudioRecords.MAX_WEEK)));
-    }
-
-    @Test
-    public void withoutAttendance_weekNotExists_returnsSameInstance() {
-        // deleting a week where no studioRecords was marked at all
-        StudioRecords studioRecords = new StudioRecords();
-        StudioRecords removedNonexistentStudioRecords = studioRecords.withoutAttendedWeek(StudioRecords.MIN_WEEK);
-        assertSame(studioRecords, removedNonexistentStudioRecords);
-
-        // deleting a week where studioRecords was not marked for that week
-        StudioRecords populatedStudioRecords = new StudioRecords(Set.of(StudioRecords.MIN_WEEK));
-        StudioRecords removedNonexistentStudioRecords2 = populatedStudioRecords.withoutAttendedWeek(StudioRecords.MAX_WEEK);
-        assertSame(populatedStudioRecords, removedNonexistentStudioRecords2);
-    }
-
-    @Test
-    public void withoutAttendedWeek_invalidWeek_throwsIllegalArgumentException() {
-        StudioRecords populatedStudioRecords2 = new StudioRecords(Set.of(StudioRecords.MIN_WEEK, StudioRecords.MAX_WEEK));
-        assertThrows(IllegalArgumentException.class, () -> populatedStudioRecords2.withoutAttendedWeek(-1));
-    }
-
-    @Test
-    public void hasAttendance_hasAttendance_returnsTrue() {
-        StudioRecords studioRecords = new StudioRecords();
-        StudioRecords withMinStudioRecords = studioRecords.withAttendedWeek(StudioRecords.MIN_WEEK);
-        assertTrue(withMinStudioRecords.hasAttendance(StudioRecords.MIN_WEEK));
-
-        StudioRecords studioRecords2 = new StudioRecords();
-        StudioRecords withMaxStudioRecords = studioRecords2.withAttendedWeek(StudioRecords.MAX_WEEK);
-        assertTrue(withMaxStudioRecords.hasAttendance(StudioRecords.MAX_WEEK));
-
-        StudioRecords withAllStudioRecords = new StudioRecords();
-        for (int i = StudioRecords.MIN_WEEK; i <= StudioRecords.MAX_WEEK; i++) {
-            withAllStudioRecords = withAllStudioRecords.withAttendedWeek(i);
-        }
-
-        for (int i = StudioRecords.MIN_WEEK; i <= StudioRecords.MAX_WEEK; i++) {
-            assertTrue(withAllStudioRecords.hasAttendance(i));
-        }
-
-        StudioRecords withMultipleSameStudioRecords = withMinStudioRecords.withAttendedWeek(StudioRecords.MIN_WEEK);
-        assertTrue(withMultipleSameStudioRecords.hasAttendance(StudioRecords.MIN_WEEK));
-    }
-
-    @Test
-    public void hasAttendance_noAttendance_returnsFalse() {
-        StudioRecords studioRecords = new StudioRecords();
-        assertFalse(studioRecords.hasAttendance(StudioRecords.MIN_WEEK));
-        assertFalse(studioRecords.hasAttendance(StudioRecords.MAX_WEEK));
-
-        StudioRecords withUnrelatedStudioRecords = studioRecords.withAttendedWeek(StudioRecords.MAX_WEEK);
-        assertFalse(withUnrelatedStudioRecords.hasAttendance(StudioRecords.MIN_WEEK));
-    }
-
-    @Test
-    public void hasAttendance_invalidWeek_exceptionThrown() {
-        StudioRecords studioRecords = new StudioRecords();
-        try {
-            studioRecords.hasAttendance(-1);
-            fail();
-        } catch (Exception e) {
-            assertEquals(StudioRecords.MESSAGE_CONSTRAINTS, e.getMessage());
-        }
-
-        try {
-            studioRecords.hasAttendance(0);
-            fail();
-        } catch (Exception e) {
-            assertEquals(StudioRecords.MESSAGE_CONSTRAINTS, e.getMessage());
-        }
-
-        try {
-            studioRecords.hasAttendance(1);
-            fail();
-        } catch (Exception e) {
-            assertEquals(StudioRecords.MESSAGE_CONSTRAINTS, e.getMessage());
-        }
-
-        try {
-            studioRecords.hasAttendance(2);
-            fail();
-        } catch (Exception e) {
-            assertEquals(StudioRecords.MESSAGE_CONSTRAINTS, e.getMessage());
-        }
-
-        try {
-            studioRecords.hasAttendance(14);
-            fail();
-        } catch (Exception e) {
-            assertEquals(StudioRecords.MESSAGE_CONSTRAINTS, e.getMessage());
-        }
-    }
-
-    @Test
-    public void getAttendedWeeks_modifySet_throwsUnsupportedOperationException() {
-        StudioRecords studioRecords = new StudioRecords(Set.of(3));
+    public void getStudioRecords_modifyMap_throwsUnsupportedOperationException() {
+        StudioRecords studioRecords = new StudioRecords(
+                Map.of(StudioRecords.MIN_WEEK, ZERO_EFFORT_RECORD));
 
         assertThrows(UnsupportedOperationException.class, () ->
-                studioRecords.getAttendedWeeks().add(5));
-
-        assertEquals(Set.of(3), studioRecords.getAttendedWeeks());
+                studioRecords.getStudioRecords().put(StudioRecords.MAX_WEEK, FULL_EFFORT_RECORD));
+        assertEquals(Map.of(StudioRecords.MIN_WEEK, ZERO_EFFORT_RECORD),
+                studioRecords.getStudioRecords());
     }
 
     @Test
-    public void getAttendedWeeks_existingAttendance_returnsRecordedWeeks() {
-        StudioRecords withOneStudioRecords = new StudioRecords(Set.of(StudioRecords.MIN_WEEK));
-        assertEquals(Set.of(StudioRecords.MIN_WEEK), withOneStudioRecords.getAttendedWeeks());
+    public void isValidWeek_boundaryWeeks_returnsTrue() {
+        assertTrue(StudioRecords.isValidWeek(StudioRecords.MIN_WEEK));
+        assertTrue(StudioRecords.isValidWeek(StudioRecords.MAX_WEEK));
     }
 
     @Test
-    public void getAttendedWeeks_noAttendance_returnsRecordedWeeks() {
-        assertEquals(Set.of(), studioRecords.getAttendedWeeks());
+    public void isValidWeek_outOfRangeWeeks_returnsFalse() {
+        assertFalse(StudioRecords.isValidWeek(StudioRecords.MIN_WEEK - 1));
+        assertFalse(StudioRecords.isValidWeek(StudioRecords.MAX_WEEK + 1));
     }
 
     @Test
-    public void equals_sameObject_returnsTrue() {
-        StudioRecords studioRecords = new StudioRecords(Set.of(StudioRecords.MIN_WEEK));
+    public void equals_sameRecords_returnsTrue() {
+        StudioRecords firstStudioRecords = new StudioRecords(
+                Map.of(StudioRecords.MIN_WEEK, PARTIAL_EFFORT_RECORD));
+        StudioRecords secondStudioRecords = new StudioRecords(
+                Map.of(StudioRecords.MIN_WEEK, new StudioRecord(50)));
 
-        assertTrue(studioRecords.equals(studioRecords));
+        assertEquals(firstStudioRecords, secondStudioRecords);
     }
 
     @Test
-    public void equals_matchingWeeks_returnsTrue() {
-        StudioRecords firstStudioRecords = new StudioRecords(Set.of(StudioRecords.MIN_WEEK, StudioRecords.MAX_WEEK));
-        StudioRecords secondStudioRecords = new StudioRecords(Set.of(StudioRecords.MIN_WEEK, StudioRecords.MAX_WEEK));
+    public void equals_differentRecords_returnsFalse() {
+        StudioRecords studioRecords = new StudioRecords(
+                Map.of(StudioRecords.MIN_WEEK, PARTIAL_EFFORT_RECORD));
+        StudioRecords differentWeek = new StudioRecords(
+                Map.of(StudioRecords.MAX_WEEK, PARTIAL_EFFORT_RECORD));
+        StudioRecords differentEffort = new StudioRecords(
+                Map.of(StudioRecords.MIN_WEEK, FULL_EFFORT_RECORD));
 
-        assertTrue(firstStudioRecords.equals(secondStudioRecords));
-        assertNotEquals(firstStudioRecords, new StudioRecords(Set.of(StudioRecords.MIN_WEEK)));
-        assertNotEquals(firstStudioRecords, null);
-        assertNotEquals(firstStudioRecords, Set.of(3, 5));
+        assertNotEquals(studioRecords, differentWeek);
+        assertNotEquals(studioRecords, differentEffort);
+        assertNotEquals(studioRecords, null);
+        assertNotEquals(studioRecords, Map.of(StudioRecords.MIN_WEEK, PARTIAL_EFFORT_RECORD));
     }
 
     @Test
-    public void equals_differentAttendedWeeks_returnsFalse() {
-        StudioRecords firstStudioRecords = new StudioRecords(Set.of(StudioRecords.MIN_WEEK));
-        StudioRecords secondStudioRecords = new StudioRecords(Set.of(StudioRecords.MAX_WEEK));
+    public void toString_recordsAndMissingWeeks_returnsCompleteWeeklySummary() {
+        StudioRecords studioRecords = new StudioRecords(Map.of(
+                3, new StudioRecord(80),
+                4, new StudioRecord(25),
+                13, FULL_EFFORT_RECORD));
 
-        assertFalse(firstStudioRecords.equals(secondStudioRecords));
-    }
+        String expected = "3: A | 80, 4: A | 25, 5: X | 0, 6: X | 0, 7: X | 0, "
+                + "8: X | 0, 9: X | 0, 10: X | 0, 11: X | 0, 12: X | 0, 13: A | 100";
 
-    @Test
-    public void equals_null_returnsFalse() {
-        StudioRecords studioRecords = new StudioRecords(Set.of(StudioRecords.MIN_WEEK));
-
-        assertFalse(studioRecords.equals(null));
-    }
-
-    @Test
-    public void equals_differentType_returnsFalse() {
-        StudioRecords studioRecords = new StudioRecords(Set.of(StudioRecords.MIN_WEEK));
-
-        assertFalse(studioRecords.equals(Set.of(StudioRecords.MIN_WEEK)));
-    }
-
-    @Test
-    public void isValidWeek_validWeek_returnsTrue() {
-        StudioRecords studioRecords = new StudioRecords();
-        for (int i = StudioRecords.MIN_WEEK; i <= StudioRecords.MAX_WEEK; i++) {
-            assertTrue(studioRecords.isValidWeek(i));
-        }
-    }
-
-    @Test
-    public void isValidWeek_invalidWeek_returnsFalse() {
-        assertFalse(studioRecords.isValidWeek(-3));
-
-        assertFalse(studioRecords.isValidWeek(0));
-
-        assertFalse(studioRecords.isValidWeek(1));
-
-        assertFalse(studioRecords.isValidWeek(2));
-
-        assertFalse(studioRecords.isValidWeek(14));
-    }
-
-    @Test
-    public void toString_unorderedWeeks_returnsAscendingOrder() {
-        StudioRecords studioRecords = new StudioRecords(Set.of(5, 3, 13));
-
-        assertEquals("[3, 5, 13]", studioRecords.toString());
+        assertEquals(expected, studioRecords.toString());
     }
 }
