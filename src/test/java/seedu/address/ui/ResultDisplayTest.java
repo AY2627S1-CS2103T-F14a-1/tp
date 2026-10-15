@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_STUDENT;
 import static seedu.address.testutil.TypicalStudents.AMY;
 
+import java.time.LocalDate;
+import java.util.List;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 
@@ -19,13 +21,14 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 import seedu.address.logic.Messages;
-import seedu.address.logic.commands.AddMissionCommand;
 import seedu.address.logic.commands.CommandResult;
-import seedu.address.logic.commands.DeleteMissionCommand;
+import seedu.address.logic.commands.MarkMissionCommand;
+import seedu.address.logic.commands.UnmarkMissionCommand;
 import seedu.address.logic.commands.ViewCommand;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
-import seedu.address.model.student.MissionSubmissions;
+import seedu.address.model.mission.Mission;
+import seedu.address.model.mission.MissionId;
 import seedu.address.model.student.Student;
 import seedu.address.testutil.StudentBuilder;
 
@@ -33,6 +36,10 @@ import seedu.address.testutil.StudentBuilder;
  * Tests the result display's FXML and mission table on the JavaFX thread.
  */
 public class ResultDisplayTest {
+
+    private static final List<Mission> MISSIONS = List.of(
+            new Mission(new MissionId("M01"), "Runes", LocalDate.of(2026, 10, 15)),
+            new Mission(new MissionId("M02"), "Curves", LocalDate.of(2026, 10, 16)));
 
     @BeforeAll
     public static void setUpJavaFx() throws Exception {
@@ -49,26 +56,56 @@ public class ResultDisplayTest {
     }
 
     @Test
-    public void setCommandResult_studentView_displaysEveryWeekAndStatus() throws Exception {
+    public void setCommandResult_studentView_displaysConfiguredMissionsAndStatus() throws Exception {
         runOnJavaFxThread(() -> {
             ResultDisplay display = new ResultDisplay();
-            Student student = new StudentBuilder(AMY).withMissionSubmissions(
-                    MissionSubmissions.MIN_WEEK, MissionSubmissions.MAX_WEEK).build();
-            display.setCommandResult(new CommandResult(Messages.formatStudentDetails(student), student));
+            Student student = new StudentBuilder(AMY).withMissionSubmissions("M01").build();
+            display.setCommandResult(new CommandResult(Messages.formatStudentDetails(student), student, MISSIONS));
             GridPane table = getTable(display);
-            int weekCount = MissionSubmissions.MAX_WEEK - MissionSubmissions.MIN_WEEK + 1;
-            assertEquals((weekCount + 1) * 2, table.getChildren().size());
-            assertEquals("Week", ((Label) table.getChildren().get(0)).getText());
-            assertEquals("Status", ((Label) table.getChildren().get(1)).getText());
-            for (int row = 1; row <= weekCount; row++) {
-                int week = MissionSubmissions.MIN_WEEK + row - 1;
-                assertEquals(String.valueOf(week), ((Label) table.getChildren().get(row * 2)).getText());
-                String expected = student.getMissionSubmissions().hasSubmission(week)
-                        ? "Submitted" : "Not submitted";
-                assertEquals(expected, ((Label) table.getChildren().get(row * 2 + 1)).getText());
-            }
+            assertEquals(6, table.getChildren().size());
+            assertEquals("Mission", ((Label) table.getChildren().get(0)).getText());
+            assertEquals("M01 · Runes\nDue: 2026-10-15", ((Label) table.getChildren().get(2)).getText());
+            assertEquals("Submitted", ((Label) table.getChildren().get(3)).getText());
+            assertEquals("Not submitted", ((Label) table.getChildren().get(5)).getText());
             assertTrue(display.getRoot().lookup("#studentDetails").isVisible());
             assertFalse(display.getRoot().lookup("#resultDisplay").isManaged());
+        });
+    }
+
+    @Test
+    public void setCommandResult_wrappedMissionRows_alignsCellBorders() throws Exception {
+        runOnJavaFxThread(() -> {
+            ResultDisplay display = new ResultDisplay();
+            List<Mission> missions = List.of(
+                    new Mission(new MissionId("M01"), "Understanding the Force", LocalDate.of(2026, 10, 15)),
+                    new Mission(new MissionId("M02"), "Beyond the Second Dimension", LocalDate.of(2026, 10, 29)));
+            Student student = new StudentBuilder(AMY).withMissionSubmissions("M01").build();
+            display.setCommandResult(new CommandResult("Student", student, missions));
+            GridPane table = getTable(display);
+            table.getStylesheets().add(ResultDisplay.class.getResource("/view/DarkTheme.css").toExternalForm());
+            table.applyCss();
+            for (double width : new double[] {240, 900}) {
+                table.resize(width, table.prefHeight(width));
+                table.layout();
+                for (int index = 0; index < table.getChildren().size(); index += 2) {
+                    Label description = (Label) table.getChildren().get(index);
+                    Label status = (Label) table.getChildren().get(index + 1);
+                    assertTrue(description.getHeight() > 0);
+                    assertEquals(description.getBoundsInParent().getMinY(),
+                            status.getBoundsInParent().getMinY(), 0.01);
+                    assertEquals(description.getBoundsInParent().getMaxY(),
+                            status.getBoundsInParent().getMaxY(), 0.01);
+                }
+            }
+        });
+    }
+
+    @Test
+    public void setCommandResult_emptyCatalogue_displaysEmptyMessage() throws Exception {
+        runOnJavaFxThread(() -> {
+            ResultDisplay display = new ResultDisplay();
+            display.setCommandResult(new CommandResult("Student", AMY));
+            assertEquals("No missions configured.", ((Label) getTable(display).getChildren().getFirst()).getText());
         });
     }
 
@@ -76,10 +113,10 @@ public class ResultDisplayTest {
     public void setCommandResult_switchStudentAndFeedback_clearsPreviousView() throws Exception {
         runOnJavaFxThread(() -> {
             ResultDisplay display = new ResultDisplay();
-            Student submitted = new StudentBuilder(AMY).withMissionSubmissions(MissionSubmissions.MIN_WEEK).build();
-            display.setCommandResult(new CommandResult("First student", submitted));
+            Student submitted = new StudentBuilder(AMY).withMissionSubmissions("M01").build();
+            display.setCommandResult(new CommandResult("First student", submitted, MISSIONS));
             Student empty = new StudentBuilder(AMY).withMissionSubmissions().build();
-            display.setCommandResult(new CommandResult("Second student", empty));
+            display.setCommandResult(new CommandResult("Second student", empty, MISSIONS));
             GridPane table = getTable(display);
             for (int index = 3; index < table.getChildren().size(); index += 2) {
                 assertEquals("Not submitted", ((Label) table.getChildren().get(index)).getText());
@@ -99,12 +136,13 @@ public class ResultDisplayTest {
     }
 
     @Test
-    public void setCommandResult_viewAfterAddAndDelete_reflectsUpdatedSubmissions() throws Exception {
+    public void setCommandResult_viewAfterMarkAndUnmark_reflectsUpdatedSubmissions() throws Exception {
         Model model = new ModelManager();
         model.addStudent(new StudentBuilder(AMY).withMissionSubmissions().build());
-        new AddMissionCommand(INDEX_FIRST_STUDENT, MissionSubmissions.MAX_WEEK).execute(model);
+        model.addMission("Runes", LocalDate.of(2026, 10, 15));
+        new MarkMissionCommand(INDEX_FIRST_STUDENT, new MissionId("M01")).execute(model);
         CommandResult added = new ViewCommand(INDEX_FIRST_STUDENT).execute(model);
-        new DeleteMissionCommand(INDEX_FIRST_STUDENT, MissionSubmissions.MAX_WEEK).execute(model);
+        new UnmarkMissionCommand(INDEX_FIRST_STUDENT, new MissionId("M01")).execute(model);
         CommandResult deleted = new ViewCommand(INDEX_FIRST_STUDENT).execute(model);
         runOnJavaFxThread(() -> {
             ResultDisplay display = new ResultDisplay();

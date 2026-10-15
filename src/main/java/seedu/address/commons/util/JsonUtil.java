@@ -66,6 +66,9 @@ public class JsonUtil {
             throw new DataLoadingException(e);
         }
 
+        if (jsonFile == null) {
+            throw new DataLoadingException(new IOException("Saved JSON document must not be null."));
+        }
         return Optional.of(jsonFile);
     }
 

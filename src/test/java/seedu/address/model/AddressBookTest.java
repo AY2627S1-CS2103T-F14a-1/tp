@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import seedu.address.model.mission.Mission;
 import seedu.address.model.student.Student;
 import seedu.address.model.student.exceptions.DuplicateStudentException;
 import seedu.address.testutil.StudentBuilder;
@@ -94,6 +95,16 @@ public class AddressBookTest {
 
         AddressBookStub(Collection<Student> students) {
             this.students.setAll(students);
+        }
+
+        @Override
+        public ObservableList<Mission> getMissionList() {
+            return FXCollections.emptyObservableList();
+        }
+
+        @Override
+        public long getNextMissionNumber() {
+            return 1;
         }
 
         @Override
