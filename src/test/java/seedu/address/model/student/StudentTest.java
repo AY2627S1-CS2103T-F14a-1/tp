@@ -3,7 +3,6 @@ package seedu.address.model.student;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static seedu.address.logic.commands.CommandTestUtil.VALID_ADDRESS_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_EMAIL_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_NAME_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_PHONE_BOB;
@@ -37,7 +36,7 @@ public class StudentTest {
 
         // same name, all other attributes different -> returns true
         Student editedAlice = new StudentBuilder(ALICE).withPhone(VALID_PHONE_BOB).withEmail(VALID_EMAIL_BOB)
-                .withAddress(VALID_ADDRESS_BOB).withTags(VALID_TAG_HUSBAND).withStudioGroup(VALID_STUDIO_GROUP_BOB)
+                .withTags(VALID_TAG_HUSBAND).withStudioGroup(VALID_STUDIO_GROUP_BOB)
                 .build();
         assertTrue(ALICE.isSameStudent(editedAlice));
 
@@ -85,10 +84,6 @@ public class StudentTest {
         editedAlice = new StudentBuilder(ALICE).withEmail(VALID_EMAIL_BOB).build();
         assertFalse(ALICE.equals(editedAlice));
 
-        // different address -> returns false
-        editedAlice = new StudentBuilder(ALICE).withAddress(VALID_ADDRESS_BOB).build();
-        assertFalse(ALICE.equals(editedAlice));
-
         // different tags -> returns false
         editedAlice = new StudentBuilder(ALICE).withTags(VALID_TAG_HUSBAND).build();
         assertFalse(ALICE.equals(editedAlice));
@@ -101,7 +96,7 @@ public class StudentTest {
     @Test
     public void constructor_defaultSubmissions_createsEmptySubmissions() {
         Student student = new Student(ALICE.getName(), ALICE.getPhone(), ALICE.getEmail(),
-                ALICE.getAddress(), ALICE.getTags(), ALICE.getStudioGroup());
+                ALICE.getTags(), ALICE.getStudioGroup());
 
         assertTrue(student.getMissionSubmissions().getSubmittedWeeks().isEmpty());
     }
@@ -110,7 +105,7 @@ public class StudentTest {
     public void constructor_nullMissionSubmissions_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () ->
                 new Student(ALICE.getName(), ALICE.getPhone(), ALICE.getEmail(),
-                        ALICE.getAddress(), ALICE.getTags(), ALICE.getStudioGroup(), null, ALICE.getAttendance()));
+                        ALICE.getTags(), ALICE.getStudioGroup(), null, ALICE.getAttendance()));
     }
 
     @Test
@@ -155,7 +150,7 @@ public class StudentTest {
         Student student = new StudentBuilder(ALICE).withMissionSubmissions(3).build();
         String expected = Student.class.getCanonicalName()
                 + "{name=" + student.getName() + ", phone=" + student.getPhone()
-                + ", email=" + student.getEmail() + ", address=" + student.getAddress() + ", tags=" + student.getTags()
+                + ", email=" + student.getEmail() + ", tags=" + student.getTags()
                 + ", studioGroup=" + student.getStudioGroup()
                 + ", missionSubmissions=" + student.getMissionSubmissions()
                 + ", attendance=[]" + "}";

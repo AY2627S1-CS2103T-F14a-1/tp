@@ -23,7 +23,6 @@ public class Student {
     private final Email email;
 
     // Data fields
-    private final Address address;
     private final Set<Tag> tags = new HashSet<>();
     private final StudioGroup studioGroup;
     private final MissionSubmissions missionSubmissions;
@@ -35,14 +34,13 @@ public class Student {
      * @param name Student's name.
      * @param phone Student's phone number.
      * @param email Student's email address.
-     * @param address Student's address.
      * @param tags Student's tags.
      * @throws NullPointerException If any argument is null.
      */
     public Student(
-            Name name, Phone phone, Email email, Address address, Set<Tag> tags,
+            Name name, Phone phone, Email email, Set<Tag> tags,
             StudioGroup studioGroup) {
-        this(name, phone, email, address, tags, studioGroup, new MissionSubmissions(), new Attendance());
+        this(name, phone, email, tags, studioGroup, new MissionSubmissions(), new Attendance());
     }
 
     /**
@@ -51,18 +49,16 @@ public class Student {
      * @param name Student's name.
      * @param phone Student's phone number.
      * @param email Student's email address.
-     * @param address Student's address.
      * @param tags Student's tags.
      * @param missionSubmissions Student's recorded mission submissions.
      * @throws NullPointerException If any argument is null.
      */
-    public Student(Name name, Phone phone, Email email, Address address, Set<Tag> tags,
+    public Student(Name name, Phone phone, Email email, Set<Tag> tags,
             StudioGroup studioGroup, MissionSubmissions missionSubmissions, Attendance attendance) {
-        requireAllNonNull(name, phone, email, address, tags, missionSubmissions);
+        requireAllNonNull(name, phone, email, tags, missionSubmissions);
         this.name = name;
         this.phone = phone;
         this.email = email;
-        this.address = address;
         this.tags.addAll(tags);
         this.studioGroup = studioGroup;
         this.missionSubmissions = missionSubmissions;
@@ -79,10 +75,6 @@ public class Student {
 
     public Email getEmail() {
         return email;
-    }
-
-    public Address getAddress() {
-        return address;
     }
 
     /**
@@ -153,7 +145,6 @@ public class Student {
         return name.equals(otherStudent.name)
                 && phone.equals(otherStudent.phone)
                 && email.equals(otherStudent.email)
-                && address.equals(otherStudent.address)
                 && tags.equals(otherStudent.tags)
                 && studioGroup.equals(otherStudent.studioGroup)
                 && missionSubmissions.equals(otherStudent.missionSubmissions)
@@ -163,7 +154,7 @@ public class Student {
     @Override
     public int hashCode() {
         // use this method for custom fields hashing instead of implementing your own
-        return Objects.hash(name, phone, email, address, tags, studioGroup, missionSubmissions, attendance);
+        return Objects.hash(name, phone, email, tags, studioGroup, missionSubmissions, attendance);
     }
 
     @Override
@@ -172,7 +163,6 @@ public class Student {
                 .add("name", name)
                 .add("phone", phone)
                 .add("email", email)
-                .add("address", address)
                 .add("tags", tags)
                 .add("studioGroup", studioGroup)
                 .add("missionSubmissions", missionSubmissions)

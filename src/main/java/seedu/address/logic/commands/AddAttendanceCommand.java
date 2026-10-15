@@ -82,7 +82,7 @@ public class AddAttendanceCommand extends Command {
         assert attendance != null;
 
         return new Student(student.getName(), student.getPhone(), student.getEmail(),
-                student.getAddress(), student.getTags(), student.getStudioGroup(), student.getMissionSubmissions(),
+                student.getTags(), student.getStudioGroup(), student.getMissionSubmissions(),
                 attendance);
     }
 
