@@ -3,7 +3,7 @@ package seedu.address.model.student;
 /**
  * Represents an immutable record of a student's weekly studio status.
  */
-public class StudioRecord {
+public final class StudioRecord {
 
     private final boolean isPresent;
     private final int participation;
