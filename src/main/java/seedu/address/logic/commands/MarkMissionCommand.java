@@ -25,7 +25,7 @@ public class MarkMissionCommand extends Command {
             + "Parameters: INDEX m/MISSION_ID\n"
             + "INDEX must be a positive integer identifying a displayed student.\n"
             + MissionId.MESSAGE_CONSTRAINTS + "\n"
-            + "Example: " + COMMAND_WORD + " 1 m/M05";
+            + "Example: " + COMMAND_WORD + " 1 m/M05.";
 
     public static final String MESSAGE_SUCCESS =
             "Added %1$s’s mission submission for mission %2$s.";
