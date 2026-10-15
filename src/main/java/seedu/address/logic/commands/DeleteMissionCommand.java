@@ -83,7 +83,7 @@ public class DeleteMissionCommand extends Command {
         assert submissions != null;
 
         return new Student(student.getName(), student.getPhone(), student.getEmail(),
-                student.getAddress(), student.getTags(), student.getStudioGroup(), submissions,
+                student.getTags(), student.getStudioGroup(), submissions,
                 student.getAttendance());
     }
 

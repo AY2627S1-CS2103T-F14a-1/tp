@@ -147,7 +147,6 @@ public class JsonAddressBookStorageTest {
                     "name": "Amy Bee",
                     "phone": "85355255",
                     "email": "amy@gmail.com",
-                    "address": "123, Jurong West Ave 6, #08-111",
                     "tags": [],
                     "studioGroup": "1A",
                     "missionSubmissions": [3, 14]
