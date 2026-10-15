@@ -43,9 +43,10 @@ public class AddStudioRecordCommand extends Command {
      * Creates a command to record a week's attendance
      *
      * @param targetIndex Index of the student in the displayed list.
-     * @param week Tutorial week for the submission
+     * @param week Studio week for the record.
      */
     public AddStudioRecordCommand(Index targetIndex, int week, StudioRecord studioRecord) {
+        requireNonNull(studioRecord);
         this.targetIndex = requireNonNull(targetIndex);
         checkArgument(StudioRecords.isValidWeek(week), StudioRecords.MESSAGE_CONSTRAINTS);
         this.week = week;
@@ -97,13 +98,13 @@ public class AddStudioRecordCommand extends Command {
         }
 
         // instanceof handles nulls
-        if (!(other instanceof AddStudioRecordCommand otherAttendanceCommand)) {
+        if (!(other instanceof AddStudioRecordCommand otherAddAttendanceRecordCommand)) {
             return false;
         }
 
-        return targetIndex.equals(otherAttendanceCommand.targetIndex)
-                && week == otherAttendanceCommand.week
-                && studioRecord.equals(otherAttendanceCommand.studioRecord);
+        return targetIndex.equals(otherAddAttendanceRecordCommand.targetIndex)
+                && week == otherAddAttendanceRecordCommand.week
+                && studioRecord.equals(otherAddAttendanceRecordCommand.studioRecord);
     }
 
     @Override
