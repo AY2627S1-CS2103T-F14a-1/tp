@@ -54,7 +54,7 @@ public class Student {
      */
     public Student(Name name, Phone phone, Email email, Set<Tag> tags,
             StudioGroup studioGroup, MissionSubmissions missionSubmissions, StudioRecords studioRecords) {
-        requireAllNonNull(name, phone, email, tags, missionSubmissions);
+        requireAllNonNull(name, phone, email, tags, missionSubmissions, studioRecords);
         this.name = name;
         this.phone = phone;
         this.email = email;

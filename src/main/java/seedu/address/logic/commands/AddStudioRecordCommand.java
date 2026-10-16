@@ -1,6 +1,7 @@
 package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
+import static seedu.address.commons.util.AppUtil.checkArgument;
 
 import java.util.List;
 
@@ -47,6 +48,8 @@ public class AddStudioRecordCommand extends Command {
     public AddStudioRecordCommand(Index targetIndex, int week, StudioRecord studioRecord) {
         requireNonNull(targetIndex);
         requireNonNull(studioRecord);
+
+        checkArgument(StudioRecords.isValidWeek(week), StudioRecords.MESSAGE_CONSTRAINTS);
 
         this.targetIndex = targetIndex;
         this.week = week;
