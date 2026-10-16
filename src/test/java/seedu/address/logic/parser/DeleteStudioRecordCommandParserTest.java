@@ -12,7 +12,7 @@ import seedu.address.logic.commands.DeleteStudioRecordCommand;
 /**
  * Tests argument structure and value-parser integration for delstudiorecord.
  */
-public class DeleteStudioRecordsCommandParserTest {
+public class DeleteStudioRecordCommandParserTest {
 
     private final DeleteStudioRecordCommandParser parser = new DeleteStudioRecordCommandParser();
 

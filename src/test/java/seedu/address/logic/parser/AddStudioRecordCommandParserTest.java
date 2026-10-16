@@ -12,7 +12,7 @@ import seedu.address.model.student.StudioRecord;
 /**
  * Tests parsing studio weeks and effort scores.
  */
-public class AddStudioRecordsCommandParserTest {
+public class AddStudioRecordCommandParserTest {
 
     private final AddStudioRecordCommandParser parser = new AddStudioRecordCommandParser();
 
