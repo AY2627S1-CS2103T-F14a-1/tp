@@ -46,9 +46,10 @@ public class AddStudioRecordCommand extends Command {
      * @param week Studio week for the record.
      */
     public AddStudioRecordCommand(Index targetIndex, int week, StudioRecord studioRecord) {
+        requireNonNull(targetIndex);
         requireNonNull(studioRecord);
-        this.targetIndex = requireNonNull(targetIndex);
-        checkArgument(StudioRecords.isValidWeek(week), StudioRecords.MESSAGE_CONSTRAINTS);
+
+        this.targetIndex = targetIndex;
         this.week = week;
         this.studioRecord = studioRecord;
     }

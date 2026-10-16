@@ -19,6 +19,7 @@ import seedu.address.model.AddressBook;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.UserPrefs;
+import seedu.address.model.student.StudioRecord;
 import seedu.address.model.student.StudioRecords;
 import seedu.address.model.student.Student;
 import seedu.address.testutil.StudentBuilder;
@@ -29,6 +30,8 @@ import seedu.address.testutil.StudentBuilder;
 public class DeleteStudioRecordsCommandTest {
 
     private final Model model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
+    private final Index index = Index.fromZeroBased(StudioRecords.MIN_WEEK);
+    private final StudioRecord studioRecord = new StudioRecord(0);
 
     @Test
     public void constructor_invalidArguments_throwsException() {
@@ -51,10 +54,15 @@ public class DeleteStudioRecordsCommandTest {
     @Test
     public void execute_validIndex_preservesOtherWeeksAndStudents() {
         Student original = model.getFilteredStudentList().get(0);
-        Student student = new StudentBuilder(original).withAttendance(3, 4, 5).build();
+        Student student = new StudentBuilder(original).withStudioRecords(
+                new StudentBuilder.StudioRecordSet(3, studioRecord),
+                new StudentBuilder.StudioRecordSet(4, studioRecord),
+                new StudentBuilder.StudioRecordSet(5, studioRecord)).build();
         model.setStudent(original, student);
 
-        Student updated = new StudentBuilder(student).withAttendance(4, 5).build();
+        Student updated = new StudentBuilder(student).withStudioRecords(
+                new StudentBuilder.StudioRecordSet(4, studioRecord),
+                new StudentBuilder.StudioRecordSet(5, studioRecord)).build();
         Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
         expectedModel.setStudent(student, updated);
 
@@ -62,14 +70,17 @@ public class DeleteStudioRecordsCommandTest {
 
         assertCommandSuccess(new DeleteStudioRecordCommand(INDEX_FIRST_STUDENT, 3),
                 model, feedback, expectedModel);
-        assertTrue(student.getStudioRecords().hasAttendance(3));
+        assertTrue(student.getStudioRecords().hasStudioRecord(
+                3));
     }
 
     @Test
     public void execute_boundaryWeeks_removesBothWeeks() throws Exception {
         Student original = model.getFilteredStudentList().get(0);
         Student student = new StudentBuilder(original)
-                .withAttendance(StudioRecords.MIN_WEEK, StudioRecords.MAX_WEEK)
+                .withStudioRecords(
+                        new StudentBuilder.StudioRecordSet(StudioRecords.MIN_WEEK, studioRecord),
+                                new StudentBuilder.StudioRecordSet(StudioRecords.MAX_WEEK, studioRecord)
                 .build();
         model.setStudent(original, student);
 

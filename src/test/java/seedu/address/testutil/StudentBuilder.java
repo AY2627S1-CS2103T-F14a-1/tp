@@ -2,9 +2,12 @@ package seedu.address.testutil;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
+import seedu.address.model.student.StudioRecord;
 import seedu.address.model.student.StudioRecords;
 import seedu.address.model.student.Email;
 import seedu.address.model.student.MissionSubmissions;
@@ -19,6 +22,8 @@ import seedu.address.model.util.SampleDataUtil;
  * A utility class to help with building Student objects.
  */
 public class StudentBuilder {
+
+    public record StudioRecordSet(int week, StudioRecord studioRecord) {}
 
     public static final String DEFAULT_NAME = "Amy Bee";
     public static final String DEFAULT_PHONE = "85355255";
@@ -126,14 +131,16 @@ public class StudentBuilder {
      * @throws NullPointerException If the array is null.
      * @throws IllegalArgumentException If any week is outside the valid range.
      */
-    public StudentBuilder withAttendance(int... weeks) {
-        requireNonNull(weeks);
+    public StudentBuilder withStudioRecords(StudioRecordSet... sets) {
+        requireNonNull(sets);
 
-        Set<Integer> attendedWeeks = new HashSet<>();
-        for (int week : weeks) {
-            attendedWeeks.add(week);
+        Map<Integer, StudioRecord> recordedStudios = new HashMap<>();
+        for (StudioRecordSet set : sets) {
+            StudioRecord studioRecord = set.studioRecord();
+            requireNonNull(studioRecord);
+            recordedStudios.put(set.week(), studioRecord);
         }
-        this.studioRecords = new StudioRecords(attendedWeeks);
+        this.studioRecords = new StudioRecords(recordedStudios);
         return this;
     }
 
