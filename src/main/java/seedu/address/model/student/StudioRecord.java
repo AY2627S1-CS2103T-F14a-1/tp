@@ -8,8 +8,6 @@ import static seedu.address.commons.util.AppUtil.checkArgument;
 public final class StudioRecord {
 
     public static final String MESSAGE_CONSTRAINTS = "Effort score must be a non-negative integer";
-
-    private static final String PRESENT_MARKER = "A: ";
     private static final String PARTICIPATION_MARKER = "P: ";
 
     private final int effortScore;
@@ -39,7 +37,7 @@ public final class StudioRecord {
     /**
      * Returns whether the given studio is within the valid range
      *
-     * @param effortScore Studio week to check.
+     * @param effortScore Studio effort score to check.
      * @return True if the effort score is a non-negative integer.
      */
     public static boolean isValidEffortScore(int effortScore) {

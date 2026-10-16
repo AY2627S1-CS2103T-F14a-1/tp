@@ -63,6 +63,7 @@ public final class StudioRecords {
      * this object. Returns this object if the week is already recorded.
      *
      * @param week Tutorial week to record.
+     * @param studioRecord Studio record to include.
      * @return StudioRecords containing the existing weeks and given week.
      */
     public StudioRecords withStudioRecord(int week, StudioRecord studioRecord) {
@@ -96,7 +97,7 @@ public final class StudioRecords {
     }
 
     /**
-     * Returns an unmodifiable set of recorded tutorial weeks.
+     * Returns an unmodifiable map of recorded studio weeks.
      *
      * @return Recorded weeks, with no guaranteed iteration order.
      */

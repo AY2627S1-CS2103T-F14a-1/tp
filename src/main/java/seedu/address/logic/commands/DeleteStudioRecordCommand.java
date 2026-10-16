@@ -31,7 +31,7 @@ public class DeleteStudioRecordCommand extends Command {
     public static final String MESSAGE_SUCCESS =
             "Removed %1$s's record for studio week %2$d.";
 
-    public static final String MESSAGE_ALREADY_RECORDED =
+    public static final String MESSAGE_ALREADY_NOT_RECORDED =
             "%1$s’s studio record was already not marked for studio week %2$d. No changes made.";
 
     private final Index targetIndex;
@@ -69,7 +69,7 @@ public class DeleteStudioRecordCommand extends Command {
         StudioRecords studioRecords = studentToUpdate.getStudioRecords();
 
         if (!studioRecords.hasStudioRecord(week)) {
-            return new CommandResult(String.format(MESSAGE_ALREADY_RECORDED, studentToUpdate.getName(), week));
+            return new CommandResult(String.format(MESSAGE_ALREADY_NOT_RECORDED, studentToUpdate.getName(), week));
         }
 
         Student updatedStudent = createUpdatedStudent(studentToUpdate, studioRecords.withoutStudioRecord(week));

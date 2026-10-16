@@ -13,8 +13,6 @@ public class AddStudioRecordCommandParser implements Parser<AddStudioRecordComma
 
     public static final String MESSAGE_MISSING_EFFORT =
             "Specify an effort score using ef/EFFORT.";
-    public static final String MESSAGE_DUPLICATE_EFFORT =
-            "Effort score must be specified only once.";
     public static final String MESSAGE_INVALID_EFFORT =
             StudioRecord.MESSAGE_CONSTRAINTS
                     + " Enter an integer without a sign or decimal point.";

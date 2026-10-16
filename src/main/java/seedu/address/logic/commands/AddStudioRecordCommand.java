@@ -23,11 +23,11 @@ public class AddStudioRecordCommand extends Command {
 
     public static final String MESSAGE_USAGE = COMMAND_WORD
             + ": Records a week's studio record for the selected student.\n"
-            + "Parameters: INDEX w/WEEK\n"
+            + "Parameters: INDEX w/WEEK ef/EFFORT\n"
             + "INDEX must be a positive integer identifying a displayed student.\n"
             + "WEEK must be between " + StudioRecords.MIN_WEEK
             + " and " + StudioRecords.MAX_WEEK + " inclusive.\n"
-            + "Example: " + COMMAND_WORD + " 1 w/3";
+            + "Example: " + COMMAND_WORD + " 1 w/3 ef/30";
 
     public static final String MESSAGE_SUCCESS =
             "Added %1$s's studio record for tutorial week %2$d.";
@@ -44,6 +44,7 @@ public class AddStudioRecordCommand extends Command {
      *
      * @param targetIndex Index of the student in the displayed list.
      * @param week Studio week for the record.
+     * @param studioRecord studio to record.
      */
     public AddStudioRecordCommand(Index targetIndex, int week, StudioRecord studioRecord) {
         requireNonNull(targetIndex);
