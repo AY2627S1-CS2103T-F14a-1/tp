@@ -42,6 +42,7 @@ public final class StudioRecords {
         for (Integer week : copiedStudioRecords.keySet()) {
             requireNonNull(week);
             checkArgument(isValidWeek(week), MESSAGE_CONSTRAINTS);
+            requireNonNull(copiedStudioRecords.get(week));
         }
         this.studioRecords = Collections.unmodifiableMap(copiedStudioRecords);
     }
