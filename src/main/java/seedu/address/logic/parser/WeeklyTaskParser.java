@@ -6,7 +6,6 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_STUDIO_EFFORT;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_WEEK;
 
 import java.util.Locale;
-import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
@@ -29,10 +28,10 @@ public class WeeklyTaskParser {
             + " Enter an integer without a sign, decimal point, or leading zero.";
     private static final Pattern POSITIVE_INTEGER = Pattern.compile("[1-9][0-9]*");
 
+    private final ArgumentMultimap argumentMultimap;
     private final String usage;
     private final Index index;
     private final int week;
-    private final StudioRecord studioRecord;
 
     /**
      * Parses arguments using the calling command's usage in format errors.
@@ -47,10 +46,9 @@ public class WeeklyTaskParser {
         this.usage = requireNonNull(usage);
         ArgumentMultimap arguments = ArgumentTokenizer.tokenize(normalizeArguments(args),
                 PREFIX_WEEK, PREFIX_STUDIO_EFFORT);
+        this.argumentMultimap = arguments;
         index = extractIndex(arguments);
-        week = parseTutorialWeek(extractWeek(arguments));
-        // TODO: dirty line of of code
-        studioRecord = new StudioRecord(Integer.parseInt(arguments.getValue(PREFIX_STUDIO_EFFORT).orElse(null)));
+        week = parseStudioWeek(extractWeek(arguments));
     }
 
     /**
@@ -71,8 +69,19 @@ public class WeeklyTaskParser {
         return week;
     }
 
-    public StudioRecord getStudioRecord() {
-        return studioRecord;
+    public StudioRecord getStudioRecord() throws ParseException {
+        String effort =  argumentMultimap.getValue(PREFIX_STUDIO_EFFORT)
+                .orElseThrow(() -> new ParseException("Specify the studio's effort using ef/WEEK"));
+        try {
+            int effortValue = Integer.parseInt(effort);
+            if (effortValue < 0) {
+                throw new ParseException("Effort must be a non-negative integer.");
+            }
+            return new StudioRecord(effortValue);
+
+        } catch (NumberFormatException e) {
+            throw new ParseException("Effort must be a non-negative integer.");
+        }
     }
 
     /**
