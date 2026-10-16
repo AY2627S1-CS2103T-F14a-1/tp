@@ -5,6 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.junit.jupiter.api.Test;
 
 /**
@@ -42,6 +45,25 @@ public class StudioRecordTest {
         assertFalse(studioRecord.equals(new StudioRecord(0)));
         assertFalse(studioRecord.equals(null));
         assertFalse(studioRecord.equals("50"));
+    }
+
+    @Test
+    public void hashCode_equalScores_returnsSameHashCode() {
+        int[] effortScores = {0, 50, Integer.MAX_VALUE};
+        for (int effortScore : effortScores) {
+            assertEquals(new StudioRecord(effortScore).hashCode(), new StudioRecord(effortScore).hashCode());
+        }
+    }
+
+    @Test
+    public void hashCode_hashSetLookup_respectsEquality() {
+        Set<StudioRecord> records = new HashSet<>();
+        records.add(new StudioRecord(50));
+
+        assertTrue(records.contains(new StudioRecord(50)));
+        assertFalse(records.contains(new StudioRecord(100)));
+        assertFalse(records.add(new StudioRecord(50)));
+        assertEquals(1, records.size());
     }
 
     @Test

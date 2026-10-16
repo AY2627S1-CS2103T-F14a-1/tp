@@ -8,7 +8,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
@@ -237,6 +240,38 @@ public class StudioRecordsTest {
         assertNotEquals(studioRecords, differentEffort);
         assertNotEquals(studioRecords, null);
         assertNotEquals(studioRecords, Map.of(StudioRecords.MIN_WEEK, PARTIAL_EFFORT_RECORD));
+    }
+
+    @Test
+    public void hashCode_emptyRecords_returnsSameHashCode() {
+        assertEquals(new StudioRecords().hashCode(), new StudioRecords(Map.of()).hashCode());
+    }
+
+    @Test
+    public void hashCode_equalRecordsInDifferentOrders_returnsSameHashCode() {
+        Map<Integer, StudioRecord> firstRecords = new LinkedHashMap<>();
+        firstRecords.put(StudioRecords.MIN_WEEK, new StudioRecord(0));
+        firstRecords.put(StudioRecords.MAX_WEEK, new StudioRecord(Integer.MAX_VALUE));
+        Map<Integer, StudioRecord> secondRecords = new LinkedHashMap<>();
+        secondRecords.put(StudioRecords.MAX_WEEK, new StudioRecord(Integer.MAX_VALUE));
+        secondRecords.put(StudioRecords.MIN_WEEK, new StudioRecord(0));
+        StudioRecords first = new StudioRecords(firstRecords);
+        StudioRecords second = new StudioRecords(secondRecords);
+
+        assertEquals(first, second);
+        assertEquals(first.hashCode(), second.hashCode());
+    }
+
+    @Test
+    public void hashCode_hashSetLookup_respectsEquality() {
+        Set<StudioRecords> records = new HashSet<>();
+        records.add(new StudioRecords(Map.of(StudioRecords.MIN_WEEK, new StudioRecord(50))));
+
+        assertTrue(records.contains(new StudioRecords(Map.of(StudioRecords.MIN_WEEK, new StudioRecord(50)))));
+        assertFalse(records.contains(new StudioRecords(Map.of(StudioRecords.MIN_WEEK, new StudioRecord(100)))));
+        assertFalse(records.contains(new StudioRecords(Map.of(StudioRecords.MAX_WEEK, new StudioRecord(50)))));
+        assertFalse(records.add(new StudioRecords(Map.of(StudioRecords.MIN_WEEK, new StudioRecord(50)))));
+        assertEquals(1, records.size());
     }
 
     @Test

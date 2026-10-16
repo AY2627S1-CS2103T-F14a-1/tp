@@ -105,7 +105,7 @@ public class DeleteStudioRecordCommandTest {
         model.setStudent(original, student);
 
         Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
-        String feedback = String.format(DeleteStudioRecordCommand.MESSAGE_ALREADY_RECORDED,
+        String feedback = String.format(DeleteStudioRecordCommand.MESSAGE_ALREADY_NOT_RECORDED,
                 student.getName(), 3);
 
         assertCommandSuccess(new DeleteStudioRecordCommand(INDEX_FIRST_STUDENT, 3),
