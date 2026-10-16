@@ -25,7 +25,7 @@ import seedu.address.model.student.StudioRecords;
 import seedu.address.testutil.StudentBuilder;
 
 /**
- * Tests attendance recording and preservation of existing attendance.
+ * Tests studio recording and preservation of existing studio records.
  */
 public class AddStudioRecordsCommandTest {
 

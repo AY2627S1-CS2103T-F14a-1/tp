@@ -157,7 +157,7 @@ public class AddressBookParserTest {
     }
 
     @Test
-    public void parseCommand_addAttendanceIgnoringCase_returnsCommand() throws Exception {
+    public void parseCommand_addStudioRecordIgnoringCase_returnsCommand() throws Exception {
         AddStudioRecordCommand expected = new AddStudioRecordCommand(INDEX_FIRST_STUDENT, 3, new StudioRecord(0));
 
         assertEquals(expected, parser.parseCommand("addstudiorecord 1 w/3 ef/0"));
@@ -167,7 +167,7 @@ public class AddressBookParserTest {
     }
 
     @Test
-    public void parseCommand_addAttendanceMissingIndex_reportsMissingIndex() {
+    public void parseCommand_addStudioRecordMissingIndex_reportsMissingIndex() {
         assertThrows(ParseException.class, WeeklyTaskParser.MESSAGE_MISSING_INDEX, () ->
                 parser.parseCommand("addstudiorecord"));
     }
@@ -195,8 +195,8 @@ public class AddressBookParserTest {
     }
 
     @Test
-    public void parseCommand_misspelledDeleteAttendance_reportsUnknownCommand() {
+    public void parseCommand_misspelledDeleteStudioRecord_reportsUnknownCommand() {
         assertThrows(ParseException.class, MESSAGE_UNKNOWN_COMMAND, () ->
-                parser.parseCommand("delattendence 1 w/3"));
+                parser.parseCommand("delstudorecord 1 w/3"));
     }
 }

@@ -98,13 +98,13 @@ public class AddStudioRecordCommand extends Command {
         }
 
         // instanceof handles nulls
-        if (!(other instanceof AddStudioRecordCommand otherAddAttendanceRecordCommand)) {
+        if (!(other instanceof AddStudioRecordCommand otherAddStudioRecordCommand)) {
             return false;
         }
 
-        return targetIndex.equals(otherAddAttendanceRecordCommand.targetIndex)
-                && week == otherAddAttendanceRecordCommand.week
-                && studioRecord.equals(otherAddAttendanceRecordCommand.studioRecord);
+        return targetIndex.equals(otherAddStudioRecordCommand.targetIndex)
+                && week == otherAddStudioRecordCommand.week
+                && studioRecord.equals(otherAddStudioRecordCommand.studioRecord);
     }
 
     @Override

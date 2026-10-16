@@ -25,7 +25,7 @@ import seedu.address.model.student.StudioRecords;
 import seedu.address.testutil.StudentBuilder;
 
 /**
- * Tests attendance deletion and preservation of existing attendance.
+ * Tests studio record deletion and preservation of existing studio records.
  */
 public class DeleteStudioRecordsCommandTest {
 
