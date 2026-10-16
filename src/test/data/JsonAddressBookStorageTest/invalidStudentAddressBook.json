@@ -1,8 +1,12 @@
 {
-  "students": [ {
-    "name": "Student with invalid name field: Ha!ns Mu@ster",
-    "phone": "9482424",
-    "email": "hans@example.com",
-    "studioGroup": "1A"
-  } ]
+  "students": [
+    {
+      "name": "Student with invalid name field: Ha!ns Mu@ster",
+      "phone": "9482424",
+      "email": "hans@example.com",
+      "studioGroup": "1A"
+    }
+  ],
+  "missions": [],
+  "nextMissionNumber": 1
 }

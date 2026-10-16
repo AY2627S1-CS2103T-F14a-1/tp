@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.parser.exceptions.ParseException;
-import seedu.address.model.student.MissionSubmissions;
+import seedu.address.model.student.Attendance;
 
 /**
  * Validates the shared student index and week arguments for mission commands.
@@ -22,7 +22,7 @@ public class WeeklyTaskParser {
     public static final String MESSAGE_DUPLICATE_WEEK = "Tutorial week must be specified only once.";
     public static final String MESSAGE_INVALID_STUDENT_INDEX =
             "Student index must be a positive integer without a sign, decimal point, or leading zero.";
-    public static final String MESSAGE_INVALID_TUTORIAL_WEEK = MissionSubmissions.MESSAGE_CONSTRAINTS
+    public static final String MESSAGE_INVALID_TUTORIAL_WEEK = Attendance.MESSAGE_CONSTRAINTS
             + " Enter an integer without a sign, decimal point, or leading zero.";
     private static final Pattern POSITIVE_INTEGER = Pattern.compile("[1-9][0-9]*");
 
@@ -132,7 +132,7 @@ public class WeeklyTaskParser {
 
         try {
             int parsedWeek = Integer.parseInt(trimmedWeek);
-            if (!MissionSubmissions.isValidWeek(parsedWeek)) {
+            if (!Attendance.isValidWeek(parsedWeek)) {
                 throw new ParseException(MESSAGE_INVALID_TUTORIAL_WEEK);
             }
             return parsedWeek;

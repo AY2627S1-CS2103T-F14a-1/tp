@@ -383,8 +383,8 @@ The user stories above represent the main intended functionality and selected fu
 
 1. Tutor requests to list students.
 2. AvengerHub shows the list of students.
-3. Tutor requests to add a mission submission record for a specific student in the list for a specified tutorial week.
-4. AvengerHub adds the selected student’s mission submission record for the specified week and confirms success.
+3. Tutor requests to add a mission submission record for a specific student in the list for a specified mission ID.
+4. AvengerHub adds the selected student’s mission submission record for the specified mission and confirms success.
 
    Use case ends.
 
@@ -400,7 +400,7 @@ The user stories above represent the main intended functionality and selected fu
 
       Use case resumes from step 3.
 
-* 3b. A mission submission record already exists for the selected student and week.
+* 3b. A mission submission record already exists for the selected student and mission.
 
     * 3b1. AvengerHub informs the tutor that the submission has already been recorded and leaves the records unchanged.
 
@@ -412,8 +412,8 @@ The user stories above represent the main intended functionality and selected fu
 
 1. Tutor requests to list students.
 2. AvengerHub shows the list of students.
-3. Tutor requests to delete a mission submission record for a specific student in the list for a specified tutorial week.
-4. AvengerHub removes the selected student’s mission submission record for the specified week and confirms success.
+3. Tutor requests to delete a mission submission record for a specific student in the list for a specified mission ID.
+4. AvengerHub removes the selected student’s mission submission record for the specified mission and confirms success.
 
    Use case ends.
 
@@ -429,7 +429,7 @@ The user stories above represent the main intended functionality and selected fu
 
       Use case resumes from step 3.
 
-* 3b. No mission submission record exists for the selected student and week.
+* 3b. No mission submission record exists for the selected student and mission.
 
     * 3b1. AvengerHub informs the tutor that no submission is recorded and leaves the records unchanged.
 
@@ -453,7 +453,7 @@ The user stories above represent the main intended functionality and selected fu
 12. All commands should be typed into a single interface.
 13. Records should be preserved after closing and reopening the application.
 14. Should retain previously saved data even if an operation fails.
-15. If one stored record does not adhere to the defined format, the system should report the problem while loading all other valid records.
+15. If a stored record is invalid, the system logs the loading error and starts with an empty address book. The saved file remains unchanged until a command executes successfully.
 
 ### Glossary
 
