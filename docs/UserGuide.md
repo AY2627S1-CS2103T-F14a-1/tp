@@ -157,52 +157,54 @@ Examples:
 
 Records a student's studio attendance and effort for a studio week.
 
-Format: `addstudiorecord INDEX w/WEEK`
+Format: `addstudiorecord INDEX w/WEEK ef/EFFORT`
 
 * `INDEX` identifies a student in the **currently displayed list**, including results from `find`. It must be a positive integer that corresponds to a displayed student.
-* `WEEK` must be an integer from **3 to 13**, inclusive. AvengerHub uses these week numbers to allow tutors to flexibly mark studioRecords across the semester's 13 weeks. Use the actual week number as defined in the NUS student calendar.
-* Weeks outside this range, such as `-1` or `14`, are rejected with an error message. The existing studioRecords record remains unchanged.
-* Both arguments are required. Put `INDEX` before `w/WEEK`, and specify `w/` exactly once. Extra arguments are rejected.
+* `WEEK` must be an integer from **3 to 13**, inclusive. AvengerHub uses these week numbers to allow tutors to flexibly mark studio records across the semester's 13 weeks. Use the actual week number as defined in the NUS student calendar.
+* Weeks outside this range, such as `-1` or `14`, are rejected with an error message. The existing studio records remain unchanged.
+* `EFFORT` is the student's effort score for that studio week. It must be a whole number from **0 to 2147483647**, inclusive. Negative numbers, decimals, non-numeric values, and values above this range are rejected without changing existing records.
+* All three arguments are required. Put `INDEX` before the prefixed arguments, and specify `w/` and `ef/` exactly once each. Extra arguments are rejected. Omitting `ef/EFFORT` displays `Specify an effort score using ef/EFFORT.`
 * Enter `INDEX` and `WEEK` as integers without signs, decimal points, or leading zeros. For example, use `3`, not `+3`, `3.0`, or `03`.
-* The command word and `w/` prefix are case-insensitive: `ADDSTUDIORECORD 1 W/3` is also accepted.
-* Each student can have one studioRecords recorded per week. Adding an existing record leaves the records unchanged and displays a message explaining that the studioRecords is already recorded.
+* The command word and the `w/` and `ef/` prefixes are case-insensitive: `ADDSTUDIORECORD 1 W/3 EF/30` is also accepted.
+* Adding a record marks the student as **Present** for that week, even when the effort score is `0`. Use `view INDEX` to see the studio records table with **Week**, **Attendance**, and **Effort** columns. Weeks without a record show **Absent** and an effort score of `0`.
+* Each student can have one studio record per week. Adding an existing record leaves both attendance and the effort score unchanged, even if a different score is supplied. To change a score, delete that week's record using `delstudiorecord`, then add it again with the new score.
 * The current list filter stays active.
 
 Examples:
 
-* `list` followed by `addstudiorecord 1 w/3` records a week 3 studioRecords for the first student displayed, if any.
-* `find Betsy` followed by `addstudiorecord 1 w/13` records a week 13 studioRecords for the first student in the search results, if any.
+* `list` followed by `addstudiorecord 1 w/3 ef/30` records attendance and an effort score of 30 for week 3 for the first student displayed, if any.
+* `find Betsy` followed by `addstudiorecord 1 w/13 ef/0` records attendance and an effort score of 0 for week 13 for the first student in the search results, if any.
 
-For example, if the first student is Amy Bee and her week 3 studioRecords is not yet recorded, `addstudiorecord 1 w/3` displays:
+For example, if the first student is Amy Bee and her week 3 studio record is not yet recorded, `addstudiorecord 1 w/3 ef/30` displays:
 
 ```text
-Added Amy Bee’s studioRecords for tutorial week 3.
+Added Amy Bee's studio record for tutorial week 3.
 ```
 
-### Deleting studioRecords: `delstudiorecord`
+### Deleting studio records: `delstudiorecord`
 
-Removes a student's studioRecords record for a tutorial week. The student remains in the address book.
+Removes a student's attendance record and effort score for a studio week. The student remains in the address book. In `view INDEX`, that week will show **Absent** with an effort score of `0`.
 
 Format: `delstudiorecord INDEX w/WEEK`
 
 * `INDEX` identifies a student in the **currently displayed list**, including results from `find`. It must be a positive integer that corresponds to a displayed student.
-* `WEEK` must be an integer from **3 to 13**, inclusive. AvengerHub uses these week numbers to allow tutors to flexibly mark studioRecords across the semester's 13 weeks. Use the actual week number as defined in the NUS student calendar.
-* Weeks outside this range, such as `-1` or `14`, are rejected with an error message. The existing studioRecords record remains unchanged.
+* `WEEK` must be an integer from **3 to 13**, inclusive. AvengerHub uses these week numbers to allow tutors to flexibly mark studio records across the semester's 13 weeks. Use the actual week number as defined in the NUS student calendar.
+* Weeks outside this range, such as `-1` or `14`, are rejected with an error message. The existing studio records remain unchanged.
 * Both arguments are required. Put `INDEX` before `w/WEEK`, and specify `w/` exactly once. Extra arguments are rejected.
 * Enter `INDEX` and `WEEK` as integers without signs, decimal points, or leading zeros.
 * The command word and `w/` prefix are case-insensitive: `DELSTUDIORECORD 1 W/3` is also accepted.
-* If the studioRecords was initially not recorded, the records remain unchanged and a message explains that no changes were made.
+* If the studio record was initially not recorded, the records remain unchanged and a message explains that no changes were made.
 * The current list filter stays active.
 
 Examples:
 
-* `list` followed by `delstudiorecord 1 w/3` removes the first student's week 3 studioRecords, if recorded, if any.
-* `find Betsy` followed by `delstudiorecord 1 w/13` removes the week 13 studioRecords for the first student in the search results, if any.
+* `list` followed by `delstudiorecord 1 w/3` removes the first student's week 3 studio record, if recorded, if any.
+* `find Betsy` followed by `delstudiorecord 1 w/13` removes the week 13 studio record for the first student in the search results, if any.
 
-For example, if the first student is Amy Bee and her week 3 studioRecords is recorded, `delstudiorecord 1 w/3` displays:
+For example, if the first student is Amy Bee and her week 3 studio record is recorded, `delstudiorecord 1 w/3` displays:
 
 ```text
-Removed Amy Bee’s studioRecords for tutorial week 3.
+Removed Amy Bee's record for studio week 3.
 ```
 
 ### Recording a mission submission: `markmission`
@@ -290,8 +292,8 @@ Action     | Format, Examples
 **Add student**    | `addstudent n/NAME p/PHONE_NUMBER e/EMAIL [t/TAG]... g/STUDIO_GROUP` <br> e.g., `addstudent n/James Ho p/22224444 e/jamesho@example.com  t/smart t/talkative g/1A`
 **Delete student** | `delstudent INDEX`<br> e.g., `delstudent 3`
 **Edit student**   | `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [t/TAG]... [g/STUDIO_GROUP]`<br> e.g.,`edit 2 n/James Lee e/jameslee@example.com g/1A`
-**Add studioRecord** | `addstudiorecord INDEX w/WEEK`<br> e.g., `addstudiorecord 1 w/3`
-**Delete studioRecord** | `delstudiorecord INDEX w/WEEK`<br> e.g., `delstudiorecord 1 w/3`
+**Add studio record** | `addstudiorecord INDEX w/WEEK ef/EFFORT`<br> e.g., `addstudiorecord 1 w/3 ef/30`
+**Delete studio record** | `delstudiorecord INDEX w/WEEK`<br> e.g., `delstudiorecord 1 w/3`
 **Record mission submission** | `markmission INDEX m/MISSION_ID`<br> e.g., `markmission 1 m/M01`
 **Remove mission submission** | `unmarkmission INDEX m/MISSION_ID`<br> e.g., `unmarkmission 1 m/M01`
 **Clear**  | `clear`
