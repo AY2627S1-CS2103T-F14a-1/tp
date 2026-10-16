@@ -20,7 +20,7 @@ import seedu.address.model.student.StudioRecord;
 public class WeeklyTaskParser {
 
     public static final String MESSAGE_MISSING_INDEX = "A student index must be provided.";
-    public static final String MESSAGE_MISSING_WEEK = "Specify a tutorial week using w/WEEK.";
+    public static final String MESSAGE_MISSING_WEEK = "Specify a studio week using w/WEEK.";
     public static final String MESSAGE_DUPLICATE_WEEK = "Tutorial week must be specified only once.";
     public static final String MESSAGE_INVALID_STUDENT_INDEX =
             "Student index must be a positive integer without a sign, decimal point, or leading zero.";
@@ -135,14 +135,14 @@ public class WeeklyTaskParser {
     }
 
     /**
-     * Parses a tutorial week within the model's valid range.
+     * Parses a studio week within the model's valid range.
      *
-     * @param week Tutorial week text.
+     * @param week Studio week text.
      * @return The validated tutorial week.
      * @throws NullPointerException If the text is null.
      * @throws ParseException If the week syntax or numeric value is invalid.
      */
-    public static int parseTutorialWeek(String week) throws ParseException {
+    public static int parseStudioWeek(String week) throws ParseException {
         requireNonNull(week);
 
         String trimmedWeek = week.trim();
