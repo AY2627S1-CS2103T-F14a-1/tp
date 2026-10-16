@@ -135,7 +135,7 @@ public class StudentTest {
                 + ", email=" + student.getEmail() + ", tags=" + student.getTags()
                 + ", studioGroup=" + student.getStudioGroup()
                 + ", missionSubmissions=" + student.getMissionSubmissions()
-                + ", attendance=[]" + "}";
+                + ", studioRecords=" + student.getStudioRecords() + "}";
         assertEquals(expected, student.toString());
     }
 }

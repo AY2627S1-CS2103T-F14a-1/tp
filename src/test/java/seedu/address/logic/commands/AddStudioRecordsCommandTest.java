@@ -30,14 +30,20 @@ import seedu.address.testutil.StudentBuilder;
 public class AddStudioRecordsCommandTest {
 
     private final Model model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
-    private final Index index = Index.fromZeroBased(StudioRecords.MIN_WEEK);
     private final StudioRecord studioRecord = new StudioRecord(0);
 
     @Test
-    public void constructor_validArguments() throws CommandException {
-        AddStudioRecordCommand cmd = new AddStudioRecordCommand(index, StudioRecords.MIN_WEEK, studioRecord);
-        CommandResult res = cmd.execute(model);
-        assertEquals(res, new CommandResult(String.format(MESSAGE_SUCCESS)), res.getFeedbackToUser());
+    public void execute_validArguments_returnsSuccessFeedback() throws Exception {
+        Student student = model.getFilteredStudentList().get(0);
+        AddStudioRecordCommand command =
+                new AddStudioRecordCommand(INDEX_FIRST_STUDENT, StudioRecords.MIN_WEEK, studioRecord);
+
+        CommandResult result = command.execute(model);
+
+        assertEquals(String.format(AddStudioRecordCommand.MESSAGE_SUCCESS,
+                student.getName(), StudioRecords.MIN_WEEK), result.getFeedbackToUser());
+        assertEquals(studioRecord, model.getFilteredStudentList().get(0)
+                .getStudioRecords().getRecordsByWeek().get(StudioRecords.MIN_WEEK));
     }
 
     @Test
@@ -74,7 +80,7 @@ public class AddStudioRecordsCommandTest {
         Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
         expectedModel.setStudent(student, updated);
 
-        String feedback = String.format(AddStudioRecordCommand.MESSAGE_SUCCESS, student.getName(), 3, studioRecord);
+        String feedback = String.format(AddStudioRecordCommand.MESSAGE_SUCCESS, student.getName(), 3);
 
         assertCommandSuccess(new AddStudioRecordCommand(INDEX_FIRST_STUDENT, 3, studioRecord),
                 model, feedback, expectedModel);
@@ -108,14 +114,14 @@ public class AddStudioRecordsCommandTest {
     }
 
     @Test
-    public void execute_existingAttendance_leavesModelUnchanged() {
+    public void execute_existingStudioRecord_leavesModelUnchanged() {
         Student original = model.getFilteredStudentList().get(0);
         Student student = new StudentBuilder(original).withStudioRecords(
                 new StudentBuilder.StudioRecordSet(3, studioRecord)).build();
         model.setStudent(original, student);
 
         Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
-        String feedback = String.format(AddStudioRecordCommand.MESSAGE_ALREADY_RECORDED, student.getName(), 3, studioRecord);
+        String feedback = String.format(AddStudioRecordCommand.MESSAGE_ALREADY_RECORDED, student.getName(), 3);
 
         assertCommandSuccess(new AddStudioRecordCommand(INDEX_FIRST_STUDENT, 3, studioRecord),
                 model, feedback, expectedModel);
@@ -153,7 +159,7 @@ public class AddStudioRecordsCommandTest {
                 new StudentBuilder.StudioRecordSet(5, studioRecord)).build();
         expectedModel.setStudent(student, updated);
 
-        String feedback = String.format(AddStudioRecordCommand.MESSAGE_SUCCESS, student.getName(), 3, studioRecord);
+        String feedback = String.format(AddStudioRecordCommand.MESSAGE_SUCCESS, student.getName(), 3);
 
         assertCommandSuccess(new AddStudioRecordCommand(INDEX_FIRST_STUDENT, 3, studioRecord),
                 model, feedback, expectedModel);
@@ -170,22 +176,23 @@ public class AddStudioRecordsCommandTest {
     }
 
     @Test
-    public void equals_sameIndexAndWeek_returnsTrue() {
+    public void equals_sameIndexWeekAndScore_returnsTrue() {
         AddStudioRecordCommand command = new AddStudioRecordCommand(INDEX_FIRST_STUDENT, 3, studioRecord);
 
         assertTrue(command.equals(command));
         assertTrue(command.equals(new AddStudioRecordCommand(INDEX_FIRST_STUDENT, 3, studioRecord)));
         assertFalse(command.equals(new AddStudioRecordCommand(INDEX_SECOND_STUDENT, 3, studioRecord)));
         assertFalse(command.equals(new AddStudioRecordCommand(INDEX_FIRST_STUDENT, 4, studioRecord)));
+        assertFalse(command.equals(new AddStudioRecordCommand(INDEX_FIRST_STUDENT, 3, new StudioRecord(50))));
         assertFalse(command.equals(null));
-        assertFalse(command.equals("addattendance"));
+        assertFalse(command.equals("addstudiorecord"));
     }
 
     @Test
     public void toString_validCommand_returnsExpectedString() {
         AddStudioRecordCommand command = new AddStudioRecordCommand(INDEX_FIRST_STUDENT, 3, studioRecord);
         String expected = AddStudioRecordCommand.class.getCanonicalName()
-                + "{targetIndex=" + INDEX_FIRST_STUDENT + ", week=3}";
+                + "{targetIndex=" + INDEX_FIRST_STUDENT + ", week=3, studioRecord=" + studioRecord + "}";
 
         assertEquals(expected, command.toString());
     }

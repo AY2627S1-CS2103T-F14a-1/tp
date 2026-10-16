@@ -1,39 +1,52 @@
 package seedu.address.model.student;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
+/**
+ * Tests studio effort scores and record equality.
+ */
 public class StudioRecordTest {
 
     @Test
-    public void constructor_validWeeks_recordsAttendance() {
-        for (int i = StudioRecords.MIN_WEEK; i <= StudioRecords.MAX_WEEK; i++) {
-            StudioRecords studioRecords = new StudioRecords(Set.of(i));
-            assertEquals(Set.of(i), studioRecords.getStudioRecords());
+    public void constructor_validScores_storesEffortScore() {
+        int[] effortScores = {0, 1, 100, Integer.MAX_VALUE};
+        for (int effortScore : effortScores) {
+            assertEquals(effortScore, new StudioRecord(effortScore).getEffortScore());
         }
-
-        // multiple valid weeks
-        Set<Integer> numbers = IntStream.rangeClosed(StudioRecords.MIN_WEEK, StudioRecords.MAX_WEEK)
-                .boxed()
-                .collect(Collectors.toSet());
-        assertEquals(numbers, new StudioRecords(numbers).getStudioRecords());
     }
 
     @Test
-    public void constructor_invalidWeeks_throwsIllegalArgumentException() {
+    public void constructor_negativeScore_throwsIllegalArgumentException() {
+        assertThrows(IllegalArgumentException.class, () -> new StudioRecord(-1));
+        assertThrows(IllegalArgumentException.class, () -> new StudioRecord(Integer.MIN_VALUE));
+    }
 
-        for (int i = -1; i < StudioRecords.MIN_WEEK; i++) {
-            int week = i;
-            assertThrows(IllegalArgumentException.class, () ->
-                    new StudioRecords(Set.of(week)));
-        }
-        assertThrows(IllegalArgumentException.class, () ->
-                new StudioRecords(Set.of(StudioRecords.MAX_WEEK + 1)));
+    @Test
+    public void isValidEffortScore_boundaryValues_returnsExpectedValidity() {
+        assertTrue(StudioRecord.isValidEffortScore(0));
+        assertTrue(StudioRecord.isValidEffortScore(Integer.MAX_VALUE));
+        assertFalse(StudioRecord.isValidEffortScore(-1));
+    }
+
+    @Test
+    public void equals_sameAndDifferentScores_returnsExpectedEquality() {
+        StudioRecord studioRecord = new StudioRecord(50);
+
+        assertTrue(studioRecord.equals(studioRecord));
+        assertTrue(studioRecord.equals(new StudioRecord(50)));
+        assertFalse(studioRecord.equals(new StudioRecord(0)));
+        assertFalse(studioRecord.equals(null));
+        assertFalse(studioRecord.equals("50"));
+    }
+
+    @Test
+    public void toString_validScore_returnsParticipationScore() {
+        assertEquals("P: 0", new StudioRecord(0).toString());
+        assertEquals("P: 50", new StudioRecord(50).toString());
     }
 }
