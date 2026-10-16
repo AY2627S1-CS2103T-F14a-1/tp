@@ -1,8 +1,10 @@
 package seedu.address.storage;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -10,13 +12,14 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import seedu.address.commons.exceptions.IllegalValueException;
-import seedu.address.model.student.StudioRecords;
 import seedu.address.model.student.Email;
 import seedu.address.model.student.MissionSubmissions;
 import seedu.address.model.student.Name;
 import seedu.address.model.student.Phone;
 import seedu.address.model.student.Student;
 import seedu.address.model.student.StudioGroup;
+import seedu.address.model.student.StudioRecord;
+import seedu.address.model.student.StudioRecords;
 import seedu.address.model.tag.Tag;
 
 /**
@@ -31,14 +34,14 @@ class JsonAdaptedStudent {
     private final String email;
     private final List<JsonAdaptedTag> tags = new ArrayList<>();
     private final String studioGroup;
-    // Preserve JSON types until validation so fractional weeks cannot be silently truncated.
+    // Preserve JSON types until validation so fractional numeric values cannot be silently truncated.
     private final List<Object> missionSubmissions = new ArrayList<>();
-    private final List<Object> attendance = new ArrayList<>();
+    private final List<Object> studioRecords = new ArrayList<>();
 
     /**
      * Constructs a {@code JsonAdaptedStudent} with the given student details.
      * Constructs a storage representation, deferring validation until model conversion.
-     * Missing or null mission submissions default to an empty collection for older saved files.
+     * Missing or null mission submissions and studio records default to empty collections.
      *
      * @param name Student's name.
      * @param phone Student's phone number.
@@ -46,14 +49,14 @@ class JsonAdaptedStudent {
      * @param tags Student's tags, or null for no tags.
      * @param studioGroup Student's studio group.
      * @param missionSubmissions Recorded tutorial weeks, or null for no submissions.
-     * @param attendance Recorded weekly attendance, or null for no attendance
+     * @param studioRecords Recorded weekly studio records, or null for no records.
      */
     @JsonCreator
     public JsonAdaptedStudent(@JsonProperty("name") String name, @JsonProperty("phone") String phone,
             @JsonProperty("email") String email,
             @JsonProperty("tags") List<JsonAdaptedTag> tags, @JsonProperty("studio group") String studioGroup,
             @JsonProperty("missionSubmissions") List<?> missionSubmissions,
-            @JsonProperty("attendance") List<?> attendance) {
+            @JsonProperty("studioRecords") List<?> studioRecords) {
         this.name = name;
         this.phone = phone;
         this.email = email;
@@ -64,8 +67,8 @@ class JsonAdaptedStudent {
         if (missionSubmissions != null) {
             this.missionSubmissions.addAll(missionSubmissions);
         }
-        if (attendance != null) {
-            this.attendance.addAll(attendance);
+        if (studioRecords != null) {
+            this.studioRecords.addAll(studioRecords);
         }
     }
 
@@ -87,9 +90,10 @@ class JsonAdaptedStudent {
                 .stream()
                 .sorted()
                 .collect(Collectors.toList()));
-        attendance.addAll(source.getStudioRecords().getAttendedWeeks()
+        studioRecords.addAll(source.getStudioRecords().getRecordedStudios().entrySet()
                 .stream()
-                .sorted()
+                .sorted(Map.Entry.comparingByKey())
+                .map(entry -> List.of(entry.getKey(), entry.getValue().getEffortScore()))
                 .collect(Collectors.toList()));
     }
 
@@ -140,7 +144,7 @@ class JsonAdaptedStudent {
 
         final Set<Tag> modelTags = new HashSet<>(studentTags);
         final MissionSubmissions modelMissionSubmissions = toModelMissionSubmissions();
-        final StudioRecords modelStudioRecords = toModelAttendance();
+        final StudioRecords modelStudioRecords = toModelStudioRecords();
         return new Student(modelName, modelPhone, modelEmail, modelTags, modelStudioGroup,
                 modelMissionSubmissions, modelStudioRecords);
     }
@@ -165,21 +169,33 @@ class JsonAdaptedStudent {
     }
 
     /**
-     * Validates attended tutorial weeks and converts them into immutable attendance.
-     * Repeated weeks are represented by a single attendance.
+     * Validates saved studio records and converts them into immutable records.
+     * Each saved record contains a week followed by its effort score. If a week is repeated,
+     * the last saved record for that week is retained.
      *
-     * @return StudioRecords containing the unique saved weeks.
-     * @throws IllegalValueException If a saved week is not an integer in the valid range.
+     * @return Studio records containing the unique saved weeks and their effort scores.
+     * @throws IllegalValueException If a saved record is malformed or contains an invalid value.
      */
-    public StudioRecords toModelAttendance() throws IllegalValueException {
-        Set<Integer> attendedWeeks = new HashSet<>();
-        for (Object value : attendance) {
-            if (!(value instanceof Integer week) || !StudioRecords.isValidWeek(week)) {
+    public StudioRecords toModelStudioRecords() throws IllegalValueException {
+        Map<Integer, StudioRecord> recordedWeeks = new HashMap<>();
+        for (Object value : studioRecords) {
+            if (!(value instanceof List<?> record) || record.size() != 2) {
                 throw new IllegalValueException(StudioRecords.MESSAGE_CONSTRAINTS);
             }
-            attendedWeeks.add(week);
+
+            Object savedWeek = record.get(0);
+            if (!(savedWeek instanceof Integer week) || !StudioRecords.isValidWeek(week)) {
+                throw new IllegalValueException(StudioRecords.MESSAGE_CONSTRAINTS);
+            }
+
+            Object savedEffortScore = record.get(1);
+            if (!(savedEffortScore instanceof Integer effortScore)
+                    || !StudioRecord.isValidEffortScore(effortScore)) {
+                throw new IllegalValueException(StudioRecord.MESSAGE_CONSTRAINTS);
+            }
+            recordedWeeks.put(week, new StudioRecord(effortScore));
         }
 
-        return new StudioRecords(attendedWeeks);
+        return new StudioRecords(recordedWeeks);
     }
 }
