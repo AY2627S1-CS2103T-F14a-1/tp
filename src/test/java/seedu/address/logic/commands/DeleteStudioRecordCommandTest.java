@@ -27,7 +27,7 @@ import seedu.address.testutil.StudentBuilder;
 /**
  * Tests studio record deletion and preservation of existing studio records.
  */
-public class DeleteStudioRecordsCommandTest {
+public class DeleteStudioRecordCommandTest {
 
     private final Model model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
     private final StudioRecord studioRecord = new StudioRecord(0);

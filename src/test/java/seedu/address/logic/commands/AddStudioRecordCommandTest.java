@@ -27,7 +27,7 @@ import seedu.address.testutil.StudentBuilder;
 /**
  * Tests studio recording and preservation of existing studio records.
  */
-public class AddStudioRecordsCommandTest {
+public class AddStudioRecordCommandTest {
 
     private final Model model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
     private final StudioRecord studioRecord = new StudioRecord(0);
