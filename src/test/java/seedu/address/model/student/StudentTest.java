@@ -2,6 +2,7 @@ package seedu.address.model.student;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_EMAIL_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_NAME_BOB;
@@ -86,9 +87,24 @@ public class StudentTest {
         editedAlice = new StudentBuilder(ALICE).withTags(VALID_TAG_HUSBAND).build();
         assertFalse(ALICE.equals(editedAlice));
 
-        // different studio group -> returns false
-        editedAlice = new StudentBuilder(ALICE).withStudioGroup(VALID_STUDIO_GROUP_BOB).build();
+    }
+
+    @Test
+    public void equals_sameStudioGroupValue_returnsTrue() {
+        Student aliceCopy = new StudentBuilder(ALICE).withStudioGroup(ALICE.getStudioGroup().toString()).build();
+
+        assertNotSame(ALICE.getStudioGroup(), aliceCopy.getStudioGroup());
+        assertTrue(ALICE.equals(aliceCopy));
+        assertTrue(aliceCopy.equals(ALICE));
+        assertEquals(ALICE.hashCode(), aliceCopy.hashCode());
+    }
+
+    @Test
+    public void equals_differentStudioGroup_returnsFalse() {
+        Student editedAlice = new StudentBuilder(ALICE).withStudioGroup(VALID_STUDIO_GROUP_BOB).build();
+
         assertFalse(ALICE.equals(editedAlice));
+        assertFalse(editedAlice.equals(ALICE));
     }
 
     @Test
@@ -103,7 +119,7 @@ public class StudentTest {
     public void constructor_nullMissionSubmissions_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () ->
                 new Student(ALICE.getName(), ALICE.getPhone(), ALICE.getEmail(),
-                        ALICE.getTags(), ALICE.getStudioGroup(), null, ALICE.getAttendance()));
+                        ALICE.getTags(), ALICE.getStudioGroup(), null, ALICE.getStudioRecords()));
     }
 
     @Test
@@ -135,7 +151,7 @@ public class StudentTest {
                 + ", email=" + student.getEmail() + ", tags=" + student.getTags()
                 + ", studioGroup=" + student.getStudioGroup()
                 + ", missionSubmissions=" + student.getMissionSubmissions()
-                + ", attendance=[]" + "}";
+                + ", studioRecords=" + student.getStudioRecords() + "}";
         assertEquals(expected, student.toString());
     }
 }

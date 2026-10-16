@@ -2,17 +2,20 @@ package seedu.address.testutil;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import seedu.address.model.mission.MissionId;
-import seedu.address.model.student.Attendance;
 import seedu.address.model.student.Email;
 import seedu.address.model.student.MissionSubmissions;
 import seedu.address.model.student.Name;
 import seedu.address.model.student.Phone;
 import seedu.address.model.student.Student;
 import seedu.address.model.student.StudioGroup;
+import seedu.address.model.student.StudioRecord;
+import seedu.address.model.student.StudioRecords;
 import seedu.address.model.tag.Tag;
 import seedu.address.model.util.SampleDataUtil;
 
@@ -20,6 +23,14 @@ import seedu.address.model.util.SampleDataUtil;
  * A utility class to help with building Student objects.
  */
 public class StudentBuilder {
+
+    /**
+     * Associates a tutorial week with its studio record for building a student.
+     *
+     * @param week Tutorial week of the record.
+     * @param studioRecord Studio record for that week.
+     */
+    public record StudioRecordSet(int week, StudioRecord studioRecord) {}
 
     public static final String DEFAULT_NAME = "Amy Bee";
     public static final String DEFAULT_PHONE = "85355255";
@@ -32,7 +43,7 @@ public class StudentBuilder {
     private Set<Tag> tags;
     private StudioGroup studioGroup;
     private MissionSubmissions missionSubmissions;
-    private Attendance attendance;
+    private StudioRecords studioRecords;
 
     /**
      * Creates a {@code StudentBuilder} with the default details.
@@ -44,7 +55,7 @@ public class StudentBuilder {
         tags = new HashSet<>();
         studioGroup = new StudioGroup(DEFAULT_STUDIO_GROUP);
         missionSubmissions = new MissionSubmissions();
-        attendance = new Attendance();
+        studioRecords = new StudioRecords();
     }
 
     /**
@@ -57,7 +68,7 @@ public class StudentBuilder {
         tags = new HashSet<>(studentToCopy.getTags());
         studioGroup = studentToCopy.getStudioGroup();
         missionSubmissions = studentToCopy.getMissionSubmissions();
-        attendance = studentToCopy.getAttendance();
+        studioRecords = studentToCopy.getStudioRecords();
     }
 
     /**
@@ -119,21 +130,23 @@ public class StudentBuilder {
     }
 
     /**
-     * Sets the attendance weeks of the student being built.
+     * Sets the studioRecords weeks of the student being built.
      *
-     * @param weeks Tutorial weeks with recorded attendance.
+     * @param sets Studio records to add.
      * @return This builder.
      * @throws NullPointerException If the array is null.
      * @throws IllegalArgumentException If any week is outside the valid range.
      */
-    public StudentBuilder withAttendance(int... weeks) {
-        requireNonNull(weeks);
+    public StudentBuilder withStudioRecords(StudioRecordSet... sets) {
+        requireNonNull(sets);
 
-        Set<Integer> attendedWeeks = new HashSet<>();
-        for (int week : weeks) {
-            attendedWeeks.add(week);
+        Map<Integer, StudioRecord> recordedStudios = new HashMap<>();
+        for (StudioRecordSet set : sets) {
+            StudioRecord studioRecord = set.studioRecord();
+            requireNonNull(studioRecord);
+            recordedStudios.put(set.week(), studioRecord);
         }
-        this.attendance = new Attendance(attendedWeeks);
+        this.studioRecords = new StudioRecords(recordedStudios);
         return this;
     }
 
@@ -143,7 +156,7 @@ public class StudentBuilder {
      * @return A student with the configured details.
      */
     public Student build() {
-        return new Student(name, phone, email, tags, studioGroup, missionSubmissions, attendance);
+        return new Student(name, phone, email, tags, studioGroup, missionSubmissions, studioRecords);
     }
 
 }

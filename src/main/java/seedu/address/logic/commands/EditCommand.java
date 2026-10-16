@@ -106,7 +106,7 @@ public class EditCommand extends Command {
         StudioGroup updatedStudioGroup = editStudentDescriptor.getStudioGroup().orElse(studentToEdit.getStudioGroup());
 
         return new Student(updatedName, updatedPhone, updatedEmail, updatedTags,
-                updatedStudioGroup, studentToEdit.getMissionSubmissions(), studentToEdit.getAttendance());
+                updatedStudioGroup, studentToEdit.getMissionSubmissions(), studentToEdit.getStudioRecords());
     }
 
     @Override

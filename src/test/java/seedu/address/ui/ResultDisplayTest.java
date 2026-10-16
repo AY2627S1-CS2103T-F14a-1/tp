@@ -8,6 +8,7 @@ import static seedu.address.testutil.TypicalStudents.AMY;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 
@@ -30,10 +31,12 @@ import seedu.address.model.ModelManager;
 import seedu.address.model.mission.Mission;
 import seedu.address.model.mission.MissionId;
 import seedu.address.model.student.Student;
+import seedu.address.model.student.StudioRecord;
+import seedu.address.model.student.StudioRecords;
 import seedu.address.testutil.StudentBuilder;
 
 /**
- * Tests the result display's FXML and mission table on the JavaFX thread.
+ * Tests the result display's FXML, mission table, and studio table on the JavaFX thread.
  */
 public class ResultDisplayTest {
 
@@ -101,6 +104,84 @@ public class ResultDisplayTest {
     }
 
     @Test
+    public void setCommandResult_studioRecords_displaysEveryWeekAndEffort() throws Exception {
+        runOnJavaFxThread(() -> {
+            ResultDisplay display = new ResultDisplay();
+            Student student = new StudentBuilder(AMY).withStudioRecords(
+                    new StudentBuilder.StudioRecordSet(3, new StudioRecord(50)),
+                    new StudentBuilder.StudioRecordSet(4, new StudioRecord(0)),
+                    new StudentBuilder.StudioRecordSet(13, new StudioRecord(Integer.MAX_VALUE))).build();
+            display.setCommandResult(new CommandResult("Student", student));
+            GridPane table = getTable(display, "#studioRecords");
+            Map<Integer, Integer> effortScores = Map.of(3, 50, 4, 0, 13, Integer.MAX_VALUE);
+
+            assertEquals(3 * (StudioRecords.MAX_WEEK - StudioRecords.MIN_WEEK + 2), table.getChildren().size());
+            assertEquals("Week", ((Label) table.getChildren().get(0)).getText());
+            assertEquals("Attendance", ((Label) table.getChildren().get(1)).getText());
+            assertEquals("Effort", ((Label) table.getChildren().get(2)).getText());
+            for (int week = StudioRecords.MIN_WEEK; week <= StudioRecords.MAX_WEEK; week++) {
+                int rowStart = 3 * (week - StudioRecords.MIN_WEEK + 1);
+                Label attendanceCell = (Label) table.getChildren().get(rowStart + 1);
+                Label effortCell = (Label) table.getChildren().get(rowStart + 2);
+
+                assertEquals(String.valueOf(week), ((Label) table.getChildren().get(rowStart)).getText());
+                assertEquals(effortScores.containsKey(week) ? "Present" : "Absent", attendanceCell.getText());
+                assertEquals(String.valueOf(effortScores.getOrDefault(week, 0)), effortCell.getText());
+            }
+        });
+    }
+
+    @Test
+    public void setCommandResult_narrowAndWideStudioTable_keepsEveryCellWithinTable() throws Exception {
+        runOnJavaFxThread(() -> {
+            ResultDisplay display = new ResultDisplay();
+            Student student = new StudentBuilder(AMY).withStudioRecords(
+                    new StudentBuilder.StudioRecordSet(13, new StudioRecord(Integer.MAX_VALUE))).build();
+            display.setCommandResult(new CommandResult("Student", student));
+            GridPane table = getTable(display, "#studioRecords");
+            table.getStylesheets().add(ResultDisplay.class.getResource("/view/DarkTheme.css").toExternalForm());
+            table.applyCss();
+
+            for (double width : new double[] {240, 900, 240}) {
+                table.resize(width, table.prefHeight(width));
+                table.layout();
+                table.getChildren().forEach(node -> {
+                    Label cell = (Label) node;
+                    assertTrue(cell.getWidth() > 0);
+                    assertTrue(cell.getBoundsInParent().getMinX() >= -0.01,
+                            "Cell starts outside the table: " + cell.getText());
+                    assertTrue(cell.getBoundsInParent().getMaxX() <= width + 0.01,
+                            "Cell overflows table width " + width + ": " + cell.getText());
+                });
+            }
+        });
+    }
+
+    @Test
+    public void setCommandResult_switchStudioStudents_replacesAttendanceAndEffort() throws Exception {
+        runOnJavaFxThread(() -> {
+            ResultDisplay display = new ResultDisplay();
+            Student recorded = new StudentBuilder(AMY).withStudioRecords(
+                    new StudentBuilder.StudioRecordSet(3, new StudioRecord(50))).build();
+            Student empty = new StudentBuilder(AMY).withStudioRecords().build();
+            display.setCommandResult(new CommandResult("Recorded student", recorded));
+            GridPane table = getTable(display, "#studioRecords");
+
+            display.setCommandResult(new CommandResult("Empty student", empty));
+            assertEquals(3 * (StudioRecords.MAX_WEEK - StudioRecords.MIN_WEEK + 2), table.getChildren().size());
+            for (int rowStart = 3; rowStart < table.getChildren().size(); rowStart += 3) {
+                assertEquals("Absent", ((Label) table.getChildren().get(rowStart + 1)).getText());
+                assertEquals("0", ((Label) table.getChildren().get(rowStart + 2)).getText());
+            }
+
+            display.setCommandResult(new CommandResult("Recorded student", recorded));
+            assertEquals(3 * (StudioRecords.MAX_WEEK - StudioRecords.MIN_WEEK + 2), table.getChildren().size());
+            assertEquals("Present", ((Label) table.getChildren().get(4)).getText());
+            assertEquals("50", ((Label) table.getChildren().get(5)).getText());
+        });
+    }
+
+    @Test
     public void setCommandResult_emptyCatalogue_displaysEmptyMessage() throws Exception {
         runOnJavaFxThread(() -> {
             ResultDisplay display = new ResultDisplay();
@@ -161,10 +242,21 @@ public class ResultDisplayTest {
      * @return The mission table loaded from FXML.
      */
     private static GridPane getTable(ResultDisplay display) {
+        return getTable(display, "#missionSubmissions");
+    }
+
+    /**
+     * Creates the scroll pane's skin before locating the requested table.
+     *
+     * @param display Display to attach to a scene.
+     * @param selector CSS selector identifying the table.
+     * @return The table loaded from FXML.
+     */
+    private static GridPane getTable(ResultDisplay display, String selector) {
         new Scene(display.getRoot());
         display.getRoot().applyCss();
         display.getRoot().layout();
-        return (GridPane) display.getRoot().lookup("#missionSubmissions");
+        return (GridPane) display.getRoot().lookup(selector);
     }
 
     /**

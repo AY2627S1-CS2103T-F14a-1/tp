@@ -7,8 +7,8 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
-import seedu.address.model.student.Attendance;
 import seedu.address.model.student.Student;
+import seedu.address.model.student.StudioRecords;
 
 /**
  * A UI component that displays information of a {@code Student}.
@@ -42,7 +42,7 @@ public class StudentCard extends UiPart<Region> {
     @FXML
     private Label studioGroup;
     @FXML
-    private Label attendance;
+    private Label studioRecords;
 
     /**
      * Creates a {@code StudentCard} with the given {@code Student} and index to display.
@@ -58,6 +58,6 @@ public class StudentCard extends UiPart<Region> {
                 .sorted(Comparator.comparing(tag -> tag.tagName))
                 .forEach(tag -> tags.getChildren().add(new Label(tag.tagName)));
         studioGroup.setText(student.getStudioGroup().studioGroup);
-        attendance.setText(Attendance.ATTENDANCE_MARKER + student.getAttendance().attendance);
+        studioRecords.setText(StudioRecords.STUDIORECORD_MARKER + student.getStudioRecords());
     }
 }

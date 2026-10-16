@@ -1,6 +1,7 @@
 package seedu.address.logic.parser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_STUDIO_EFFORT;
 import static seedu.address.testutil.Assert.assertThrows;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_STUDENT;
 
@@ -38,12 +39,12 @@ public class WeeklyTaskParserTest {
     }
 
     @Test
-    public void parseTutorialWeek_validInput_returnsWeek() throws Exception {
-        assertEquals(3, WeeklyTaskParser.parseTutorialWeek("3"));
-        assertEquals(11, WeeklyTaskParser.parseTutorialWeek("11"));
-        assertEquals(12, WeeklyTaskParser.parseTutorialWeek("12"));
-        assertEquals(13, WeeklyTaskParser.parseTutorialWeek("13"));
-        assertEquals(3, WeeklyTaskParser.parseTutorialWeek(" \t3 "));
+    public void parseStudioWeek_validInput_returnsWeek() throws Exception {
+        assertEquals(3, WeeklyTaskParser.parseStudioWeek("3"));
+        assertEquals(11, WeeklyTaskParser.parseStudioWeek("11"));
+        assertEquals(12, WeeklyTaskParser.parseStudioWeek("12"));
+        assertEquals(13, WeeklyTaskParser.parseStudioWeek("13"));
+        assertEquals(3, WeeklyTaskParser.parseStudioWeek(" \t3 "));
     }
 
     @Test
@@ -52,18 +53,25 @@ public class WeeklyTaskParserTest {
 
         for (String input : invalidInputs) {
             assertThrows(ParseException.class, WeeklyTaskParser.MESSAGE_INVALID_TUTORIAL_WEEK, () ->
-                    WeeklyTaskParser.parseTutorialWeek(input));
+                    WeeklyTaskParser.parseStudioWeek(input));
         }
     }
 
     @Test
-    public void parseTutorialWeek_nullInput_throwsNullPointerException() {
-        assertThrows(NullPointerException.class, () -> WeeklyTaskParser.parseTutorialWeek(null));
+    public void parseStudioWeek_nullInput_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> WeeklyTaskParser.parseStudioWeek(null));
     }
 
     @Test
     public void constructor_nullArguments_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> new WeeklyTaskParser(null, "usage"));
         assertThrows(NullPointerException.class, () -> new WeeklyTaskParser("1 w/3", null));
+    }
+
+    @Test
+    public void getPrefixValue_additionalPrefix_returnsValue() throws Exception {
+        WeeklyTaskParser parser = new WeeklyTaskParser("1 w/3 ef/8", "usage", PREFIX_STUDIO_EFFORT);
+
+        assertEquals("8", parser.getPrefixValue(PREFIX_STUDIO_EFFORT).orElseThrow());
     }
 }
