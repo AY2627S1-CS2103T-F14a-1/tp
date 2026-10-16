@@ -14,7 +14,7 @@ import seedu.address.logic.commands.DeleteStudioRecordCommand;
  */
 public class DeleteStudioRecordsCommandParserTest {
 
-    private final DeleteAttendanceCommandParser parser = new DeleteAttendanceCommandParser();
+    private final DeleteStudioRecordCommandParser parser = new DeleteStudioRecordCommandParser();
 
     @Test
     public void parse_validArguments_returnsCommand() {

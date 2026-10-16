@@ -14,7 +14,7 @@ public class AddStudioRecordsCommandParserTest {
 
     @Test
     void parse_validArgs_returnsAddAttendanceCommand() throws ParseException {
-        AddAttendanceCommandParser parser = new AddAttendanceCommandParser();
+        AddStudioRecordCommandParser parser = new AddStudioRecordCommandParser();
         assertParseSuccess(parser, "1 " + PREFIX_WEEK + MIN_WEEK,
                 new AddStudioRecordCommand(INDEX_FIRST_STUDENT, MIN_WEEK)
         );

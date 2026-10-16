@@ -42,7 +42,7 @@ public class StudentCard extends UiPart<Region> {
     @FXML
     private Label studioGroup;
     @FXML
-    private Label attendance;
+    private Label studioRecords;
 
     /**
      * Creates a {@code StudentCard} with the given {@code Student} and index to display.
@@ -58,6 +58,6 @@ public class StudentCard extends UiPart<Region> {
                 .sorted(Comparator.comparing(tag -> tag.tagName))
                 .forEach(tag -> tags.getChildren().add(new Label(tag.tagName)));
         studioGroup.setText(student.getStudioGroup().studioGroup);
-        attendance.setText(StudioRecords.STUDIORECORD_MARKER + student.getStudioRecords().attendance);
+        studioRecords.setText(StudioRecords.STUDIORECORD_MARKER + student.getStudioRecords());
     }
 }

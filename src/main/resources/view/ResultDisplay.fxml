@@ -22,7 +22,7 @@
           <ColumnConstraints percentWidth="65"/>
         </columnConstraints>
       </GridPane>
-      <Label text="Attendance" styleClass="mission-title"/>
+      <Label text="Studio records" styleClass="mission-title"/>
       <GridPane fx:id="studioRecords">
         <columnConstraints>
           <ColumnConstraints percentWidth="35"/>

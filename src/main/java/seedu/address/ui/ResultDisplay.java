@@ -30,7 +30,7 @@ public class ResultDisplay extends UiPart<Region> {
     @FXML
     private GridPane missionSubmissions;
     @FXML
-    private GridPane attendance;
+    private GridPane studioRecords;
 
     public ResultDisplay() {
         super(FXML);
@@ -56,7 +56,7 @@ public class ResultDisplay extends UiPart<Region> {
         result.getStudentToView().ifPresent(student -> {
             studentSummary.setText(result.getFeedbackToUser());
             populateMissionSubmissions(student);
-            populateAttendance(student);
+            populateStudioRecords(student);
             showStudentDetails(true);
             studentDetails.setVvalue(0);
         });
@@ -103,17 +103,17 @@ public class ResultDisplay extends UiPart<Region> {
      *
      * @param student Student whose submission status is displayed.
      */
-    private void populateAttendance(Student student) {
+    private void populateStudioRecords(Student student) {
         assert student != null;
 
-        attendance.getChildren().clear();
-        addAttendanceCell("Week", 0, 0, "mission-header");
-        addAttendanceCell("Status", 1, 0, "mission-header");
+        studioRecords.getChildren().clear();
+        addStudioRecordCell("Week", 0, 0, "mission-header");
+        addStudioRecordCell("Status", 1, 0, "mission-header");
         for (int week = StudioRecords.MIN_WEEK; week <= StudioRecords.MAX_WEEK; week++) {
             int row = week - StudioRecords.MIN_WEEK + 1;
-            boolean hasAttended = student.getStudioRecords().hasAttendance(week);
-            addAttendanceCell(String.valueOf(week), 0, row, "mission-week");
-            addAttendanceCell(hasAttended ? "Present" : "Absent", 1, row,
+            boolean hasAttended = student.getStudioRecords().hasStudioRecord(week);
+            addStudioRecordCell(String.valueOf(week), 0, row, "mission-week");
+            addStudioRecordCell(hasAttended ? "Present" : "Absent", 1, row,
                     hasAttended ? "present" : "absent");
         }
     }
@@ -126,12 +126,12 @@ public class ResultDisplay extends UiPart<Region> {
      * @param row Row index, including the header.
      * @param styleClass Style identifying the cell's purpose or status.
      */
-    private void addAttendanceCell(String text, int column, int row, String styleClass) {
+    private void addStudioRecordCell(String text, int column, int row, String styleClass) {
         Label cell = new Label(text);
         cell.getStyleClass().addAll("mission-cell", styleClass);
         cell.setWrapText(true);
         cell.setMaxWidth(Double.MAX_VALUE);
-        attendance.add(cell, column, row);
+        studioRecords.add(cell, column, row);
     }
 
     /**
