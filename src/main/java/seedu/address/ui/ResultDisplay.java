@@ -3,6 +3,7 @@ package seedu.address.ui;
 import static java.util.Objects.requireNonNull;
 
 import java.util.List;
+import java.util.Map;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -13,6 +14,7 @@ import javafx.scene.layout.Region;
 import seedu.address.logic.commands.CommandResult;
 import seedu.address.model.mission.Mission;
 import seedu.address.model.student.Student;
+import seedu.address.model.student.StudioRecord;
 import seedu.address.model.student.StudioRecords;
 
 /**
@@ -119,13 +121,18 @@ public class ResultDisplay extends UiPart<Region> {
 
         studioRecords.getChildren().clear();
         addStudioRecordCell("Week", 0, 0, "mission-header");
-        addStudioRecordCell("Status", 1, 0, "mission-header");
+        addStudioRecordCell("Attendance", 1, 0, "mission-header");
+        addStudioRecordCell("Effort", 2, 0, "mission-header");
+        Map<Integer, StudioRecord> weeklyStudioRecords = student.getStudioRecords().getRecordsByWeek();
         for (int week = StudioRecords.MIN_WEEK; week <= StudioRecords.MAX_WEEK; week++) {
             int row = week - StudioRecords.MIN_WEEK + 1;
             boolean hasAttended = student.getStudioRecords().hasStudioRecord(week);
+            int effort = weeklyStudioRecords.containsKey(week)
+                    ? weeklyStudioRecords.get(week).getEffortScore() : 0;
             addStudioRecordCell(String.valueOf(week), 0, row, "mission-week");
             addStudioRecordCell(hasAttended ? "Present" : "Absent", 1, row,
                     hasAttended ? "present" : "absent");
+            addStudioRecordCell(Integer.toString(effort), 2, row, "mission-week");
         }
     }
 

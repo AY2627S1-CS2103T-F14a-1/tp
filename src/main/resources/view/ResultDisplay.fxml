@@ -25,8 +25,9 @@
       <Label text="Studio records" styleClass="mission-title"/>
       <GridPane fx:id="studioRecords">
         <columnConstraints>
-          <ColumnConstraints percentWidth="35"/>
-          <ColumnConstraints percentWidth="65"/>
+          <ColumnConstraints percentWidth="25"/>
+          <ColumnConstraints percentWidth="45"/>
+          <ColumnConstraints percentWidth="30"/>
         </columnConstraints>
       </GridPane>
     </VBox>
