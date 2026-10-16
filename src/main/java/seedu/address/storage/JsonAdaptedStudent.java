@@ -90,7 +90,7 @@ class JsonAdaptedStudent {
                 .stream()
                 .sorted()
                 .collect(Collectors.toList()));
-        studioRecords.addAll(source.getStudioRecords().getRecordedStudios().entrySet()
+        studioRecords.addAll(source.getStudioRecords().getRecordsByWeek().entrySet()
                 .stream()
                 .sorted(Map.Entry.comparingByKey())
                 .map(entry -> List.of(entry.getKey(), entry.getValue().getEffortScore()))

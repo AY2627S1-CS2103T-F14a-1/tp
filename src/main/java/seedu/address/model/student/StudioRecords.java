@@ -98,7 +98,7 @@ public final class StudioRecords {
      *
      * @return Recorded weeks, with no guaranteed iteration order.
      */
-    public Map<Integer, StudioRecord> getStudioRecords() {
+    public Map<Integer, StudioRecord> getRecordsByWeek() {
         return studioRecords;
     }
 
