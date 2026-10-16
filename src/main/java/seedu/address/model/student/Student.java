@@ -50,6 +50,7 @@ public class Student {
      * @param email Student's email address.
      * @param tags Student's tags.
      * @param missionSubmissions Student's recorded mission submissions.
+     * @param studioRecords Student's recorded studio records.
      * @throws NullPointerException If any argument is null.
      */
     public Student(Name name, Phone phone, Email email, Set<Tag> tags,

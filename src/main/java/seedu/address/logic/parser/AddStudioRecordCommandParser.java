@@ -18,7 +18,7 @@ public class AddStudioRecordCommandParser implements Parser<AddStudioRecordComma
                     + " Enter an integer without a sign or decimal point.";
 
     /**
-     * Parses the student index and tutorial week.
+     * Parses the student index, studio week, and studio effort.
      *
      * @param args Arguments following the command word.
      * @return A command containing the validated index and week.

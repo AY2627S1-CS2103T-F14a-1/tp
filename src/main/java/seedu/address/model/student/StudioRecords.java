@@ -144,11 +144,11 @@ public final class StudioRecords {
         StringBuilder summary = new StringBuilder();
         for (int week = MIN_WEEK; week <= MAX_WEEK; week++) {
             StudioRecord studioRecord = studioRecords.get(week);
-            boolean attended = studioRecord != null;
-            int effortScore = attended ? studioRecord.getEffortScore() : 0;
+            boolean hasAttended = studioRecord != null;
+            int effortScore = hasAttended ? studioRecord.getEffortScore() : 0;
 
             summary.append(week)
-                    .append(": ").append(attended ? "A" : "X")
+                    .append(": ").append(hasAttended ? "A" : "X")
                     .append(" | ").append(effortScore);
             if (week < MAX_WEEK) {
                 summary.append(", ");
