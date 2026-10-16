@@ -463,6 +463,7 @@ The user stories above represent the main intended functionality and selected fu
 * **Tutor**: The TAs (teaching assistants) in the CS1101S course that handle the tutorial sessions. Also known as "Avengers" by the course.
 * **Mission**: The CS1101S term for homework assignments. A mission submission usually happens via the course website.
 * **Studio group**: The CS1101S term for tutorial groups.
+* **Studio effort**: The score given by an Avenger to students for each studio.
 * **Mastery check**: A CS1101S assessment where the tutor conducts an oral interview with a pair of students to ensure they have understood the course content. The date and time of the assessment is decided jointly by the students and the tutor.
 * **Record(s)**: The list of all student information. This is saved on the disk and exists in memory as well when the application is running.
 * **Storage**: The file containing the list of student information that is saved to disk.
