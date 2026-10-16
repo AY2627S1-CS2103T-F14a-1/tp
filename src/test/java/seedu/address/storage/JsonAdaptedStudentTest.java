@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 
 import seedu.address.commons.exceptions.IllegalValueException;
 import seedu.address.commons.util.JsonUtil;
+import seedu.address.model.mission.MissionId;
 import seedu.address.model.student.Email;
 import seedu.address.model.student.MissionSubmissions;
 import seedu.address.model.student.Name;
@@ -23,6 +24,7 @@ import seedu.address.model.student.Student;
 import seedu.address.model.student.StudioGroup;
 import seedu.address.model.student.StudioRecord;
 import seedu.address.model.student.StudioRecords;
+import seedu.address.testutil.StudentBuilder;
 
 public class JsonAdaptedStudentTest {
     private static final String INVALID_NAME = "R@chel";
@@ -129,20 +131,21 @@ public class JsonAdaptedStudentTest {
 
     @Test
     public void toModelType_validMissionSubmissions_returnsStudent() throws Exception {
-        Student expected = withMissionSubmissions(VALID_STUDENT, 3, 4, 11, 12, 13);
+        Student expected = withMissionSubmissions(VALID_STUDENT, "M03", "M04", "M11", "M12", "M13");
         JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_PHONE, VALID_EMAIL,
-                VALID_TAGS, VALID_STUDIO_GROUP, List.of(3, 4, 11, 12, 13), VALID_STUDIO_RECORDS);
+                VALID_TAGS, VALID_STUDIO_GROUP,
+                List.of("M03", "M04", "M11", "M12", "M13"), VALID_STUDIO_RECORDS);
 
         assertEquals(expected, student.toModelType());
     }
 
     @Test
     public void toModelType_invalidMissionSubmissions_throwsIllegalValueException() {
-        for (int week : new int[] {-1, 0, 1, 2, 14}) {
+        for (String invalidId : List.of("", "M00", "M1", "m01", "M001")) {
             JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_PHONE, VALID_EMAIL,
-                    VALID_TAGS, VALID_STUDIO_GROUP, List.of(5, week), VALID_STUDIO_RECORDS);
+                    VALID_TAGS, VALID_STUDIO_GROUP, List.of("M05", invalidId), VALID_STUDIO_RECORDS);
 
-            assertThrows(IllegalValueException.class, MissionSubmissions.MESSAGE_CONSTRAINTS,
+            assertThrows(IllegalValueException.class, MissionId.MESSAGE_CONSTRAINTS,
                     student::toModelType);
         }
     }
@@ -157,11 +160,11 @@ public class JsonAdaptedStudentTest {
     }
 
     @Test
-    public void toModelType_nullMissionSubmissionWeek_throwsIllegalValueException() {
+    public void toModelType_nullMissionSubmissionId_throwsIllegalValueException() {
         JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_PHONE, VALID_EMAIL,
-                VALID_TAGS, VALID_STUDIO_GROUP, Arrays.asList(5, null), VALID_STUDIO_RECORDS);
+                VALID_TAGS, VALID_STUDIO_GROUP, Arrays.asList("M05", null), VALID_STUDIO_RECORDS);
 
-        assertThrows(IllegalValueException.class, MissionSubmissions.MESSAGE_CONSTRAINTS,
+        assertThrows(IllegalValueException.class, MissionId.MESSAGE_CONSTRAINTS,
                 student::toModelType);
     }
 
@@ -175,10 +178,10 @@ public class JsonAdaptedStudentTest {
     }
 
     @Test
-    public void toModelType_duplicateMissionSubmissionWeeks_returnsUniqueSubmissions() throws Exception {
-        Student expected = withMissionSubmissions(VALID_STUDENT, 5, 4);
+    public void toModelType_duplicateMissionSubmissionIds_returnsUniqueSubmissions() throws Exception {
+        Student expected = withMissionSubmissions(VALID_STUDENT, "M05", "M04");
         JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_PHONE, VALID_EMAIL,
-                VALID_TAGS, VALID_STUDIO_GROUP, List.of(5, 5, 4), VALID_STUDIO_RECORDS);
+                VALID_TAGS, VALID_STUDIO_GROUP, List.of("M05", "M05", "M04"), VALID_STUDIO_RECORDS);
 
         assertEquals(expected, student.toModelType());
     }
@@ -191,7 +194,7 @@ public class JsonAdaptedStudentTest {
                   "phone": "85355255",
                   "email": "amy@gmail.com",
                   "tags": [],
-                  "studioGroup": "1A",
+                  "studio group": "1A",
                   "studioRecords": [[3, 50]]
                 }
                 """;
@@ -203,15 +206,15 @@ public class JsonAdaptedStudentTest {
     }
 
     @Test
-    public void toModelType_invalidJsonMissionSubmissionWeekTypes_throwsIllegalValueException() throws Exception {
+    public void toModelType_invalidJsonMissionSubmissionIdTypes_throwsIllegalValueException() throws Exception {
         String template = JsonUtil.toJsonString(
-                new JsonAdaptedStudent(withMissionSubmissions(DEFAULT_STUDENT, 3)));
+                new JsonAdaptedStudent(new StudentBuilder().withMissionSubmissions("M03").build()));
         for (String value : List.of("3.9", "13.9", "3.0", "3e0", "\"03\"", "true", "null", "2147483648", "{}")) {
             String json = template.replaceFirst(
                     "\"missionSubmissions\"\\s*:\\s*\\[[^]]*]", "\"missionSubmissions\": [" + value + "]");
             JsonAdaptedStudent student = JsonUtil.fromJsonString(json, JsonAdaptedStudent.class);
 
-            assertThrows(IllegalValueException.class, MissionSubmissions.MESSAGE_CONSTRAINTS, student::toModelType);
+            assertThrows(IllegalValueException.class, MissionId.MESSAGE_CONSTRAINTS, student::toModelType);
         }
     }
 
@@ -301,12 +304,12 @@ public class JsonAdaptedStudentTest {
                   "phone": "85355255",
                   "email": "amy@gmail.com",
                   "tags": [],
-                  "studioGroup": "1A",
-                  "missionSubmissions": [3]
+                  "studio group": "1A",
+                  "missionSubmissions": ["M03"]
                 }
                 """;
         JsonAdaptedStudent student = JsonUtil.fromJsonString(json, JsonAdaptedStudent.class);
-        Student expected = withMissionSubmissions(DEFAULT_STUDENT, 3);
+        Student expected = new StudentBuilder().withMissionSubmissions("M03").withStudioRecords().build();
 
         assertEquals(expected, student.toModelType());
     }
@@ -350,13 +353,13 @@ public class JsonAdaptedStudentTest {
      * Returns a copy of the given student with the specified mission submissions.
      *
      * @param student Student whose other fields should be retained.
-     * @param weeks Submitted mission weeks to use in the copy.
+     * @param missionIds Submitted mission IDs to use in the copy.
      * @return A student containing the specified mission submissions.
      */
-    private static Student withMissionSubmissions(Student student, int... weeks) {
-        Set<Integer> submittedWeeks = Arrays.stream(weeks).boxed().collect(Collectors.toSet());
+    private static Student withMissionSubmissions(Student student, String... missionIds) {
+        Set<MissionId> submittedIds = Arrays.stream(missionIds).map(MissionId::new).collect(Collectors.toSet());
         return new Student(student.getName(), student.getPhone(), student.getEmail(), student.getTags(),
-                student.getStudioGroup(), new MissionSubmissions(submittedWeeks), student.getStudioRecords());
+                student.getStudioGroup(), new MissionSubmissions(submittedIds), student.getStudioRecords());
     }
 
     /**
@@ -384,7 +387,7 @@ public class JsonAdaptedStudentTest {
                   "phone": "85355255",
                   "email": "amy@gmail.com",
                   "tags": [],
-                  "studioGroup": "1A",
+                  "studio group": "1A",
                   "missionSubmissions": [],
                   "studioRecords": [%s]
                 }

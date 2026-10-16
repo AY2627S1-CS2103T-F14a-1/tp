@@ -1,8 +1,12 @@
 {
-  "students": [ {
-    "name": "Hans Muster",
-    "phone": "9482424",
-    "email": "invalid@email!3e",
-    "studioGroup": "1A"
-  } ]
+  "students": [
+    {
+      "name": "Hans Muster",
+      "phone": "9482424",
+      "email": "invalid@email!3e",
+      "studioGroup": "1A"
+    }
+  ],
+  "missions": [],
+  "nextMissionNumber": 1
 }
