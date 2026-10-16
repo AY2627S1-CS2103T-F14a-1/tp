@@ -60,6 +60,11 @@ public final class StudioRecord {
     }
 
     @Override
+    public int hashCode() {
+        return Integer.hashCode(effortScore);
+    }
+
+    @Override
     public String toString() {
         return PARTICIPATION_MARKER + effortScore;
     }

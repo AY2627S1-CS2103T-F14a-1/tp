@@ -128,6 +128,11 @@ public final class StudioRecords {
         return studioRecords.equals(otherStudioRecords.studioRecords);
     }
 
+    @Override
+    public int hashCode() {
+        return studioRecords.hashCode();
+    }
+
     /**
      * Returns the studio records in ascending week order.
      *
