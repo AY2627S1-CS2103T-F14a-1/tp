@@ -153,53 +153,53 @@ Examples:
 * `list` followed by `delstudent 2` deletes the 2nd student in the address book.
 * `find Betsy` followed by `delstudent 1` deletes the 1st student in the results of the `find` command.
 
-### Adding studioRecords: `addattendance`
+### Adding studio records: `addstudiorecord`
 
-Records that a student has attended the tutorial for a tutorial week.
+Records a student's studio attendance and effort for a studio week.
 
-Format: `addattendance INDEX w/WEEK`
+Format: `addstudiorecord INDEX w/WEEK`
 
 * `INDEX` identifies a student in the **currently displayed list**, including results from `find`. It must be a positive integer that corresponds to a displayed student.
 * `WEEK` must be an integer from **3 to 13**, inclusive. AvengerHub uses these week numbers to allow tutors to flexibly mark studioRecords across the semester's 13 weeks. Use the actual week number as defined in the NUS student calendar.
 * Weeks outside this range, such as `-1` or `14`, are rejected with an error message. The existing studioRecords record remains unchanged.
 * Both arguments are required. Put `INDEX` before `w/WEEK`, and specify `w/` exactly once. Extra arguments are rejected.
 * Enter `INDEX` and `WEEK` as integers without signs, decimal points, or leading zeros. For example, use `3`, not `+3`, `3.0`, or `03`.
-* The command word and `w/` prefix are case-insensitive: `ADDATTENDANCE 1 W/3` is also accepted.
+* The command word and `w/` prefix are case-insensitive: `ADDSTUDIORECORD 1 W/3` is also accepted.
 * Each student can have one studioRecords recorded per week. Adding an existing record leaves the records unchanged and displays a message explaining that the studioRecords is already recorded.
 * The current list filter stays active.
 
 Examples:
 
-* `list` followed by `addattendance 1 w/3` records a week 3 studioRecords for the first student displayed, if any.
-* `find Betsy` followed by `addattendance 1 w/13` records a week 13 studioRecords for the first student in the search results, if any.
+* `list` followed by `addstudiorecord 1 w/3` records a week 3 studioRecords for the first student displayed, if any.
+* `find Betsy` followed by `addstudiorecord 1 w/13` records a week 13 studioRecords for the first student in the search results, if any.
 
-For example, if the first student is Amy Bee and her week 3 studioRecords is not yet recorded, `addattendance 1 w/3` displays:
+For example, if the first student is Amy Bee and her week 3 studioRecords is not yet recorded, `addstudiorecord 1 w/3` displays:
 
 ```text
 Added Amy Bee’s studioRecords for tutorial week 3.
 ```
 
-### Deleting studioRecords: `delattendance`
+### Deleting studioRecords: `delstudiorecord`
 
 Removes a student's studioRecords record for a tutorial week. The student remains in the address book.
 
-Format: `delattendance INDEX w/WEEK`
+Format: `delstudiorecord INDEX w/WEEK`
 
 * `INDEX` identifies a student in the **currently displayed list**, including results from `find`. It must be a positive integer that corresponds to a displayed student.
 * `WEEK` must be an integer from **3 to 13**, inclusive. AvengerHub uses these week numbers to allow tutors to flexibly mark studioRecords across the semester's 13 weeks. Use the actual week number as defined in the NUS student calendar.
 * Weeks outside this range, such as `-1` or `14`, are rejected with an error message. The existing studioRecords record remains unchanged.
 * Both arguments are required. Put `INDEX` before `w/WEEK`, and specify `w/` exactly once. Extra arguments are rejected.
 * Enter `INDEX` and `WEEK` as integers without signs, decimal points, or leading zeros.
-* The command word and `w/` prefix are case-insensitive: `DELATTENDANCE 1 W/3` is also accepted.
+* The command word and `w/` prefix are case-insensitive: `DELSTUDIORECORD 1 W/3` is also accepted.
 * If the studioRecords was initially not recorded, the records remain unchanged and a message explains that no changes were made.
 * The current list filter stays active.
 
 Examples:
 
-* `list` followed by `delattendance 1 w/3` removes the first student's week 3 studioRecords, if recorded, if any.
-* `find Betsy` followed by `delattendance 1 w/13` removes the week 13 studioRecords for the first student in the search results, if any.
+* `list` followed by `delstudiorecord 1 w/3` removes the first student's week 3 studioRecords, if recorded, if any.
+* `find Betsy` followed by `delstudiorecord 1 w/13` removes the week 13 studioRecords for the first student in the search results, if any.
 
-For example, if the first student is Amy Bee and her week 3 studioRecords is recorded, `delattendance 1 w/3` displays:
+For example, if the first student is Amy Bee and her week 3 studioRecords is recorded, `delstudiorecord 1 w/3` displays:
 
 ```text
 Removed Amy Bee’s studioRecords for tutorial week 3.
@@ -215,7 +215,7 @@ Format: `markmission INDEX m/MISSION_ID`
 * Use the lowercase `m/` prefix exactly once. Mission IDs are case-insensitive: `m/m01` and `m/M01` both identify `M01`. IDs are displayed and saved in uppercase.
 * Each mission ID identifies one configured assignment.
 * Repeated marking reports that the submission is already recorded and changes nothing.
-* Other students, other submissions, attendance, and the current student filter are preserved.
+* Other students, other submissions, studio records, and the current student filter are preserved.
 * Records are maintained manually. Not submitted means no submission is recorded in AvengerHub.
 
 Example: `markmission 1 m/M01`, followed by `view 1`, displays M01 as Submitted.
@@ -290,8 +290,8 @@ Action     | Format, Examples
 **Add student**    | `addstudent n/NAME p/PHONE_NUMBER e/EMAIL [t/TAG]... g/STUDIO_GROUP` <br> e.g., `addstudent n/James Ho p/22224444 e/jamesho@example.com  t/smart t/talkative g/1A`
 **Delete student** | `delstudent INDEX`<br> e.g., `delstudent 3`
 **Edit student**   | `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [t/TAG]... [g/STUDIO_GROUP]`<br> e.g.,`edit 2 n/James Lee e/jameslee@example.com g/1A`
-**Add studioRecord** | `addstudiorecord INDEX w/WEEK`<br> e.g., `addattendance 1 w/3`
-**Delete studioRecord** | `delstudiorecord INDEX w/WEEK`<br> e.g., `delattendance 1 w/3`
+**Add studioRecord** | `addstudiorecord INDEX w/WEEK`<br> e.g., `addstudiorecord 1 w/3`
+**Delete studioRecord** | `delstudiorecord INDEX w/WEEK`<br> e.g., `delstudiorecord 1 w/3`
 **Record mission submission** | `markmission INDEX m/MISSION_ID`<br> e.g., `markmission 1 m/M01`
 **Remove mission submission** | `unmarkmission INDEX m/MISSION_ID`<br> e.g., `unmarkmission 1 m/M01`
 **Clear**  | `clear`
