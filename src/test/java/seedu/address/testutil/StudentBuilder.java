@@ -7,14 +7,14 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import seedu.address.model.student.StudioRecord;
-import seedu.address.model.student.StudioRecords;
 import seedu.address.model.student.Email;
 import seedu.address.model.student.MissionSubmissions;
 import seedu.address.model.student.Name;
 import seedu.address.model.student.Phone;
 import seedu.address.model.student.Student;
 import seedu.address.model.student.StudioGroup;
+import seedu.address.model.student.StudioRecord;
+import seedu.address.model.student.StudioRecords;
 import seedu.address.model.tag.Tag;
 import seedu.address.model.util.SampleDataUtil;
 
@@ -23,6 +23,12 @@ import seedu.address.model.util.SampleDataUtil;
  */
 public class StudentBuilder {
 
+    /**
+     * Associates a tutorial week with its studio record for building a student.
+     *
+     * @param week Tutorial week of the record.
+     * @param studioRecord Studio record for that week.
+     */
     public record StudioRecordSet(int week, StudioRecord studioRecord) {}
 
     public static final String DEFAULT_NAME = "Amy Bee";
@@ -126,7 +132,7 @@ public class StudentBuilder {
     /**
      * Sets the studioRecords weeks of the student being built.
      *
-     * @param weeks Tutorial weeks with recorded studioRecords.
+     * @param sets Studio records to add.
      * @return This builder.
      * @throws NullPointerException If the array is null.
      * @throws IllegalArgumentException If any week is outside the valid range.

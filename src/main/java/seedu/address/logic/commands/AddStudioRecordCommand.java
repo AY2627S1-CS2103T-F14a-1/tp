@@ -1,7 +1,6 @@
 package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
-import static seedu.address.commons.util.AppUtil.checkArgument;
 
 import java.util.List;
 
@@ -10,9 +9,9 @@ import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.Messages;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
+import seedu.address.model.student.Student;
 import seedu.address.model.student.StudioRecord;
 import seedu.address.model.student.StudioRecords;
-import seedu.address.model.student.Student;
 
 /**
  * Records a week's tutorial studio for a student identified by a displayed index.

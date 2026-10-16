@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static seedu.address.logic.commands.AddStudioRecordCommand.MESSAGE_SUCCESS;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandFailure;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandSuccess;
 import static seedu.address.logic.commands.CommandTestUtil.showStudentAtIndex;
@@ -16,14 +15,13 @@ import org.junit.jupiter.api.Test;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.Messages;
-import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.AddressBook;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.UserPrefs;
+import seedu.address.model.student.Student;
 import seedu.address.model.student.StudioRecord;
 import seedu.address.model.student.StudioRecords;
-import seedu.address.model.student.Student;
 import seedu.address.testutil.StudentBuilder;
 
 /**
@@ -56,7 +54,8 @@ public class AddStudioRecordsCommandTest {
 
     @Test
     public void execute_nullModel_throwsNullPointerException() {
-        AddStudioRecordCommand command = new AddStudioRecordCommand(INDEX_FIRST_STUDENT, StudioRecords.MIN_WEEK, studioRecord);
+        AddStudioRecordCommand command =
+                new AddStudioRecordCommand(INDEX_FIRST_STUDENT, StudioRecords.MIN_WEEK, studioRecord);
         assertThrows(NullPointerException.class, () -> command.execute(null));
     }
 
@@ -88,7 +87,8 @@ public class AddStudioRecordsCommandTest {
         Student student = new StudentBuilder(original).withStudioRecords().build();
         model.setStudent(original, student);
 
-        CommandResult firstResult = new AddStudioRecordCommand(INDEX_FIRST_STUDENT, StudioRecords.MIN_WEEK, studioRecord)
+        CommandResult firstResult = new AddStudioRecordCommand(
+                INDEX_FIRST_STUDENT, StudioRecords.MIN_WEEK, studioRecord)
                 .execute(model);
         CommandResult lastResult = new AddStudioRecordCommand(INDEX_FIRST_STUDENT, StudioRecords.MAX_WEEK, studioRecord)
                 .execute(model);

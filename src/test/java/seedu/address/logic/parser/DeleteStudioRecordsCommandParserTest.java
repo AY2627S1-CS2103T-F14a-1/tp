@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import seedu.address.logic.commands.DeleteStudioRecordCommand;
 
 /**
- * Tests argument structure and value-parser integration for delattendance.
+ * Tests argument structure and value-parser integration for delstudiorecord.
  */
 public class DeleteStudioRecordsCommandParserTest {
 

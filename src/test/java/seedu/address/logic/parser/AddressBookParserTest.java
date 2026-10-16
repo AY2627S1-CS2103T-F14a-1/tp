@@ -12,13 +12,13 @@ import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
-import seedu.address.logic.commands.AddStudioRecordCommand;
 import seedu.address.logic.commands.AddMissionCommand;
 import seedu.address.logic.commands.AddStudentCommand;
+import seedu.address.logic.commands.AddStudioRecordCommand;
 import seedu.address.logic.commands.ClearCommand;
-import seedu.address.logic.commands.DeleteStudioRecordCommand;
 import seedu.address.logic.commands.DeleteMissionCommand;
 import seedu.address.logic.commands.DeleteStudentCommand;
+import seedu.address.logic.commands.DeleteStudioRecordCommand;
 import seedu.address.logic.commands.EditCommand;
 import seedu.address.logic.commands.EditCommand.EditStudentDescriptor;
 import seedu.address.logic.commands.ExitCommand;
@@ -29,6 +29,7 @@ import seedu.address.logic.commands.ViewCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.student.NameContainsKeywordsPredicate;
 import seedu.address.model.student.Student;
+import seedu.address.model.student.StudioRecord;
 import seedu.address.testutil.EditStudentDescriptorBuilder;
 import seedu.address.testutil.StudentBuilder;
 import seedu.address.testutil.StudentUtil;
@@ -156,40 +157,40 @@ public class AddressBookParserTest {
 
     @Test
     public void parseCommand_addAttendanceIgnoringCase_returnsCommand() throws Exception {
-        AddStudioRecordCommand expected = new AddStudioRecordCommand(INDEX_FIRST_STUDENT, 3);
+        AddStudioRecordCommand expected = new AddStudioRecordCommand(INDEX_FIRST_STUDENT, 3, new StudioRecord(0));
 
-        assertEquals(expected, parser.parseCommand("addattendance 1 w/3"));
-        assertEquals(expected, parser.parseCommand("ADDATTENDANCE 1 w/3"));
-        assertEquals(expected, parser.parseCommand("AddAttendance 1 W/3"));
-        assertEquals(expected, parser.parseCommand("  addattendance\t1\tw/3  "));
+        assertEquals(expected, parser.parseCommand("addstudiorecord 1 w/3 ef/0"));
+        assertEquals(expected, parser.parseCommand("ADDSTUDIORECORD 1 w/3 ef/0"));
+        assertEquals(expected, parser.parseCommand("AddStudioRecord 1 W/3 EF/0"));
+        assertEquals(expected, parser.parseCommand("  addstudiorecord\t1\tw/3 ef/0  "));
     }
 
     @Test
     public void parseCommand_addAttendanceMissingIndex_reportsMissingIndex() {
         assertThrows(ParseException.class, WeeklyTaskParser.MESSAGE_MISSING_INDEX, () ->
-                parser.parseCommand("addattendance"));
+                parser.parseCommand("addstudiorecord"));
     }
 
     @Test
-    public void parseCommand_misspelledAddAttendance_reportsUnknownCommand() {
+    public void parseCommand_misspelledAddStudioRecord_reportsUnknownCommand() {
         assertThrows(ParseException.class, MESSAGE_UNKNOWN_COMMAND, () ->
                 parser.parseCommand("addattendence 1 w/3"));
     }
 
     @Test
-    public void parseCommand_deleteAttendanceIgnoringCase_returnsCommand() throws Exception {
+    public void parseCommand_deleteStudioRecordIgnoringCase_returnsCommand() throws Exception {
         DeleteStudioRecordCommand expected = new DeleteStudioRecordCommand(INDEX_FIRST_STUDENT, 3);
 
-        assertEquals(expected, parser.parseCommand("delattendance 1 w/3"));
-        assertEquals(expected, parser.parseCommand("DELATTENDANCE 1 w/3"));
-        assertEquals(expected, parser.parseCommand("DelAttendance 1 W/3"));
-        assertEquals(expected, parser.parseCommand("  delattendance\t1\tw/3  "));
+        assertEquals(expected, parser.parseCommand("delstudiorecord 1 w/3"));
+        assertEquals(expected, parser.parseCommand("DELSTUDIORECORD 1 w/3"));
+        assertEquals(expected, parser.parseCommand("DelStudioRecord 1 W/3"));
+        assertEquals(expected, parser.parseCommand("  delstudiorecord\t1\tw/3  "));
     }
 
     @Test
-    public void parseCommand_deleteAttendanceMissingIndex_reportsMissingIndex() {
+    public void parseCommand_deleteStudioRecordMissingIndex_reportsMissingIndex() {
         assertThrows(ParseException.class, WeeklyTaskParser.MESSAGE_MISSING_INDEX, () ->
-                parser.parseCommand("delattendance"));
+                parser.parseCommand("delstudiorecord"));
     }
 
     @Test

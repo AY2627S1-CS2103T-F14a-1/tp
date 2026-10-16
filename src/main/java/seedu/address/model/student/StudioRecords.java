@@ -15,11 +15,12 @@ public final class StudioRecords {
 
     public static final int MIN_WEEK = 3;
     public static final int MAX_WEEK = 13;
-    private final Map<Integer, StudioRecord> studioRecords;
 
     public static final String STUDIORECORD_MARKER = "StudioRecords: ";
     public static final String MESSAGE_CONSTRAINTS =
             "Tutorial week must be between " + MIN_WEEK + " and " + MAX_WEEK + " inclusive";
+
+    private final Map<Integer, StudioRecord> studioRecords;
 
     /**
      * Creates {@code StudioRecords} with no recorded weeks.
@@ -32,7 +33,7 @@ public final class StudioRecords {
      * Creates studio records from the given studio records.
      *
      * @param studioRecords Weeks for which studio status has been recorded.
-     * @throws NullPointerException If the set or any of its elements is {@code null}.
+     * @throws NullPointerException If the map, any week, or any studio record is {@code null}.
      */
     public StudioRecords(Map<Integer, StudioRecord> studioRecords) {
         requireNonNull(studioRecords);

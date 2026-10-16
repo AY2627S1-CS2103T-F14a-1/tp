@@ -7,13 +7,20 @@ import static seedu.address.commons.util.AppUtil.checkArgument;
  */
 public final class StudioRecord {
 
-    private final int effortScore;
-    private final String studioRecord;
+    public static final String MESSAGE_CONSTRAINTS = "Effort score must be a non-negative integer";
 
     private static final String PRESENT_MARKER = "A: ";
     private static final String PARTICIPATION_MARKER = "P: ";
-    public static final String MESSAGE_CONSTRAINTS = "Effort score must be a non-negative integer";
 
+    private final int effortScore;
+    private final String studioRecord;
+
+    /**
+     * Creates a studio record with the given effort score.
+     *
+     * @param effortScore Non-negative effort score for the recorded week.
+     * @throws IllegalArgumentException If the effort score is negative.
+     */
     public StudioRecord(int effortScore) {
         checkArgument(isValidEffortScore(effortScore), MESSAGE_CONSTRAINTS);
         this.effortScore = effortScore;

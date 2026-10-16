@@ -19,9 +19,9 @@ import seedu.address.model.AddressBook;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.UserPrefs;
+import seedu.address.model.student.Student;
 import seedu.address.model.student.StudioRecord;
 import seedu.address.model.student.StudioRecords;
-import seedu.address.model.student.Student;
 import seedu.address.testutil.StudentBuilder;
 
 /**
@@ -30,7 +30,6 @@ import seedu.address.testutil.StudentBuilder;
 public class DeleteStudioRecordsCommandTest {
 
     private final Model model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
-    private final Index index = Index.fromZeroBased(StudioRecords.MIN_WEEK);
     private final StudioRecord studioRecord = new StudioRecord(0);
 
     @Test
@@ -80,7 +79,7 @@ public class DeleteStudioRecordsCommandTest {
         Student student = new StudentBuilder(original)
                 .withStudioRecords(
                         new StudentBuilder.StudioRecordSet(StudioRecords.MIN_WEEK, studioRecord),
-                                new StudentBuilder.StudioRecordSet(StudioRecords.MAX_WEEK, studioRecord)
+                        new StudentBuilder.StudioRecordSet(StudioRecords.MAX_WEEK, studioRecord))
                 .build();
         model.setStudent(original, student);
 
@@ -94,14 +93,15 @@ public class DeleteStudioRecordsCommandTest {
         assertEquals(String.format(DeleteStudioRecordCommand.MESSAGE_SUCCESS,
                 student.getName(), StudioRecords.MAX_WEEK), lastResult.getFeedbackToUser());
 
-        Student expected = new StudentBuilder(student).withAttendance().build();
+        Student expected = new StudentBuilder(student).withStudioRecords().build();
         assertEquals(expected, model.getFilteredStudentList().get(0));
     }
 
     @Test
-    public void execute_missingAttendance_leavesModelUnchanged() {
+    public void execute_missingStudioRecord_leavesModelUnchanged() {
         Student original = model.getFilteredStudentList().get(0);
-        Student student = new StudentBuilder(original).withAttendance(5).build();
+        Student student = new StudentBuilder(original).withStudioRecords(
+                new StudentBuilder.StudioRecordSet(5, studioRecord)).build();
         model.setStudent(original, student);
 
         Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
@@ -131,14 +131,17 @@ public class DeleteStudioRecordsCommandTest {
     @Test
     public void execute_filteredList_updatesDisplayedStudentAndPreservesFilter() {
         Student original = model.getFilteredStudentList().get(INDEX_SECOND_STUDENT.getZeroBased());
-        Student student = new StudentBuilder(original).withAttendance(3, 5).build();
+        Student student = new StudentBuilder(original).withStudioRecords(
+                new StudentBuilder.StudioRecordSet(3, studioRecord),
+                new StudentBuilder.StudioRecordSet(5, studioRecord)).build();
         model.setStudent(original, student);
 
         Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
         showStudentAtIndex(model, INDEX_SECOND_STUDENT);
         showStudentAtIndex(expectedModel, INDEX_SECOND_STUDENT);
 
-        Student updated = new StudentBuilder(student).withAttendance(5).build();
+        Student updated = new StudentBuilder(student).withStudioRecords(
+                new StudentBuilder.StudioRecordSet(5, studioRecord)).build();
         expectedModel.setStudent(student, updated);
 
         String feedback = String.format(DeleteStudioRecordCommand.MESSAGE_SUCCESS, student.getName(), 3);
@@ -166,7 +169,7 @@ public class DeleteStudioRecordsCommandTest {
         assertFalse(command.equals(new DeleteStudioRecordCommand(INDEX_SECOND_STUDENT, 3)));
         assertFalse(command.equals(new DeleteStudioRecordCommand(INDEX_FIRST_STUDENT, 4)));
         assertFalse(command.equals(null));
-        assertFalse(command.equals("delattendance"));
+        assertFalse(command.equals("delstudiorecord"));
     }
 
     @Test

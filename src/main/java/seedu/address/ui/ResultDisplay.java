@@ -9,9 +9,9 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 import seedu.address.logic.commands.CommandResult;
-import seedu.address.model.student.StudioRecords;
 import seedu.address.model.student.MissionSubmissions;
 import seedu.address.model.student.Student;
+import seedu.address.model.student.StudioRecords;
 
 /**
  * A UI component that displays the result of a command execution.

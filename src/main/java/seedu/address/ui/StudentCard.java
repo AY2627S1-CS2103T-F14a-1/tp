@@ -7,8 +7,8 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
-import seedu.address.model.student.StudioRecords;
 import seedu.address.model.student.Student;
+import seedu.address.model.student.StudioRecords;
 
 /**
  * A UI component that displays information of a {@code Student}.

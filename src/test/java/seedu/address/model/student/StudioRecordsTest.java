@@ -25,7 +25,7 @@ public class StudioRecordsTest {
     public void constructor_noArguments_createsEmptyStudioRecords() {
         StudioRecords studioRecords = new StudioRecords();
 
-        assertTrue(studioRecords.getStudioRecords().isEmpty());
+        assertTrue(studioRecords.getRecordsByWeek().isEmpty());
     }
 
     @Test
@@ -36,7 +36,7 @@ public class StudioRecordsTest {
 
         StudioRecords studioRecords = new StudioRecords(records);
 
-        assertEquals(records, studioRecords.getStudioRecords());
+        assertEquals(records, studioRecords.getRecordsByWeek());
     }
 
     @Test
@@ -77,7 +77,7 @@ public class StudioRecordsTest {
         records.put(StudioRecords.MAX_WEEK, FULL_EFFORT_RECORD);
 
         assertEquals(Map.of(StudioRecords.MIN_WEEK, ZERO_EFFORT_RECORD),
-                studioRecords.getStudioRecords());
+                studioRecords.getRecordsByWeek());
     }
 
     @Test
@@ -89,11 +89,11 @@ public class StudioRecordsTest {
                 StudioRecords.MAX_WEEK, FULL_EFFORT_RECORD);
 
         assertEquals(Map.of(StudioRecords.MIN_WEEK, ZERO_EFFORT_RECORD),
-                original.getStudioRecords());
+                original.getRecordsByWeek());
         assertEquals(Map.of(
                 StudioRecords.MIN_WEEK, ZERO_EFFORT_RECORD,
                 StudioRecords.MAX_WEEK, FULL_EFFORT_RECORD),
-                updated.getStudioRecords());
+                updated.getRecordsByWeek());
     }
 
     @Test
@@ -106,7 +106,7 @@ public class StudioRecordsTest {
 
         assertSame(original, updated);
         assertEquals(ZERO_EFFORT_RECORD,
-                updated.getStudioRecords().get(StudioRecords.MIN_WEEK));
+                updated.getRecordsByWeek().get(StudioRecords.MIN_WEEK));
     }
 
     @Test
@@ -139,9 +139,9 @@ public class StudioRecordsTest {
         assertEquals(Map.of(
                 StudioRecords.MIN_WEEK, ZERO_EFFORT_RECORD,
                 StudioRecords.MAX_WEEK, FULL_EFFORT_RECORD),
-                original.getStudioRecords());
+                original.getRecordsByWeek());
         assertEquals(Map.of(StudioRecords.MAX_WEEK, FULL_EFFORT_RECORD),
-                updated.getStudioRecords());
+                updated.getRecordsByWeek());
     }
 
     @Test
@@ -192,14 +192,14 @@ public class StudioRecordsTest {
     }
 
     @Test
-    public void getStudioRecords_modifyMap_throwsUnsupportedOperationException() {
+    public void getRecordsByWeek_modifyMap_throwsUnsupportedOperationException() {
         StudioRecords studioRecords = new StudioRecords(
                 Map.of(StudioRecords.MIN_WEEK, ZERO_EFFORT_RECORD));
 
         assertThrows(UnsupportedOperationException.class, () ->
-                studioRecords.getStudioRecords().put(StudioRecords.MAX_WEEK, FULL_EFFORT_RECORD));
+                studioRecords.getRecordsByWeek().put(StudioRecords.MAX_WEEK, FULL_EFFORT_RECORD));
         assertEquals(Map.of(StudioRecords.MIN_WEEK, ZERO_EFFORT_RECORD),
-                studioRecords.getStudioRecords());
+                studioRecords.getRecordsByWeek());
     }
 
     @Test
