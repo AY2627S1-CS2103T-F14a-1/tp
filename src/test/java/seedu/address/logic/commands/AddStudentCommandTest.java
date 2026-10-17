@@ -93,6 +93,11 @@ public class AddStudentCommandTest {
      */
     private class ModelStub implements Model {
         @Override
+        public seedu.address.model.mission.Mission deleteMission(seedu.address.model.mission.MissionId id) {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
         public Mission addMission(String description, LocalDate deadline) {
             throw new AssertionError("Unexpected mission creation");
         }

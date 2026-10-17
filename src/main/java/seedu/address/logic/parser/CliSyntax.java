@@ -12,5 +12,6 @@ public class CliSyntax {
     public static final Prefix PREFIX_TAG = new Prefix("t/");
     public static final Prefix PREFIX_WEEK = new Prefix("w/");
     public static final Prefix PREFIX_STUDIO_GROUP = new Prefix("g/");
+    public static final Prefix PREFIX_DATE = new Prefix("d/");
     public static final Prefix PREFIX_MISSION = new Prefix("m/");
 }
