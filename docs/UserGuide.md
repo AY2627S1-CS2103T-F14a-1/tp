@@ -205,6 +205,45 @@ For example, if the first student is Amy Bee and her week 3 attendance is record
 Removed Amy Bee’s attendance for tutorial week 3.
 ```
 
+### Adding a mission: `addmission`
+
+Creates one mission shared by all students. Adding a mission does not mark anyone as having
+submitted it; students without a submission record show **Not submitted**.
+
+Format: `addmission n/NAME d/DEADLINE`
+
+* Supply exactly one lowercase `n/` and one lowercase `d/`, in either order. Do not put text
+  before the first prefix. The command word is case-insensitive.
+* `NAME` must not be blank. Multiple words and ordinary punctuation are allowed.
+  Leading and trailing whitespace is removed, and internal whitespace becomes a single space.
+  Letter case and punctuation are preserved for display and saving.
+* Names are unique across the mission catalogue, ignoring case and whitespace differences.
+  `Rune Reading` and `rune reading` are duplicates, even with different deadlines.
+  Adding extra spaces before, after, or between the words also counts as the same name.
+  `RuneReading` and `Rune Reading!` remain different names.
+* `DEADLINE` must be a real calendar date in `YYYY-MM-DD` format. For example, `2024-02-29`
+  is valid but `2026-15-32` is not. Times and single-digit months or days are rejected.
+  Past deadlines are accepted for recording existing assignments.
+* The app assigns an ID such as `M01`. Use the ID shown in the success message for submission commands.
+* Successful additions are saved automatically. Invalid or duplicate additions do not change
+  the catalogue, consume an ID, or save the data file. Existing students and their list filter are preserved.
+
+Examples:
+
+* `addmission n/Rune Reading d/2026-10-20`
+* `addmission d/2024-02-29 n/Mission 1:  Rune Reading!` stores the name `Mission 1: Rune Reading!`.
+
+For an empty catalogue with its allocation counter at 1, the first example displays:
+
+```text
+New mission added: M01 · Rune Reading (Due: 2026-10-20)
+```
+
+Missing required prefixes or unexpected text before them produces a format error with usage
+instructions. Repeated prefixes identify the repeated fields; blank names and invalid dates
+produce their respective constraint messages. An existing name produces
+`This mission already exists in the mission list.`
+
 ### Recording a mission submission: `markmission`
 
 Format: `markmission INDEX m/MISSION_ID`
@@ -292,6 +331,7 @@ Action     | Format, Examples
 **Edit student**   | `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [t/TAG]... [g/STUDIO_GROUP]`<br> e.g.,`edit 2 n/James Lee e/jameslee@example.com g/1A`
 **Add attendance** | `addattendance INDEX w/WEEK`<br> e.g., `addattendance 1 w/3`
 **Delete attendance** | `delattendance INDEX w/WEEK`<br> e.g., `delattendance 1 w/3`
+**Add mission** | `addmission n/NAME d/DEADLINE`<br> e.g., `addmission n/Rune Reading d/2026-10-20`
 **Record mission submission** | `markmission INDEX m/MISSION_ID`<br> e.g., `markmission 1 m/M01`
 **Remove mission submission** | `unmarkmission INDEX m/MISSION_ID`<br> e.g., `unmarkmission 1 m/M01`
 **Clear**  | `clear`
