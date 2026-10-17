@@ -35,7 +35,7 @@ The following provides a quick overview of the main components and their interac
 
 **Main components of the architecture**
 
-**`Main`** (consisting of classes [`Main`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/Main.java) and [`MainApp`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/MainApp.java)) is in charge of the app launch and shut down.
+**`Main`** (consisting of classes [`Main`](https://github.com/AY2627S1-CS2103T-F14a-1/tp/blob/master/src/main/java/seedu/address/Main.java) and [`MainApp`](https://github.com/AY2627S1-CS2103T-F14a-1/tp/blob/master/src/main/java/seedu/address/MainApp.java)) is in charge of the app launch and shut down.
 * At app launch, it initializes the other components in the correct sequence, and connects them up with each other.
 * At shut down, it shuts down the other components and invokes cleanup methods where necessary.
 
@@ -50,7 +50,7 @@ The bulk of the app's work is done by the following four components:
 
 **How the architecture components interact with each other**
 
-The *Sequence Diagram* below shows how the components interact with each other for the scenario where the user issues the command `delete 1`.
+The *Sequence Diagram* below shows how the components interact with each other for the scenario where the user issues the command `delstudent 1`.
 
 <puml src="diagrams/ArchitectureSequenceDiagram.puml" width="574" />
 
@@ -67,13 +67,13 @@ The sections below give more details of each component.
 
 ### UI component
 
-The **API** of this component is specified in [`Ui.java`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/ui/Ui.java)
+The **API** of this component is specified in [`Ui.java`](https://github.com/AY2627S1-CS2103T-F14a-1/tp/blob/master/src/main/java/seedu/address/ui/Ui.java)
 
 <puml src="diagrams/UiClassDiagram.puml" alt="Structure of the UI Component"/>
 
 The UI consists of a `MainWindow` and its parts, such as `CommandBox`, `ResultDisplay`, `StudentListPanel`, and `StatusBarFooter`. All of these, including `MainWindow`, inherit from the abstract `UiPart` class, which captures common behavior among classes that represent visible GUI parts.
 
-The `UI` component uses the JavaFX UI framework. The layouts of these UI parts are defined in matching `.fxml` files in `src/main/resources/view`. For example, [`MainWindow.fxml`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/resources/view/MainWindow.fxml) specifies the layout of [`MainWindow`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/ui/MainWindow.java).
+The `UI` component uses the JavaFX UI framework. The layouts of these UI parts are defined in matching `.fxml` files in `src/main/resources/view`. For example, [`MainWindow.fxml`](https://github.com/AY2627S1-CS2103T-F14a-1/tp/blob/master/src/main/resources/view/MainWindow.fxml) specifies the layout of [`MainWindow`](https://github.com/AY2627S1-CS2103T-F14a-1/tp/blob/master/src/main/java/seedu/address/ui/MainWindow.java).
 
 The `UI` component,
 
@@ -84,15 +84,15 @@ The `UI` component,
 
 ### Logic component
 
-**API** : [`Logic.java`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/logic/Logic.java)
+**API** : [`Logic.java`](https://github.com/AY2627S1-CS2103T-F14a-1/tp/blob/master/src/main/java/seedu/address/logic/Logic.java)
 
 Here's a (partial) class diagram of the `Logic` component:
 
 <puml src="diagrams/LogicClassDiagram.puml" width="550"/>
 
-The sequence diagram below illustrates the interactions within the `Logic` component, taking `execute("delete 1")` API call as an example.
+The sequence diagram below illustrates the interactions within the `Logic` component, taking `execute("delstudent 1")` API call as an example.
 
-<puml src="diagrams/DeleteSequenceDiagram.puml" alt="Interactions Inside the Logic Component for the `delete 1` Command" />
+<puml src="diagrams/DeleteSequenceDiagram.puml" alt="Interactions Inside the Logic Component for the `delstudent 1` Command" />
 
 <box type="info" seamless>
 
@@ -117,7 +117,7 @@ How the parsing works:
 * All `XYZCommandParser` classes, such as `AddStudentCommandParser` and `DeleteStudentCommandParser`, implement the `Parser` interface so they can be treated similarly where appropriate, for example during testing.
 
 ### Model component
-**API** : [`Model.java`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/model/Model.java)
+**API** : [`Model.java`](https://github.com/AY2627S1-CS2103T-F14a-1/tp/blob/master/src/main/java/seedu/address/model/Model.java)
 
 <puml src="diagrams/ModelClassDiagram.puml" width="450" />
 
@@ -140,7 +140,7 @@ The `Model` component,
 
 ### Storage component
 
-**API** : [`Storage.java`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/storage/Storage.java)
+**API** : [`Storage.java`](https://github.com/AY2627S1-CS2103T-F14a-1/tp/blob/master/src/main/java/seedu/address/storage/Storage.java)
 
 <puml src="diagrams/StorageClassDiagram.puml" width="550" />
 
@@ -383,8 +383,8 @@ The user stories above represent the main intended functionality and selected fu
 
 1. Tutor requests to list students.
 2. AvengerHub shows the list of students.
-3. Tutor requests to add a mission submission record for a specific student in the list for a specified tutorial week.
-4. AvengerHub adds the selected student’s mission submission record for the specified week and confirms success.
+3. Tutor requests to add a mission submission record for a specific student in the list for a specified mission ID.
+4. AvengerHub adds the selected student’s mission submission record for the specified mission and confirms success.
 
    Use case ends.
 
@@ -400,7 +400,7 @@ The user stories above represent the main intended functionality and selected fu
 
       Use case resumes from step 3.
 
-* 3b. A mission submission record already exists for the selected student and week.
+* 3b. A mission submission record already exists for the selected student and mission.
 
     * 3b1. AvengerHub informs the tutor that the submission has already been recorded and leaves the records unchanged.
 
@@ -412,8 +412,8 @@ The user stories above represent the main intended functionality and selected fu
 
 1. Tutor requests to list students.
 2. AvengerHub shows the list of students.
-3. Tutor requests to delete a mission submission record for a specific student in the list for a specified tutorial week.
-4. AvengerHub removes the selected student’s mission submission record for the specified week and confirms success.
+3. Tutor requests to delete a mission submission record for a specific student in the list for a specified mission ID.
+4. AvengerHub removes the selected student’s mission submission record for the specified mission and confirms success.
 
    Use case ends.
 
@@ -429,7 +429,7 @@ The user stories above represent the main intended functionality and selected fu
 
       Use case resumes from step 3.
 
-* 3b. No mission submission record exists for the selected student and week.
+* 3b. No mission submission record exists for the selected student and mission.
 
     * 3b1. AvengerHub informs the tutor that no submission is recorded and leaves the records unchanged.
 
@@ -453,17 +453,17 @@ The user stories above represent the main intended functionality and selected fu
 12. All commands should be typed into a single interface.
 13. Records should be preserved after closing and reopening the application.
 14. Should retain previously saved data even if an operation fails.
-15. If one stored record does not adhere to the defined format, the system should report the problem while loading all other valid records.
+15. If a stored record is invalid, the system logs the loading error and starts with an empty address book. The saved file remains unchanged until a command executes successfully.
 
 ### Glossary
 
 * **Mainstream OS**: Windows, Linux, Unix, or macOS
-* **Private contact detail**: A contact detail that is not meant to be shared with others
+* **Private student detail**: A student detail that is not meant to be shared with others
 * **AvengerHub**: The name of the application.
 * **Tutor**: The TAs (teaching assistants) in the CS1101S course that handle the tutorial sessions. Also known as "Avengers" by the course.
 * **Mission**: The CS1101S term for homework assignments. A mission submission usually happens via the course website.
-* **Studio group**: The CS110S term for tutorial groups.
-* **Mastery check**: A CS110S assessment where the tutor conducts an oral interview with a pair of students to ensure they have understood the course content. The date and time of the assessment is decided jointly by the students and the tutor.
+* **Studio group**: The CS1101S term for tutorial groups.
+* **Mastery check**: A CS1101S assessment where the tutor conducts an oral interview with a pair of students to ensure they have understood the course content. The date and time of the assessment is decided jointly by the students and the tutor.
 * **Record(s)**: The list of all student information. This is saved on the disk and exists in memory as well when the application is running.
 * **Storage**: The file containing the list of student information that is saved to disk.
 * **Corrupted**: Any data read from Storage that does not adhere to our expected format will be considered corrupted.
@@ -495,7 +495,7 @@ testers are expected to do more *exploratory* testing.
    1. Download the JAR file and copy it into an empty folder.
 
    1. Double-click the JAR file.<br>
-      Expected: The GUI opens with a set of sample contacts. The window size may not be optimal.
+      Expected: The GUI opens with a set of sample students. The window size may not be optimal.
 
 1. Saving window preferences
 
@@ -513,7 +513,7 @@ testers are expected to do more *exploratory* testing.
    1. Prerequisites: List all students using the `list` command, with multiple students in the list.
 
    1. Test case: `delstudent 1`<br>
-      Expected: The first contact is deleted from the list. The status message shows the deleted contact's details.
+      Expected: The first student is deleted from the list. The status message shows the deleted student's details.
 
    1. Test case: `delstudent 0`<br>
       Expected: No student is deleted. The status message shows error details.

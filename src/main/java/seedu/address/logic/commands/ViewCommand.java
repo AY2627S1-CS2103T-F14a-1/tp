@@ -37,7 +37,7 @@ public class ViewCommand extends Command {
                 getStudentAtDisplayedIndex(model, targetIndex);
 
         return new CommandResult(
-                Messages.formatStudentDetails(studentToView), studentToView);
+                Messages.formatStudentDetails(studentToView), studentToView, model.getMissionList());
     }
 
     @Override
