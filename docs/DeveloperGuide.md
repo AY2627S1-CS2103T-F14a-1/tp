@@ -377,6 +377,53 @@ The user stories above represent the main intended functionality and selected fu
 
       Use case ends.
 
+**Use case: Add mission**
+
+**MSS**
+
+1. Tutor requests to add a shared mission and provides the required details.
+2. AvengerHub creates the mission with a unique ID, saves it, and confirms success with the assigned ID.
+
+   Use case ends.
+
+**Extensions**
+
+* 1a. The tutor provides invalid or incomplete details.
+
+    * 1a1. AvengerHub shows an error message and leaves the records unchanged.
+
+      Use case resumes from step 1.
+
+* 1b. A mission with the same name already exists.
+
+    * 1b1. AvengerHub informs the tutor that the mission already exists and leaves the records unchanged.
+
+      Use case resumes from step 1.
+
+**Use case: Delete mission**
+
+**MSS**
+
+1. Tutor requests to delete a shared mission and provides the required details.
+2. AvengerHub removes the mission and its associated submission records from every student,
+   saves the updated records, and confirms success.
+
+   Use case ends.
+
+**Extensions**
+
+* 1a. The tutor provides invalid or incomplete details.
+
+    * 1a1. AvengerHub shows an error message and leaves the records unchanged.
+
+      Use case resumes from step 1.
+
+* 1b. No mission with the specified ID exists.
+
+    * 1b1. AvengerHub informs the tutor that the mission does not exist and leaves the records unchanged.
+
+      Use case resumes from step 1.
+
 **Use case: Add mission submission record**
 
 **MSS**
