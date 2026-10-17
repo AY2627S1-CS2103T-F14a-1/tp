@@ -99,6 +99,16 @@ public interface Model {
     Mission addMission(String description, LocalDate deadline);
 
     /**
+     * Removes a shared mission and all associated submission records.
+     *
+     * @param id Mission ID to remove.
+     * @return Deleted mission.
+     * @throws IllegalArgumentException If no such mission exists.
+     * @throws NullPointerException If the ID is null.
+     */
+    Mission deleteMission(MissionId id);
+
+    /**
      * Finds a mission by its stable ID.
      *
      * @param id Mission identifier.

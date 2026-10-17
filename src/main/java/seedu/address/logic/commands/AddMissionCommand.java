@@ -19,8 +19,8 @@ public class AddMissionCommand extends Command {
     public static final String MESSAGE_USAGE = COMMAND_WORD + ": Adds a mission shared across students.\n"
             + "Parameters: " + PREFIX_NAME + "NAME " + PREFIX_DATE + "DEADLINE\n"
             + "DEADLINE must be a real date in YYYY-MM-DD format.\n"
-            + "Example: " + COMMAND_WORD + " " + PREFIX_NAME + "Rune Reading " + PREFIX_DATE + "2026-10-20";
-    public static final String MESSAGE_SUCCESS = "New mission added: %1$s";
+            + "Example: " + COMMAND_WORD + " " + PREFIX_NAME + "Rune Reading " + PREFIX_DATE + "2026-10-20.";
+    public static final String MESSAGE_SUCCESS = "New mission added: %1$s.";
     public static final String MESSAGE_DUPLICATE_MISSION = "This mission already exists in the mission list.";
 
     private final String name;
