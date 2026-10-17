@@ -14,6 +14,7 @@ import seedu.address.logic.parser.exceptions.ParseException;
 
 /** Tests field validation, strict dates, and command routing. */
 public class AddMissionCommandParserTest {
+
     private final AddMissionCommandParser parser = new AddMissionCommandParser();
 
     @Test

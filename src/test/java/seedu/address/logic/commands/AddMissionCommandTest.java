@@ -28,6 +28,7 @@ import seedu.address.testutil.TypicalStudents;
 
 /** Tests command parsing through execution and the existing automatic save path. */
 public class AddMissionCommandTest {
+
     @TempDir
     public Path directory;
 

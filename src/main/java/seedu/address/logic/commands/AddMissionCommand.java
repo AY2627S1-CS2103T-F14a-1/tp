@@ -14,6 +14,7 @@ import seedu.address.model.mission.Mission;
 
 /** Adds a shared mission, allocating its ID only when the command executes. */
 public class AddMissionCommand extends Command {
+
     public static final String COMMAND_WORD = "addmission";
     public static final String MESSAGE_USAGE = COMMAND_WORD + ": Adds a mission shared across students.\n"
             + "Parameters: " + PREFIX_NAME + "NAME " + PREFIX_DATE + "DEADLINE\n"
