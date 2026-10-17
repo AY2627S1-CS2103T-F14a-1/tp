@@ -14,7 +14,7 @@ import seedu.address.commons.util.ToStringBuilder;
 public final class Mission {
 
     public static final String MISSING_NAME =
-            "Mission description cannot be blank.";
+            "Mission name cannot be blank.";
 
     private final MissionId id;
     private final String name;
@@ -24,7 +24,7 @@ public final class Mission {
      * Creates a mission.
      *
      * @param missionId Unique mission identifier.
-     * @param name Nonblank mission name.
+     * @param name Non-blank mission name.
      * @param deadline Date through which submissions are considered on time.
      * @throws NullPointerException If any argument is null.
      * @throws IllegalArgumentException If the name is blank.

@@ -29,7 +29,7 @@ public class AddMissionCommand extends Command {
     /**
      * Creates a command containing parsed mission details without allocating an ID.
      *
-     * @param name Validated nonblank mission name.
+     * @param name Validated non-blank mission name.
      * @param deadline Validated deadline, which may be in the past.
      */
     public AddMissionCommand(String name, LocalDate deadline) {
