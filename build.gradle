@@ -49,6 +49,7 @@ task coverage(type: JacocoReport) {
 dependencies {
     String jUnitVersion = '5.14.4'
     String javaFxVersion = '17.0.7'
+    String testFxVersion = '4.0.18'
 
     implementation "org.openjfx:javafx-base:${javaFxVersion}:win"
     implementation "org.openjfx:javafx-base:${javaFxVersion}:mac"
@@ -67,6 +68,7 @@ dependencies {
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.7.4'
 
     testImplementation "org.junit.jupiter:junit-jupiter-api:${jUnitVersion}"
+    testImplementation "org.testfx:testfx-junit5:${testFxVersion}"
 
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${jUnitVersion}"
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.14.4'
