@@ -46,7 +46,7 @@ public class AddMissionCommandTest {
         AddMissionCommand command = new AddMissionCommand("Rune Reading", LocalDate.of(2024, 2, 29));
         assertTrue(model.getMissionList().isEmpty());
         CommandResult result = command.execute(model);
-        assertEquals("New mission added: M01 · Rune Reading (Due: 2024-02-29)", result.getFeedbackToUser());
+        assertEquals("New mission added: M01 · Rune Reading (Due: 2024-02-29).", result.getFeedbackToUser());
         assertEquals(List.of(TypicalStudents.ALICE), model.getAddressBook().getStudentList());
         assertTrue(model.getFilteredStudentList().isEmpty());
         assertEquals(2, model.getAddressBook().getNextMissionNumber());
