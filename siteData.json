@@ -116,6 +116,8 @@
         "deleting-a-student-delstudent": "Deleting a student: delstudent",
         "adding-attendance-addattendance": "Adding attendance: addattendance",
         "deleting-attendance-delattendance": "Deleting attendance: delattendance",
+        "adding-a-mission-addmission": "Adding a mission: addmission",
+        "deleting-a-mission-delmission": "Deleting a mission: delmission",
         "recording-a-mission-submission-markmission": "Recording a mission submission: markmission",
         "removing-a-submission-record-unmarkmission": "Removing a submission record: unmarkmission",
         "clearing-all-entries-clear": "Clearing all entries: clear",
