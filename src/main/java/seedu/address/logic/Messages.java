@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import seedu.address.logic.parser.Prefix;
+import seedu.address.model.mission.Mission;
 import seedu.address.model.student.Student;
 
 /**
@@ -44,6 +45,13 @@ public class Messages {
                 .append("; Tags: ");
         student.getTags().forEach(builder::append);
         return builder.toString();
+    }
+
+    /**
+     * Formats the {@code mission} for display to the user.
+     */
+    public static String format(Mission mission) {
+        return mission.getId() + " · " + mission.getName() + " (Due: " + mission.getDeadline() + ")";
     }
 
     /**

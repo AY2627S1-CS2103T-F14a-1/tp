@@ -41,7 +41,7 @@ class JsonAdaptedMission {
      */
     public JsonAdaptedMission(Mission mission) {
         id = mission.getId().toString();
-        description = mission.getDescription();
+        description = mission.getName();
         deadline = mission.getDeadline().toString();
     }
 

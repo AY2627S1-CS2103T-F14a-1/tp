@@ -75,6 +75,18 @@ public interface Model {
     void updateFilteredStudentList(Predicate<Student> predicate);
 
     /**
+     * Checks whether a mission has the supplied name, ignoring case and whitespace differences.
+     *
+     * @param name Mission name to compare without changing its display text.
+     * @return True if a matching name exists.
+     */
+    default boolean hasMissionName(String name) {
+        java.util.Objects.requireNonNull(name);
+        return getMissionList().stream()
+                .anyMatch(mission -> mission.hasSameName(name));
+    }
+
+    /**
      * Creates a configured mission with an automatically allocated ID.
      *
      * @param description Nonblank mission description.
