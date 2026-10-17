@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 
 /** Tests mission validation, normalized names, deadline boundaries, and value equality. */
 public class MissionTest {
+
     private static final MissionId ID = new MissionId("M01");
     private static final LocalDate DEADLINE = LocalDate.of(2024, 2, 29);
 

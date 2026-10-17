@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 
 /** Tests canonical mission IDs and their numeric boundaries independently of parsing. */
 public class MissionIdTest {
+
     @Test
     public void constructor_validIds_preservesTextAndNumericValue() {
         for (String text : List.of("M01", "M09", "M10", "M99", "M100", "M105", "M9223372036854775807")) {
