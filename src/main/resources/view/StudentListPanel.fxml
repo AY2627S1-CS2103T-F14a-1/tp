@@ -7,6 +7,9 @@
 
 <VBox xmlns="http://javafx.com/javafx/17"
       xmlns:fx="http://javafx.com/fxml/1"
+      fillWidth="true"
+      maxWidth="Infinity"
+      maxHeight="Infinity"
       styleClass="student-list-panel">
 
   <HBox styleClass="student-list-header">
@@ -15,5 +18,7 @@
   </HBox>
 
   <ListView fx:id="studentListView"
-            VBox.vgrow="ALWAYS"/>
+            VBox.vgrow="ALWAYS"
+            maxWidth="Infinity"
+            maxHeight="Infinity"/>
 </VBox>

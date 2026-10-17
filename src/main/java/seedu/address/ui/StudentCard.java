@@ -32,8 +32,8 @@ public class StudentCard extends UiPart<Region> {
     private Label id;
     @FXML
     private Label studioGroup;
-    @FXML
-    private Label attendance;
+//    @FXML
+//    private Label attendance;
 
     /**
      * Creates a {@code StudentCard} with the given {@code Student} and index to display.
@@ -45,6 +45,6 @@ public class StudentCard extends UiPart<Region> {
         id.setText(String.valueOf(displayedIndex));
         name.setText(student.getName().fullName);
         studioGroup.setText(student.getStudioGroup().studioGroup);
-        attendance.setText(Attendance.ATTENDANCE_MARKER + student.getAttendance().attendance);
+        //attendance.setText(Attendance.ATTENDANCE_MARKER + student.getAttendance().attendance);
     }
 }
