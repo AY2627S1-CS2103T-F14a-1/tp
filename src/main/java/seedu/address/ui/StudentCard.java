@@ -60,4 +60,20 @@ public class StudentCard extends UiPart<Region> {
         studioGroup.setText(student.getStudioGroup().studioGroup);
         attendance.setText(Attendance.ATTENDANCE_MARKER + student.getAttendance().attendance);
     }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other == this) {
+            return true;
+        }
+
+        if (!(other instanceof StudentCard)) {
+            return false;
+        }
+
+        // state check
+        StudentCard card = (StudentCard) other;
+        return id.getText().equals(card.id.getText())
+                && student.equals(card.student);
+    }
 }
