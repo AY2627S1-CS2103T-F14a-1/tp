@@ -244,6 +244,22 @@ instructions. Repeated prefixes identify the repeated fields; blank names and in
 produce their respective constraint messages. An existing name produces
 `This mission already exists in the mission list.`
 
+### Deleting a mission: `delmission`
+
+Format: `delmission m/MISSIONID`
+
+Example: `delmission m/M03`
+
+Use exactly one lowercase `m/` prefix. Mission IDs are case-insensitive, so `m/m03` also
+identifies `M03`. Numeric-only values such as `m/3` are rejected. Use the stable mission ID,
+not a student index or a position in the displayed list.
+
+Deletion removes the mission and its submission records from **every student**, including
+students hidden by the current filter. Student details, attendance, and other missions are
+preserved. The current student filter stays active. The result area shows deletion feedback;
+run `view INDEX` to see the updated profile. Deletion is automatically saved and survives restart.
+Deleted IDs are not reused. Unknown or invalid IDs leave data unchanged.
+
 ### Recording a mission submission: `markmission`
 
 Format: `markmission INDEX m/MISSION_ID`
@@ -332,6 +348,7 @@ Action     | Format, Examples
 **Add attendance** | `addattendance INDEX w/WEEK`<br> e.g., `addattendance 1 w/3`
 **Delete attendance** | `delattendance INDEX w/WEEK`<br> e.g., `delattendance 1 w/3`
 **Add mission** | `addmission n/NAME d/DEADLINE`<br> e.g., `addmission n/Rune Reading d/2026-10-20`
+**Delete mission** | `delmission m/MISSIONID`<br> e.g., `delmission m/M03`
 **Record mission submission** | `markmission INDEX m/MISSION_ID`<br> e.g., `markmission 1 m/M01`
 **Remove mission submission** | `unmarkmission INDEX m/MISSION_ID`<br> e.g., `unmarkmission 1 m/M01`
 **Clear**  | `clear`
