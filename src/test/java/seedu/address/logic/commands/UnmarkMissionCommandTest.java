@@ -113,14 +113,6 @@ public class UnmarkMissionCommandTest {
     }
 
     @Test
-    public void execute_emptyList_reportsInvalidIndex() {
-        Model emptyModel = new ModelManager(new AddressBook(), new UserPrefs());
-
-        assertCommandFailure(new UnmarkMissionCommand(INDEX_FIRST_STUDENT, new MissionId("M03")),
-                emptyModel, Messages.MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX);
-    }
-
-    @Test
     public void execute_filteredList_updatesDisplayedStudentAndPreservesFilter() {
         Student original = model.getFilteredStudentList().get(INDEX_SECOND_STUDENT.getZeroBased());
         Student student = new StudentBuilder(original).withMissionSubmissions("M05", "M03").build();

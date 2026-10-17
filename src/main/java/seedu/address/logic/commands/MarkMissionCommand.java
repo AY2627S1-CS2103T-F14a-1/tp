@@ -2,11 +2,8 @@ package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.List;
-
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.ToStringBuilder;
-import seedu.address.logic.Messages;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 import seedu.address.model.mission.MissionId;
@@ -62,16 +59,11 @@ public class MarkMissionCommand extends Command {
     public CommandResult execute(Model model) throws CommandException {
         requireNonNull(model);
 
-        List<Student> lastShownList = model.getFilteredStudentList();
-        if (targetIndex.getZeroBased() >= lastShownList.size()) {
-            throw new CommandException(Messages.MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX);
-        }
-
         if (model.findMission(missionId).isEmpty()) {
             throw new CommandException(String.format(MESSAGE_MISSION_NOT_FOUND, missionId));
         }
 
-        Student studentToUpdate = lastShownList.get(targetIndex.getZeroBased());
+        Student studentToUpdate = getStudentAtDisplayedIndex(model, targetIndex);
         MissionSubmissions submissions = studentToUpdate.getMissionSubmissions();
 
         if (submissions.hasSubmission(missionId)) {
