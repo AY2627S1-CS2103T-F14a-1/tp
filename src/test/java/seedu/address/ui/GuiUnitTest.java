@@ -2,10 +2,11 @@ package seedu.address.ui;
 
 import java.util.Optional;
 
+import org.junit.jupiter.api.extension.RegisterExtension;
+
 import guitests.GuiRobot;
 import guitests.guihandles.exceptions.NodeNotFoundException;
 import javafx.scene.Node;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import seedu.address.ui.testutil.UiPartExtension;
 
 /**

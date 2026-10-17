@@ -24,6 +24,9 @@ public class StudentCardHandle extends NodeHandle<Node> {
     private final Label emailLabel;
     private final List<Label> tagLabels;
 
+    /**
+     * Creates a {@code StudentCardHandle} with the given {@code cardNode}.
+     */
     public StudentCardHandle(Node cardNode) {
         super(cardNode);
 

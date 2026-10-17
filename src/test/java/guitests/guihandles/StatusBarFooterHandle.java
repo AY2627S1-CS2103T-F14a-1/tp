@@ -12,6 +12,9 @@ public class StatusBarFooterHandle extends NodeHandle<Node> {
 
     private final Labeled saveLocationNode;
 
+    /**
+     * Creates a {@code StatusBarFooterHandle} with the given {@code statusBarFooterNode}.
+     */
     public StatusBarFooterHandle(Node statusBarFooterNode) {
         super(statusBarFooterNode);
 
