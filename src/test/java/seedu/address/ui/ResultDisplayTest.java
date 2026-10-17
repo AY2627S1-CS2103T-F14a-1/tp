@@ -11,9 +11,10 @@ import java.util.List;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import guitests.guihandles.ResultDisplayHandle;
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -35,24 +36,34 @@ import seedu.address.testutil.StudentBuilder;
 /**
  * Tests the result display's FXML and mission table on the JavaFX thread.
  */
-public class ResultDisplayTest {
+public class ResultDisplayTest extends GuiUnitTest {
 
     private static final List<Mission> MISSIONS = List.of(
             new Mission(new MissionId("M01"), "Runes", LocalDate.of(2026, 10, 15)),
             new Mission(new MissionId("M02"), "Curves", LocalDate.of(2026, 10, 16)));
 
-    @BeforeAll
-    public static void setUpJavaFx() throws Exception {
-        FutureTask<Void> startup = new FutureTask<>(() -> {
-            Platform.setImplicitExit(false);
-            return null;
-        });
-        try {
-            Platform.startup(startup);
-        } catch (IllegalStateException e) {
-            Platform.runLater(startup);
-        }
-        startup.get(10, TimeUnit.SECONDS);
+    private ResultDisplay resultDisplay;
+    private ResultDisplayHandle resultDisplayHandle;
+
+    @BeforeEach
+    public void setUp() {
+        resultDisplay = new ResultDisplay();
+        uiPartExtension.setUiPart(resultDisplay);
+
+        resultDisplayHandle = new ResultDisplayHandle(getChildNode(resultDisplay.getRoot(),
+                ResultDisplayHandle.RESULT_DISPLAY_ID));
+    }
+
+    @Test
+    public void display() {
+        // default result text
+        guiRobot.pauseForHuman();
+        assertEquals("", resultDisplayHandle.getText());
+
+        // new result received
+        guiRobot.interact(() -> resultDisplay.setFeedbackToUser("Dummy feedback to user"));
+        guiRobot.pauseForHuman();
+        assertEquals("Dummy feedback to user", resultDisplayHandle.getText());
     }
 
     @Test
