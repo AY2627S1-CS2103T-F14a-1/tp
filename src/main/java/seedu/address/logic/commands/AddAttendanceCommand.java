@@ -64,7 +64,7 @@ public class AddAttendanceCommand extends Command {
             return new CommandResult(String.format(MESSAGE_ALREADY_RECORDED, studentToUpdate.getName(), week));
         }
 
-        Student updatedStudent = createUpdatedStudent(studentToUpdate, attendance.withAttendedWeek(week));
+        Student updatedStudent = studentToUpdate.withAttendance(attendance.withAttendedWeek(week));
         model.setStudent(studentToUpdate, updatedStudent);
         return new CommandResult(String.format(MESSAGE_SUCCESS, studentToUpdate.getName(), week));
     }

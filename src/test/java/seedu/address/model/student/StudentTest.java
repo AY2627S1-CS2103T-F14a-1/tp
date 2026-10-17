@@ -12,6 +12,8 @@ import static seedu.address.testutil.Assert.assertThrows;
 import static seedu.address.testutil.TypicalStudents.ALICE;
 import static seedu.address.testutil.TypicalStudents.BOB;
 
+import java.util.Set;
+
 import org.junit.jupiter.api.Test;
 
 import seedu.address.testutil.StudentBuilder;
@@ -125,6 +127,22 @@ public class StudentTest {
 
         assertEquals(original, copy);
         assertEquals(original.hashCode(), copy.hashCode());
+    }
+
+    @Test
+    public void withAttendance_updatedAttendance_returnsStudentWithUpdatedAttendance() {
+        Student original = new StudentBuilder(ALICE).withAttendance(3, 5).build();
+        Attendance updatedAttendance = new Attendance(Set.of(3, 5));
+        Student expectedStudent = new StudentBuilder(original).withAttendance(3, 5).build();
+
+        Student updatedStudent = original.withAttendance(updatedAttendance);
+
+        assertEquals(expectedStudent, updatedStudent);
+    }
+
+    @Test
+    public void withAttendance_nullAttendance_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> ALICE.withAttendance(null));
     }
 
     @Test
