@@ -18,7 +18,8 @@ import seedu.address.model.mission.MissionId;
 public class MissionParser {
 
     public static final String MESSAGE_MISSING_INDEX = "A student index must be provided.";
-    public static final String MESSAGE_MISSING_MISSION = "Specify a mission ID using m/MISSION_ID.";
+    public static final String MESSAGE_MISSING_MISSION = "Specify a mission ID using "
+            + PREFIX_MISSION + "MISSION_ID.";
     public static final String MESSAGE_DUPLICATE_MISSION = "Mission ID must be specified only once.";
     public static final String MESSAGE_INVALID_STUDENT_INDEX =
             "Student index must be a positive integer without a sign, decimal point, or leading zero.";

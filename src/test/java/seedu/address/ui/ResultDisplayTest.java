@@ -22,6 +22,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 import seedu.address.logic.Messages;
 import seedu.address.logic.commands.CommandResult;
+import seedu.address.logic.commands.DeleteMissionCommand;
 import seedu.address.logic.commands.MarkMissionCommand;
 import seedu.address.logic.commands.UnmarkMissionCommand;
 import seedu.address.logic.commands.ViewCommand;
@@ -151,6 +152,29 @@ public class ResultDisplayTest {
             assertEquals("Submitted", ((Label) table.getChildren().getLast()).getText());
             display.setCommandResult(deleted);
             assertEquals("Not submitted", ((Label) table.getChildren().getLast()).getText());
+        });
+    }
+
+    @Test
+    public void setCommandResult_missionDeleted_clearsStaleProfileAndShowsUpdatedCatalogue() throws Exception {
+        Model model = new ModelManager();
+        model.addStudent(new StudentBuilder(AMY).withMissionSubmissions("M01").build());
+        model.addMission("Runes", LocalDate.of(2026, 10, 20));
+        CommandResult before = new ViewCommand(INDEX_FIRST_STUDENT).execute(model);
+        CommandResult deletion = new DeleteMissionCommand(new MissionId("M01")).execute(model);
+        CommandResult after = new ViewCommand(INDEX_FIRST_STUDENT).execute(model);
+        runOnJavaFxThread(() -> {
+            ResultDisplay display = new ResultDisplay();
+            display.setCommandResult(before);
+            GridPane table = getTable(display);
+            assertEquals(4, table.getChildren().size());
+            display.setCommandResult(deletion);
+            assertFalse(display.getRoot().lookup("#studentDetails").isVisible());
+            assertTrue(table.getChildren().isEmpty());
+            TextArea feedback = (TextArea) display.getRoot().lookup("#resultDisplay");
+            assertEquals(deletion.getFeedbackToUser(), feedback.getText());
+            display.setCommandResult(after);
+            assertEquals("No missions configured.", ((Label) table.getChildren().getFirst()).getText());
         });
     }
 
