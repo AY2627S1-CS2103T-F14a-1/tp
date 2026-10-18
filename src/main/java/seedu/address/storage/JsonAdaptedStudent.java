@@ -49,7 +49,7 @@ class JsonAdaptedStudent {
      * @param email Student's email address.
      * @param tags Student's tags, or null for no tags.
      * @param studioGroup Student's studio group.
-     * @param studioRecords Recorded weekly studio records, or null for no records.
+     * @param registeredStudioRecords Recorded weekly studio records, or null for no records.
      * @param missionSubmissions Recorded mission IDs, or null for no submissions.
      */
     @JsonCreator
@@ -57,7 +57,7 @@ class JsonAdaptedStudent {
             @JsonProperty("email") String email,
             @JsonProperty("tags") List<JsonAdaptedTag> tags, @JsonProperty("studio group") String studioGroup,
             @JsonProperty("missionSubmissions") List<?> missionSubmissions,
-            @JsonProperty("registeredStudioRecords") List<?> studioRecords) {
+            @JsonProperty("registeredStudioRecords") List<?> registeredStudioRecords) {
         this.name = name;
         this.phone = phone;
         this.email = email;
@@ -68,8 +68,8 @@ class JsonAdaptedStudent {
         if (missionSubmissions != null) {
             this.missionSubmissions.addAll(missionSubmissions);
         }
-        if (studioRecords != null) {
-            this.registeredStudioRecords.addAll(studioRecords);
+        if (registeredStudioRecords != null) {
+            this.registeredStudioRecords.addAll(registeredStudioRecords);
         }
     }
 
