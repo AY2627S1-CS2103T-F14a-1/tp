@@ -18,7 +18,9 @@ Class Phone
 Class Email
 Class Tag
 Class StudioGroup
-Class Attendance
+Class RegisteredStudioRecords
+Class StudioRecord
+
 Class MissionSubmissions
 Class MissionCatalogue
 Class Mission
@@ -41,20 +43,30 @@ AddressBook *--> "1" MissionCatalogue
 UniqueStudentList --> "*" Student : all
 ModelManager --> "*" Student : filtered
 MissionCatalogue --> "*" Mission
-Mission --> "1" MissionId
+Mission *-down-> "1" MissionId
 Student *--> "1" Name
 Student *--> "1" Phone
 Student *--> "1" Email
 Student --> "*" Tag
 Student *--> "1" StudioGroup
-Student *--> "1" Attendance
+Student *--> "1" RegisteredStudioRecords
 Student *--> "1" MissionSubmissions
-MissionSubmissions --> "0..*" MissionId : submitted IDs
+MissionSubmissions -[norank]-> "0..*" MissionId : submitted IDs
 
 Name -[hidden]right-> Phone
 Phone -[hidden]right-> Email
 Email -[hidden]right-> Tag
 Tag -[hidden]right-> StudioGroup
-StudioGroup -[hidden]right-> Attendance
-Attendance -[hidden]right-> MissionSubmissions
+StudioGroup -[hidden]right-> RegisteredStudioRecords
+RegisteredStudioRecords -[hidden]right-> MissionSubmissions
+
+'Keep the architecture and student values in the reference diagram's order.
+ReadOnlyAddressBook -[hidden]right-> Model
+Model -[hidden]right-> ReadOnlyUserPrefs
+AddressBook -[hidden]right-> ModelManager
+ModelManager -[hidden]right-> UserPrefs
+MissionCatalogue -[hidden]right-> UniqueStudentList
+RegisteredStudioRecords *--> "0..*" StudioRecord : records by week
+Mission -[hidden]right-> Name
+MissionId -[hidden]right-> StudioRecord
 @enduml

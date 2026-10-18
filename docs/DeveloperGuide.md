@@ -124,13 +124,15 @@ How the parsing works:
 The `Model` component,
 
 * stores the address book data, including all `Student` objects (contained in a `UniqueStudentList`) and shared `Mission` objects (contained in a `MissionCatalogue`).
-* stores each student's contact details, studio group, tags, attendance, and mission submissions. `MissionSubmissions` records the IDs of submitted missions; a mission without a recorded submission is treated as not submitted.
+* stores each student's contact details, studio group, tags, studio records, and mission submissions. Studio records track attendance and effort scores by week, while `MissionSubmissions` records the IDs of submitted missions. A mission without a recorded submission is treated as not submitted.
 * stores each mission's ID, description, and deadline. The mission catalogue allocates IDs and keeps track of the next mission number.
 * maintains a _filtered_ view of the students, such as search results. It exposes this view as an unmodifiable `ObservableList<Student>` that the UI can observe and bind to, so the UI updates when the list changes.
 * stores a `UserPrefs` object that represents the user's preferences (currently, just the GUI settings). This is exposed to the outside as a `ReadOnlyUserPrefs` object.
 * does not depend on any of the other three components (as the `Model` represents data entities of the domain, they should make sense on their own without depending on other components).
 
-Each student has one `Attendance` object containing the attended weeks and one `MissionSubmissions` object containing zero or more submitted mission IDs. The `1` multiplicities count these containers, not the records inside them. Composition diamonds show conceptual ownership of the values that form a student record; immutable values may be reused internally when records are replaced. Submission IDs reference shared missions rather than owning them.
+Each student has one `RegisteredStudioRecords` object containing an immutable map from studio weeks to `StudioRecord` objects. Each recorded week is between 3 and 13 and has one record containing a non-negative effort score. The week is the map key; the presence of a record indicates attendance, even when its effort score is zero. Weeks without a record are displayed as absent with an effort score of zero. Each student also has one `MissionSubmissions` object containing zero or more submitted mission IDs. The `1` multiplicities count these containers, not the records inside them.
+
+Composition diamonds show conceptual ownership of the values that form a student record; immutable values may be reused internally when records are replaced. Submission IDs reference shared missions rather than owning them.
 
 <box type="info" seamless>
 

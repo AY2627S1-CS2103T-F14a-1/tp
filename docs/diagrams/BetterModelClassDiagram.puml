@@ -17,12 +17,13 @@ Student *--> "1" Name
 Student *--> "1" Phone
 Student *--> "1" Email
 Student *--> "1" StudioGroup
-Student *--> "1" Attendance
+Student *--> "1" RegisteredStudioRecords
+RegisteredStudioRecords *--> "0..*" StudioRecord : records by week
 Student *--> "1" MissionSubmissions
 
 Name -[hidden]right-> Phone
 Phone -[hidden]right-> Email
 Email -[hidden]right-> StudioGroup
-StudioGroup -[hidden]right-> Attendance
-Attendance -[hidden]right-> MissionSubmissions
+StudioGroup -[hidden]right-> RegisteredStudioRecords
+RegisteredStudioRecords -[hidden]right-> MissionSubmissions
 @enduml
