@@ -11,40 +11,40 @@ import java.util.Map;
  * Represents an immutable collection of a student's weekly studio status.
  * Each recorded week is between {@value MIN_WEEK} and {@value MAX_WEEK}, inclusive.
  */
-public final class StudioRecords {
+public final class RegisteredStudioRecords {
 
     public static final int MIN_WEEK = 3;
     public static final int MAX_WEEK = 13;
 
-    public static final String STUDIORECORD_MARKER = "StudioRecords: ";
+    public static final String STUDIORECORD_MARKER = "RegisteredStudioRecords: ";
     public static final String MESSAGE_CONSTRAINTS =
             "Tutorial week must be between " + MIN_WEEK + " and " + MAX_WEEK + " inclusive";
 
-    private final Map<Integer, StudioRecord> studioRecords;
+    private final Map<Integer, StudioRecord> recordsByWeek;
 
     /**
-     * Creates {@code StudioRecords} with no recorded weeks.
+     * Creates {@code RegisteredStudioRecords} with no recorded weeks.
      */
-    public StudioRecords() {
-        this.studioRecords = Collections.emptyMap();
+    public RegisteredStudioRecords() {
+        this.recordsByWeek = Collections.emptyMap();
     }
 
     /**
      * Creates studio records from the given studio records.
      *
-     * @param studioRecords Weeks for which studio status has been recorded.
+     * @param recordsByWeek Weeks for which studio status has been recorded.
      * @throws NullPointerException If the map, any week, or any studio record is {@code null}.
      */
-    public StudioRecords(Map<Integer, StudioRecord> studioRecords) {
-        requireNonNull(studioRecords);
+    public RegisteredStudioRecords(Map<Integer, StudioRecord> recordsByWeek) {
+        requireNonNull(recordsByWeek);
 
-        Map<Integer, StudioRecord> copiedStudioRecords = new HashMap<>(studioRecords);
+        Map<Integer, StudioRecord> copiedStudioRecords = new HashMap<>(recordsByWeek);
         for (Integer week : copiedStudioRecords.keySet()) {
             requireNonNull(week);
             checkArgument(isValidWeek(week), MESSAGE_CONSTRAINTS);
             requireNonNull(copiedStudioRecords.get(week));
         }
-        this.studioRecords = Collections.unmodifiableMap(copiedStudioRecords);
+        this.recordsByWeek = Collections.unmodifiableMap(copiedStudioRecords);
     }
 
     /**
@@ -55,7 +55,7 @@ public final class StudioRecords {
      */
     public boolean hasStudioRecord(int week) {
         checkArgument(isValidWeek(week), MESSAGE_CONSTRAINTS);
-        return studioRecords.containsKey(week);
+        return recordsByWeek.containsKey(week);
     }
 
     /**
@@ -64,18 +64,18 @@ public final class StudioRecords {
      *
      * @param week Tutorial week to record.
      * @param studioRecord Studio record to include.
-     * @return StudioRecords containing the existing weeks and given week.
+     * @return RegisteredStudioRecords containing the existing weeks and given week.
      */
-    public StudioRecords withStudioRecord(int week, StudioRecord studioRecord) {
+    public RegisteredStudioRecords withStudioRecord(int week, StudioRecord studioRecord) {
         requireNonNull(studioRecord);
         if (hasStudioRecord(week)) {
             return this;
         }
 
-        Map<Integer, StudioRecord> updatedRecords = new HashMap<>(studioRecords);
+        Map<Integer, StudioRecord> updatedRecords = new HashMap<>(recordsByWeek);
         updatedRecords.put(week, studioRecord);
 
-        return new StudioRecords(updatedRecords);
+        return new RegisteredStudioRecords(updatedRecords);
     }
 
     /**
@@ -83,17 +83,17 @@ public final class StudioRecords {
      * this object. Returns this object if the week is already not recorded.
      *
      * @param week Tutorial week to delete.
-     * @return StudioRecords containing the existing weeks without given week.
+     * @return RegisteredStudioRecords containing the existing weeks without given week.
      */
-    public StudioRecords withoutStudioRecord(int week) {
+    public RegisteredStudioRecords withoutStudioRecord(int week) {
         if (!hasStudioRecord(week)) {
             return this;
         }
 
-        Map<Integer, StudioRecord> updatedRecords = new HashMap<>(studioRecords);
+        Map<Integer, StudioRecord> updatedRecords = new HashMap<>(recordsByWeek);
         updatedRecords.remove(week);
 
-        return new StudioRecords(updatedRecords);
+        return new RegisteredStudioRecords(updatedRecords);
     }
 
     /**
@@ -102,7 +102,7 @@ public final class StudioRecords {
      * @return Recorded weeks, with no guaranteed iteration order.
      */
     public Map<Integer, StudioRecord> getRecordsByWeek() {
-        return studioRecords;
+        return recordsByWeek;
     }
 
     /**
@@ -122,16 +122,16 @@ public final class StudioRecords {
         }
 
         // instanceof handles nulls
-        if (!(other instanceof StudioRecords otherStudioRecords)) {
+        if (!(other instanceof RegisteredStudioRecords otherRegisteredStudioRecords)) {
             return false;
         }
 
-        return studioRecords.equals(otherStudioRecords.studioRecords);
+        return recordsByWeek.equals(otherRegisteredStudioRecords.recordsByWeek);
     }
 
     @Override
     public int hashCode() {
-        return studioRecords.hashCode();
+        return recordsByWeek.hashCode();
     }
 
     /**
@@ -143,7 +143,7 @@ public final class StudioRecords {
     public String toString() {
         StringBuilder summary = new StringBuilder();
         for (int week = MIN_WEEK; week <= MAX_WEEK; week++) {
-            StudioRecord studioRecord = studioRecords.get(week);
+            StudioRecord studioRecord = recordsByWeek.get(week);
             boolean hasAttended = studioRecord != null;
             int effortScore = hasAttended ? studioRecord.getEffortScore() : 0;
 
