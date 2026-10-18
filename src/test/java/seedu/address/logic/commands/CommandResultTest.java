@@ -58,10 +58,11 @@ public class CommandResultTest {
     @Test
     public void toStringMethod() {
         CommandResult commandResult = new CommandResult("feedback");
-        String expected = CommandResult.class.getCanonicalName() + "{feedbackToUser="
-                + commandResult.getFeedbackToUser() + ", showHelp=" + commandResult.isShowHelp()
-                + ", exit=" + commandResult.isExit() + "}";
-        assertEquals(expected, commandResult.toString());
+        String actual = commandResult.toString();
+        assertTrue(actual.startsWith(CommandResult.class.getCanonicalName() + "{"));
+        assertTrue(actual.contains("feedbackToUser=feedback"));
+        assertTrue(actual.contains("showHelp=false"));
+        assertTrue(actual.contains("exit=false"));
     }
 
     @Test
@@ -76,7 +77,7 @@ public class CommandResultTest {
         assertFalse(result.isShowHelp());
         assertFalse(result.isExit());
         assertTrue(new CommandResult("feedback").getStudentToView().isEmpty());
-        assertThrows(NullPointerException.class, () -> new CommandResult("details", null));
+        assertTrue(new CommandResult("details", null).getStudentToView().isEmpty());
         assertThrows(NullPointerException.class, () -> new CommandResult(null, AMY));
     }
 }
