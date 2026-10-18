@@ -44,11 +44,29 @@ public class AddMissionCommandParserTest {
     }
 
     @Test
-    public void parse_invalidDeadline_reportsDateConstraint() {
-        for (String date : List.of("", " ", "2023-02-29", "1900-02-29", "2026-04-31", "2026-13-01",
-                "2026-00-01", "2026-10-00", "2026-1-01", "26-10-20", "2026-10-20T12:00", "2026-10-20 extra")) {
+    public void parse_invalidDeadlineFormat_reportsFormatConstraint() {
+        for (String date : List.of("", " ", "20/10/2026", "2026-1-01", "26-10-20",
+                "2026-10-20T12:00", "2026-10-20 extra")) {
             ParseException error = assertThrows(ParseException.class, () -> parser.parse("n/Runes d/" + date));
             assertEquals(ParserUtil.MESSAGE_INVALID_MISSION_DEADLINE, error.getMessage());
+        }
+    }
+
+    @Test
+    public void parse_invalidCalendarDate_reportsCalendarConstraint() {
+        for (String date : List.of("2023-02-29", "1900-02-29", "2026-04-31", "2026-13-12",
+                "2026-00-01", "2026-10-00", "2026-10-32")) {
+            ParseException error = assertThrows(ParseException.class, () -> parser.parse("n/Runes d/" + date));
+            assertEquals(ParserUtil.MESSAGE_INVALID_MISSION_CALENDAR_DATE, error.getMessage());
+        }
+    }
+
+    @Test
+    public void parse_validCalendarBoundaries_acceptsDeadline() throws Exception {
+        for (String date : List.of("2026-01-01", "2026-12-31", "2026-04-30", "2026-02-28",
+                "2024-02-29", "2000-02-29")) {
+            assertEquals(new AddMissionCommand("Runes", LocalDate.parse(date)),
+                    parser.parse("n/Runes d/ " + date + " "));
         }
     }
 
