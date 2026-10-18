@@ -19,7 +19,7 @@ import seedu.address.model.student.StudioRecords;
 public class WeeklyTaskParser {
 
     public static final String MESSAGE_MISSING_INDEX = "A student index must be provided.";
-    public static final String MESSAGE_MISSING_WEEK = "Specify a studio week using w/WEEK.";
+    public static final String MESSAGE_MISSING_WEEK = "Specify a studio week using " + PREFIX_WEEK + "WEEK.";
     public static final String MESSAGE_DUPLICATE_WEEK = "Tutorial week must be specified only once.";
     public static final String MESSAGE_INVALID_STUDENT_INDEX =
             "Student index must be a positive integer without a sign, decimal point, or leading zero.";

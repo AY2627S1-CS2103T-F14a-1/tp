@@ -12,7 +12,7 @@ import seedu.address.model.student.StudioRecord;
 public class AddStudioRecordCommandParser implements Parser<AddStudioRecordCommand> {
 
     public static final String MESSAGE_MISSING_EFFORT =
-            "Specify an effort score using ef/EFFORT.";
+            "Specify an effort score using " + PREFIX_STUDIO_EFFORT + "EFFORT.";
     public static final String MESSAGE_INVALID_EFFORT =
             StudioRecord.MESSAGE_CONSTRAINTS
                     + " Enter an integer without a sign or decimal point.";
