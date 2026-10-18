@@ -25,7 +25,7 @@ public class Student {
     private final Set<Tag> tags = new HashSet<>();
     private final StudioGroup studioGroup;
     private final MissionSubmissions missionSubmissions;
-    private final Attendance attendance;
+    private final RegisteredStudioRecords registeredStudioRecords;
 
     /**
      * Creates a student with no recorded mission submissions.
@@ -39,7 +39,7 @@ public class Student {
     public Student(
             Name name, Phone phone, Email email, Set<Tag> tags,
             StudioGroup studioGroup) {
-        this(name, phone, email, tags, studioGroup, new MissionSubmissions(), new Attendance());
+        this(name, phone, email, tags, studioGroup, new MissionSubmissions(), new RegisteredStudioRecords());
     }
 
     /**
@@ -50,18 +50,19 @@ public class Student {
      * @param email Student's email address.
      * @param tags Student's tags.
      * @param missionSubmissions Student's recorded mission submissions.
+     * @param registeredStudioRecords Student's registered studio records.
      * @throws NullPointerException If any argument is null.
      */
-    public Student(Name name, Phone phone, Email email, Set<Tag> tags,
-            StudioGroup studioGroup, MissionSubmissions missionSubmissions, Attendance attendance) {
-        requireAllNonNull(name, phone, email, tags, missionSubmissions);
+    public Student(Name name, Phone phone, Email email, Set<Tag> tags, StudioGroup studioGroup,
+                   MissionSubmissions missionSubmissions, RegisteredStudioRecords registeredStudioRecords) {
+        requireAllNonNull(name, phone, email, tags, missionSubmissions, registeredStudioRecords);
         this.name = name;
         this.phone = phone;
         this.email = email;
         this.tags.addAll(tags);
         this.studioGroup = studioGroup;
         this.missionSubmissions = missionSubmissions;
-        this.attendance = attendance;
+        this.registeredStudioRecords = registeredStudioRecords;
     }
 
     public Name getName() {
@@ -97,8 +98,8 @@ public class Student {
         return missionSubmissions;
     }
 
-    public Attendance getAttendance() {
-        return attendance;
+    public RegisteredStudioRecords getRegisteredStudioRecords() {
+        return registeredStudioRecords;
     }
 
     /**
@@ -135,13 +136,13 @@ public class Student {
                 && tags.equals(otherStudent.tags)
                 && studioGroup.equals(otherStudent.studioGroup)
                 && missionSubmissions.equals(otherStudent.missionSubmissions)
-                && attendance.equals(otherStudent.attendance);
+                && registeredStudioRecords.equals(otherStudent.registeredStudioRecords);
     }
 
     @Override
     public int hashCode() {
         // use this method for custom fields hashing instead of implementing your own
-        return Objects.hash(name, phone, email, tags, studioGroup, missionSubmissions, attendance);
+        return Objects.hash(name, phone, email, tags, studioGroup, missionSubmissions, registeredStudioRecords);
     }
 
     @Override
@@ -153,7 +154,7 @@ public class Student {
                 .add("tags", tags)
                 .add("studioGroup", studioGroup)
                 .add("missionSubmissions", missionSubmissions)
-                .add("attendance", attendance)
+                .add("registeredStudioRecords", registeredStudioRecords)
                 .toString();
     }
 

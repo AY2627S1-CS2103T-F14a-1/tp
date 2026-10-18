@@ -3,17 +3,18 @@ package seedu.address.ui;
 import static java.util.Objects.requireNonNull;
 
 import java.util.List;
+import java.util.Map;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 import seedu.address.logic.commands.CommandResult;
 import seedu.address.model.mission.Mission;
-import seedu.address.model.student.Attendance;
+import seedu.address.model.student.RegisteredStudioRecords;
 import seedu.address.model.student.Student;
+import seedu.address.model.student.StudioRecord;
 
 /**
  * A UI component that displays the result of a command execution.
@@ -23,7 +24,7 @@ public class ResultDisplay extends UiPart<Region> {
     private static final String FXML = "ResultDisplay.fxml";
 
     @FXML
-    private TextArea resultDisplay;
+    private Label resultDisplay;
 
     @FXML
     private ScrollPane studentDetails;
@@ -32,7 +33,7 @@ public class ResultDisplay extends UiPart<Region> {
     @FXML
     private GridPane missionSubmissions;
     @FXML
-    private GridPane attendance;
+    private GridPane registeredStudioRecords;
 
     public ResultDisplay() {
         super(FXML);
@@ -57,8 +58,8 @@ public class ResultDisplay extends UiPart<Region> {
         setFeedbackToUser(result.getFeedbackToUser());
         result.getStudentToView().ifPresent(student -> {
             studentSummary.setText(result.getFeedbackToUser());
+            populateRegisteredStudioRecords(student);
             populateMissionSubmissions(student, result.getMissions());
-            populateAttendance(student);
             showStudentDetails(true);
             studentDetails.setVvalue(0);
         });
@@ -114,18 +115,23 @@ public class ResultDisplay extends UiPart<Region> {
      *
      * @param student Student whose submission status is displayed.
      */
-    private void populateAttendance(Student student) {
+    private void populateRegisteredStudioRecords(Student student) {
         assert student != null;
 
-        attendance.getChildren().clear();
-        addAttendanceCell("Week", 0, 0, "mission-header");
-        addAttendanceCell("Status", 1, 0, "mission-header");
-        for (int week = Attendance.MIN_WEEK; week <= Attendance.MAX_WEEK; week++) {
-            int row = week - Attendance.MIN_WEEK + 1;
-            boolean hasAttended = student.getAttendance().hasAttendance(week);
-            addAttendanceCell(String.valueOf(week), 0, row, "mission-week");
-            addAttendanceCell(hasAttended ? "Present" : "Absent", 1, row,
+        registeredStudioRecords.getChildren().clear();
+        addStudioRecordCell("Week", 0, 0, "mission-header");
+        addStudioRecordCell("Attendance", 1, 0, "mission-header");
+        addStudioRecordCell("Effort", 2, 0, "mission-header");
+        Map<Integer, StudioRecord> weeklyStudioRecords = student.getRegisteredStudioRecords().getRecordsByWeek();
+        for (int week = RegisteredStudioRecords.MIN_WEEK; week <= RegisteredStudioRecords.MAX_WEEK; week++) {
+            int row = week - RegisteredStudioRecords.MIN_WEEK + 1;
+            boolean hasAttended = student.getRegisteredStudioRecords().hasStudioRecord(week);
+            int effort = weeklyStudioRecords.containsKey(week)
+                    ? weeklyStudioRecords.get(week).getEffortScore() : 0;
+            addStudioRecordCell(String.valueOf(week), 0, row, "mission-week");
+            addStudioRecordCell(hasAttended ? "Present" : "Absent", 1, row,
                     hasAttended ? "present" : "absent");
+            addStudioRecordCell(Integer.toString(effort), 2, row, "mission-week");
         }
     }
 
@@ -137,12 +143,12 @@ public class ResultDisplay extends UiPart<Region> {
      * @param row Row index, including the header.
      * @param styleClass Style identifying the cell's purpose or status.
      */
-    private void addAttendanceCell(String text, int column, int row, String styleClass) {
+    private void addStudioRecordCell(String text, int column, int row, String styleClass) {
         Label cell = new Label(text);
         cell.getStyleClass().addAll("mission-cell", styleClass);
         cell.setWrapText(true);
         cell.setMaxWidth(Double.MAX_VALUE);
-        attendance.add(cell, column, row);
+        registeredStudioRecords.add(cell, column, row);
     }
 
     /**

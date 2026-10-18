@@ -8,34 +8,37 @@ import static seedu.address.testutil.TypicalStudents.AMY;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import guitests.guihandles.ResultDisplayHandle;
 import javafx.application.Platform;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 import seedu.address.logic.Messages;
 import seedu.address.logic.commands.CommandResult;
 import seedu.address.logic.commands.DeleteMissionCommand;
 import seedu.address.logic.commands.MarkMissionCommand;
 import seedu.address.logic.commands.UnmarkMissionCommand;
-import seedu.address.logic.commands.ViewCommand;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.mission.Mission;
 import seedu.address.model.mission.MissionId;
+import seedu.address.model.student.RegisteredStudioRecords;
 import seedu.address.model.student.Student;
+import seedu.address.model.student.StudioRecord;
 import seedu.address.testutil.StudentBuilder;
 
 /**
- * Tests the result display's FXML and mission table on the JavaFX thread.
+ * Tests the result display's FXML, mission table, and studio table on the JavaFX thread.
  */
 public class ResultDisplayTest extends GuiUnitTest {
 
@@ -65,6 +68,93 @@ public class ResultDisplayTest extends GuiUnitTest {
         guiRobot.interact(() -> resultDisplay.setFeedbackToUser("Dummy feedback to user"));
         guiRobot.pauseForHuman();
         assertEquals("Dummy feedback to user", resultDisplayHandle.getText());
+    }
+
+    private static GridPane getMissionTable(StudentDetailsPanel panel) {
+        new Scene(panel.getRoot());
+        panel.getRoot().applyCss();
+        panel.getRoot().layout();
+
+        return (GridPane) panel.getRoot().lookup("#missionSubmissionsGrid");
+    }
+
+    private static String getMissionStatus(GridPane table, MissionId missionId) {
+        for (Node node : table.getChildren()) {
+            Integer row = GridPane.getRowIndex(node);
+            Integer column = GridPane.getColumnIndex(node);
+
+            if (row == null || column == null || column != 0) {
+                continue;
+            }
+
+            Label missionLabel = (Label) node;
+
+            if (missionLabel.getText().startsWith(missionId + " · ")) {
+                int missionRow = row;
+
+                return table.getChildren().stream()
+                        .filter(child -> GridPane.getRowIndex(child) != null
+                                && GridPane.getRowIndex(child) == missionRow
+                                && GridPane.getColumnIndex(child) != null
+                                && GridPane.getColumnIndex(child) == 1)
+                        .map(Label.class::cast)
+                        .findFirst()
+                        .orElseThrow()
+                        .getText();
+            }
+        }
+
+        throw new AssertionError("Mission not found: " + missionId);
+    }
+
+    private static GridPane getAttendanceTable(ResultDisplay display) {
+        new Scene(display.getRoot());
+        display.getRoot().applyCss();
+        display.getRoot().layout();
+
+        return (GridPane) display.getRoot().lookup("#attendance");
+    }
+
+    private static String getStatus(GridPane table, int week) {
+        for (int row = 1; row <= table.getRowCount(); row++) {
+            int currentRow = row;
+
+            Label weekLabel = (Label) table.getChildren().stream()
+                    .filter(node -> GridPane.getRowIndex(node) != null
+                            && GridPane.getRowIndex(node) == currentRow
+                            && GridPane.getColumnIndex(node) != null
+                            && GridPane.getColumnIndex(node) == 0)
+                    .findFirst()
+                    .orElseThrow();
+
+            if (weekLabel.getText().equals(String.valueOf(week))) {
+                return table.getChildren().stream()
+                        .filter(node -> GridPane.getRowIndex(node) != null
+                                && GridPane.getRowIndex(node) == currentRow
+                                && GridPane.getColumnIndex(node) != null
+                                && GridPane.getColumnIndex(node) == 1)
+                        .map(Label.class::cast)
+                        .findFirst()
+                        .orElseThrow()
+                        .getText();
+            }
+        }
+
+        throw new AssertionError("No status found for week " + week);
+    }
+
+    @BeforeAll
+    public static void setUpJavaFx() throws Exception {
+        FutureTask<Void> startup = new FutureTask<>(() -> {
+            Platform.setImplicitExit(false);
+            return null;
+        });
+        try {
+            Platform.startup(startup);
+        } catch (IllegalStateException e) {
+            Platform.runLater(startup);
+        }
+        startup.get(10, TimeUnit.SECONDS);
     }
 
     @Test
@@ -113,6 +203,87 @@ public class ResultDisplayTest extends GuiUnitTest {
     }
 
     @Test
+    public void setCommandResult_registeredStudioRecords_displaysEveryWeekAndEffort() throws Exception {
+        runOnJavaFxThread(() -> {
+            ResultDisplay display = new ResultDisplay();
+            Student student = new StudentBuilder(AMY).withStudioRecords(
+                    new StudentBuilder.StudioRecordSet(3, new StudioRecord(50)),
+                    new StudentBuilder.StudioRecordSet(4, new StudioRecord(0)),
+                    new StudentBuilder.StudioRecordSet(13, new StudioRecord(Integer.MAX_VALUE))).build();
+            display.setCommandResult(new CommandResult("Student", student));
+            GridPane table = getTable(display, "#registeredStudioRecords");
+            Map<Integer, Integer> effortScores = Map.of(3, 50, 4, 0, 13, Integer.MAX_VALUE);
+
+            assertEquals(3 * (RegisteredStudioRecords.MAX_WEEK - RegisteredStudioRecords.MIN_WEEK + 2),
+                    table.getChildren().size());
+            assertEquals("Week", ((Label) table.getChildren().get(0)).getText());
+            assertEquals("Attendance", ((Label) table.getChildren().get(1)).getText());
+            assertEquals("Effort", ((Label) table.getChildren().get(2)).getText());
+            for (int week = RegisteredStudioRecords.MIN_WEEK; week <= RegisteredStudioRecords.MAX_WEEK; week++) {
+                int rowStart = 3 * (week - RegisteredStudioRecords.MIN_WEEK + 1);
+                Label attendanceCell = (Label) table.getChildren().get(rowStart + 1);
+                Label effortCell = (Label) table.getChildren().get(rowStart + 2);
+
+                assertEquals(String.valueOf(week), ((Label) table.getChildren().get(rowStart)).getText());
+                assertEquals(effortScores.containsKey(week) ? "Present" : "Absent", attendanceCell.getText());
+                assertEquals(String.valueOf(effortScores.getOrDefault(week, 0)), effortCell.getText());
+            }
+        });
+    }
+
+    @Test
+    public void setCommandResult_narrowAndWideStudioTable_keepsEveryCellWithinTable() throws Exception {
+        runOnJavaFxThread(() -> {
+            ResultDisplay display = new ResultDisplay();
+            Student student = new StudentBuilder(AMY).withStudioRecords(
+                    new StudentBuilder.StudioRecordSet(13, new StudioRecord(Integer.MAX_VALUE))).build();
+            display.setCommandResult(new CommandResult("Student", student));
+            GridPane table = getTable(display, "#registeredStudioRecords");
+            table.getStylesheets().add(ResultDisplay.class.getResource("/view/DarkTheme.css").toExternalForm());
+            table.applyCss();
+
+            for (double width : new double[] {240, 900, 240}) {
+                table.resize(width, table.prefHeight(width));
+                table.layout();
+                table.getChildren().forEach(node -> {
+                    Label cell = (Label) node;
+                    assertTrue(cell.getWidth() > 0);
+                    assertTrue(cell.getBoundsInParent().getMinX() >= -0.01,
+                            "Cell starts outside the table: " + cell.getText());
+                    assertTrue(cell.getBoundsInParent().getMaxX() <= width + 0.01,
+                            "Cell overflows table width " + width + ": " + cell.getText());
+                });
+            }
+        });
+    }
+
+    @Test
+    public void setCommandResult_switchStudioStudents_replacesAttendanceAndEffort() throws Exception {
+        runOnJavaFxThread(() -> {
+            ResultDisplay display = new ResultDisplay();
+            Student recorded = new StudentBuilder(AMY).withStudioRecords(
+                    new StudentBuilder.StudioRecordSet(3, new StudioRecord(50))).build();
+            Student empty = new StudentBuilder(AMY).withStudioRecords().build();
+            display.setCommandResult(new CommandResult("Recorded student", recorded));
+            GridPane table = getTable(display, "#registeredStudioRecords");
+
+            display.setCommandResult(new CommandResult("Empty student", empty));
+            assertEquals(3 * (RegisteredStudioRecords.MAX_WEEK - RegisteredStudioRecords.MIN_WEEK + 2),
+                    table.getChildren().size());
+            for (int rowStart = 3; rowStart < table.getChildren().size(); rowStart += 3) {
+                assertEquals("Absent", ((Label) table.getChildren().get(rowStart + 1)).getText());
+                assertEquals("0", ((Label) table.getChildren().get(rowStart + 2)).getText());
+            }
+
+            display.setCommandResult(new CommandResult("Recorded student", recorded));
+            assertEquals(3 * (RegisteredStudioRecords.MAX_WEEK - RegisteredStudioRecords.MIN_WEEK + 2),
+                    table.getChildren().size());
+            assertEquals("Present", ((Label) table.getChildren().get(4)).getText());
+            assertEquals("50", ((Label) table.getChildren().get(5)).getText());
+        });
+    }
+
+    @Test
     public void setCommandResult_emptyCatalogue_displaysEmptyMessage() throws Exception {
         runOnJavaFxThread(() -> {
             ResultDisplay display = new ResultDisplay();
@@ -138,7 +309,7 @@ public class ResultDisplayTest extends GuiUnitTest {
             display.setFeedbackToUser("Invalid index");
             assertFalse(display.getRoot().lookup("#studentDetails").isVisible());
             assertTrue(table.getChildren().isEmpty());
-            TextArea feedback = (TextArea) display.getRoot().lookup("#resultDisplay");
+            Label feedback = (Label) display.getRoot().lookup("#resultDisplay");
             assertTrue(feedback.isVisible());
             assertEquals("Invalid index", feedback.getText());
             display.setCommandResult(new CommandResult("Listed students"));
@@ -148,44 +319,68 @@ public class ResultDisplayTest extends GuiUnitTest {
     }
 
     @Test
-    public void setCommandResult_viewAfterMarkAndUnmark_reflectsUpdatedSubmissions() throws Exception {
+    public void showStudent_afterMarkAndUnmark_reflectsUpdatedSubmissions() throws Exception {
         Model model = new ModelManager();
         model.addStudent(new StudentBuilder(AMY).withMissionSubmissions().build());
         model.addMission("Runes", LocalDate.of(2026, 10, 15));
+
+        List<Mission> missions = model.getMissionList();
+
         new MarkMissionCommand(INDEX_FIRST_STUDENT, new MissionId("M01")).execute(model);
-        CommandResult added = new ViewCommand(INDEX_FIRST_STUDENT).execute(model);
+        Student markedStudent = model.getFilteredStudentList().get(INDEX_FIRST_STUDENT.getZeroBased());
+
         new UnmarkMissionCommand(INDEX_FIRST_STUDENT, new MissionId("M01")).execute(model);
-        CommandResult deleted = new ViewCommand(INDEX_FIRST_STUDENT).execute(model);
+        Student unmarkedStudent = model.getFilteredStudentList().get(INDEX_FIRST_STUDENT.getZeroBased());
+
         runOnJavaFxThread(() -> {
-            ResultDisplay display = new ResultDisplay();
-            display.setCommandResult(added);
-            GridPane table = getTable(display);
-            assertEquals("Submitted", ((Label) table.getChildren().getLast()).getText());
-            display.setCommandResult(deleted);
-            assertEquals("Not submitted", ((Label) table.getChildren().getLast()).getText());
+            StudentDetailsPanel panel = new StudentDetailsPanel();
+            panel.showStudent(markedStudent, missions);
+
+            GridPane table = getMissionTable(panel);
+            assertEquals("Submitted", getMissionStatus(table, new MissionId("M01")));
+
+            panel.showStudent(unmarkedStudent, missions);
+
+            assertEquals("Not submitted", getMissionStatus(table, new MissionId("M01")));
         });
     }
 
     @Test
-    public void setCommandResult_missionDeleted_clearsStaleProfileAndShowsUpdatedCatalogue() throws Exception {
+    public void showStudent_afterMissionDeletion_showsUpdatedCatalogue() throws Exception {
         Model model = new ModelManager();
-        model.addStudent(new StudentBuilder(AMY).withMissionSubmissions("M01").build());
+        model.addStudent(new StudentBuilder(AMY)
+                .withMissionSubmissions("M01")
+                .build());
         model.addMission("Runes", LocalDate.of(2026, 10, 20));
-        CommandResult before = new ViewCommand(INDEX_FIRST_STUDENT).execute(model);
-        CommandResult deletion = new DeleteMissionCommand(new MissionId("M01")).execute(model);
-        CommandResult after = new ViewCommand(INDEX_FIRST_STUDENT).execute(model);
+
+        Student student = model.getFilteredStudentList()
+                .get(INDEX_FIRST_STUDENT.getZeroBased());
+
+        List<Mission> missionsBeforeDeletion =
+                List.copyOf(model.getMissionList());
+
+        new DeleteMissionCommand(new MissionId("M01")).execute(model);
+
+        Student updatedStudent = model.getFilteredStudentList()
+                .get(INDEX_FIRST_STUDENT.getZeroBased());
+
+        List<Mission> missionsAfterDeletion =
+                List.copyOf(model.getMissionList());
+
         runOnJavaFxThread(() -> {
-            ResultDisplay display = new ResultDisplay();
-            display.setCommandResult(before);
-            GridPane table = getTable(display);
+            StudentDetailsPanel panel = new StudentDetailsPanel();
+
+            panel.showStudent(student, missionsBeforeDeletion);
+
+            GridPane table = getMissionTable(panel);
             assertEquals(4, table.getChildren().size());
-            display.setCommandResult(deletion);
-            assertFalse(display.getRoot().lookup("#studentDetails").isVisible());
-            assertTrue(table.getChildren().isEmpty());
-            TextArea feedback = (TextArea) display.getRoot().lookup("#resultDisplay");
-            assertEquals(deletion.getFeedbackToUser(), feedback.getText());
-            display.setCommandResult(after);
-            assertEquals("No missions configured.", ((Label) table.getChildren().getFirst()).getText());
+
+            panel.showStudent(updatedStudent, missionsAfterDeletion);
+
+            assertEquals(1, table.getChildren().size());
+            assertEquals(
+                    "No missions configured.", (
+                            (Label) table.getChildren().getFirst()).getText());
         });
     }
 
@@ -196,10 +391,21 @@ public class ResultDisplayTest extends GuiUnitTest {
      * @return The mission table loaded from FXML.
      */
     private static GridPane getTable(ResultDisplay display) {
+        return getTable(display, "#missionSubmissions");
+    }
+
+    /**
+     * Creates the scroll pane's skin before locating the requested table.
+     *
+     * @param display Display to attach to a scene.
+     * @param selector CSS selector identifying the table.
+     * @return The table loaded from FXML.
+     */
+    private static GridPane getTable(ResultDisplay display, String selector) {
         new Scene(display.getRoot());
         display.getRoot().applyCss();
         display.getRoot().layout();
-        return (GridPane) display.getRoot().lookup("#missionSubmissions");
+        return (GridPane) display.getRoot().lookup(selector);
     }
 
     /**

@@ -2,7 +2,9 @@ package seedu.address.ui;
 
 import static java.time.Duration.ofMillis;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
+import static seedu.address.testutil.TypicalStudents.AMY;
 import static seedu.address.testutil.TypicalStudents.getTypicalStudents;
 import static seedu.address.ui.testutil.GuiTestAssert.assertCardDisplaysStudent;
 
@@ -14,6 +16,7 @@ import guitests.guihandles.StudentCardHandle;
 import guitests.guihandles.StudentListPanelHandle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.control.ListView;
 import seedu.address.model.student.Email;
 import seedu.address.model.student.Name;
 import seedu.address.model.student.Phone;
@@ -21,12 +24,26 @@ import seedu.address.model.student.Student;
 import seedu.address.model.student.StudioGroup;
 
 public class StudentListPanelTest extends GuiUnitTest {
+
     private static final ObservableList<Student> TYPICAL_STUDENTS =
             FXCollections.observableList(getTypicalStudents());
 
     private static final long CARD_CREATION_AND_DELETION_TIMEOUT = 2500;
 
     private StudentListPanelHandle studentListPanelHandle;
+
+    /**
+     * Initializes {@code studentListPanelHandle} with a {@code StudentListPanel} backed by {@code backingList}.
+     * Also shows the {@code Stage} that displays only {@code StudentListPanel}.
+     */
+    private void initUi(ObservableList<Student> backingList) {
+        StudentListPanel studentListPanel =
+                new StudentListPanel(backingList);
+        uiPartExtension.setUiPart(studentListPanel);
+
+        studentListPanelHandle = new StudentListPanelHandle(getChildNode(studentListPanel.getRoot(),
+                StudentListPanelHandle.STUDENT_LIST_VIEW_ID));
+    }
 
     @Test
     public void display() {
@@ -72,16 +89,16 @@ public class StudentListPanelTest extends GuiUnitTest {
         return backingList;
     }
 
-    /**
-     * Initializes {@code studentListPanelHandle} with a {@code StudentListPanel} backed by {@code backingList}.
-     * Also shows the {@code Stage} that displays only {@code StudentListPanel}.
-     */
-    private void initUi(ObservableList<Student> backingList) {
-        StudentListPanel studentListPanel =
-                new StudentListPanel(backingList);
-        uiPartExtension.setUiPart(studentListPanel);
+    @Test
+    public void constructor_setsStudentListItems() {
+        ObservableList<Student> students =
+                FXCollections.observableArrayList(AMY);
 
-        studentListPanelHandle = new StudentListPanelHandle(getChildNode(studentListPanel.getRoot(),
-                StudentListPanelHandle.STUDENT_LIST_VIEW_ID));
+        StudentListPanel panel = new StudentListPanel(students);
+        ListView<Student> listView = panel.getStudentListView();
+
+        assertSame(students, listView.getItems());
+        assertEquals(1, listView.getItems().size());
+        assertEquals(AMY, listView.getItems().get(0));
     }
 }

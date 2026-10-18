@@ -10,50 +10,58 @@ import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.Messages;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
-import seedu.address.model.student.Attendance;
+import seedu.address.model.student.RegisteredStudioRecords;
 import seedu.address.model.student.Student;
+import seedu.address.model.student.StudioRecord;
 
 /**
- * Removes a week's tutorial attendance for a student identified by a displayed index.
+ * Records a week's studio record for a student identified by a displayed index.
  */
-public class DeleteAttendanceCommand extends Command {
+public class AddStudioRecordCommand extends Command {
 
-    public static final String COMMAND_WORD = "delattendance";
+    public static final String COMMAND_WORD = "addstudiorecord";
 
     public static final String MESSAGE_USAGE = COMMAND_WORD
-            + ": Removes a week's attendance for the selected student.\n"
-            + "Parameters: INDEX w/WEEK\n"
+            + ": Records a week's studio record for the selected student.\n"
+            + "Parameters: INDEX w/WEEK ef/EFFORT\n"
             + "INDEX must be a positive integer identifying a displayed student.\n"
-            + "WEEK must be between " + Attendance.MIN_WEEK
-            + " and " + Attendance.MAX_WEEK + " inclusive.\n"
-            + "Example: " + COMMAND_WORD + " 1 w/3";
+            + "WEEK must be between " + RegisteredStudioRecords.MIN_WEEK
+            + " and " + RegisteredStudioRecords.MAX_WEEK + " inclusive.\n"
+            + "Example: " + COMMAND_WORD + " 1 w/3 ef/30";
 
     public static final String MESSAGE_SUCCESS =
-            "Removed %1$s's attendance for tutorial week %2$d.";
+            "Added %1$s's studio record for tutorial week %2$d.";
 
     public static final String MESSAGE_ALREADY_RECORDED =
-            "%1$s’s attendance was already not marked for tutorial week %2$d. No changes made.";
+            "%1$s’s studio has already been recorded for tutorial week %2$d. No changes made.";
 
     private final Index targetIndex;
     private final int week;
+    private final StudioRecord studioRecord;
 
     /**
-     * Creates a command to delete a week's attendance.
+     * Creates a command to record a week's studio.
      *
      * @param targetIndex Index of the student in the displayed list.
-     * @param week Tutorial week for the deletion.
+     * @param week Studio week for the record.
+     * @param studioRecord studio to record.
      */
-    public DeleteAttendanceCommand(Index targetIndex, int week) {
-        this.targetIndex = requireNonNull(targetIndex);
-        checkArgument(Attendance.isValidWeek(week), Attendance.MESSAGE_CONSTRAINTS);
+    public AddStudioRecordCommand(Index targetIndex, int week, StudioRecord studioRecord) {
+        requireNonNull(targetIndex);
+        requireNonNull(studioRecord);
+
+        checkArgument(RegisteredStudioRecords.isValidWeek(week), RegisteredStudioRecords.MESSAGE_CONSTRAINTS);
+
+        this.targetIndex = targetIndex;
         this.week = week;
+        this.studioRecord = studioRecord;
     }
 
     /**
-     * Removes a week's attendance without changing the current list filter.
+     * Records studio without changing the current list filter.
      *
      * @param model Model containing the students.
-     * @return Feedback describing the removal or an already non-existent attendance.
+     * @return Feedback describing the addition or an existing studio.
      * @throws CommandException If the index does not identify a displayed student.
      */
     @Override
@@ -66,24 +74,25 @@ public class DeleteAttendanceCommand extends Command {
         }
 
         Student studentToUpdate = lastShownList.get(targetIndex.getZeroBased());
-        Attendance attendance = studentToUpdate.getAttendance();
+        RegisteredStudioRecords registeredStudioRecords = studentToUpdate.getRegisteredStudioRecords();
 
-        if (!attendance.hasAttendance(week)) {
+        if (registeredStudioRecords.hasStudioRecord(week)) {
             return new CommandResult(String.format(MESSAGE_ALREADY_RECORDED, studentToUpdate.getName(), week));
         }
 
-        Student updatedStudent = createUpdatedStudent(studentToUpdate, attendance.withoutAttendedWeek(week));
+        Student updatedStudent = createUpdatedStudent(
+                studentToUpdate, registeredStudioRecords.withStudioRecord(week, studioRecord));
         model.setStudent(studentToUpdate, updatedStudent);
         return new CommandResult(String.format(MESSAGE_SUCCESS, studentToUpdate.getName(), week));
     }
 
-    private Student createUpdatedStudent(Student student, Attendance attendance) {
+    private Student createUpdatedStudent(Student student, RegisteredStudioRecords registeredStudioRecords) {
         assert student != null;
-        assert attendance != null;
+        assert registeredStudioRecords != null;
 
         return new Student(student.getName(), student.getPhone(), student.getEmail(),
                 student.getTags(), student.getStudioGroup(), student.getMissionSubmissions(),
-                attendance);
+                registeredStudioRecords);
     }
 
     @Override
@@ -93,12 +102,13 @@ public class DeleteAttendanceCommand extends Command {
         }
 
         // instanceof handles nulls
-        if (!(other instanceof DeleteAttendanceCommand otherAttendanceCommand)) {
+        if (!(other instanceof AddStudioRecordCommand otherAddStudioRecordCommand)) {
             return false;
         }
 
-        return targetIndex.equals(otherAttendanceCommand.targetIndex)
-                && week == otherAttendanceCommand.week;
+        return targetIndex.equals(otherAddStudioRecordCommand.targetIndex)
+                && week == otherAddStudioRecordCommand.week
+                && studioRecord.equals(otherAddStudioRecordCommand.studioRecord);
     }
 
     @Override
@@ -106,6 +116,7 @@ public class DeleteAttendanceCommand extends Command {
         return new ToStringBuilder(this)
                 .add("targetIndex", targetIndex)
                 .add("week", week)
+                .add("studioRecord", studioRecord)
                 .toString();
     }
 }
