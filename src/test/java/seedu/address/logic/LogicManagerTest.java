@@ -248,4 +248,11 @@ public class LogicManagerTest {
         assertEquals(savedJson, Files.readString(filePath));
         assertEquals(expected, reloadedModel.getFilteredStudentList().get(0));
     }
+
+    @Test
+    public void getMissions_returnsModelMissionList() {
+        model.addMission("Runes", java.time.LocalDate.of(2026, 10, 20));
+
+        assertEquals(model.getMissionList(), logic.getMissions());
+    }
 }

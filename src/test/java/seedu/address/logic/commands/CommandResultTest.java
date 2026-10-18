@@ -8,7 +8,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.testutil.TypicalStudents.AMY;
 import static seedu.address.testutil.TypicalStudents.BOB;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
+
+import seedu.address.model.mission.Mission;
+import seedu.address.model.mission.MissionId;
 
 public class CommandResultTest {
     @Test
@@ -79,5 +84,20 @@ public class CommandResultTest {
         assertTrue(new CommandResult("feedback").getStudentToView().isEmpty());
         assertTrue(new CommandResult("details", null).getStudentToView().isEmpty());
         assertThrows(NullPointerException.class, () -> new CommandResult(null, AMY));
+    }
+
+    @Test
+    public void missions_constructorStoresMissionCatalogue() {
+        Mission mission = new Mission(
+                new MissionId("M01"),
+                "Runes",
+                java.time.LocalDate.of(2026, 10, 20));
+
+        CommandResult result = new CommandResult(
+                "Student details",
+                AMY,
+                List.of(mission));
+
+        assertEquals(List.of(mission), result.getMissions());
     }
 }
