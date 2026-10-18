@@ -25,9 +25,9 @@ import seedu.address.model.util.SampleDataUtil;
 public class StudentBuilder {
 
     /**
-     * Associates a tutorial week with its studio record for building a student.
+     * Associates a studio week with its studio record for building a student.
      *
-     * @param week Tutorial week of the record.
+     * @param week Studio week of the record.
      * @param studioRecord Studio record for that week.
      */
     public record StudioRecordSet(int week, StudioRecord studioRecord) {}

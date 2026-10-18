@@ -55,10 +55,10 @@ public class DeleteStudioRecordCommandParserTest {
     @Test
     public void parse_invalidValues_reportsValidationMessages() {
         assertParseFailure(parser, "01 w/3", WeeklyTaskParser.MESSAGE_INVALID_STUDENT_INDEX);
-        assertParseFailure(parser, "1 w/03", WeeklyTaskParser.MESSAGE_INVALID_TUTORIAL_WEEK);
-        assertParseFailure(parser, "1 w/2", WeeklyTaskParser.MESSAGE_INVALID_TUTORIAL_WEEK);
-        assertParseFailure(parser, "1 w/1", WeeklyTaskParser.MESSAGE_INVALID_TUTORIAL_WEEK);
-        assertParseFailure(parser, "1 w/14", WeeklyTaskParser.MESSAGE_INVALID_TUTORIAL_WEEK);
+        assertParseFailure(parser, "1 w/03", WeeklyTaskParser.MESSAGE_INVALID_STUDIO_WEEK);
+        assertParseFailure(parser, "1 w/2", WeeklyTaskParser.MESSAGE_INVALID_STUDIO_WEEK);
+        assertParseFailure(parser, "1 w/1", WeeklyTaskParser.MESSAGE_INVALID_STUDIO_WEEK);
+        assertParseFailure(parser, "1 w/14", WeeklyTaskParser.MESSAGE_INVALID_STUDIO_WEEK);
     }
 
     @Test

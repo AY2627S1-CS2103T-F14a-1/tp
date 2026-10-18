@@ -18,7 +18,7 @@ public final class RegisteredStudioRecords {
 
     public static final String STUDIORECORD_MARKER = "Studio records: ";
     public static final String MESSAGE_CONSTRAINTS =
-            "Tutorial week must be between " + MIN_WEEK + " and " + MAX_WEEK + " inclusive";
+            "Studio week must be between " + MIN_WEEK + " and " + MAX_WEEK + " inclusive";
 
     private final Map<Integer, StudioRecord> recordsByWeek;
 
@@ -62,7 +62,7 @@ public final class RegisteredStudioRecords {
      * Returns studio records including the given week without changing
      * this object. Returns this object if the week is already recorded.
      *
-     * @param week Tutorial week to record.
+     * @param week Studio week to record.
      * @param studioRecord Studio record to include.
      * @return RegisteredStudioRecords containing the existing weeks and given week.
      */
@@ -82,7 +82,7 @@ public final class RegisteredStudioRecords {
      * Returns studio records not including the given week without changing
      * this object. Returns this object if the week is already not recorded.
      *
-     * @param week Tutorial week to delete.
+     * @param week Studio week to delete.
      * @return RegisteredStudioRecords containing the existing weeks without given week.
      */
     public RegisteredStudioRecords withoutStudioRecord(int week) {
@@ -108,7 +108,7 @@ public final class RegisteredStudioRecords {
     /**
      * Returns whether the given studio week is within the valid range.
      *
-     * @param week Tutorial week to check.
+     * @param week Studio week to check.
      * @return True if the week is between {@value #MIN_WEEK} and {@value #MAX_WEEK}, inclusive.
      */
     public static boolean isValidWeek(int week) {

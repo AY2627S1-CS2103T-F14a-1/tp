@@ -223,7 +223,7 @@ public class LogicManagerTest {
         assertStudioState(reloadedModel, storage, withWeekThirteen);
 
         String savedAfterDeletion = Files.readString(storage.getAddressBookFilePath());
-        assertThrows(ParseException.class, WeeklyTaskParser.MESSAGE_INVALID_TUTORIAL_WEEK, () ->
+        assertThrows(ParseException.class, WeeklyTaskParser.MESSAGE_INVALID_STUDIO_WEEK, () ->
                 reloadedLogic.execute("delstudiorecord 1 w/14"));
         assertEquals(savedAfterDeletion, Files.readString(storage.getAddressBookFilePath()));
         assertStudioState(reloadedModel, storage, withWeekThirteen);

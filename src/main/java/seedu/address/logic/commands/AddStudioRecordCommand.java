@@ -15,7 +15,7 @@ import seedu.address.model.student.Student;
 import seedu.address.model.student.StudioRecord;
 
 /**
- * Records a week's tutorial studio for a student identified by a displayed index.
+ * Records a week's studio record for a student identified by a displayed index.
  */
 public class AddStudioRecordCommand extends Command {
 

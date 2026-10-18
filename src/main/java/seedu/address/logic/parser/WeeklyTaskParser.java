@@ -20,7 +20,7 @@ public class WeeklyTaskParser {
 
     public static final String MESSAGE_MISSING_INDEX = "A student index must be provided.";
     public static final String MESSAGE_MISSING_WEEK = "Specify a studio week using " + PREFIX_WEEK + "WEEK.";
-    public static final String MESSAGE_DUPLICATE_WEEK = "Tutorial week must be specified only once.";
+    public static final String MESSAGE_DUPLICATE_WEEK = "Studio week must be specified only once.";
     public static final String MESSAGE_INVALID_STUDENT_INDEX =
             "Student index must be a positive integer without a sign, decimal point, or leading zero.";
     public static final String MESSAGE_INVALID_STUDIO_WEEK = RegisteredStudioRecords.MESSAGE_CONSTRAINTS
@@ -154,7 +154,7 @@ public class WeeklyTaskParser {
 
         String trimmedWeek = week.trim();
         if (!POSITIVE_INTEGER.matcher(trimmedWeek).matches()) {
-            throw new ParseException(MESSAGE_INVALID_TUTORIAL_WEEK);
+            throw new ParseException(MESSAGE_INVALID_STUDIO_WEEK);
         }
 
         try {
@@ -164,7 +164,7 @@ public class WeeklyTaskParser {
             }
             return parsedWeek;
         } catch (NumberFormatException e) {
-            throw new ParseException(MESSAGE_INVALID_TUTORIAL_WEEK);
+            throw new ParseException(MESSAGE_INVALID_STUDIO_WEEK);
         }
     }
 
