@@ -2,6 +2,8 @@ package seedu.address.logic.parser;
 
 import static java.util.Objects.requireNonNull;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -19,6 +21,10 @@ import seedu.address.model.tag.Tag;
  * Contains utility methods used for parsing strings in the various *Parser classes.
  */
 public class ParserUtil {
+
+    public static final String MESSAGE_INVALID_MISSION_NAME = "Mission name cannot be blank.";
+    public static final String MESSAGE_INVALID_MISSION_DEADLINE =
+            "Deadline must be a real calendar date in YYYY-MM-DD format.";
 
     public static final String MESSAGE_INVALID_INDEX = "Index must be a positive integer.";
 
@@ -121,4 +127,41 @@ public class ParserUtil {
         }
         return new StudioGroup(trimmedStudioGroup);
     }
+
+    /**
+     * Parses a mission name, collapsing whitespace while preserving punctuation and case.
+     *
+     * @param name Raw mission name.
+     * @return Name with surrounding whitespace removed and internal whitespace collapsed.
+     * @throws ParseException If the name is blank.
+     */
+    public static String parseMissionName(String name) throws ParseException {
+        requireNonNull(name);
+        String trimmedName = name.replaceAll("(?U)\\s+", " ").strip();
+        if (trimmedName.isBlank()) {
+            throw new ParseException(MESSAGE_INVALID_MISSION_NAME);
+        }
+        return trimmedName;
+    }
+
+    /**
+     * Parses a strict calendar deadline, including past dates.
+     *
+     * @param deadline Raw date text in YYYY-MM-DD format.
+     * @return Valid calendar date.
+     * @throws ParseException If the syntax or calendar date is invalid.
+     */
+    public static LocalDate parseMissionDeadline(String deadline) throws ParseException {
+        requireNonNull(deadline);
+        String trimmedDeadline = deadline.strip();
+        if (!trimmedDeadline.matches("[0-9]{4}-[0-9]{2}-[0-9]{2}")) {
+            throw new ParseException(MESSAGE_INVALID_MISSION_DEADLINE);
+        }
+        try {
+            return LocalDate.parse(trimmedDeadline);
+        } catch (DateTimeParseException e) {
+            throw new ParseException(MESSAGE_INVALID_MISSION_DEADLINE);
+        }
+    }
+
 }

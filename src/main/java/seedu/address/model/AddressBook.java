@@ -74,6 +74,30 @@ public class AddressBook implements ReadOnlyAddressBook {
     }
 
     /**
+     * Deletes a mission and its submissions from every student, preserving the allocation counter.
+     * Replacement records are prepared before any state is changed.
+     *
+     * @param id Mission to delete.
+     * @return Deleted mission.
+     * @throws IllegalArgumentException If the mission does not exist.
+     * @throws NullPointerException If the ID is null.
+     */
+    public Mission deleteMission(MissionId id) {
+        requireNonNull(id);
+        Mission deleted = missions.find(id).orElseThrow(() ->
+                new IllegalArgumentException("Mission does not exist: " + id));
+        List<Student> updatedStudents = students.asUnmodifiableObservableList().stream().map(student ->
+                new Student(student.getName(), student.getPhone(), student.getEmail(), student.getTags(),
+                        student.getStudioGroup(), student.getMissionSubmissions().withoutSubmission(id),
+                        student.getStudioRecords())).toList();
+        List<Mission> remaining = missions.getMissions().stream()
+                .filter(mission -> !mission.getId().equals(id)).toList();
+        students.setStudents(updatedStudents);
+        missions.restore(remaining, missions.getNextMissionNumber());
+        return deleted;
+    }
+
+    /**
      * Finds a configured mission by its stable ID.
      *
      * @param id Mission identifier.

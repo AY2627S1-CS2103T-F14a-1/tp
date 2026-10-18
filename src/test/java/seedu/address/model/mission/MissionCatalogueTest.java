@@ -32,7 +32,7 @@ public class MissionCatalogueTest {
         assertThrows(NullPointerException.class, () -> new Mission(null, "Runes", DEADLINE));
         assertThrows(NullPointerException.class, () -> new Mission(id, null, DEADLINE));
         assertThrows(NullPointerException.class, () -> new Mission(id, "Runes", null));
-        assertEquals("Runes", new Mission(id, " Runes ", DEADLINE).getDescription());
+        assertEquals("Runes", new Mission(id, " Runes ", DEADLINE).getName());
     }
 
     @Test

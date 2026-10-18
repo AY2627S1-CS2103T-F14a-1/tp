@@ -6,35 +6,38 @@ import static seedu.address.commons.util.AppUtil.checkArgument;
 import java.time.LocalDate;
 import java.util.Objects;
 
+import seedu.address.commons.util.ToStringBuilder;
+
 /**
  * Represents an assignment shared by the students in the address book.
  */
 public final class Mission {
 
-    public static final String MISSING_DESCRIPTION =
-            "Mission description cannot be blank.";
+    public static final String MISSING_NAME =
+            "Mission name cannot be blank.";
 
     private final MissionId id;
-    private final String description;
+    private final String name;
     private final LocalDate deadline;
 
     /**
      * Creates a mission.
      *
      * @param missionId Unique mission identifier.
-     * @param description Nonblank mission description.
+     * @param name Non-blank mission name.
      * @param deadline Date through which submissions are considered on time.
      * @throws NullPointerException If any argument is null.
-     * @throws IllegalArgumentException If the description is blank.
+     * @throws IllegalArgumentException If the name is blank.
      */
-    public Mission(MissionId missionId, String description, LocalDate deadline) {
+    public Mission(MissionId missionId, String name, LocalDate deadline) {
         requireNonNull(missionId);
-        requireNonNull(description);
+        requireNonNull(name);
         requireNonNull(deadline);
-        checkArgument(!description.isBlank(), MISSING_DESCRIPTION);
+        String normalizedName = normalizeName(name);
+        checkArgument(!normalizedName.isBlank(), MISSING_NAME);
 
         this.id = missionId;
-        this.description = description.strip();
+        this.name = normalizedName;
         this.deadline = deadline;
     }
 
@@ -52,8 +55,8 @@ public final class Mission {
      *
      * @return Mission description.
      */
-    public String getDescription() {
-        return description;
+    public String getName() {
+        return name;
     }
 
     /**
@@ -77,6 +80,29 @@ public final class Mission {
         return date.isAfter(deadline);
     }
 
+    /**
+     * Compares names ignoring case and runs of Unicode whitespace without changing display text.
+     * Punctuation and word boundaries remain significant.
+     *
+     * @param otherName Name to compare with this mission.
+     * @return True if both names identify the same assignment.
+     * @throws NullPointerException If the other name is null.
+     */
+    public boolean hasSameName(String otherName) {
+        requireNonNull(otherName);
+        return normalizeName(name).equalsIgnoreCase(normalizeName(otherName));
+    }
+
+    /**
+     * Collapses whitespace for stored names and duplicate comparison.
+     *
+     * @param value Name whose whitespace should be normalized.
+     * @return Name with Unicode whitespace collapsed and surrounding spaces removed.
+     */
+    private static String normalizeName(String value) {
+        return value.replaceAll("(?U)\\s+", " ").strip();
+    }
+
     @Override
     public boolean equals(Object other) {
         if (other == this) {
@@ -85,12 +111,20 @@ public final class Mission {
 
         return other instanceof Mission otherMission
                 && id.equals(otherMission.id)
-                && description.equals(otherMission.description)
+                && name.equals(otherMission.name)
                 && deadline.equals(otherMission.deadline);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, description, deadline);
+        return Objects.hash(id, name, deadline);
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .add("name", name)
+                .add("deadline", deadline)
+                .toString();
     }
 }

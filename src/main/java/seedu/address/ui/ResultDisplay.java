@@ -86,7 +86,7 @@ public class ResultDisplay extends UiPart<Region> {
         int row = 1;
         for (Mission mission : missions) {
             boolean isSubmitted = student.getMissionSubmissions().hasSubmission(mission.getId());
-            addMissionCell(mission.getId() + " · " + mission.getDescription() + "\nDue: " + mission.getDeadline(),
+            addMissionCell(mission.getId() + " · " + mission.getName() + "\nDue: " + mission.getDeadline(),
                     0, row, "mission-description");
             addMissionCell(isSubmitted ? "Submitted" : "Not submitted", 1, row,
                     isSubmitted ? "mission-submitted" : "mission-not-submitted");
