@@ -255,7 +255,7 @@ identifies `M03`. Numeric-only values such as `m/3` are rejected. Use the stable
 not a student index or a position in the displayed list.
 
 Deletion removes the mission and its submission records from **every student**, including
-students hidden by the current filter. Student details, attendance, and other missions are
+students hidden by the current filter. Student details, student records, and other missions are
 preserved. The current student filter stays active. The result area shows deletion feedback;
 run `view INDEX` to see the updated profile. Deletion is automatically saved and survives restart.
 Deleted IDs are not reused. Unknown or invalid IDs leave data unchanged.
@@ -270,7 +270,7 @@ Format: `markmission INDEX m/MISSION_ID`
 * Use the lowercase `m/` prefix exactly once. Mission IDs are case-insensitive: `m/m01` and `m/M01` both identify `M01`. IDs are displayed and saved in uppercase.
 * Each mission ID identifies one configured assignment.
 * Repeated marking reports that the submission is already recorded and changes nothing.
-* Other students, other submissions, attendance, and the current student filter are preserved.
+* Other students, other submissions, student records, and the current student filter are preserved.
 * Records are maintained manually. Not submitted means no submission is recorded in AvengerHub.
 
 Example: `markmission 1 m/M01`, followed by `view 1`, displays M01 as Submitted.
