@@ -89,7 +89,7 @@ public class AddressBook implements ReadOnlyAddressBook {
         List<Student> updatedStudents = students.asUnmodifiableObservableList().stream().map(student ->
                 new Student(student.getName(), student.getPhone(), student.getEmail(), student.getTags(),
                         student.getStudioGroup(), student.getMissionSubmissions().withoutSubmission(id),
-                        student.getStudioRecords())).toList();
+                        student.getRegisteredStudioRecords())).toList();
         List<Mission> remaining = missions.getMissions().stream()
                 .filter(mission -> !mission.getId().equals(id)).toList();
         students.setStudents(updatedStudents);

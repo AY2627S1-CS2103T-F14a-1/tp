@@ -10,9 +10,9 @@ import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.Messages;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
+import seedu.address.model.student.RegisteredStudioRecords;
 import seedu.address.model.student.Student;
 import seedu.address.model.student.StudioRecord;
-import seedu.address.model.student.StudioRecords;
 
 /**
  * Records a week's tutorial studio for a student identified by a displayed index.
@@ -25,8 +25,8 @@ public class AddStudioRecordCommand extends Command {
             + ": Records a week's studio record for the selected student.\n"
             + "Parameters: INDEX w/WEEK ef/EFFORT\n"
             + "INDEX must be a positive integer identifying a displayed student.\n"
-            + "WEEK must be between " + StudioRecords.MIN_WEEK
-            + " and " + StudioRecords.MAX_WEEK + " inclusive.\n"
+            + "WEEK must be between " + RegisteredStudioRecords.MIN_WEEK
+            + " and " + RegisteredStudioRecords.MAX_WEEK + " inclusive.\n"
             + "Example: " + COMMAND_WORD + " 1 w/3 ef/30";
 
     public static final String MESSAGE_SUCCESS =
@@ -50,7 +50,7 @@ public class AddStudioRecordCommand extends Command {
         requireNonNull(targetIndex);
         requireNonNull(studioRecord);
 
-        checkArgument(StudioRecords.isValidWeek(week), StudioRecords.MESSAGE_CONSTRAINTS);
+        checkArgument(RegisteredStudioRecords.isValidWeek(week), RegisteredStudioRecords.MESSAGE_CONSTRAINTS);
 
         this.targetIndex = targetIndex;
         this.week = week;
@@ -74,25 +74,25 @@ public class AddStudioRecordCommand extends Command {
         }
 
         Student studentToUpdate = lastShownList.get(targetIndex.getZeroBased());
-        StudioRecords studioRecords = studentToUpdate.getStudioRecords();
+        RegisteredStudioRecords registeredStudioRecords = studentToUpdate.getRegisteredStudioRecords();
 
-        if (studioRecords.hasStudioRecord(week)) {
+        if (registeredStudioRecords.hasStudioRecord(week)) {
             return new CommandResult(String.format(MESSAGE_ALREADY_RECORDED, studentToUpdate.getName(), week));
         }
 
         Student updatedStudent = createUpdatedStudent(
-                studentToUpdate, studioRecords.withStudioRecord(week, studioRecord));
+                studentToUpdate, registeredStudioRecords.withStudioRecord(week, studioRecord));
         model.setStudent(studentToUpdate, updatedStudent);
         return new CommandResult(String.format(MESSAGE_SUCCESS, studentToUpdate.getName(), week));
     }
 
-    private Student createUpdatedStudent(Student student, StudioRecords studioRecords) {
+    private Student createUpdatedStudent(Student student, RegisteredStudioRecords registeredStudioRecords) {
         assert student != null;
-        assert studioRecords != null;
+        assert registeredStudioRecords != null;
 
         return new Student(student.getName(), student.getPhone(), student.getEmail(),
                 student.getTags(), student.getStudioGroup(), student.getMissionSubmissions(),
-                studioRecords);
+                registeredStudioRecords);
     }
 
     @Override

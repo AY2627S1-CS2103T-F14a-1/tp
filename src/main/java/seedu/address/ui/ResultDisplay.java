@@ -13,9 +13,9 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 import seedu.address.logic.commands.CommandResult;
 import seedu.address.model.mission.Mission;
+import seedu.address.model.student.RegisteredStudioRecords;
 import seedu.address.model.student.Student;
 import seedu.address.model.student.StudioRecord;
-import seedu.address.model.student.StudioRecords;
 
 /**
  * A UI component that displays the result of a command execution.
@@ -34,7 +34,7 @@ public class ResultDisplay extends UiPart<Region> {
     @FXML
     private GridPane missionSubmissions;
     @FXML
-    private GridPane studioRecords;
+    private GridPane registeredStudioRecords;
 
     public ResultDisplay() {
         super(FXML);
@@ -119,14 +119,14 @@ public class ResultDisplay extends UiPart<Region> {
     private void populateStudioRecords(Student student) {
         assert student != null;
 
-        studioRecords.getChildren().clear();
+        registeredStudioRecords.getChildren().clear();
         addStudioRecordCell("Week", 0, 0, "mission-header");
         addStudioRecordCell("Attendance", 1, 0, "mission-header");
         addStudioRecordCell("Effort", 2, 0, "mission-header");
-        Map<Integer, StudioRecord> weeklyStudioRecords = student.getStudioRecords().getRecordsByWeek();
-        for (int week = StudioRecords.MIN_WEEK; week <= StudioRecords.MAX_WEEK; week++) {
-            int row = week - StudioRecords.MIN_WEEK + 1;
-            boolean hasAttended = student.getStudioRecords().hasStudioRecord(week);
+        Map<Integer, StudioRecord> weeklyStudioRecords = student.getRegisteredStudioRecords().getRecordsByWeek();
+        for (int week = RegisteredStudioRecords.MIN_WEEK; week <= RegisteredStudioRecords.MAX_WEEK; week++) {
+            int row = week - RegisteredStudioRecords.MIN_WEEK + 1;
+            boolean hasAttended = student.getRegisteredStudioRecords().hasStudioRecord(week);
             int effort = weeklyStudioRecords.containsKey(week)
                     ? weeklyStudioRecords.get(week).getEffortScore() : 0;
             addStudioRecordCell(String.valueOf(week), 0, row, "mission-week");
@@ -149,7 +149,7 @@ public class ResultDisplay extends UiPart<Region> {
         cell.getStyleClass().addAll("mission-cell", styleClass);
         cell.setWrapText(true);
         cell.setMaxWidth(Double.MAX_VALUE);
-        studioRecords.add(cell, column, row);
+        registeredStudioRecords.add(cell, column, row);
     }
 
     /**

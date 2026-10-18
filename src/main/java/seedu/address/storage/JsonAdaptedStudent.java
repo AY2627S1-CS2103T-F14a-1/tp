@@ -17,10 +17,10 @@ import seedu.address.model.student.Email;
 import seedu.address.model.student.MissionSubmissions;
 import seedu.address.model.student.Name;
 import seedu.address.model.student.Phone;
+import seedu.address.model.student.RegisteredStudioRecords;
 import seedu.address.model.student.Student;
 import seedu.address.model.student.StudioGroup;
 import seedu.address.model.student.StudioRecord;
-import seedu.address.model.student.StudioRecords;
 import seedu.address.model.tag.Tag;
 
 /**
@@ -36,7 +36,7 @@ class JsonAdaptedStudent {
     private final List<JsonAdaptedTag> tags = new ArrayList<>();
     private final String studioGroup;
     private final List<Object> missionSubmissions = new ArrayList<>();
-    private final List<Object> studioRecords = new ArrayList<>();
+    private final List<Object> registeredStudioRecords = new ArrayList<>();
 
     /**
      * Constructs a {@code JsonAdaptedStudent} with the given student details.
@@ -57,7 +57,7 @@ class JsonAdaptedStudent {
             @JsonProperty("email") String email,
             @JsonProperty("tags") List<JsonAdaptedTag> tags, @JsonProperty("studio group") String studioGroup,
             @JsonProperty("missionSubmissions") List<?> missionSubmissions,
-            @JsonProperty("studioRecords") List<?> studioRecords) {
+            @JsonProperty("registeredStudioRecords") List<?> studioRecords) {
         this.name = name;
         this.phone = phone;
         this.email = email;
@@ -69,7 +69,7 @@ class JsonAdaptedStudent {
             this.missionSubmissions.addAll(missionSubmissions);
         }
         if (studioRecords != null) {
-            this.studioRecords.addAll(studioRecords);
+            this.registeredStudioRecords.addAll(studioRecords);
         }
     }
 
@@ -92,7 +92,7 @@ class JsonAdaptedStudent {
                 .sorted(java.util.Comparator.comparingLong(MissionId::getNumber))
                 .map(MissionId::toString)
                 .collect(Collectors.toList()));
-        studioRecords.addAll(source.getStudioRecords().getRecordsByWeek().entrySet()
+        registeredStudioRecords.addAll(source.getRegisteredStudioRecords().getRecordsByWeek().entrySet()
                 .stream()
                 .sorted(Map.Entry.comparingByKey())
                 .map(entry -> List.of(entry.getKey(), entry.getValue().getEffortScore()))
@@ -149,9 +149,9 @@ class JsonAdaptedStudent {
 
         final Set<Tag> modelTags = new HashSet<>(studentTags);
         final MissionSubmissions modelMissionSubmissions = toModelMissionSubmissions();
-        final StudioRecords modelStudioRecords = toModelStudioRecords();
+        final RegisteredStudioRecords modelRegisteredStudioRecords = toModelStudioRecords();
         return new Student(modelName, modelPhone, modelEmail, modelTags, modelStudioGroup,
-                modelMissionSubmissions, modelStudioRecords);
+                modelMissionSubmissions, modelRegisteredStudioRecords);
     }
 
     /**
@@ -183,16 +183,16 @@ class JsonAdaptedStudent {
      * @return Studio records containing the unique saved weeks and their effort scores.
      * @throws IllegalValueException If a saved record is malformed or contains an invalid value.
      */
-    public StudioRecords toModelStudioRecords() throws IllegalValueException {
+    public RegisteredStudioRecords toModelStudioRecords() throws IllegalValueException {
         Map<Integer, StudioRecord> recordedWeeks = new HashMap<>();
-        for (Object value : studioRecords) {
+        for (Object value : registeredStudioRecords) {
             if (!(value instanceof List<?> record) || record.size() != 2) {
-                throw new IllegalValueException(StudioRecords.MESSAGE_CONSTRAINTS);
+                throw new IllegalValueException(RegisteredStudioRecords.MESSAGE_CONSTRAINTS);
             }
 
             Object savedWeek = record.get(0);
-            if (!(savedWeek instanceof Integer week) || !StudioRecords.isValidWeek(week)) {
-                throw new IllegalValueException(StudioRecords.MESSAGE_CONSTRAINTS);
+            if (!(savedWeek instanceof Integer week) || !RegisteredStudioRecords.isValidWeek(week)) {
+                throw new IllegalValueException(RegisteredStudioRecords.MESSAGE_CONSTRAINTS);
             }
 
             Object savedEffortScore = record.get(1);
@@ -203,6 +203,6 @@ class JsonAdaptedStudent {
             recordedWeeks.put(week, new StudioRecord(effortScore));
         }
 
-        return new StudioRecords(recordedWeeks);
+        return new RegisteredStudioRecords(recordedWeeks);
     }
 }

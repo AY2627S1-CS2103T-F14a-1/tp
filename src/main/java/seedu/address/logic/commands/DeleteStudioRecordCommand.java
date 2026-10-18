@@ -7,8 +7,8 @@ import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
+import seedu.address.model.student.RegisteredStudioRecords;
 import seedu.address.model.student.Student;
-import seedu.address.model.student.StudioRecords;
 
 /**
  * Removes a week's studio record for a student identified by a displayed index.
@@ -21,8 +21,8 @@ public class DeleteStudioRecordCommand extends Command {
             + ": Removes a week's studio record for the selected student.\n"
             + "Parameters: INDEX w/WEEK\n"
             + "INDEX must be a positive integer identifying a displayed student.\n"
-            + "WEEK must be between " + StudioRecords.MIN_WEEK
-            + " and " + StudioRecords.MAX_WEEK + " inclusive.\n"
+            + "WEEK must be between " + RegisteredStudioRecords.MIN_WEEK
+            + " and " + RegisteredStudioRecords.MAX_WEEK + " inclusive.\n"
             + "Example: " + COMMAND_WORD + " 1 w/3";
 
     public static final String MESSAGE_SUCCESS =
@@ -42,7 +42,7 @@ public class DeleteStudioRecordCommand extends Command {
      */
     public DeleteStudioRecordCommand(Index targetIndex, int week) {
         this.targetIndex = requireNonNull(targetIndex);
-        checkArgument(StudioRecords.isValidWeek(week), StudioRecords.MESSAGE_CONSTRAINTS);
+        checkArgument(RegisteredStudioRecords.isValidWeek(week), RegisteredStudioRecords.MESSAGE_CONSTRAINTS);
         this.week = week;
     }
 
@@ -57,24 +57,25 @@ public class DeleteStudioRecordCommand extends Command {
     public CommandResult execute(Model model) throws CommandException {
         requireNonNull(model);
         Student studentToUpdate = getStudentAtDisplayedIndex(model, targetIndex);
-        StudioRecords studioRecords = studentToUpdate.getStudioRecords();
+        RegisteredStudioRecords registeredStudioRecords = studentToUpdate.getRegisteredStudioRecords();
 
-        if (!studioRecords.hasStudioRecord(week)) {
+        if (!registeredStudioRecords.hasStudioRecord(week)) {
             return new CommandResult(String.format(MESSAGE_ALREADY_NOT_RECORDED, studentToUpdate.getName(), week));
         }
 
-        Student updatedStudent = createUpdatedStudent(studentToUpdate, studioRecords.withoutStudioRecord(week));
+        Student updatedStudent = createUpdatedStudent(
+                studentToUpdate, registeredStudioRecords.withoutStudioRecord(week));
         model.setStudent(studentToUpdate, updatedStudent);
         return new CommandResult(String.format(MESSAGE_SUCCESS, studentToUpdate.getName(), week));
     }
 
-    private Student createUpdatedStudent(Student student, StudioRecords studioRecords) {
+    private Student createUpdatedStudent(Student student, RegisteredStudioRecords registeredStudioRecords) {
         assert student != null;
-        assert studioRecords != null;
+        assert registeredStudioRecords != null;
 
         return new Student(student.getName(), student.getPhone(), student.getEmail(),
                 student.getTags(), student.getStudioGroup(), student.getMissionSubmissions(),
-                studioRecords);
+                registeredStudioRecords);
     }
 
     @Override
