@@ -16,21 +16,21 @@ import seedu.address.model.mission.MissionId;
 class JsonAdaptedMission {
 
     private final String id;
-    private final String description;
+    private final String name;
     private final String deadline;
 
     /**
      * Creates a saved mission for validation during model conversion.
      *
      * @param id Saved identifier.
-     * @param description Saved description.
+     * @param name Saved name.
      * @param deadline Saved ISO calendar date.
      */
     @JsonCreator
     public JsonAdaptedMission(@JsonProperty("id") String id,
-            @JsonProperty("description") String description, @JsonProperty("deadline") String deadline) {
+            @JsonProperty("name") String name, @JsonProperty("deadline") String deadline) {
         this.id = id;
-        this.description = description;
+        this.name = name;
         this.deadline = deadline;
     }
 
@@ -41,7 +41,7 @@ class JsonAdaptedMission {
      */
     public JsonAdaptedMission(Mission mission) {
         id = mission.getId().toString();
-        description = mission.getDescription();
+        name = mission.getName();
         deadline = mission.getDeadline().toString();
     }
 
@@ -52,11 +52,11 @@ class JsonAdaptedMission {
      * @throws IllegalValueException If a field is missing or invalid.
      */
     public Mission toModelType() throws IllegalValueException {
-        if (id == null || description == null || deadline == null) {
+        if (id == null || name == null || deadline == null) {
             throw new IllegalValueException("Mission ID, description and deadline are required.");
         }
         try {
-            return new Mission(new MissionId(id), description, LocalDate.parse(deadline));
+            return new Mission(new MissionId(id), name, LocalDate.parse(deadline));
         } catch (DateTimeParseException e) {
             throw new IllegalValueException("Invalid mission deadline: " + deadline);
         } catch (IllegalArgumentException e) {
