@@ -10,7 +10,6 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import seedu.address.model.mission.Mission;
 import seedu.address.model.mission.MissionId;
-import seedu.address.model.student.Attendance;
 import seedu.address.model.student.MissionSubmissions;
 import seedu.address.model.student.Student;
 
@@ -208,30 +207,6 @@ public class StudentDetailsPanel extends UiPart<Region> {
                 1,
                 0,
                 true);
-
-        for (int week = Attendance.MIN_WEEK;
-             week <= Attendance.MAX_WEEK;
-             week++) {
-
-            int row = week - Attendance.MIN_WEEK + 1;
-
-            boolean hasAttended =
-                    student.getAttendance().hasAttendance(week);
-
-            addGridLabel(
-                    attendanceGrid,
-                    String.valueOf(week),
-                    0,
-                    row,
-                    false);
-
-            addGridLabel(
-                    attendanceGrid,
-                    hasAttended ? "Present" : "Absent",
-                    1,
-                    row,
-                    false);
-        }
     }
 
     /**

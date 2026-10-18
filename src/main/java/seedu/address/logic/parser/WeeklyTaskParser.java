@@ -5,45 +5,58 @@ import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_WEEK;
 
 import java.util.Locale;
+import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.parser.exceptions.ParseException;
-import seedu.address.model.student.Attendance;
+import seedu.address.model.student.RegisteredStudioRecords;
 
 /**
- * Validates the shared student index and week arguments for mission commands.
+ * Validates the shared student index and week arguments for studio commands.
  */
 public class WeeklyTaskParser {
 
     public static final String MESSAGE_MISSING_INDEX = "A student index must be provided.";
-    public static final String MESSAGE_MISSING_WEEK = "Specify a tutorial week using w/WEEK.";
-    public static final String MESSAGE_DUPLICATE_WEEK = "Tutorial week must be specified only once.";
+    public static final String MESSAGE_MISSING_WEEK = "Specify a studio week using " + PREFIX_WEEK + "WEEK.";
+    public static final String MESSAGE_DUPLICATE_WEEK = "Studio week must be specified only once.";
     public static final String MESSAGE_INVALID_STUDENT_INDEX =
             "Student index must be a positive integer without a sign, decimal point, or leading zero.";
-    public static final String MESSAGE_INVALID_TUTORIAL_WEEK = Attendance.MESSAGE_CONSTRAINTS
+    public static final String MESSAGE_INVALID_STUDIO_WEEK = RegisteredStudioRecords.MESSAGE_CONSTRAINTS
             + " Enter an integer without a sign, decimal point, or leading zero.";
     private static final Pattern POSITIVE_INTEGER = Pattern.compile("[1-9][0-9]*");
 
+    private final ArgumentMultimap argumentMultimap;
     private final String usage;
     private final Index index;
     private final int week;
 
     /**
-     * Parses arguments using the calling command's usage in format errors.
+     * Parses the common student index and week arguments, with any additional prefixes.
      *
      * @param args Arguments following the command word.
      * @param usage Usage instructions for the calling command.
-     * @throws NullPointerException If either argument is null.
+     * @param additionalPrefixes Prefixes to recognize in addition to the week prefix.
+     * @throws NullPointerException If an argument or prefix is null.
      * @throws ParseException If required information is missing or invalid.
      */
-    public WeeklyTaskParser(String args, String usage) throws ParseException {
+    public WeeklyTaskParser(String args, String usage, Prefix... additionalPrefixes) throws ParseException {
         requireNonNull(args);
         this.usage = requireNonNull(usage);
-        ArgumentMultimap arguments = ArgumentTokenizer.tokenize(normalizeArguments(args), PREFIX_WEEK);
+        requireNonNull(additionalPrefixes);
+        for (Prefix prefix : additionalPrefixes) {
+            requireNonNull(prefix);
+        }
+
+        Prefix[] prefixes = new Prefix[additionalPrefixes.length + 1];
+        prefixes[0] = PREFIX_WEEK;
+        System.arraycopy(additionalPrefixes, 0, prefixes, 1, additionalPrefixes.length);
+        ArgumentMultimap arguments = ArgumentTokenizer.tokenize(normalizeArguments(args),
+                prefixes);
+        this.argumentMultimap = arguments;
         index = extractIndex(arguments);
-        week = parseTutorialWeek(extractWeek(arguments));
+        week = parseStudioWeek(extractWeek(arguments));
     }
 
     /**
@@ -56,12 +69,26 @@ public class WeeklyTaskParser {
     }
 
     /**
-     * Returns the validated tutorial week.
+     * Returns the validated studio week.
      *
-     * @return The tutorial week.
+     * @return The studio week.
      */
     public int getWeek() {
         return week;
+    }
+
+    /**
+     * Returns the sole value associated with the given prefix.
+     *
+     * @param prefix Prefix whose value should be returned.
+     * @return An {@code Optional} containing the prefix value, if any.
+     * @throws NullPointerException If the prefix is null.
+     * @throws ParseException If the prefix occurs more than once.
+     */
+    public Optional<String> getPrefixValue(Prefix prefix) throws ParseException {
+        requireNonNull(prefix);
+        argumentMultimap.verifyNoDuplicatePrefixesFor(prefix);
+        return argumentMultimap.getValue(prefix);
     }
 
     /**
@@ -115,29 +142,29 @@ public class WeeklyTaskParser {
     }
 
     /**
-     * Parses a tutorial week within the model's valid range.
+     * Parses a studio week within the model's valid range.
      *
-     * @param week Tutorial week text.
-     * @return The validated tutorial week.
+     * @param week Studio week text.
+     * @return The validated studio week.
      * @throws NullPointerException If the text is null.
      * @throws ParseException If the week syntax or numeric value is invalid.
      */
-    public static int parseTutorialWeek(String week) throws ParseException {
+    public static int parseStudioWeek(String week) throws ParseException {
         requireNonNull(week);
 
         String trimmedWeek = week.trim();
         if (!POSITIVE_INTEGER.matcher(trimmedWeek).matches()) {
-            throw new ParseException(MESSAGE_INVALID_TUTORIAL_WEEK);
+            throw new ParseException(MESSAGE_INVALID_STUDIO_WEEK);
         }
 
         try {
             int parsedWeek = Integer.parseInt(trimmedWeek);
-            if (!Attendance.isValidWeek(parsedWeek)) {
-                throw new ParseException(MESSAGE_INVALID_TUTORIAL_WEEK);
+            if (!RegisteredStudioRecords.isValidWeek(parsedWeek)) {
+                throw new ParseException(MESSAGE_INVALID_STUDIO_WEEK);
             }
             return parsedWeek;
         } catch (NumberFormatException e) {
-            throw new ParseException(MESSAGE_INVALID_TUTORIAL_WEEK);
+            throw new ParseException(MESSAGE_INVALID_STUDIO_WEEK);
         }
     }
 
@@ -153,7 +180,7 @@ public class WeeklyTaskParser {
     }
 
     /**
-     * Extracts the single required tutorial week value.
+     * Extracts the single required studio week value.
      *
      * @param argMultimap Tokenized command arguments.
      * @return The non-empty week text.
