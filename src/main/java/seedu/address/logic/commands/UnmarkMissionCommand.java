@@ -2,6 +2,9 @@ package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.logging.Logger;
+
+import seedu.address.commons.core.LogsCenter;
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.commands.exceptions.CommandException;
@@ -30,6 +33,8 @@ public class UnmarkMissionCommand extends Command {
     public static final String MESSAGE_NOT_RECORDED =
             "%1$s’s mission submission was already not recorded for mission %2$s. No changes made.";
 
+    private static final Logger logger = LogsCenter.getLogger(UnmarkMissionCommand.class);
+
     private final Index targetIndex;
     private final MissionId missionId;
 
@@ -57,6 +62,7 @@ public class UnmarkMissionCommand extends Command {
         requireNonNull(model);
 
         if (model.findMission(missionId).isEmpty()) {
+            logger.fine("UnmarkMissionCommand rejected: mission " + missionId + " does not exist.");
             throw new CommandException("Mission does not exist: " + missionId);
         }
 
@@ -64,11 +70,15 @@ public class UnmarkMissionCommand extends Command {
         MissionSubmissions submissions = studentToUpdate.getMissionSubmissions();
 
         if (!submissions.hasSubmission(missionId)) {
+            logger.fine("UnmarkMissionCommand made no changes for mission " + missionId
+                    + " at displayed student index " + targetIndex.getOneBased() + ".");
             return new CommandResult(String.format(MESSAGE_NOT_RECORDED, studentToUpdate.getName(), missionId));
         }
 
         Student updatedStudent = createUpdatedStudent(studentToUpdate, submissions.withoutSubmission(missionId));
         model.setStudent(studentToUpdate, updatedStudent);
+        logger.info("Removed submission for mission " + missionId
+                + " at displayed student index " + targetIndex.getOneBased() + " in memory.");
         return new CommandResult(String.format(MESSAGE_SUCCESS, studentToUpdate.getName(), missionId));
     }
 
