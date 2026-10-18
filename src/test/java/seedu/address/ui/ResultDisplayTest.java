@@ -270,8 +270,8 @@ public class ResultDisplayTest {
 
             assertEquals(1, table.getChildren().size());
             assertEquals(
-                    "No missions configured.",
-                    ((Label) table.getChildren().getFirst()).getText());
+                    "No missions configured.", (
+                            (Label) table.getChildren().getFirst()).getText());
         });
     }
 
