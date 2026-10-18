@@ -14,7 +14,7 @@ organized in one place.
 
 - Add, edit, and delete student contact records.
 - Find students by name and view all saved records.
-- Keep track of administrative tutor work, such as mission submissions and attendance.
+- Keep track of administrative tutor work, such as mission submissions and studio records.
 - Save data automatically between sessions.
 
 ## Documentation

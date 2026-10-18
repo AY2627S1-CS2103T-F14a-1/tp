@@ -2,7 +2,6 @@ package seedu.address.logic.commands;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.ToStringBuilder;
-import seedu.address.logic.Messages;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 import seedu.address.model.student.Student;
@@ -19,6 +18,9 @@ public class ViewCommand extends Command {
             + "index number used in the displayed student list.\n"
             + "Parameters: INDEX (must be a positive integer)\n"
             + "Example: " + COMMAND_WORD + " 1";
+
+    public static final String MESSAGE_VIEW_STUDENT_SUCCESS =
+            "Showing profile of %1$s";
 
     private final Index targetIndex;
 
@@ -37,7 +39,11 @@ public class ViewCommand extends Command {
                 getStudentAtDisplayedIndex(model, targetIndex);
 
         return new CommandResult(
-                Messages.formatStudentDetails(studentToView), studentToView, model.getMissionList());
+        String.format(
+                MESSAGE_VIEW_STUDENT_SUCCESS,
+                studentToView.getName().fullName),
+                studentToView, model.getMissionList()
+        );
     }
 
     @Override

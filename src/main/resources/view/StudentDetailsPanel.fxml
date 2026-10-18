@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.geometry.Insets?>
+
+<?import javafx.scene.layout.StackPane?>
+<StackPane xmlns="http://javafx.com/javafx/17"
+           xmlns:fx="http://javafx.com/fxml/1"
+           maxWidth="Infinity"
+           maxHeight="Infinity"
+           styleClass="student-details-panel">
+
+    <VBox fx:id="emptyMessage"
+          alignment="CENTER"
+          fillWidth="true"
+          maxWidth="Infinity"
+          maxHeight="Infinity"
+          spacing="5"
+          VBox.vgrow="ALWAYS">
+
+        <Label text="No student selected."
+               textAlignment="CENTER"
+               styleClass="empty-details-message"/>
+
+        <Label text="Type view INDEX to open a profile."
+               textAlignment="CENTER"
+               styleClass="empty-details-message"/>
+    </VBox>
+
+    <ScrollPane fx:id="studentDetailsScrollPane"
+                visible="false"
+                managed="false"
+                fitToWidth="true"
+                fitToHeight="true"
+                hbarPolicy="NEVER"
+                vbarPolicy="AS_NEEDED"
+                maxWidth="Infinity"
+                maxHeight="Infinity"
+                styleClass="student-details-scroll-pane">
+        <content>
+            <VBox fx:id="studentDetails"
+                  visible="false"
+                  managed="false"
+                  alignment="TOP_LEFT"
+                  fillWidth="true"
+                  maxWidth="Infinity"
+                  spacing="12"
+                  styleClass="student-profile">
+
+                <Label fx:id="studentName"
+                       styleClass="student-details-name"/>
+
+                <Label fx:id="studioGroup"
+                       styleClass="field-value"/>
+
+                <Label fx:id="phone"
+                       styleClass="field-value"/>
+
+                <Label fx:id="email"
+                       styleClass="field-value"
+                       wrapText="true"/>
+
+                <Label fx:id="address"
+                       styleClass="field-value"
+                       wrapText="true"/>
+
+                <Label fx:id="tags"
+                       styleClass="field-value"
+                       wrapText="true"/>
+
+                <Separator/>
+
+                <Label text="Attendance"
+                       styleClass="section-heading"/>
+
+                <GridPane fx:id="attendanceGrid"
+                          hgap="12"
+                          vgap="4"/>
+
+                <Label text="Mission submissions"
+                       styleClass="section-heading"/>
+
+                <GridPane fx:id="missionSubmissionsGrid"
+                          hgap="12"
+                          vgap="4"
+                          styleClass="details-grid">
+                    <padding>
+                        <Insets top="4" right="0" bottom="0" left="0"/>
+                    </padding>
+                </GridPane>
+            </VBox>
+        </content>
+    </ScrollPane>
+</StackPane>

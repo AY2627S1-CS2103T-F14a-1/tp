@@ -7,75 +7,75 @@ import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
-import seedu.address.model.student.Attendance;
+import seedu.address.model.student.RegisteredStudioRecords;
 import seedu.address.model.student.Student;
 
 /**
- * Records a week's tutorial attendance for a student identified by a displayed index.
+ * Removes a week's studio record for a student identified by a displayed index.
  */
-public class AddAttendanceCommand extends Command {
+public class DeleteStudioRecordCommand extends Command {
 
-    public static final String COMMAND_WORD = "addattendance";
+    public static final String COMMAND_WORD = "delstudiorecord";
 
     public static final String MESSAGE_USAGE = COMMAND_WORD
-            + ": Records a week's attendance for the selected student.\n"
+            + ": Removes a week's studio record for the selected student.\n"
             + "Parameters: INDEX w/WEEK\n"
             + "INDEX must be a positive integer identifying a displayed student.\n"
-            + "WEEK must be between " + Attendance.MIN_WEEK
-            + " and " + Attendance.MAX_WEEK + " inclusive.\n"
+            + "WEEK must be between " + RegisteredStudioRecords.MIN_WEEK
+            + " and " + RegisteredStudioRecords.MAX_WEEK + " inclusive.\n"
             + "Example: " + COMMAND_WORD + " 1 w/3";
 
     public static final String MESSAGE_SUCCESS =
-            "Added %1$s's attendance for tutorial week %2$d.";
+            "Removed %1$s's record for studio week %2$d.";
 
-    public static final String MESSAGE_ALREADY_RECORDED =
-            "%1$s’s attendance has already been recorded for tutorial week %2$d. No changes made.";
+    public static final String MESSAGE_ALREADY_NOT_RECORDED =
+            "%1$s’s studio record was already not marked for studio week %2$d. No changes made.";
 
     private final Index targetIndex;
     private final int week;
 
     /**
-     * Creates a command to record a week's attendance
+     * Creates a command to delete a week's studio record.
      *
      * @param targetIndex Index of the student in the displayed list.
-     * @param week Tutorial week for the submission
+     * @param week Tutorial week for the deletion.
      */
-    public AddAttendanceCommand(Index targetIndex, int week) {
+    public DeleteStudioRecordCommand(Index targetIndex, int week) {
         this.targetIndex = requireNonNull(targetIndex);
-        checkArgument(Attendance.isValidWeek(week), Attendance.MESSAGE_CONSTRAINTS);
+        checkArgument(RegisteredStudioRecords.isValidWeek(week), RegisteredStudioRecords.MESSAGE_CONSTRAINTS);
         this.week = week;
     }
 
     /**
-     * Records attendance without changing the current list filter.
+     * Removes a week's studio record without changing the current list filter.
      *
      * @param model Model containing the students.
-     * @return Feedback describing the addition or an existing attendance.
+     * @return Feedback describing the removal or an already non-existent studio record.
      * @throws CommandException If the index does not identify a displayed student.
      */
     @Override
     public CommandResult execute(Model model) throws CommandException {
         requireNonNull(model);
-
         Student studentToUpdate = getStudentAtDisplayedIndex(model, targetIndex);
-        Attendance attendance = studentToUpdate.getAttendance();
+        RegisteredStudioRecords registeredStudioRecords = studentToUpdate.getRegisteredStudioRecords();
 
-        if (attendance.hasAttendance(week)) {
-            return new CommandResult(String.format(MESSAGE_ALREADY_RECORDED, studentToUpdate.getName(), week));
+        if (!registeredStudioRecords.hasStudioRecord(week)) {
+            return new CommandResult(String.format(MESSAGE_ALREADY_NOT_RECORDED, studentToUpdate.getName(), week));
         }
 
-        Student updatedStudent = createUpdatedStudent(studentToUpdate, attendance.withAttendedWeek(week));
+        Student updatedStudent = createUpdatedStudent(
+                studentToUpdate, registeredStudioRecords.withoutStudioRecord(week));
         model.setStudent(studentToUpdate, updatedStudent);
         return new CommandResult(String.format(MESSAGE_SUCCESS, studentToUpdate.getName(), week));
     }
 
-    private Student createUpdatedStudent(Student student, Attendance attendance) {
+    private Student createUpdatedStudent(Student student, RegisteredStudioRecords registeredStudioRecords) {
         assert student != null;
-        assert attendance != null;
+        assert registeredStudioRecords != null;
 
         return new Student(student.getName(), student.getPhone(), student.getEmail(),
                 student.getTags(), student.getStudioGroup(), student.getMissionSubmissions(),
-                attendance);
+                registeredStudioRecords);
     }
 
     @Override
@@ -85,12 +85,12 @@ public class AddAttendanceCommand extends Command {
         }
 
         // instanceof handles nulls
-        if (!(other instanceof AddAttendanceCommand otherAttendanceCommand)) {
+        if (!(other instanceof DeleteStudioRecordCommand otherDeleteStudioRecordCommand)) {
             return false;
         }
 
-        return targetIndex.equals(otherAttendanceCommand.targetIndex)
-                && week == otherAttendanceCommand.week;
+        return targetIndex.equals(otherDeleteStudioRecordCommand.targetIndex)
+                && week == otherDeleteStudioRecordCommand.week;
     }
 
     @Override
