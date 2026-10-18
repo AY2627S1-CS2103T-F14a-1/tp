@@ -22,4 +22,8 @@
   <Label fx:id="studioGroup"
          maxWidth="50"
          styleClass="student-group"/>
+
+  <Label fx:id="registeredStudioRecords"
+         wrapText="true"
+         styleClass="student-studio-records"/>
 </HBox>
