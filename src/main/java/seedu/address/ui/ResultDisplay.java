@@ -7,7 +7,6 @@ import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 import seedu.address.logic.commands.CommandResult;
@@ -23,7 +22,7 @@ public class ResultDisplay extends UiPart<Region> {
     private static final String FXML = "ResultDisplay.fxml";
 
     @FXML
-    private TextArea resultDisplay;
+    private Label resultDisplay;
 
     @FXML
     private ScrollPane studentDetails;

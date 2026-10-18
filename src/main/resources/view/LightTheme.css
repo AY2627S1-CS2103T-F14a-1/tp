@@ -1,0 +1,172 @@
+.root,
+.scene,
+VBox,
+HBox,
+StackPane,
+BorderPane,
+GridPane,
+SplitPane {
+    -fx-background-color: white;
+}
+
+.label,
+.text,
+.text-field,
+.list-cell {
+    -fx-text-fill: #1d2b3a;
+}
+
+.command-section,
+.command-input,
+.command-result,
+.result-display {
+    -fx-background-color: white;
+    -fx-text-fill: #1d2b3a;
+}
+
+#commandTextField {
+    -fx-background-color: white;
+    -fx-text-fill: #1d2b3a;
+    -fx-prompt-text-fill: #8a9bb0;
+    -fx-border-color: #cbd5df;
+}
+
+#commandTextField:focused {
+    -fx-border-color: #4c91c9;
+}
+
+.command-label {
+    -fx-text-fill: #526579;
+}
+
+.command-prompt {
+    -fx-text-fill: #1769aa;
+}
+
+.command-result {
+    -fx-background-color: #eef1f4;
+    -fx-text-fill: #1d2b3a;
+}
+
+.result-display {
+    -fx-background-color: white;
+    -fx-text-fill: #1d2b3a;
+}
+
+.error {
+    -fx-text-fill: #d06651 !important;
+}
+
+.list-view,
+.list-cell,
+.student-list-container,
+.student-list-panel,
+.student-row {
+    -fx-background-color: white;
+}
+
+.list-cell,
+.list-cell .label,
+.student-name {
+    -fx-text-fill: #1d2b3a;
+}
+
+.student-index,
+.student-group {
+    -fx-text-fill: #728399;
+}
+
+.list-cell:filled:selected,
+.list-cell:filled:selected .student-row {
+    -fx-background-color: #e6f0fa;
+}
+
+.list-cell:filled:hover,
+.list-cell:filled:hover .student-row {
+    -fx-background-color: #f3f7fb;
+}
+
+.student-list-title,
+.student-details-name,
+.field-value,
+.section-heading,
+.grid-value {
+    -fx-text-fill: #1d2b3a;
+}
+
+.student-list-header {
+    -fx-background-color: white;
+    -fx-border-color: #e1e7ed;
+}
+
+.student-row {
+    -fx-border-color: #e4e9ee;
+}
+
+.student-details-container,
+.student-details-panel,
+.student-profile {
+    -fx-background-color: white;
+}
+
+.student-details-scroll-pane,
+.student-details-scroll-pane .viewport {
+    -fx-background-color: white;
+}
+
+.empty-details-message,
+.field-label,
+.grid-header {
+    -fx-text-fill: #728399;
+}
+
+.app-header {
+    -fx-background-color: white;
+}
+
+.app-title {
+    -fx-text-fill: #1d2b3a;
+}
+
+.app-subtitle {
+    -fx-text-fill: #728399;
+}
+
+.tooltip-text {
+    -fx-text-fill: #1d2b3a;
+}
+
+.student-list-panel,
+.student-list-panel .list-view,
+.list-view {
+    -fx-background-color: white;
+}
+
+.list-cell {
+    -fx-background-color: white;
+    -fx-text-fill: #1d2b3a;
+}
+
+.list-cell .label,
+.student-name,
+.student-index,
+.student-group {
+    -fx-text-fill: #1d2b3a;
+}
+
+.student-list-title {
+    -fx-text-fill: #1d2b3a;
+}
+
+.student-details-scroll-pane,
+.student-details-scroll-pane:focused,
+.student-details-scroll-pane > .viewport,
+.student-details-scroll-pane:focused > .viewport {
+    -fx-background-color: white;
+    -fx-background-insets: 0;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-border-insets: 0;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}

@@ -28,7 +28,8 @@ public class ViewCommandTest {
         Student studentToView = model.getFilteredStudentList().get(INDEX_FIRST_STUDENT.getZeroBased());
         ViewCommand command = new ViewCommand(INDEX_FIRST_STUDENT);
 
-        String expectedMessage = Messages.formatStudentDetails(studentToView);
+        String expectedMessage = String.format(ViewCommand.MESSAGE_VIEW_STUDENT_SUCCESS,
+                studentToView.getName());
         assertCommandSuccess(command, model, new CommandResult(expectedMessage, studentToView), model);
     }
 
