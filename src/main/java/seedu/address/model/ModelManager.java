@@ -136,6 +136,11 @@ public class ModelManager implements Model {
     }
 
     @Override
+    public Mission deleteMission(MissionId id) {
+        return addressBook.deleteMission(id);
+    }
+
+    @Override
     public Optional<Mission> findMission(MissionId id) {
         return addressBook.findMission(id);
     }
