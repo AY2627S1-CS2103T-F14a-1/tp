@@ -106,7 +106,7 @@ public final class StudioRecords {
     }
 
     /**
-     * Returns whether the given tutorial week is within the valid range
+     * Returns whether the given studio week is within the valid range.
      *
      * @param week Tutorial week to check.
      * @return True if the week is between {@value #MIN_WEEK} and {@value #MAX_WEEK}, inclusive.

@@ -26,7 +26,7 @@ public final class StudioRecord {
     }
 
     /**
-     * Returns the student's effort score for the tutorial week.
+     * Returns the student's effort score for the studio week.
      *
      * @return The effort score.
      */
