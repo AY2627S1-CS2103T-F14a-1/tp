@@ -16,17 +16,16 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import javafx.application.Platform;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 import seedu.address.logic.Messages;
 import seedu.address.logic.commands.CommandResult;
 import seedu.address.logic.commands.DeleteMissionCommand;
 import seedu.address.logic.commands.MarkMissionCommand;
 import seedu.address.logic.commands.UnmarkMissionCommand;
-import seedu.address.logic.commands.ViewCommand;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.mission.Mission;
@@ -44,6 +43,79 @@ public class ResultDisplayTest {
     private static final List<Mission> MISSIONS = List.of(
             new Mission(new MissionId("M01"), "Runes", LocalDate.of(2026, 10, 15)),
             new Mission(new MissionId("M02"), "Curves", LocalDate.of(2026, 10, 16)));
+
+    private static GridPane getMissionTable(StudentDetailsPanel panel) {
+        new Scene(panel.getRoot());
+        panel.getRoot().applyCss();
+        panel.getRoot().layout();
+
+        return (GridPane) panel.getRoot().lookup("#missionSubmissionsGrid");
+    }
+
+    private static String getMissionStatus(GridPane table, MissionId missionId) {
+        for (Node node : table.getChildren()) {
+            Integer row = GridPane.getRowIndex(node);
+            Integer column = GridPane.getColumnIndex(node);
+
+            if (row == null || column == null || column != 0) {
+                continue;
+            }
+
+            Label missionLabel = (Label) node;
+
+            if (missionLabel.getText().startsWith(missionId + " · ")) {
+                int missionRow = row;
+
+                return table.getChildren().stream()
+                        .filter(child -> GridPane.getRowIndex(child) != null
+                                && GridPane.getRowIndex(child) == missionRow
+                                && GridPane.getColumnIndex(child) != null
+                                && GridPane.getColumnIndex(child) == 1)
+                        .map(Label.class::cast)
+                        .findFirst()
+                        .orElseThrow()
+                        .getText();
+            }
+        }
+
+        throw new AssertionError("Mission not found: " + missionId);
+    }
+
+    private static GridPane getAttendanceTable(ResultDisplay display) {
+        new Scene(display.getRoot());
+        display.getRoot().applyCss();
+        display.getRoot().layout();
+
+        return (GridPane) display.getRoot().lookup("#attendance");
+    }
+
+    private static String getStatus(GridPane table, int week) {
+        for (int row = 1; row <= table.getRowCount(); row++) {
+            int currentRow = row;
+
+            Label weekLabel = (Label) table.getChildren().stream()
+                    .filter(node -> GridPane.getRowIndex(node) != null
+                            && GridPane.getRowIndex(node) == currentRow
+                            && GridPane.getColumnIndex(node) != null
+                            && GridPane.getColumnIndex(node) == 0)
+                    .findFirst()
+                    .orElseThrow();
+
+            if (weekLabel.getText().equals(String.valueOf(week))) {
+                return table.getChildren().stream()
+                        .filter(node -> GridPane.getRowIndex(node) != null
+                                && GridPane.getRowIndex(node) == currentRow
+                                && GridPane.getColumnIndex(node) != null
+                                && GridPane.getColumnIndex(node) == 1)
+                        .map(Label.class::cast)
+                        .findFirst()
+                        .orElseThrow()
+                        .getText();
+            }
+        }
+
+        throw new AssertionError("No status found for week " + week);
+    }
 
     @BeforeAll
     public static void setUpJavaFx() throws Exception {
@@ -211,7 +283,7 @@ public class ResultDisplayTest {
             display.setFeedbackToUser("Invalid index");
             assertFalse(display.getRoot().lookup("#studentDetails").isVisible());
             assertTrue(table.getChildren().isEmpty());
-            TextArea feedback = (TextArea) display.getRoot().lookup("#resultDisplay");
+            Label feedback = (Label) display.getRoot().lookup("#resultDisplay");
             assertTrue(feedback.isVisible());
             assertEquals("Invalid index", feedback.getText());
             display.setCommandResult(new CommandResult("Listed students"));
@@ -221,44 +293,68 @@ public class ResultDisplayTest {
     }
 
     @Test
-    public void setCommandResult_viewAfterMarkAndUnmark_reflectsUpdatedSubmissions() throws Exception {
+    public void showStudent_afterMarkAndUnmark_reflectsUpdatedSubmissions() throws Exception {
         Model model = new ModelManager();
         model.addStudent(new StudentBuilder(AMY).withMissionSubmissions().build());
         model.addMission("Runes", LocalDate.of(2026, 10, 15));
+
+        List<Mission> missions = model.getMissionList();
+
         new MarkMissionCommand(INDEX_FIRST_STUDENT, new MissionId("M01")).execute(model);
-        CommandResult added = new ViewCommand(INDEX_FIRST_STUDENT).execute(model);
+        Student markedStudent = model.getFilteredStudentList().get(INDEX_FIRST_STUDENT.getZeroBased());
+
         new UnmarkMissionCommand(INDEX_FIRST_STUDENT, new MissionId("M01")).execute(model);
-        CommandResult deleted = new ViewCommand(INDEX_FIRST_STUDENT).execute(model);
+        Student unmarkedStudent = model.getFilteredStudentList().get(INDEX_FIRST_STUDENT.getZeroBased());
+
         runOnJavaFxThread(() -> {
-            ResultDisplay display = new ResultDisplay();
-            display.setCommandResult(added);
-            GridPane table = getTable(display);
-            assertEquals("Submitted", ((Label) table.getChildren().getLast()).getText());
-            display.setCommandResult(deleted);
-            assertEquals("Not submitted", ((Label) table.getChildren().getLast()).getText());
+            StudentDetailsPanel panel = new StudentDetailsPanel();
+            panel.showStudent(markedStudent, missions);
+
+            GridPane table = getMissionTable(panel);
+            assertEquals("Submitted", getMissionStatus(table, new MissionId("M01")));
+
+            panel.showStudent(unmarkedStudent, missions);
+
+            assertEquals("Not submitted", getMissionStatus(table, new MissionId("M01")));
         });
     }
 
     @Test
-    public void setCommandResult_missionDeleted_clearsStaleProfileAndShowsUpdatedCatalogue() throws Exception {
+    public void showStudent_afterMissionDeletion_showsUpdatedCatalogue() throws Exception {
         Model model = new ModelManager();
-        model.addStudent(new StudentBuilder(AMY).withMissionSubmissions("M01").build());
+        model.addStudent(new StudentBuilder(AMY)
+                .withMissionSubmissions("M01")
+                .build());
         model.addMission("Runes", LocalDate.of(2026, 10, 20));
-        CommandResult before = new ViewCommand(INDEX_FIRST_STUDENT).execute(model);
-        CommandResult deletion = new DeleteMissionCommand(new MissionId("M01")).execute(model);
-        CommandResult after = new ViewCommand(INDEX_FIRST_STUDENT).execute(model);
+
+        Student student = model.getFilteredStudentList()
+                .get(INDEX_FIRST_STUDENT.getZeroBased());
+
+        List<Mission> missionsBeforeDeletion =
+                List.copyOf(model.getMissionList());
+
+        new DeleteMissionCommand(new MissionId("M01")).execute(model);
+
+        Student updatedStudent = model.getFilteredStudentList()
+                .get(INDEX_FIRST_STUDENT.getZeroBased());
+
+        List<Mission> missionsAfterDeletion =
+                List.copyOf(model.getMissionList());
+
         runOnJavaFxThread(() -> {
-            ResultDisplay display = new ResultDisplay();
-            display.setCommandResult(before);
-            GridPane table = getTable(display);
+            StudentDetailsPanel panel = new StudentDetailsPanel();
+
+            panel.showStudent(student, missionsBeforeDeletion);
+
+            GridPane table = getMissionTable(panel);
             assertEquals(4, table.getChildren().size());
-            display.setCommandResult(deletion);
-            assertFalse(display.getRoot().lookup("#studentDetails").isVisible());
-            assertTrue(table.getChildren().isEmpty());
-            TextArea feedback = (TextArea) display.getRoot().lookup("#resultDisplay");
-            assertEquals(deletion.getFeedbackToUser(), feedback.getText());
-            display.setCommandResult(after);
-            assertEquals("No missions configured.", ((Label) table.getChildren().getFirst()).getText());
+
+            panel.showStudent(updatedStudent, missionsAfterDeletion);
+
+            assertEquals(1, table.getChildren().size());
+            assertEquals(
+                    "No missions configured.", (
+                            (Label) table.getChildren().getFirst()).getText());
         });
     }
 

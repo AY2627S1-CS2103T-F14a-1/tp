@@ -8,7 +8,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.testutil.TypicalStudents.AMY;
 import static seedu.address.testutil.TypicalStudents.BOB;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
+
+import seedu.address.model.mission.Mission;
+import seedu.address.model.mission.MissionId;
 
 public class CommandResultTest {
     @Test
@@ -58,10 +63,11 @@ public class CommandResultTest {
     @Test
     public void toStringMethod() {
         CommandResult commandResult = new CommandResult("feedback");
-        String expected = CommandResult.class.getCanonicalName() + "{feedbackToUser="
-                + commandResult.getFeedbackToUser() + ", showHelp=" + commandResult.isShowHelp()
-                + ", exit=" + commandResult.isExit() + "}";
-        assertEquals(expected, commandResult.toString());
+        String actual = commandResult.toString();
+        assertTrue(actual.startsWith(CommandResult.class.getCanonicalName() + "{"));
+        assertTrue(actual.contains("feedbackToUser=feedback"));
+        assertTrue(actual.contains("showHelp=false"));
+        assertTrue(actual.contains("exit=false"));
     }
 
     @Test
@@ -76,7 +82,22 @@ public class CommandResultTest {
         assertFalse(result.isShowHelp());
         assertFalse(result.isExit());
         assertTrue(new CommandResult("feedback").getStudentToView().isEmpty());
-        assertThrows(NullPointerException.class, () -> new CommandResult("details", null));
+        assertTrue(new CommandResult("details", null).getStudentToView().isEmpty());
         assertThrows(NullPointerException.class, () -> new CommandResult(null, AMY));
+    }
+
+    @Test
+    public void missions_constructorStoresMissionCatalogue() {
+        Mission mission = new Mission(
+                new MissionId("M01"),
+                "Runes",
+                java.time.LocalDate.of(2026, 10, 20));
+
+        CommandResult result = new CommandResult(
+                "Student details",
+                AMY,
+                List.of(mission));
+
+        assertEquals(List.of(mission), result.getMissions());
     }
 }

@@ -177,7 +177,7 @@ This section describes some noteworthy details on how certain features are imple
 **Target user profile**:
 
 * serves as tutor for CS1101S tutorial(s)
-* has a need to manage students across one or more tutorial groups assigned to them 
+* has a need to manage students across one or more tutorial groups assigned to them
 * has a need to keep track of administrative information relevant to conducting and managing their tutorials
 * prefers desktop apps over other types of applications
 * can type fast
@@ -475,7 +475,7 @@ The user stories above represent the main intended functionality and selected fu
   * RAM: 8GB
   * GPU: Integrated graphics
   * We expect the application to be stored in a SSD. Loading times may be worse with HDDs.
-* **Above average typing speed**: Sustained >=80 WPM with a sequence of random words. 
+* **Above average typing speed**: Sustained >=80 WPM with a sequence of random words.
 
 --------------------------------------------------------------------------------------------------------------------
 
