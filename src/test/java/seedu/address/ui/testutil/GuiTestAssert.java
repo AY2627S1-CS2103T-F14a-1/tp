@@ -34,6 +34,7 @@ public class GuiTestAssert {
         assertEquals(expectedStudent.getEmail().value, actualCard.getEmail());
         assertEquals(expectedStudent.getTags().stream().map(tag -> tag.tagName).sorted().collect(Collectors.toList()),
                 actualCard.getTags());
+        assertEquals(expectedStudent.getStudioGroup().studioGroup, actualCard.getStudioGroup());
     }
 
     /**

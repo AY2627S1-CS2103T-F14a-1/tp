@@ -16,12 +16,14 @@ public class StudentCardHandle extends NodeHandle<Node> {
     private static final String NAME_FIELD_ID = "#name";
     private static final String PHONE_FIELD_ID = "#phone";
     private static final String EMAIL_FIELD_ID = "#email";
+    private static final String STUDIOGROUP_ID = "#studioGroup";
     private static final String TAGS_FIELD_ID = "#tags";
 
     private final Label idLabel;
     private final Label nameLabel;
     private final Label phoneLabel;
     private final Label emailLabel;
+    private final Label studioGroupLabel;
     private final List<Label> tagLabels;
 
     /**
@@ -34,6 +36,7 @@ public class StudentCardHandle extends NodeHandle<Node> {
         nameLabel = getChildNode(NAME_FIELD_ID);
         phoneLabel = getChildNode(PHONE_FIELD_ID);
         emailLabel = getChildNode(EMAIL_FIELD_ID);
+        studioGroupLabel = getChildNode(STUDIOGROUP_ID);
 
         Region tagsContainer = getChildNode(TAGS_FIELD_ID);
         tagLabels = tagsContainer
@@ -57,6 +60,10 @@ public class StudentCardHandle extends NodeHandle<Node> {
 
     public String getEmail() {
         return emailLabel.getText();
+    }
+
+    public String getStudioGroup() {
+        return studioGroupLabel.getText();
     }
 
     public List<String> getTags() {
