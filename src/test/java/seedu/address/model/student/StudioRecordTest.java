@@ -67,8 +67,8 @@ public class StudioRecordTest {
     }
 
     @Test
-    public void toString_validScore_returnsParticipationScore() {
-        assertEquals("P: 0", new StudioRecord(0).toString());
-        assertEquals("P: 50", new StudioRecord(50).toString());
+    public void toString_validScore_returnsEffortScore() {
+        assertEquals("E: 0", new StudioRecord(0).toString());
+        assertEquals("E: 50", new StudioRecord(50).toString());
     }
 }
