@@ -51,7 +51,7 @@ Student --> "*" Tag
 Student *--> "1" StudioGroup
 Student *--> "1" RegisteredStudioRecords
 Student *--> "1" MissionSubmissions
-MissionSubmissions -[norank]-> "0..*" MissionId : submitted IDs
+MissionSubmissions -[norank]-> "        submitted IDs\n\n0..*                             " MissionId
 
 Name -[hidden]right-> Phone
 Phone -[hidden]right-> Email
