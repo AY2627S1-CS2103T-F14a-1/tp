@@ -160,6 +160,51 @@ Classes used by multiple components are in the `seedu.address.commons` package.
 
 This section describes some noteworthy details on how certain features are implemented.
 
+### Adding a mission
+
+For `addmission n/NAME d/DEADLINE`, `AddressBookParser` delegates to `AddMissionCommandParser`, which validates exactly one name and deadline and creates an `AddMissionCommand`. `ParserUtil` removes surrounding whitespace and collapses repeated whitespace in the name, while preserving case and punctuation. The deadline must be a real date in `YYYY-MM-DD` format; past dates are accepted. Missing, repeated, blank, or invalid fields and unexpected preamble text cause a `ParseException`.
+
+When executed, `AddMissionCommand` calls `Model#hasMissionName(...)` to reject duplicates, ignoring case and whitespace differences. It then calls `Model#addMission(...)`, which delegates to the shared `MissionCatalogue` through `ModelManager` and `AddressBook`. The catalogue allocates the next mission ID only when adding the validated mission. Existing student records remain unchanged: an absent submission ID means not submitted. The command returns a `CommandResult` containing the added mission.
+
+The sequence diagram below illustrates the successful interaction flow using `execute("addmission n/Rune Reading d/2026-10-20")`. The full command text is abbreviated as `commandText` inside the diagram.
+
+<puml src="diagrams/AddMissionSequenceDiagram.puml" width="1000" />
+
+### Deleting a mission
+
+For `delmission m/M03`, `AddressBookParser` delegates to `DeleteMissionCommandParser`. The parser requires exactly one nonblank `m/` value and rejects unexpected preamble text. It uses `MissionParser#parseMissionId(...)` to trim and validate the ID and convert it to uppercase, then creates a `DeleteMissionCommand`. Thus, `m/m03` and `m/M03` identify the same mission; the ID is not a displayed list position.
+
+When executed, `DeleteMissionCommand` calls `Model#findMission(...)` and rejects a nonexistent mission before making changes. It then calls `Model#deleteMission(...)`. Within the model, `AddressBook` prepares replacement student records without the deleted mission's submission ID and removes the mission from the catalogue. This includes students hidden by the current filter and preserves their other details and submissions. The allocation counter is retained, so remaining IDs do not change and deleted IDs are not reused. The command returns a `CommandResult` identifying the deleted mission.
+
+The sequence diagram below illustrates the successful interaction flow using `execute("delmission m/M03")`. The model is shown as a single participant to keep the focus on the Logic component.
+
+<puml src="diagrams/DeleteMissionSequenceDiagram.puml" width="1000" />
+
+### Marking and unmarking mission submissions
+
+For `markmission INDEX m/MISSION_ID` or `unmarkmission INDEX m/MISSION_ID`, `AddressBookParser` delegates to `MarkMissionCommandParser` or `UnmarkMissionCommandParser`. Both reuse `MissionParser` to validate a positive student index and exactly one case-insensitive mission ID, then create the corresponding command. Invalid or extra arguments cause a `ParseException`; whether the mission and displayed student exist is checked during execution.
+
+When executed, the command calls `Model#findMission(...)` and retrieves the selected student from `Model#getFilteredStudentList()`. Marking uses `MissionSubmissions#withSubmission(...)`; unmarking uses `MissionSubmissions#withoutSubmission(...)`. Each produces updated immutable submission data, which the command places in a replacement `Student` before calling `Model#setStudent(...)`. Other student details and the current filter are preserved, and the observable student list notifies the UI of the replacement.
+
+Marking an already recorded submission or unmarking an absent submission returns a no-change `CommandResult` without replacing the student. A missing mission or out-of-range displayed index causes a `CommandException` before any update. The shared mission itself is unchanged by either command.
+
+The sequence diagram below illustrates `execute("markmission 1 m/M03")` when the mission and student exist and the submission is not yet recorded. Unmarking follows the same flow with `UnmarkMissionCommandParser`, `UnmarkMissionCommand`, and removal of the submission ID instead of addition.
+
+<puml src="diagrams/MissionSubmissionSequenceDiagram.puml" width="1000" />
+
+<box type="info" seamless>
+
+The diagrams show successful paths through Logic, omitting validation branches and internal model operations. Parser lifetime markers are omitted because these temporary objects are managed by Java. The common saving step described below is also omitted from the diagrams.
+
+</box>
+
+### Saving mission changes
+
+After any of these commands returns successfully, `LogicManager` calls `Storage.saveAddressBook` with the current address book before returning the result to the UI. The saved data contains the mission catalogue, the next mission number, and each student's submitted mission IDs. This preserves additions, deletions, and submission changes across restarts. Successful no-change mark/unmark requests also trigger saving.
+
+Parsing and command-validation failures exit before the saving step. If saving itself fails, `LogicManager` reports a `CommandException`; the in-memory change has already occurred and is not rolled back. On loading, storage validates the catalogue and requires saved submission IDs to refer to existing missions.
+
+
 --------------------------------------------------------------------------------------------------------------------
 
 ## **Documentation, logging, testing, dev-ops**
