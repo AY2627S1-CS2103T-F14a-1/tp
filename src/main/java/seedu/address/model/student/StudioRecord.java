@@ -8,7 +8,7 @@ import static seedu.address.commons.util.AppUtil.checkArgument;
 public final class StudioRecord {
 
     public static final String MESSAGE_CONSTRAINTS = "Effort score must be a non-negative integer";
-    private static final String PARTICIPATION_MARKER = "P: ";
+    private static final String EFFORT_MARKER = "E: ";
 
     private final int effortScore;
     private final String studioRecord;
@@ -64,6 +64,6 @@ public final class StudioRecord {
 
     @Override
     public String toString() {
-        return PARTICIPATION_MARKER + effortScore;
+        return EFFORT_MARKER + effortScore;
     }
 }
