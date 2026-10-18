@@ -31,9 +31,9 @@ import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.mission.Mission;
 import seedu.address.model.mission.MissionId;
+import seedu.address.model.student.RegisteredStudioRecords;
 import seedu.address.model.student.Student;
 import seedu.address.model.student.StudioRecord;
-import seedu.address.model.student.StudioRecords;
 import seedu.address.testutil.StudentBuilder;
 
 /**
@@ -105,7 +105,7 @@ public class ResultDisplayTest {
     }
 
     @Test
-    public void setCommandResult_studioRecords_displaysEveryWeekAndEffort() throws Exception {
+    public void setCommandResult_registeredStudioRecords_displaysEveryWeekAndEffort() throws Exception {
         runOnJavaFxThread(() -> {
             ResultDisplay display = new ResultDisplay();
             Student student = new StudentBuilder(AMY).withStudioRecords(
@@ -113,15 +113,16 @@ public class ResultDisplayTest {
                     new StudentBuilder.StudioRecordSet(4, new StudioRecord(0)),
                     new StudentBuilder.StudioRecordSet(13, new StudioRecord(Integer.MAX_VALUE))).build();
             display.setCommandResult(new CommandResult("Student", student));
-            GridPane table = getTable(display, "#studioRecords");
+            GridPane table = getTable(display, "#registeredStudioRecords");
             Map<Integer, Integer> effortScores = Map.of(3, 50, 4, 0, 13, Integer.MAX_VALUE);
 
-            assertEquals(3 * (StudioRecords.MAX_WEEK - StudioRecords.MIN_WEEK + 2), table.getChildren().size());
+            assertEquals(3 * (RegisteredStudioRecords.MAX_WEEK - RegisteredStudioRecords.MIN_WEEK + 2),
+                    table.getChildren().size());
             assertEquals("Week", ((Label) table.getChildren().get(0)).getText());
             assertEquals("Attendance", ((Label) table.getChildren().get(1)).getText());
             assertEquals("Effort", ((Label) table.getChildren().get(2)).getText());
-            for (int week = StudioRecords.MIN_WEEK; week <= StudioRecords.MAX_WEEK; week++) {
-                int rowStart = 3 * (week - StudioRecords.MIN_WEEK + 1);
+            for (int week = RegisteredStudioRecords.MIN_WEEK; week <= RegisteredStudioRecords.MAX_WEEK; week++) {
+                int rowStart = 3 * (week - RegisteredStudioRecords.MIN_WEEK + 1);
                 Label attendanceCell = (Label) table.getChildren().get(rowStart + 1);
                 Label effortCell = (Label) table.getChildren().get(rowStart + 2);
 
@@ -139,7 +140,7 @@ public class ResultDisplayTest {
             Student student = new StudentBuilder(AMY).withStudioRecords(
                     new StudentBuilder.StudioRecordSet(13, new StudioRecord(Integer.MAX_VALUE))).build();
             display.setCommandResult(new CommandResult("Student", student));
-            GridPane table = getTable(display, "#studioRecords");
+            GridPane table = getTable(display, "#registeredStudioRecords");
             table.getStylesheets().add(ResultDisplay.class.getResource("/view/DarkTheme.css").toExternalForm());
             table.applyCss();
 
@@ -166,17 +167,19 @@ public class ResultDisplayTest {
                     new StudentBuilder.StudioRecordSet(3, new StudioRecord(50))).build();
             Student empty = new StudentBuilder(AMY).withStudioRecords().build();
             display.setCommandResult(new CommandResult("Recorded student", recorded));
-            GridPane table = getTable(display, "#studioRecords");
+            GridPane table = getTable(display, "#registeredStudioRecords");
 
             display.setCommandResult(new CommandResult("Empty student", empty));
-            assertEquals(3 * (StudioRecords.MAX_WEEK - StudioRecords.MIN_WEEK + 2), table.getChildren().size());
+            assertEquals(3 * (RegisteredStudioRecords.MAX_WEEK - RegisteredStudioRecords.MIN_WEEK + 2),
+                    table.getChildren().size());
             for (int rowStart = 3; rowStart < table.getChildren().size(); rowStart += 3) {
                 assertEquals("Absent", ((Label) table.getChildren().get(rowStart + 1)).getText());
                 assertEquals("0", ((Label) table.getChildren().get(rowStart + 2)).getText());
             }
 
             display.setCommandResult(new CommandResult("Recorded student", recorded));
-            assertEquals(3 * (StudioRecords.MAX_WEEK - StudioRecords.MIN_WEEK + 2), table.getChildren().size());
+            assertEquals(3 * (RegisteredStudioRecords.MAX_WEEK - RegisteredStudioRecords.MIN_WEEK + 2),
+                    table.getChildren().size());
             assertEquals("Present", ((Label) table.getChildren().get(4)).getText());
             assertEquals("50", ((Label) table.getChildren().get(5)).getText());
         });

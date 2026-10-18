@@ -59,7 +59,7 @@ public class ResultDisplay extends UiPart<Region> {
         setFeedbackToUser(result.getFeedbackToUser());
         result.getStudentToView().ifPresent(student -> {
             studentSummary.setText(result.getFeedbackToUser());
-            populateStudioRecords(student);
+            populateRegisteredStudioRecords(student);
             populateMissionSubmissions(student, result.getMissions());
             showStudentDetails(true);
             studentDetails.setVvalue(0);
@@ -116,7 +116,7 @@ public class ResultDisplay extends UiPart<Region> {
      *
      * @param student Student whose submission status is displayed.
      */
-    private void populateStudioRecords(Student student) {
+    private void populateRegisteredStudioRecords(Student student) {
         assert student != null;
 
         registeredStudioRecords.getChildren().clear();

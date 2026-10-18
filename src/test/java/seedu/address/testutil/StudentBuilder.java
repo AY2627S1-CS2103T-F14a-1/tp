@@ -12,10 +12,10 @@ import seedu.address.model.student.Email;
 import seedu.address.model.student.MissionSubmissions;
 import seedu.address.model.student.Name;
 import seedu.address.model.student.Phone;
+import seedu.address.model.student.RegisteredStudioRecords;
 import seedu.address.model.student.Student;
 import seedu.address.model.student.StudioGroup;
 import seedu.address.model.student.StudioRecord;
-import seedu.address.model.student.StudioRecords;
 import seedu.address.model.tag.Tag;
 import seedu.address.model.util.SampleDataUtil;
 
@@ -43,7 +43,7 @@ public class StudentBuilder {
     private Set<Tag> tags;
     private StudioGroup studioGroup;
     private MissionSubmissions missionSubmissions;
-    private StudioRecords studioRecords;
+    private RegisteredStudioRecords registeredStudioRecords;
 
     /**
      * Creates a {@code StudentBuilder} with the default details.
@@ -55,7 +55,7 @@ public class StudentBuilder {
         tags = new HashSet<>();
         studioGroup = new StudioGroup(DEFAULT_STUDIO_GROUP);
         missionSubmissions = new MissionSubmissions();
-        studioRecords = new StudioRecords();
+        registeredStudioRecords = new RegisteredStudioRecords();
     }
 
     /**
@@ -68,7 +68,7 @@ public class StudentBuilder {
         tags = new HashSet<>(studentToCopy.getTags());
         studioGroup = studentToCopy.getStudioGroup();
         missionSubmissions = studentToCopy.getMissionSubmissions();
-        studioRecords = studentToCopy.getStudioRecords();
+        registeredStudioRecords = studentToCopy.getRegisteredStudioRecords();
     }
 
     /**
@@ -130,7 +130,7 @@ public class StudentBuilder {
     }
 
     /**
-     * Sets the studioRecords weeks of the student being built.
+     * Sets the registered studio record weeks of the student being built.
      *
      * @param sets Studio records to add.
      * @return This builder.
@@ -146,7 +146,7 @@ public class StudentBuilder {
             requireNonNull(studioRecord);
             recordedStudios.put(set.week(), studioRecord);
         }
-        this.studioRecords = new StudioRecords(recordedStudios);
+        this.registeredStudioRecords = new RegisteredStudioRecords(recordedStudios);
         return this;
     }
 
@@ -156,7 +156,7 @@ public class StudentBuilder {
      * @return A student with the configured details.
      */
     public Student build() {
-        return new Student(name, phone, email, tags, studioGroup, missionSubmissions, studioRecords);
+        return new Student(name, phone, email, tags, studioGroup, missionSubmissions, registeredStudioRecords);
     }
 
 }

@@ -149,7 +149,7 @@ class JsonAdaptedStudent {
 
         final Set<Tag> modelTags = new HashSet<>(studentTags);
         final MissionSubmissions modelMissionSubmissions = toModelMissionSubmissions();
-        final RegisteredStudioRecords modelRegisteredStudioRecords = toModelStudioRecords();
+        final RegisteredStudioRecords modelRegisteredStudioRecords = toModelRegisteredStudioRecords();
         return new Student(modelName, modelPhone, modelEmail, modelTags, modelStudioGroup,
                 modelMissionSubmissions, modelRegisteredStudioRecords);
     }
@@ -183,7 +183,7 @@ class JsonAdaptedStudent {
      * @return Studio records containing the unique saved weeks and their effort scores.
      * @throws IllegalValueException If a saved record is malformed or contains an invalid value.
      */
-    public RegisteredStudioRecords toModelStudioRecords() throws IllegalValueException {
+    public RegisteredStudioRecords toModelRegisteredStudioRecords() throws IllegalValueException {
         Map<Integer, StudioRecord> recordedWeeks = new HashMap<>();
         for (Object value : registeredStudioRecords) {
             if (!(value instanceof List<?> record) || record.size() != 2) {

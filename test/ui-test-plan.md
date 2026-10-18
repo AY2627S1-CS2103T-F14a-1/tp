@@ -3,14 +3,14 @@
 ## Constructor validation regression
 
 Null studio-record values cannot be entered through the UI. Run the JUnit case
-`StudioRecordsTest.constructor_nullStudioRecord_throwsNullPointerException`
+`RegisteredStudioRecordsTest.constructor_nullStudioRecord_throwsNullPointerException`
 to verify that the constructor rejects them. Use the studio command and
 persistence cases below to check that valid records still behave normally.
 
 ## Equality and hashing regression
 
 Hash codes are not exposed through the UI. Run the `hashCode_*` JUnit cases in
-`StudioRecordTest` and `StudioRecordsTest` to verify equal values have equal
+`StudioRecordTest` and `RegisteredStudioRecordsTest` to verify equal values have equal
 hash codes, including empty records, boundary scores, and different insertion
 orders. Hash-set cases interleave successful lookups with unequal-score and
 unequal-week lookups, then verify equal values are not inserted twice.
@@ -21,9 +21,10 @@ Run the complete UI plan below to check existing studio behavior.
 | ID | Steps | Expected result |
 | --- | --- | --- |
 | STUDIO-SUMMARY-001 | View a student with records for weeks 3, 4, and 13, including an effort score of 0 for week 4. | The summary lists every week from 3 to 13 under `Week`, `Attendance`, and `Effort`. Recorded weeks show `Present` and their saved effort score, including 0; weeks without a record show `Absent` and effort score `0`. |
+| STUDIO-LABEL-001 | View the student list after adding a studio record. | The student card prefixes the weekly record summary with `Studio records:` and does not expose a Java class name. |
 | STUDIO-LAYOUT-001 | View a student with a week 13 effort score of 2147483647. Resize the window from narrow to wide and back. | All three columns and their headers remain inside the studio table. Effort values remain readable, wrapping when necessary, without horizontal scrolling. JUnit also checks every cell at table widths of 240 and 900 pixels. |
 | STUDIO-SWITCH-001 | View a student with week 3 effort 50, then view another student without studio records, then view the first student again. | The second student shows every week as `Absent` with effort `0`. Returning to the first student restores `Present` and effort `50` for week 3, without duplicated rows. |
-| STUDIO-PERSISTENCE-001 | Add studio records with different effort scores, exit the application, restart it, and view the same student. | Each recorded week and its corresponding effort score are restored unchanged. |
+| STUDIO-PERSISTENCE-001 | Add studio records with different effort scores, exit the application, inspect the saved student record, restart the application, and view the same student. | The saved JSON uses the `registeredStudioRecords` property. Each recorded week and its corresponding effort score are restored unchanged. |
 
 ## Studio commands
 

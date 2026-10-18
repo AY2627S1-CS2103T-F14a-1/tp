@@ -16,7 +16,7 @@ public final class RegisteredStudioRecords {
     public static final int MIN_WEEK = 3;
     public static final int MAX_WEEK = 13;
 
-    public static final String STUDIORECORD_MARKER = "RegisteredStudioRecords: ";
+    public static final String STUDIORECORD_MARKER = "Studio records: ";
     public static final String MESSAGE_CONSTRAINTS =
             "Tutorial week must be between " + MIN_WEEK + " and " + MAX_WEEK + " inclusive";
 

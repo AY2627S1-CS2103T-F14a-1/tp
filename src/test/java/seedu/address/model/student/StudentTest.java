@@ -119,7 +119,7 @@ public class StudentTest {
     public void constructor_nullMissionSubmissions_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () ->
                 new Student(ALICE.getName(), ALICE.getPhone(), ALICE.getEmail(),
-                        ALICE.getTags(), ALICE.getStudioGroup(), null, ALICE.getStudioRecords()));
+                        ALICE.getTags(), ALICE.getStudioGroup(), null, ALICE.getRegisteredStudioRecords()));
     }
 
     @Test
@@ -151,7 +151,7 @@ public class StudentTest {
                 + ", email=" + student.getEmail() + ", tags=" + student.getTags()
                 + ", studioGroup=" + student.getStudioGroup()
                 + ", missionSubmissions=" + student.getMissionSubmissions()
-                + ", studioRecords=" + student.getStudioRecords() + "}";
+                + ", registeredStudioRecords=" + student.getRegisteredStudioRecords() + "}";
         assertEquals(expected, student.toString());
     }
 }

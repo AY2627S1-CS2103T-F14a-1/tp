@@ -19,9 +19,9 @@ import seedu.address.model.AddressBook;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.UserPrefs;
+import seedu.address.model.student.RegisteredStudioRecords;
 import seedu.address.model.student.Student;
 import seedu.address.model.student.StudioRecord;
-import seedu.address.model.student.StudioRecords;
 import seedu.address.testutil.StudentBuilder;
 
 /**
@@ -36,32 +36,32 @@ public class AddStudioRecordCommandTest {
     public void execute_validArguments_returnsSuccessFeedback() throws Exception {
         Student student = model.getFilteredStudentList().get(0);
         AddStudioRecordCommand command =
-                new AddStudioRecordCommand(INDEX_FIRST_STUDENT, StudioRecords.MIN_WEEK, studioRecord);
+                new AddStudioRecordCommand(INDEX_FIRST_STUDENT, RegisteredStudioRecords.MIN_WEEK, studioRecord);
 
         CommandResult result = command.execute(model);
 
         assertEquals(String.format(AddStudioRecordCommand.MESSAGE_SUCCESS,
-                student.getName(), StudioRecords.MIN_WEEK), result.getFeedbackToUser());
+                student.getName(), RegisteredStudioRecords.MIN_WEEK), result.getFeedbackToUser());
         assertEquals(studioRecord, model.getFilteredStudentList().get(0)
-                .getStudioRecords().getRecordsByWeek().get(StudioRecords.MIN_WEEK));
+                .getRegisteredStudioRecords().getRecordsByWeek().get(RegisteredStudioRecords.MIN_WEEK));
     }
 
     @Test
     public void constructor_nullArguments_throwsException() {
         // null index
         assertThrows(NullPointerException.class, () -> new AddStudioRecordCommand(null,
-                StudioRecords.MIN_WEEK, studioRecord));
+                RegisteredStudioRecords.MIN_WEEK, studioRecord));
 
         // null studio record
         assertThrows(NullPointerException.class, () ->
                 new AddStudioRecordCommand(INDEX_FIRST_STUDENT,
-                        StudioRecords.MIN_WEEK, null));
+                        RegisteredStudioRecords.MIN_WEEK, null));
     }
 
     @Test
     public void execute_nullModel_throwsNullPointerException() {
         AddStudioRecordCommand command =
-                new AddStudioRecordCommand(INDEX_FIRST_STUDENT, StudioRecords.MIN_WEEK, studioRecord);
+                new AddStudioRecordCommand(INDEX_FIRST_STUDENT, RegisteredStudioRecords.MIN_WEEK, studioRecord);
         assertThrows(NullPointerException.class, () -> command.execute(null));
     }
 
@@ -84,7 +84,7 @@ public class AddStudioRecordCommandTest {
 
         assertCommandSuccess(new AddStudioRecordCommand(INDEX_FIRST_STUDENT, 3, studioRecord),
                 model, feedback, expectedModel);
-        assertFalse(student.getStudioRecords().hasStudioRecord(3));
+        assertFalse(student.getRegisteredStudioRecords().hasStudioRecord(3));
     }
 
     @Test
@@ -94,20 +94,22 @@ public class AddStudioRecordCommandTest {
         model.setStudent(original, student);
 
         CommandResult firstResult = new AddStudioRecordCommand(
-                INDEX_FIRST_STUDENT, StudioRecords.MIN_WEEK, studioRecord)
+                INDEX_FIRST_STUDENT, RegisteredStudioRecords.MIN_WEEK, studioRecord)
                 .execute(model);
-        CommandResult lastResult = new AddStudioRecordCommand(INDEX_FIRST_STUDENT, StudioRecords.MAX_WEEK, studioRecord)
-                .execute(model);
+        CommandResult lastResult = new AddStudioRecordCommand(
+                INDEX_FIRST_STUDENT, RegisteredStudioRecords.MAX_WEEK, studioRecord).execute(model);
 
-        assertEquals(String.format(AddStudioRecordCommand.MESSAGE_SUCCESS, student.getName(), StudioRecords.MIN_WEEK),
+        assertEquals(String.format(AddStudioRecordCommand.MESSAGE_SUCCESS, student.getName(),
+                        RegisteredStudioRecords.MIN_WEEK),
                 firstResult.getFeedbackToUser());
-        assertEquals(String.format(AddStudioRecordCommand.MESSAGE_SUCCESS, student.getName(), StudioRecords.MAX_WEEK),
+        assertEquals(String.format(AddStudioRecordCommand.MESSAGE_SUCCESS, student.getName(),
+                        RegisteredStudioRecords.MAX_WEEK),
                 lastResult.getFeedbackToUser());
 
         Student expected = new StudentBuilder(student)
                 .withStudioRecords(
-                        new StudentBuilder.StudioRecordSet(StudioRecords.MIN_WEEK, studioRecord),
-                        new StudentBuilder.StudioRecordSet(StudioRecords.MAX_WEEK, studioRecord)
+                        new StudentBuilder.StudioRecordSet(RegisteredStudioRecords.MIN_WEEK, studioRecord),
+                        new StudentBuilder.StudioRecordSet(RegisteredStudioRecords.MAX_WEEK, studioRecord)
                 )
                 .build();
         assertEquals(expected, model.getFilteredStudentList().get(0));
@@ -121,9 +123,11 @@ public class AddStudioRecordCommandTest {
         model.setStudent(original, student);
 
         Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
-        String feedback = String.format(AddStudioRecordCommand.MESSAGE_ALREADY_RECORDED, student.getName(), 3);
+        String feedback = String.format(
+                AddStudioRecordCommand.MESSAGE_ALREADY_RECORDED, student.getName(), 3);
 
-        assertCommandSuccess(new AddStudioRecordCommand(INDEX_FIRST_STUDENT, 3, studioRecord),
+        assertCommandSuccess(
+                new AddStudioRecordCommand(INDEX_FIRST_STUDENT, 3, studioRecord),
                 model, feedback, expectedModel);
     }
 

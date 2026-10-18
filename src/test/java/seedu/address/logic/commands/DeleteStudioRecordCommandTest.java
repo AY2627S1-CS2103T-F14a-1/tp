@@ -19,9 +19,9 @@ import seedu.address.model.AddressBook;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.UserPrefs;
+import seedu.address.model.student.RegisteredStudioRecords;
 import seedu.address.model.student.Student;
 import seedu.address.model.student.StudioRecord;
-import seedu.address.model.student.StudioRecords;
 import seedu.address.testutil.StudentBuilder;
 
 /**
@@ -35,17 +35,17 @@ public class DeleteStudioRecordCommandTest {
     @Test
     public void constructor_invalidArguments_throwsException() {
         assertThrows(NullPointerException.class, () ->
-                new DeleteStudioRecordCommand(null, StudioRecords.MIN_WEEK));
+                new DeleteStudioRecordCommand(null, RegisteredStudioRecords.MIN_WEEK));
         assertThrows(IllegalArgumentException.class, () ->
-                new DeleteStudioRecordCommand(INDEX_FIRST_STUDENT, StudioRecords.MIN_WEEK - 1));
+                new DeleteStudioRecordCommand(INDEX_FIRST_STUDENT, RegisteredStudioRecords.MIN_WEEK - 1));
         assertThrows(IllegalArgumentException.class, () ->
-                new DeleteStudioRecordCommand(INDEX_FIRST_STUDENT, StudioRecords.MAX_WEEK + 1));
+                new DeleteStudioRecordCommand(INDEX_FIRST_STUDENT, RegisteredStudioRecords.MAX_WEEK + 1));
     }
 
     @Test
     public void execute_nullModel_throwsNullPointerException() {
         DeleteStudioRecordCommand command =
-                new DeleteStudioRecordCommand(INDEX_FIRST_STUDENT, StudioRecords.MIN_WEEK);
+                new DeleteStudioRecordCommand(INDEX_FIRST_STUDENT, RegisteredStudioRecords.MIN_WEEK);
 
         assertThrows(NullPointerException.class, () -> command.execute(null));
     }
@@ -69,7 +69,7 @@ public class DeleteStudioRecordCommandTest {
 
         assertCommandSuccess(new DeleteStudioRecordCommand(INDEX_FIRST_STUDENT, 3),
                 model, feedback, expectedModel);
-        assertTrue(student.getStudioRecords().hasStudioRecord(
+        assertTrue(student.getRegisteredStudioRecords().hasStudioRecord(
                 3));
     }
 
@@ -78,20 +78,20 @@ public class DeleteStudioRecordCommandTest {
         Student original = model.getFilteredStudentList().get(0);
         Student student = new StudentBuilder(original)
                 .withStudioRecords(
-                        new StudentBuilder.StudioRecordSet(StudioRecords.MIN_WEEK, studioRecord),
-                        new StudentBuilder.StudioRecordSet(StudioRecords.MAX_WEEK, studioRecord))
+                        new StudentBuilder.StudioRecordSet(RegisteredStudioRecords.MIN_WEEK, studioRecord),
+                        new StudentBuilder.StudioRecordSet(RegisteredStudioRecords.MAX_WEEK, studioRecord))
                 .build();
         model.setStudent(original, student);
 
-        CommandResult firstResult = new DeleteStudioRecordCommand(INDEX_FIRST_STUDENT, StudioRecords.MIN_WEEK)
+        CommandResult firstResult = new DeleteStudioRecordCommand(INDEX_FIRST_STUDENT, RegisteredStudioRecords.MIN_WEEK)
                 .execute(model);
-        CommandResult lastResult = new DeleteStudioRecordCommand(INDEX_FIRST_STUDENT, StudioRecords.MAX_WEEK)
+        CommandResult lastResult = new DeleteStudioRecordCommand(INDEX_FIRST_STUDENT, RegisteredStudioRecords.MAX_WEEK)
                 .execute(model);
 
         assertEquals(String.format(DeleteStudioRecordCommand.MESSAGE_SUCCESS,
-                student.getName(), StudioRecords.MIN_WEEK), firstResult.getFeedbackToUser());
+                student.getName(), RegisteredStudioRecords.MIN_WEEK), firstResult.getFeedbackToUser());
         assertEquals(String.format(DeleteStudioRecordCommand.MESSAGE_SUCCESS,
-                student.getName(), StudioRecords.MAX_WEEK), lastResult.getFeedbackToUser());
+                student.getName(), RegisteredStudioRecords.MAX_WEEK), lastResult.getFeedbackToUser());
 
         Student expected = new StudentBuilder(student).withStudioRecords().build();
         assertEquals(expected, model.getFilteredStudentList().get(0));

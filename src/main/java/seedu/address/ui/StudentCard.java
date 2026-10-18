@@ -58,6 +58,7 @@ public class StudentCard extends UiPart<Region> {
                 .sorted(Comparator.comparing(tag -> tag.tagName))
                 .forEach(tag -> tags.getChildren().add(new Label(tag.tagName)));
         studioGroup.setText(student.getStudioGroup().studioGroup);
-        registeredStudioRecords.setText(RegisteredStudioRecords.STUDIORECORD_MARKER + student.getRegisteredStudioRecords());
+        registeredStudioRecords.setText(
+                RegisteredStudioRecords.STUDIORECORD_MARKER + student.getRegisteredStudioRecords());
     }
 }
