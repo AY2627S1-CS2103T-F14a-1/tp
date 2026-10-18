@@ -178,6 +178,8 @@ For `delmission m/M03`, `AddressBookParser` delegates to `DeleteMissionCommandPa
 
 When executed, `DeleteMissionCommand` calls `Model#findMission(...)` and rejects a nonexistent mission before making changes. It then calls `Model#deleteMission(...)`. Within the model, `AddressBook` prepares replacement student records without the deleted mission's submission ID and removes the mission from the catalogue. This includes students hidden by the current filter and preserves their other details and submissions. The allocation counter is retained, so remaining IDs do not change and deleted IDs are not reused. The command returns a `CommandResult` identifying the deleted mission.
 
+Deleting a mission removes its submission records from every student. Recreating it—even with the same name and deadline—assigns a new ID and starts with no submissions recorded. Previous submission records are not restored.
+
 The sequence diagram below illustrates the successful interaction flow using `execute("delmission m/M03")`. The model is shown as a single participant to keep the focus on the Logic component.
 
 <puml src="diagrams/DeleteMissionSequenceDiagram.puml" width="1000" />
