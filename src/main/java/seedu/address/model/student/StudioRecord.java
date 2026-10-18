@@ -35,7 +35,7 @@ public final class StudioRecord {
     }
 
     /**
-     * Returns whether the given studio effort score is within the valid range
+     * Returns whether the given studio effort score is within the valid range.
      *
      * @param effortScore Studio effort score to check.
      * @return True if the effort score is a non-negative integer.
