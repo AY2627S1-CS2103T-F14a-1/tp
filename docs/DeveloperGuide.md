@@ -166,7 +166,7 @@ This section describes some noteworthy details on how certain features are imple
 
 For `addmission n/NAME d/DEADLINE`, `AddressBookParser` delegates to `AddMissionCommandParser`, which validates exactly one name and deadline and creates an `AddMissionCommand`. `ParserUtil` removes surrounding whitespace and collapses repeated whitespace in the name, while preserving case and punctuation. The deadline must be a real date in `YYYY-MM-DD` format; past dates are accepted. Missing, repeated, blank, or invalid fields and unexpected preamble text cause a `ParseException`.
 
-When executed, `AddMissionCommand` calls `Model#hasMissionName(...)` to reject duplicates, ignoring case and whitespace differences. It then calls `Model#addMission(...)`, which delegates to the shared `MissionCatalogue` through `ModelManager` and `AddressBook`. The catalogue allocates the next mission ID only when adding the validated mission. Existing student records remain unchanged: an absent submission ID means not submitted. The command returns a `CommandResult` containing the added mission.
+When executed, `AddMissionCommand` calls `Model#hasMissionName(...)` to reject duplicates, ignoring case and whitespace differences. It then calls `Model#addMission(...)`, which delegates to the shared `MissionCatalogue` through `ModelManager` and `AddressBook`. The catalogue allocates the next mission ID only when adding the validated mission. The command returns a `CommandResult` containing the added mission.
 
 The sequence diagram below illustrates the successful interaction flow using `execute("addmission n/Rune Reading d/2026-10-20")`. The full command text is abbreviated as `commandText` inside the diagram.
 
