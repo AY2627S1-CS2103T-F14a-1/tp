@@ -7,15 +7,22 @@ skinparam classBackgroundColor MODEL_COLOR
 AddressBook *-right-> "1" UniqueStudentList
 AddressBook *-right-> "1" UniqueTagList
 UniqueTagList -[hidden]down- UniqueStudentList
-UniqueTagList -[hidden]down- UniqueStudentList
 
 UniqueTagList -right-> "*" Tag
-UniqueStudentList -right-> Student
+UniqueStudentList -right-> "*" Student
 
 Student -up-> "*" Tag
 
-Student *--> Name
-Student *--> Phone
-Student *--> Email
-Student *--> Address
+Student *--> "1" Name
+Student *--> "1" Phone
+Student *--> "1" Email
+Student *--> "1" StudioGroup
+Student *--> "1" Attendance
+Student *--> "1" MissionSubmissions
+
+Name -[hidden]right-> Phone
+Phone -[hidden]right-> Email
+Email -[hidden]right-> StudioGroup
+StudioGroup -[hidden]right-> Attendance
+Attendance -[hidden]right-> MissionSubmissions
 @enduml

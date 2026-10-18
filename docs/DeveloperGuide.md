@@ -119,24 +119,25 @@ How the parsing works:
 ### Model component
 **API** : [`Model.java`](https://github.com/AY2627S1-CS2103T-F14a-1/tp/blob/master/src/main/java/seedu/address/model/Model.java)
 
-<puml src="diagrams/ModelClassDiagram.puml" width="450" />
-
+<puml src="diagrams/ModelClassDiagram.puml" width="850" />
 
 The `Model` component,
 
-* stores the address book data i.e., all `Student` objects (which are contained in a `UniqueStudentList` object).
-* stores the `Student` objects selected by the current filter, such as search results, in a separate _filtered_ list. It exposes this list as an unmodifiable `ObservableList<Student>` that the UI can observe and bind to, so the UI updates when the list changes.
-* stores a `UserPrefs` object that represents the user’s preferences (currently, just the GUI settings). This is exposed to the outside as a `ReadOnlyUserPrefs` object.
-* does not depend on any of the other three components (as the `Model` represents data entities of the domain, they should make sense on their own without depending on other components)
+* stores the address book data, including all `Student` objects (contained in a `UniqueStudentList`) and shared `Mission` objects (contained in a `MissionCatalogue`).
+* stores each student's contact details, studio group, tags, attendance, and mission submissions. `MissionSubmissions` records the IDs of submitted missions; a mission without a recorded submission is treated as not submitted.
+* stores each mission's ID, description, and deadline. The mission catalogue allocates IDs and keeps track of the next mission number.
+* maintains a _filtered_ view of the students, such as search results. It exposes this view as an unmodifiable `ObservableList<Student>` that the UI can observe and bind to, so the UI updates when the list changes.
+* stores a `UserPrefs` object that represents the user's preferences (currently, just the GUI settings). This is exposed to the outside as a `ReadOnlyUserPrefs` object.
+* does not depend on any of the other three components (as the `Model` represents data entities of the domain, they should make sense on their own without depending on other components).
 
+Each student has one `Attendance` object containing the attended weeks and one `MissionSubmissions` object containing zero or more submitted mission IDs. The `1` multiplicities count these containers, not the records inside them. Composition diamonds show conceptual ownership of the values that form a student record; immutable values may be reused internally when records are replaced. Submission IDs reference shared missions rather than owning them.
 
 <box type="info" seamless>
 
-**Note:** The alternative, arguably more object-oriented, design below keeps a unique list of tags in `AddressBook`, and each `Student` references tags from that list. This lets `AddressBook` maintain one `Tag` object per unique tag instead of each `Student` holding its own `Tag` objects.<br>
+**Note:** The diagram below illustrates a possible alternative for managing tags. Currently, each `Student` stores its own set of tags, and `AddressBook` has no `UniqueTagList`. In the alternative, `AddressBook` would store one `Tag` object per unique tag in a central `UniqueTagList`, and students would reference those shared tags. The student detail classes are retained to show that only tag ownership changes. The mission catalogue is omitted for clarity.
 
-<puml src="diagrams/BetterModelClassDiagram.puml" width="450" />
+<puml src="diagrams/BetterModelClassDiagram.puml" width="800" />
 </box>
-
 
 ### Storage component
 

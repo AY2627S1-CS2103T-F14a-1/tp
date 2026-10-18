@@ -4,30 +4,31 @@ skinparam arrowThickness 1.1
 skinparam arrowColor MODEL_COLOR
 skinparam classBackgroundColor MODEL_COLOR
 
-Package Model as ModelPackage <<Rectangle>>{
+Package Model as ModelPackage <<Rectangle>> {
 Class "<<interface>>\nReadOnlyAddressBook" as ReadOnlyAddressBook
 Class "<<interface>>\nReadOnlyUserPrefs" as ReadOnlyUserPrefs
 Class "<<interface>>\nModel" as Model
 Class AddressBook
 Class ModelManager
 Class UserPrefs
-
 Class UniqueStudentList
 Class Student
-Class Address
-Class Email
 Class Name
 Class Phone
+Class Email
 Class Tag
-
-Class I #FFFFFF
+Class StudioGroup
+Class Attendance
+Class MissionSubmissions
+Class MissionCatalogue
+Class Mission
+Class MissionId
 }
 
 Class HiddenOutside #FFFFFF
 HiddenOutside ..> Model
 
 AddressBook .up.|> ReadOnlyAddressBook
-
 ModelManager .up.|> Model
 Model .right.> ReadOnlyUserPrefs
 Model .left.> ReadOnlyAddressBook
@@ -36,19 +37,24 @@ ModelManager -right-> "1" UserPrefs
 UserPrefs .up.|> ReadOnlyUserPrefs
 
 AddressBook *--> "1" UniqueStudentList
-UniqueStudentList --> "~* all" Student
-Student *--> Name
-Student *--> Phone
-Student *--> Email
-Student *--> Address
-Student *--> "*" Tag
-
-Student -[hidden]up--> I
-UniqueStudentList -[hidden]right-> I
+AddressBook *--> "1" MissionCatalogue
+UniqueStudentList --> "*" Student : all
+ModelManager --> "*" Student : filtered
+MissionCatalogue --> "*" Mission
+Mission --> "1" MissionId
+Student *--> "1" Name
+Student *--> "1" Phone
+Student *--> "1" Email
+Student --> "*" Tag
+Student *--> "1" StudioGroup
+Student *--> "1" Attendance
+Student *--> "1" MissionSubmissions
+MissionSubmissions --> "0..*" MissionId : submitted IDs
 
 Name -[hidden]right-> Phone
-Phone -[hidden]right-> Address
-Address -[hidden]right-> Email
-
-ModelManager --> "~* filtered" Student
+Phone -[hidden]right-> Email
+Email -[hidden]right-> Tag
+Tag -[hidden]right-> StudioGroup
+StudioGroup -[hidden]right-> Attendance
+Attendance -[hidden]right-> MissionSubmissions
 @enduml
