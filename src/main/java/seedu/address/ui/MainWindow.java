@@ -149,11 +149,18 @@ public class MainWindow extends UiPart<Stage> {
 
         studentDetailsPanel = new StudentDetailsPanel();
 
-        Region studentDetailsRoot = studentDetailsPanel.getRoot();
+        Region studentDetailsRoot =
+                studentDetailsPanel.getRoot();
 
         studentDetailsRoot.setMaxSize(
                 Double.MAX_VALUE,
                 Double.MAX_VALUE);
+
+        studentDetailsRoot.prefWidthProperty().bind(
+                studentDetailsPanelPlaceholder.widthProperty());
+
+        studentDetailsRoot.prefHeightProperty().bind(
+                studentDetailsPanelPlaceholder.heightProperty());
 
         StackPane.setAlignment(
                 studentDetailsRoot,
@@ -166,7 +173,7 @@ public class MainWindow extends UiPart<Stage> {
                 .getSelectionModel()
                 .selectedItemProperty()
                 .addListener((observable, oldStudent, newStudent) ->
-                        studentDetailsPanel.showStudent(newStudent));
+                        studentDetailsPanel.showStudent(newStudent, logic.getMissions()));
 
         resultDisplay = new ResultDisplay();
         resultDisplayPlaceholder.getChildren()
@@ -263,7 +270,8 @@ public class MainWindow extends UiPart<Stage> {
                     commandResult.getFeedbackToUser());
 
             commandResult.getStudentToView().ifPresent(student -> {
-                studentDetailsPanel.showStudent(student);
+                studentDetailsPanel.showStudent(student,
+                        commandResult.getMissions());
                 studentListPanel.getStudentListView()
                         .getSelectionModel()
                         .select(student);

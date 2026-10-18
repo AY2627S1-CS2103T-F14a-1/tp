@@ -1,11 +1,16 @@
 package seedu.address.ui;
 
+import java.util.List;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import seedu.address.model.mission.Mission;
+import seedu.address.model.mission.MissionId;
+import seedu.address.model.student.Attendance;
 import seedu.address.model.student.MissionSubmissions;
 import seedu.address.model.student.Student;
 
@@ -39,6 +44,9 @@ public class StudentDetailsPanel extends UiPart<Region> {
     private VBox studentDetails;
 
     @FXML
+    private GridPane attendanceGrid;
+
+    @FXML
     private GridPane missionSubmissionsGrid;
 
     @FXML
@@ -49,6 +57,7 @@ public class StudentDetailsPanel extends UiPart<Region> {
      */
     public StudentDetailsPanel() {
         super(FXML);
+        clearStudent();
     }
 
     /**
@@ -59,7 +68,10 @@ public class StudentDetailsPanel extends UiPart<Region> {
      *
      * @param student student whose profile should be displayed
      */
-    public void showStudent(Student student) {
+    public void showStudent(
+            Student student,
+            List<Mission> missions) {
+
         if (student == null) {
             clearStudent();
             return;
@@ -81,7 +93,8 @@ public class StudentDetailsPanel extends UiPart<Region> {
         email.setText("Email: " + student.getEmail().value);
         tags.setText("Tags: " + student.getTags());
 
-        populateMissionSubmissions(student);
+        populateMissionSubmissions(student, missions);
+        populateAttendance(student);
     }
 
     /**
@@ -105,29 +118,57 @@ public class StudentDetailsPanel extends UiPart<Region> {
      * {@code Submitted} or {@code Not submitted}.</p>
      *
      * @param student student whose mission-submission status is displayed
+     * @param missions list of all missions
      */
-    private void populateMissionSubmissions(Student student) {
+    private void populateMissionSubmissions(
+            Student student,
+            List<Mission> missions) {
+
         missionSubmissionsGrid.getChildren().clear();
 
-        addGridLabel(missionSubmissionsGrid, "Week", 0, 0, true);
-        addGridLabel(missionSubmissionsGrid, "Status", 1, 0, true);
+        if (missions.isEmpty()) {
+            addGridLabel(
+                    missionSubmissionsGrid,
+                    "No missions configured.",
+                    0,
+                    0,
+                    false);
+            return;
+        }
+
+        addGridLabel(
+                missionSubmissionsGrid,
+                "Mission",
+                0,
+                0,
+                true);
+
+        addGridLabel(
+                missionSubmissionsGrid,
+                "Status",
+                1,
+                0,
+                true);
 
         MissionSubmissions submissions =
                 student.getMissionSubmissions();
 
         int row = 1;
 
-        for (int week = MissionSubmissions.MIN_WEEK;
-             week <= MissionSubmissions.MAX_WEEK;
-             week++) {
+        for (Mission mission : missions) {
+            MissionId missionId = mission.getId();
 
-            String status = submissions.hasSubmission(week)
+            String status = submissions.hasSubmission(missionId)
                     ? "Submitted"
                     : "Not submitted";
 
             addGridLabel(
                     missionSubmissionsGrid,
-                    String.valueOf(week),
+                    mission.getId()
+                            + " · "
+                            + mission.toString()
+                            + "\nDue: "
+                            + mission.getDeadline(),
                     0,
                     row,
                     false);
@@ -140,6 +181,56 @@ public class StudentDetailsPanel extends UiPart<Region> {
                     false);
 
             row++;
+        }
+    }
+
+    /**
+     * Populates the attendance grid for the given student.
+     *
+     * <p>Each valid week is displayed together with either
+     * {@code Present} or {@code Absent}.</p>
+     *
+     * @param student student whose attendance is displayed
+     */
+    private void populateAttendance(Student student) {
+        attendanceGrid.getChildren().clear();
+
+        addGridLabel(
+                attendanceGrid,
+                "Week",
+                0,
+                0,
+                true);
+
+        addGridLabel(
+                attendanceGrid,
+                "Status",
+                1,
+                0,
+                true);
+
+        for (int week = Attendance.MIN_WEEK;
+             week <= Attendance.MAX_WEEK;
+             week++) {
+
+            int row = week - Attendance.MIN_WEEK + 1;
+
+            boolean hasAttended =
+                    student.getAttendance().hasAttendance(week);
+
+            addGridLabel(
+                    attendanceGrid,
+                    String.valueOf(week),
+                    0,
+                    row,
+                    false);
+
+            addGridLabel(
+                    attendanceGrid,
+                    hasAttended ? "Present" : "Absent",
+                    1,
+                    row,
+                    false);
         }
     }
 

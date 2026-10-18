@@ -59,16 +59,52 @@
     -fx-max-width: 50px;
 }
 
-.student-details-container,
+.student-details-container {
+    -fx-padding: 0;
+    -fx-alignment: CENTER;
+}
+
 .student-details-panel {
     -fx-padding: 24px;
-    -fx-alignment: top-left;
+    -fx-alignment: CENTER;
+    -fx-max-width: infinity;
+    -fx-max-height: infinity;
+}
+
+#emptyMessage {
+    -fx-alignment: CENTER;
+    -fx-max-width: infinity;
+    -fx-max-height: infinity;
+}
+
+.student-details-scroll-pane {
+    -fx-padding: 0;
+    -fx-background-insets: 0;
+    -fx-border-insets: 0;
+    -fx-border-width: 0;
+    -fx-border-color: transparent;
+    -fx-background-color: transparent;
+    -fx-max-width: infinity;
+    -fx-max-height: infinity;
+}
+
+.student-details-scroll-pane > .viewport {
+    -fx-padding: 0;
+    -fx-background-insets: 0;
+    -fx-border-width: 0;
+    -fx-border-color: transparent;
+    -fx-background-color: transparent;
+}
+
+.student-details-scroll-pane > .corner {
+    -fx-background-color: transparent;
 }
 
 .student-profile {
+    -fx-padding: 0;
     -fx-alignment: TOP_LEFT;
+    -fx-fill-width: true;
     -fx-max-width: infinity;
-    -fx-max-height: infinity;
 }
 
 .student-details-name {
@@ -86,13 +122,6 @@
 
 .empty-details-message {
     -fx-font-size: 15px;
-}
-
-.student-details-scroll-pane {
-    -fx-background-insets: 0;
-    -fx-padding: 0;
-    -fx-max-width: infinity;
-    -fx-max-height: infinity;
 }
 
 .student-profile .separator {

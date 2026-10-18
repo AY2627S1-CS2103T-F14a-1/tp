@@ -157,3 +157,16 @@ SplitPane {
 .student-list-title {
     -fx-text-fill: #1d2b3a;
 }
+
+.student-details-scroll-pane,
+.student-details-scroll-pane:focused,
+.student-details-scroll-pane > .viewport,
+.student-details-scroll-pane:focused > .viewport {
+    -fx-background-color: white;
+    -fx-background-insets: 0;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-border-insets: 0;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}

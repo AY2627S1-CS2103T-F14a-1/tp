@@ -1,10 +1,7 @@
 package seedu.address.logic.commands;
 
-import java.util.List;
-
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.ToStringBuilder;
-import seedu.address.logic.Messages;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 import seedu.address.model.student.Student;
@@ -38,22 +35,15 @@ public class ViewCommand extends Command {
 
     @Override
     public CommandResult execute(Model model) throws CommandException {
-        List<Student> lastShownList =
-                model.getFilteredStudentList();
-
-        if (targetIndex.getZeroBased() >= lastShownList.size()) {
-            throw new CommandException(
-                    Messages.MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX);
-        }
-
         Student studentToView =
-                lastShownList.get(targetIndex.getZeroBased());
+                getStudentAtDisplayedIndex(model, targetIndex);
 
         return new CommandResult(
-                String.format(
-                        MESSAGE_VIEW_STUDENT_SUCCESS,
-                        studentToView.getName().fullName),
-                studentToView);
+        String.format(
+                MESSAGE_VIEW_STUDENT_SUCCESS,
+                studentToView.getName().fullName),
+                studentToView, model.getMissionList()
+        );
     }
 
     @Override

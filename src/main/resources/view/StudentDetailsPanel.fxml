@@ -8,17 +8,18 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.geometry.Insets?>
 
-<VBox xmlns="http://javafx.com/javafx/17"
-      xmlns:fx="http://javafx.com/fxml/1"
-      alignment="TOP_LEFT"
-      fillWidth="true"
-      maxWidth="Infinity"
-      maxHeight="Infinity"
-      spacing="12"
-      styleClass="student-details-panel">
+<?import javafx.scene.layout.StackPane?>
+<StackPane xmlns="http://javafx.com/javafx/17"
+           xmlns:fx="http://javafx.com/fxml/1"
+           maxWidth="Infinity"
+           maxHeight="Infinity"
+           styleClass="student-details-panel">
 
     <VBox fx:id="emptyMessage"
           alignment="CENTER"
+          fillWidth="true"
+          maxWidth="Infinity"
+          maxHeight="Infinity"
           spacing="5"
           VBox.vgrow="ALWAYS">
 
@@ -32,13 +33,14 @@
     </VBox>
 
     <ScrollPane fx:id="studentDetailsScrollPane"
+                visible="false"
+                managed="false"
                 fitToWidth="true"
                 fitToHeight="true"
                 hbarPolicy="NEVER"
                 vbarPolicy="AS_NEEDED"
-                visible="false"
-                managed="false"
-                VBox.vgrow="ALWAYS"
+                maxWidth="Infinity"
+                maxHeight="Infinity"
                 styleClass="student-details-scroll-pane">
         <content>
             <VBox fx:id="studentDetails"
@@ -94,4 +96,4 @@
             </VBox>
         </content>
     </ScrollPane>
-</VBox>
+</StackPane>

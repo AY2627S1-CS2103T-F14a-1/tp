@@ -3,11 +3,8 @@ package seedu.address.logic.commands;
 import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.AppUtil.checkArgument;
 
-import java.util.List;
-
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.ToStringBuilder;
-import seedu.address.logic.Messages;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 import seedu.address.model.student.Attendance;
@@ -60,12 +57,7 @@ public class AddAttendanceCommand extends Command {
     public CommandResult execute(Model model) throws CommandException {
         requireNonNull(model);
 
-        List<Student> lastShownList = model.getFilteredStudentList();
-        if (targetIndex.getZeroBased() >= lastShownList.size()) {
-            throw new CommandException(Messages.MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX);
-        }
-
-        Student studentToUpdate = lastShownList.get(targetIndex.getZeroBased());
+        Student studentToUpdate = getStudentAtDisplayedIndex(model, targetIndex);
         Attendance attendance = studentToUpdate.getAttendance();
 
         if (attendance.hasAttendance(week)) {

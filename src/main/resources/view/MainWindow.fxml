@@ -93,6 +93,9 @@
           </VBox>
 
           <StackPane fx:id="studentDetailsPanelPlaceholder"
+                     alignment="CENTER"
+                     maxWidth="Infinity"
+                     maxHeight="Infinity"
                      styleClass="student-details-container"/>
         </SplitPane>
 

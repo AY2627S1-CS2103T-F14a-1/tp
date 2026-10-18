@@ -1,14 +1,21 @@
 {
-  "students": [ {
-    "name": "Alice Pauline",
-    "phone": "94351253",
-    "email": "alice@example.com",
-    "tags": [ "friends" ],
-    "studioGroup": "1A"
-  }, {
-    "name": "Alice Pauline",
-    "phone": "94351253",
-    "email": "pauline@example.com",
-    "studioGroup": "1A"
-  } ]
+  "students": [
+    {
+      "name": "Alice Pauline",
+      "phone": "94351253",
+      "email": "alice@example.com",
+      "tags": [
+        "friends"
+      ],
+      "studioGroup": "1A"
+    },
+    {
+      "name": "Alice Pauline",
+      "phone": "94351253",
+      "email": "pauline@example.com",
+      "studioGroup": "1A"
+    }
+  ],
+  "missions": [],
+  "nextMissionNumber": 1
 }

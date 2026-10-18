@@ -2,10 +2,12 @@ package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
 import seedu.address.commons.util.ToStringBuilder;
+import seedu.address.model.mission.Mission;
 import seedu.address.model.student.Student;
 
 /**
@@ -31,6 +33,7 @@ public class CommandResult {
 
     /** Student details requested by a view command, or null for ordinary feedback. */
     private final Student studentToView;
+    private final List<Mission> missions;
 
     /**
      * Creates a {@code CommandResult} with the specified fields.
@@ -40,27 +43,33 @@ public class CommandResult {
      * @param exit whether the application should exit
      * @param studentToView student to display in the profile panel,
      *                      or {@code null} if no profile should be displayed
+     * @param missions missions to display in the profile panel
      */
-    public CommandResult(String feedbackToUser, boolean showHelp, boolean exit, Student studentToView) {
+    public CommandResult(String feedbackToUser,
+                         boolean showHelp,
+                         boolean exit,
+                         Student studentToView,
+                         List<Mission> missions) {
         this.feedbackToUser = requireNonNull(feedbackToUser);
         this.showHelp = showHelp;
         this.exit = exit;
         this.studentToView = studentToView;
+        this.missions = requireNonNull(missions);
     }
 
     /**
      * Creates a {@code CommandResult} without a student profile target.
      *
      * @param feedbackToUser feedback message displayed to the user
-     * @param showHelp whether the help window should be shown
-     * @param exit whether the application should exit
+     * @param studentToView student to display in the profile panel
+     * @param missions missions to display in the profile panel
      */
     public CommandResult(
             String feedbackToUser,
-            boolean showHelp,
-            boolean exit) {
+            Student studentToView,
+            List<Mission> missions) {
 
-        this(feedbackToUser, showHelp, exit, null);
+        this(feedbackToUser, false, false, studentToView, missions);
     }
 
     /**
@@ -70,7 +79,7 @@ public class CommandResult {
      * @param feedbackToUser feedback message displayed to the user
      */
     public CommandResult(String feedbackToUser) {
-        this(feedbackToUser, false, false, null);
+        this(feedbackToUser, false, false, null, List.of());
     }
 
     /**
@@ -81,7 +90,27 @@ public class CommandResult {
      * @param studentToView student to display in the profile panel
      */
     public CommandResult(String feedbackToUser, Student studentToView) {
-        this(feedbackToUser, false, false, studentToView);
+        this(feedbackToUser, false, false, studentToView, List.of());
+    }
+
+    /**
+     * Creates a {@code CommandResult} that shows help or exits the application.
+     *
+     * @param feedbackToUser feedback message displayed to the user
+     * @param showHelp whether the help window should be shown
+     * @param exit whether the application should exit
+     */
+    public CommandResult(String feedbackToUser, boolean showHelp, boolean exit) {
+        this(feedbackToUser, showHelp, exit, null, List.of());
+    }
+
+    /**
+     * Returns the immutable catalogue snapshot for the student view.
+     *
+     * @return Missions to display.
+     */
+    public List<Mission> getMissions() {
+        return missions;
     }
 
     /**
@@ -89,7 +118,6 @@ public class CommandResult {
      *
      * @return feedback message
      */
-
     public String getFeedbackToUser() {
         return feedbackToUser;
     }
@@ -135,12 +163,13 @@ public class CommandResult {
         return feedbackToUser.equals(otherCommandResult.feedbackToUser)
                 && showHelp == otherCommandResult.showHelp
                 && exit == otherCommandResult.exit
-                && Objects.equals(studentToView, otherCommandResult.studentToView);
+                && Objects.equals(studentToView, otherCommandResult.studentToView)
+                && Objects.equals(missions, otherCommandResult.missions);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(feedbackToUser, showHelp, exit, studentToView);
+        return Objects.hash(feedbackToUser, showHelp, exit, studentToView, missions);
     }
 
     @Override
@@ -149,6 +178,8 @@ public class CommandResult {
                 .add("feedbackToUser", feedbackToUser)
                 .add("showHelp", showHelp)
                 .add("exit", exit)
+                .add("studentToView", studentToView)
+                .add("missions", missions)
                 .toString();
     }
 

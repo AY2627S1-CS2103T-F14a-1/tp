@@ -1,116 +1,99 @@
 package seedu.address.model.student;
 
 import static java.util.Objects.requireNonNull;
-import static seedu.address.commons.util.AppUtil.checkArgument;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.TreeSet;
+
+import seedu.address.model.mission.MissionId;
 
 /**
- * Represents an immutable collection of a student's mission submission weeks.
- * Each recorded week is between 3 and 13, inclusive.
+ * Represents an immutable collection of a student's submitted mission IDs.
  */
 public final class MissionSubmissions {
 
-    public static final int MIN_WEEK = 3;
-    public static final int MAX_WEEK = 13;
-    public static final String MESSAGE_CONSTRAINTS =
-            "Tutorial week must be between " + MIN_WEEK + " and " + MAX_WEEK + " inclusive.";
-
-    private final Set<Integer> submittedWeeks;
+    private final Set<MissionId> submittedMissionIds;
 
     /**
      * Creates an empty collection of mission submissions.
      */
     public MissionSubmissions() {
-        submittedWeeks = Collections.emptySet();
+        submittedMissionIds = Collections.emptySet();
     }
 
     /**
-     * Creates mission submissions from the given tutorial weeks.
+     * Creates mission submissions from the given mission IDs.
      *
-     * @param submissionWeeks Weeks for which submissions have been recorded.
+     * @param submissionIds Mission IDs with recorded submissions.
      * @throws NullPointerException If the set or any of its elements is null.
-     * @throws IllegalArgumentException If any week is outside the valid range.
      */
-    public MissionSubmissions(Set<Integer> submissionWeeks) {
-        requireNonNull(submissionWeeks);
+    public MissionSubmissions(Set<MissionId> submissionIds) {
+        requireNonNull(submissionIds);
 
-        Set<Integer> copiedWeeks = new HashSet<>(submissionWeeks);
-        for (Integer week : copiedWeeks) {
-            requireNonNull(week);
-            checkArgument(isValidWeek(week), MESSAGE_CONSTRAINTS);
+        Set<MissionId> copiedIds = new HashSet<>(submissionIds);
+        for (MissionId missionId : copiedIds) {
+            requireNonNull(missionId);
         }
-        submittedWeeks = Collections.unmodifiableSet(copiedWeeks);
+        submittedMissionIds = Collections.unmodifiableSet(copiedIds);
     }
 
     /**
-     * Returns whether the given tutorial week is within the valid range.
+     * Returns whether a submission has been recorded for the given mission ID.
      *
-     * @param week Tutorial week to check.
-     * @return True if the week is between 3 and 13, inclusive.
+     * @param missionId Mission ID to check.
+     * @return True if a submission is recorded for the mission ID.
+     * @throws NullPointerException If the mission ID is null.
      */
-    public static boolean isValidWeek(int week) {
-        return week >= MIN_WEEK && week <= MAX_WEEK;
+    public boolean hasSubmission(MissionId missionId) {
+        requireNonNull(missionId);
+        return submittedMissionIds.contains(missionId);
     }
 
     /**
-     * Returns whether a submission has been recorded for the given week.
+     * Returns mission submissions including the given mission ID without changing
+     * this object. Returns this object if the mission ID is already recorded.
      *
-     * @param week Tutorial week to check.
-     * @return True if a submission is recorded for the week.
-     * @throws IllegalArgumentException If the week is outside the valid range.
+     * @param missionId Mission ID to record.
+     * @return Mission submissions containing the existing mission IDs and given mission ID.
+     * @throws NullPointerException If the mission ID is null.
      */
-    public boolean hasSubmission(int week) {
-        checkArgument(isValidWeek(week), MESSAGE_CONSTRAINTS);
-        return submittedWeeks.contains(week);
-    }
-
-    /**
-     * Returns mission submissions including the given week without changing
-     * this object. Returns this object if the week is already recorded.
-     *
-     * @param week Tutorial week to record.
-     * @return Mission submissions containing the existing weeks and given week.
-     * @throws IllegalArgumentException If the week is outside the valid range.
-     */
-    public MissionSubmissions withSubmission(int week) {
-        if (hasSubmission(week)) {
+    public MissionSubmissions withSubmission(MissionId missionId) {
+        if (hasSubmission(missionId)) {
             return this;
         }
 
-        Set<Integer> updatedWeeks = new HashSet<>(submittedWeeks);
-        updatedWeeks.add(week);
-        return new MissionSubmissions(updatedWeeks);
+        Set<MissionId> updatedIds = new HashSet<>(submittedMissionIds);
+        updatedIds.add(missionId);
+        return new MissionSubmissions(updatedIds);
     }
 
     /**
-     * Returns submissions excluding the given week without modifying this object.
-     * Returns this object if the week is not recorded.
+     * Returns submissions excluding the given mission ID without modifying this object.
+     * Returns this object if the mission ID is not recorded.
      *
-     * @param week Tutorial week to remove.
-     * @return Submissions containing all existing weeks except the given week.
-     * @throws IllegalArgumentException If the week is outside the valid range.
+     * @param missionId Mission ID to remove.
+     * @return Submissions containing all existing mission IDs except the given mission ID.
+     * @throws NullPointerException If the mission ID is null.
      */
-    public MissionSubmissions withoutSubmission(int week) {
-        if (!hasSubmission(week)) {
+    public MissionSubmissions withoutSubmission(MissionId missionId) {
+        if (!hasSubmission(missionId)) {
             return this;
         }
 
-        Set<Integer> updatedWeeks = new HashSet<>(submittedWeeks);
-        updatedWeeks.remove(week);
-        return new MissionSubmissions(updatedWeeks);
+        Set<MissionId> updatedIds = new HashSet<>(submittedMissionIds);
+        updatedIds.remove(missionId);
+        return new MissionSubmissions(updatedIds);
     }
 
     /**
-     * Returns an unmodifiable set of recorded tutorial weeks.
+     * Returns an unmodifiable set of recorded mission IDs.
      *
-     * @return Recorded weeks, with no guaranteed iteration order.
+     * @return Recorded mission IDs, with no guaranteed iteration order.
      */
-    public Set<Integer> getSubmittedWeeks() {
-        return submittedWeeks;
+    public Set<MissionId> getSubmittedMissionIds() {
+        return submittedMissionIds;
     }
 
     @Override
@@ -124,22 +107,23 @@ public final class MissionSubmissions {
             return false;
         }
 
-        return submittedWeeks.equals(otherSubmissions.submittedWeeks);
+        return submittedMissionIds.equals(otherSubmissions.submittedMissionIds);
     }
 
     @Override
     public int hashCode() {
-        return submittedWeeks.hashCode();
+        return submittedMissionIds.hashCode();
     }
 
     /**
-     * Returns the submitted weeks in ascending order for diagnostic output.
+     * Returns the submitted mission IDs in ascending order for diagnostic output.
      *
-     * @return A string containing the recorded weeks in ascending order.
+     * @return A string containing the recorded mission IDs in ascending order.
      */
     @Override
     public String toString() {
-        return new TreeSet<>(submittedWeeks).toString();
+        return submittedMissionIds.stream().sorted(Comparator.comparingLong(MissionId::getNumber))
+                .map(MissionId::toString).toList().toString();
     }
 
 }

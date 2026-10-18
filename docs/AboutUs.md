@@ -7,7 +7,7 @@
 
 We are a team based in the [School of Computing, National University of Singapore](http://www.comp.nus.edu.sg).
 
-You can reach us at the email `seer[at]comp.nus.edu.sg`
+You can reach us at the email `ay2627s1-cs2103t-f14a-1[at]nusu.onmicrosoft.com`
 
 ## Project team
 
@@ -26,7 +26,7 @@ You can reach us at the email `seer[at]comp.nus.edu.sg`
 [[github](http://github.com/brianlim35)]
 
 * Role: Code quality
-* Responsibilities: Checking of codes readability
+* Responsibilities: Checking of code readability
 
 ### Charis Tan
 
