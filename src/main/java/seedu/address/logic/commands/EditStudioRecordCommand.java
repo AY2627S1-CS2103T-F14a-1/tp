@@ -2,6 +2,8 @@ package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.AppUtil.checkArgument;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_STUDIO_EFFORT;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_WEEK;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.ToStringBuilder;
@@ -11,20 +13,29 @@ import seedu.address.model.student.RegisteredStudioRecords;
 import seedu.address.model.student.Student;
 import seedu.address.model.student.StudioRecord;
 
+/**
+ * Edits a week's studio record for a student identified by a displayed index.
+ */
 public class EditStudioRecordCommand extends Command {
 
     public static final String COMMAND_WORD = "editstudiorecord";
-
-    private final Index targetIndex;
-    private final int week;
-    private final StudioRecord studioRecord;
-
     public static final String MESSAGE_ALREADY_RECORDED =
             "%1$s’s studio for studio week %2$d is already the same. No changes made.";
     public static final String MESSAGE_SUCCESS =
             "Edited %1$s's studio record for studio week %2$d.";
+    public static final String MESSAGE_USAGE = COMMAND_WORD
+            + ": Edits a week's studio record for the selected student.\n"
+            + "Parameters: INDEX " + PREFIX_WEEK + "WEEK " + PREFIX_STUDIO_EFFORT + "EFFORT\n"
+            + "INDEX must be a positive integer identifying a displayed student.\n"
+            + "WEEK must be between " + RegisteredStudioRecords.MIN_WEEK
+            + " and " + RegisteredStudioRecords.MAX_WEEK + " inclusive.\n"
+            + "Example: " + COMMAND_WORD + " 1 " + PREFIX_WEEK + "3 " + PREFIX_STUDIO_EFFORT + "30";
     public static final String MESSAGE_WEEK_NOT_RECORDED =
             "%1$s’s studio for studio week %2$d was not already recorded. No changes made.";
+
+    private final Index targetIndex;
+    private final int week;
+    private final StudioRecord studioRecord;
 
     /**
      * Creates a command to edit a week's studio.
