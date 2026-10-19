@@ -225,10 +225,10 @@ Format: `editstudiorecord INDEX w/WEEK ef/EFFORT`
 
 Examples:
 
-* `list` followed by `editstudiorecord 1 w/3 ef/30` records attendance and an effort score of 30 for week 3 for the first student displayed, if any.
-* `find Betsy` followed by `editstudiorecord 1 w/13 ef/0` records attendance and an effort score of 0 for week 13 for the first student in the search results, if any.
+* `list` followed by `editstudiorecord 1 w/3 ef/30` edits studio record's effort score to 30 for week 3 for the first student displayed, if any.
+* `find Betsy` followed by `editstudiorecord 1 w/13 ef/0` edits studio's effort score to 0 for week 13 for the first student in the search results, if any.
 
-For example, if the first student is Amy Bee and her week 3 studio record is not yet recorded, `editstudiorecord 1 w/3 ef/30` displays:
+For example, if the first student is Amy Bee and her week 3 studio record is recorded, `editstudiorecord 1 w/3 ef/30` displays:
 
 ```text
 Edited Amy Bee's studio record for studio week 3.
