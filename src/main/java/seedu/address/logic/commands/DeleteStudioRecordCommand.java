@@ -63,8 +63,8 @@ public class DeleteStudioRecordCommand extends Command {
             return new CommandResult(String.format(MESSAGE_ALREADY_NOT_RECORDED, studentToUpdate.getName(), week));
         }
 
-        Student updatedStudent = createUpdatedStudent(
-                studentToUpdate, registeredStudioRecords.withoutStudioRecord(week));
+        Student updatedStudent = studentToUpdate.withRegisteredStudioRecords(
+                registeredStudioRecords.withoutStudioRecord(week));
         model.setStudent(studentToUpdate, updatedStudent);
         return new CommandResult(String.format(MESSAGE_SUCCESS, studentToUpdate.getName(), week));
     }
