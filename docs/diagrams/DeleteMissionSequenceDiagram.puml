@@ -13,30 +13,41 @@ participant "m:Model" as M MODEL_COLOR
 end box
 [-> L : execute("delmission m/M03")
 activate L
-L -> A : parseCommand(...)
+L -> A : parseCommand("delmission m/M03")
 activate A
 create P
 A -> P
-A -> P : parse(...)
+activate P
+P --> A
+deactivate P
+A -> P : parse("m/M03")
 activate P
 create C
-P -> C
+P -> C : DeleteMissionCommand(missionId)
+activate C
+C --> P
+deactivate C
 P --> A : c
 deactivate P
+P -[hidden]-> A
+destroy P
 A --> L : c
 deactivate A
 L -> C : execute(m)
 activate C
-C -> M : findMission(id)
+C -> M : findMission(missionId)
 activate M
 M --> C : mission present
 deactivate M
-C -> M : deleteMission(id)
+C -> M : deleteMission(missionId)
 activate M
 M --> C : deleted mission
 deactivate M
 create R
-C -> R
+C -> R : CommandResult(feedback)
+activate R
+R --> C
+deactivate R
 C --> L : r
 deactivate C
 [<-- L : r

@@ -168,7 +168,7 @@ For `addmission n/NAME d/DEADLINE`, `AddressBookParser` delegates to `AddMission
 
 When executed, `AddMissionCommand` calls `Model#hasMissionName(...)` to reject duplicates, ignoring case and whitespace differences. It then calls `Model#addMission(...)`, which delegates to the shared `MissionCatalogue` through `ModelManager` and `AddressBook`. The catalogue allocates the next mission ID only when adding the validated mission. The command returns a `CommandResult` containing the added mission.
 
-The sequence diagram below illustrates the successful interaction flow using `execute("addmission n/Rune Reading d/2026-10-20")`. The full command text is abbreviated as `commandText` inside the diagram.
+The sequence diagram below illustrates the successful interaction flow using `execute("addmission n/Rune Reading d/2026-10-20")`. Here, `deadline` is the parsed `LocalDate` value for `2026-10-20`, and `feedback` is the formatted success message.
 
 <puml src="diagrams/AddMissionSequenceDiagram.puml" width="1000" />
 
@@ -180,7 +180,7 @@ When executed, `DeleteMissionCommand` calls `Model#findMission(...)` and rejects
 
 Deleting a mission removes its submission records from every student. Recreating it—even with the same name and deadline—assigns a new ID and starts with no submissions recorded. Previous submission records are not restored.
 
-The sequence diagram below illustrates the successful interaction flow using `execute("delmission m/M03")`. The model is shown as a single participant to keep the focus on the Logic component.
+The sequence diagram below illustrates the successful interaction flow using `execute("delmission m/M03")`. Here, `missionId` is the parsed `MissionId` value `M03`, and `feedback` is the formatted success message. The model is shown as a single participant to keep the focus on the Logic component.
 
 <puml src="diagrams/DeleteMissionSequenceDiagram.puml" width="1000" />
 
@@ -192,13 +192,17 @@ When executed, the command calls `Model#findMission(...)` and retrieves the sele
 
 Marking an already recorded submission or unmarking an absent submission returns a no-change `CommandResult` without replacing the student. A missing mission or out-of-range displayed index causes a `CommandException` before any update. The shared mission itself is unchanged by either command.
 
-The sequence diagram below illustrates `execute("markmission 1 m/M03")` when the mission and student exist and the submission is not yet recorded. Unmarking follows the same flow with `UnmarkMissionCommandParser`, `UnmarkMissionCommand`, and removal of the submission ID instead of addition.
+The sequence diagram below illustrates `execute("markmission 1 m/M03")` when the mission and student exist and the submission is not yet recorded. Here, `targetIndex` is the parsed one-based index 1, `missionId` is the parsed `MissionId` value `M03`, and `feedback` is the formatted success message. `studentToUpdate` is the selected student and `updatedStudent` is its replacement.
 
 <puml src="diagrams/MissionSubmissionSequenceDiagram.puml" width="1000" />
 
+The corresponding unmarking sequence uses `execute("unmarkmission 1 m/M03")` when the submission is recorded. The parameter names have the same meanings as above; the replacement student has `M03` removed from its submissions.
+
+<puml src="diagrams/UnmarkMissionSubmissionSequenceDiagram.puml" width="1000" />
+
 <box type="info" seamless>
 
-The diagrams show successful paths through Logic, omitting validation branches and internal model operations. Parser lifetime markers are omitted because these temporary objects are managed by Java. The common saving step described below is also omitted from the diagrams.
+The diagrams show successful paths through Logic, omitting validation branches and internal model operations. The parser destroy markers (X) indicate that the temporary parsers are no longer needed after parsing, rather than explicit destruction in Java. PlantUML may continue drawing a parser lifeline below its destroy marker. The common saving step described below is also omitted from the diagrams.
 
 </box>
 
