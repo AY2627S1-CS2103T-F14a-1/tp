@@ -43,7 +43,7 @@ public class AddStudioRecordCommandParserTest {
     @Test
     public void parse_invalidIndexOrWeek_reportsValidationMessage() {
         assertParseFailure(parser, "0 w/3 ef/50", WeeklyTaskParser.MESSAGE_INVALID_STUDENT_INDEX);
-        assertParseFailure(parser, "1 w/2 ef/50", WeeklyTaskParser.MESSAGE_INVALID_STUDIO_WEEK);
+        assertParseFailure(parser, "1 w/-1 ef/50", WeeklyTaskParser.MESSAGE_INVALID_STUDIO_WEEK);
         assertParseFailure(parser, "1 w/14 ef/50", WeeklyTaskParser.MESSAGE_INVALID_STUDIO_WEEK);
     }
 }

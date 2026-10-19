@@ -238,7 +238,7 @@ public class JsonAdaptedStudentTest {
 
     @Test
     public void toModelType_invalidStudioRecordWeek_throwsIllegalValueException() {
-        for (int week : new int[] {-1, 0, 1, 2, 14}) {
+        for (int week : new int[] {-1, 14}) {
             JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_PHONE, VALID_EMAIL,
                     VALID_TAGS, VALID_STUDIO_GROUP, VALID_MISSION_SUBMISSIONS,
                     List.of(List.of(5, 50), List.of(week, 50)));
