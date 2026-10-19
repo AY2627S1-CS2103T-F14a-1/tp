@@ -26,6 +26,13 @@ public class EditStudioRecordCommand extends Command {
     public static final String MESSAGE_WEEK_NOT_RECORDED =
             "%1$s’s studio for studio week %2$d was not already recorded. No changes made.";
 
+    /**
+     * Creates a command to edit a week's studio.
+     *
+     * @param targetIndex Index of the student in the displayed list.
+     * @param week Studio week for the record.
+     * @param studioRecord Record to edit.
+     */
     public EditStudioRecordCommand(Index targetIndex, int week, StudioRecord studioRecord) {
         requireNonNull(targetIndex);
         requireNonNull(studioRecord);
@@ -37,6 +44,13 @@ public class EditStudioRecordCommand extends Command {
         this.studioRecord = studioRecord;
     }
 
+    /**
+     * Edits studio without changing the current list filter.
+     *
+     * @param model {@code Model} containing the students.
+     * @return Feedback describing the edit or an existing studio record.
+     * @throws CommandException If the index does not identify a displayed student.
+     */
     @Override
     public CommandResult execute(Model model) throws CommandException {
         requireNonNull(model);
