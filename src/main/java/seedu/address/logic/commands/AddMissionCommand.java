@@ -5,7 +5,9 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_DATE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
 
 import java.time.LocalDate;
+import java.util.logging.Logger;
 
+import seedu.address.commons.core.LogsCenter;
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.Messages;
 import seedu.address.logic.commands.exceptions.CommandException;
@@ -22,6 +24,8 @@ public class AddMissionCommand extends Command {
             + "Example: " + COMMAND_WORD + " " + PREFIX_NAME + "Rune Reading " + PREFIX_DATE + "2026-10-20.";
     public static final String MESSAGE_SUCCESS = "New mission added: %1$s.";
     public static final String MESSAGE_DUPLICATE_MISSION = "This mission already exists in the mission list.";
+
+    private static final Logger logger = LogsCenter.getLogger(AddMissionCommand.class);
 
     private final String name;
     private final LocalDate deadline;
@@ -41,9 +45,11 @@ public class AddMissionCommand extends Command {
     public CommandResult execute(Model model) throws CommandException {
         requireNonNull(model);
         if (model.hasMissionName(name)) {
+            logger.fine("Mission addition rejected: duplicate name.");
             throw new CommandException(MESSAGE_DUPLICATE_MISSION);
         }
         Mission added = model.addMission(name, deadline);
+        logger.info("Added mission " + added.getId() + " to the in-memory catalogue.");
         return new CommandResult(String.format(MESSAGE_SUCCESS, Messages.format(added)));
     }
 

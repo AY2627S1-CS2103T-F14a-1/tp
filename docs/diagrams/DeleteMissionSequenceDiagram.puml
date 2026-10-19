@@ -1,0 +1,55 @@
+@startuml
+!include style.puml
+skinparam ArrowFontStyle plain
+box Logic LOGIC_COLOR_T1
+participant ":LogicManager" as L LOGIC_COLOR
+participant ":AddressBookParser" as A LOGIC_COLOR
+participant ":DeleteMissionCommandParser" as P LOGIC_COLOR
+participant "c:DeleteMissionCommand" as C LOGIC_COLOR
+participant "r:CommandResult" as R LOGIC_COLOR
+end box
+box Model MODEL_COLOR_T1
+participant "m:Model" as M MODEL_COLOR
+end box
+[-> L : execute("delmission m/M03")
+activate L
+L -> A : parseCommand("delmission m/M03")
+activate A
+create P
+A -> P
+activate P
+P --> A
+deactivate P
+A -> P : parse("m/M03")
+activate P
+create C
+P -> C : DeleteMissionCommand(missionId)
+activate C
+C --> P
+deactivate C
+P --> A : c
+deactivate P
+P -[hidden]-> A
+destroy P
+A --> L : c
+deactivate A
+L -> C : execute(m)
+activate C
+C -> M : findMission(missionId)
+activate M
+M --> C : mission present
+deactivate M
+C -> M : deleteMission(missionId)
+activate M
+M --> C : deleted mission
+deactivate M
+create R
+C -> R : CommandResult(feedback)
+activate R
+R --> C
+deactivate R
+C --> L : r
+deactivate C
+[<-- L : r
+deactivate L
+@enduml

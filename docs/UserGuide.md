@@ -257,7 +257,7 @@ identifies `M03`. Numeric-only values such as `m/3` are rejected. Use the stable
 not a student index or a position in the displayed list.
 
 Deletion removes the mission and its submission records from **every student**, including
-students hidden by the current filter. Student details, attendance, and other missions are
+students hidden by the current filter. Student details, studio records, and other missions are
 preserved. The current student filter stays active. The result area shows deletion feedback;
 run `view INDEX` to see the updated profile. Deletion is automatically saved and survives restart.
 Deleted IDs are not reused. Unknown or invalid IDs leave data unchanged.
