@@ -74,6 +74,7 @@ public class MarkMissionCommand extends Command {
 
         if (submissions.hasSubmission(missionId)) {
             logger.fine("MarkMissionCommand made no changes for mission " + missionId
+                    + " for student " + studentToUpdate.getName()
                     + " at displayed student index " + targetIndex.getOneBased() + ".");
             return new CommandResult(String.format(MESSAGE_ALREADY_RECORDED, studentToUpdate.getName(), missionId));
         }
@@ -81,6 +82,7 @@ public class MarkMissionCommand extends Command {
         Student updatedStudent = createUpdatedStudent(studentToUpdate, submissions.withSubmission(missionId));
         model.setStudent(studentToUpdate, updatedStudent);
         logger.info("Recorded submission for mission " + missionId
+                + " for student " + studentToUpdate.getName()
                 + " at displayed student index " + targetIndex.getOneBased() + " in memory.");
         return new CommandResult(String.format(MESSAGE_SUCCESS, studentToUpdate.getName(), missionId));
     }
