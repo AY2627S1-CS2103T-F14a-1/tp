@@ -13,6 +13,8 @@ import static seedu.address.testutil.Assert.assertThrows;
 import static seedu.address.testutil.TypicalStudents.ALICE;
 import static seedu.address.testutil.TypicalStudents.BOB;
 
+import java.util.Map;
+
 import org.junit.jupiter.api.Test;
 
 import seedu.address.testutil.StudentBuilder;
@@ -141,6 +143,35 @@ public class StudentTest {
 
         assertEquals(original, copy);
         assertEquals(original.hashCode(), copy.hashCode());
+    }
+
+    @Test
+    public void withRegisteredStudioRecords_validRecords_replacesRecordsAndPreservesOtherFields() {
+        StudioRecord originalRecord = new StudioRecord(20);
+        Student original = new StudentBuilder(ALICE)
+                .withMissionSubmissions("M03")
+                .withStudioRecords(new StudentBuilder.StudioRecordSet(3, originalRecord))
+                .build();
+        RegisteredStudioRecords updatedRecords = new RegisteredStudioRecords(Map.of(4, new StudioRecord(40)));
+
+        Student updated = original.withRegisteredStudioRecords(updatedRecords);
+
+        assertNotSame(original, updated);
+        assertEquals(original.getName(), updated.getName());
+        assertEquals(original.getPhone(), updated.getPhone());
+        assertEquals(original.getEmail(), updated.getEmail());
+        assertEquals(original.getTags(), updated.getTags());
+        assertEquals(original.getStudioGroup(), updated.getStudioGroup());
+        assertEquals(original.getMissionSubmissions(), updated.getMissionSubmissions());
+        assertEquals(updatedRecords, updated.getRegisteredStudioRecords());
+        assertEquals(originalRecord, original.getRegisteredStudioRecords().getRecordsByWeek().get(3));
+    }
+
+    @Test
+    public void withRegisteredStudioRecords_nullRecords_throwsNullPointerException() {
+        Student student = new StudentBuilder().build();
+
+        assertThrows(NullPointerException.class, () -> student.withRegisteredStudioRecords(null));
     }
 
     @Test
