@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 import static seedu.address.testutil.TypicalStudents.AMY;
-import static seedu.address.testutil.TypicalStudents.getTypicalStudents;
 
 import java.util.Collections;
 
