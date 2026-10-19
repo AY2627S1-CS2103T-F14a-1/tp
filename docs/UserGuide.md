@@ -166,7 +166,7 @@ Format: `addstudiorecord INDEX w/WEEK ef/EFFORT`
 * All three arguments are required. Put `INDEX` before the prefixed arguments, and specify `w/` and `ef/` exactly once each. Extra arguments are rejected. Omitting `ef/EFFORT` displays `Specify an effort score using ef/EFFORT.`
 * Enter `INDEX` and `WEEK` as integers without signs, decimal points, or leading zeros. For example, use `3`, not `+3`, `3.0`, or `03`.
 * The command word and the `w/` and `ef/` prefixes are case-insensitive: `ADDSTUDIORECORD 1 W/3 EF/30` is also accepted.
-* Adding a record marks the student as **Present** for that week, even when the effort score is `0`. Use `view INDEX` to see the studio records table with **Week**, **Attendance**, and **Effort** columns. Weeks without a record show **Absent** and an effort score of `0`.
+* Adding a record marks the student as recorded for that week, even when the effort score is `0`. Weeks without a record show are considered absent with an effort score of `0`.
 * Each student can have one studio record per week. Adding an existing record leaves both attendance and the effort score unchanged, even if a different score is supplied. To change a score, delete that week's record using `delstudiorecord`, then add it again with the new score.
 * The current list filter stays active.
 
