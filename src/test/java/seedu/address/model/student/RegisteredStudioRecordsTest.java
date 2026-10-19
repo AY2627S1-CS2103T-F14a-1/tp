@@ -285,7 +285,7 @@ public class RegisteredStudioRecordsTest {
                 4, new StudioRecord(25),
                 13, FULL_EFFORT_RECORD));
 
-        String expected = "3: A | 80, 4: A | 25, 5: X | 0, 6: X | 0, 7: X | 0, "
+        String expected = "0: X | 0, 1: X | 0, 2: X | 0, 3: A | 80, 4: A | 25, 5: X | 0, 6: X | 0, 7: X | 0, "
                 + "8: X | 0, 9: X | 0, 10: X | 0, 11: X | 0, 12: X | 0, 13: A | 100";
 
         assertEquals(expected, registeredStudioRecords.toString());

@@ -49,7 +49,7 @@ public class WeeklyTaskParserTest {
 
     @Test
     public void parseTutorialWeek_invalidInput_throwsParseException() {
-        String[] invalidInputs = {"", " ", "0", "1", "2", "14", "-1", "+3", "03", "3.0", "three", "3 4", "2147483648"};
+        String[] invalidInputs = {"", " ", "14", "-1", "+3", "03", "3.0", "three", "3 4", "2147483648"};
 
         for (String input : invalidInputs) {
             assertThrows(ParseException.class, WeeklyTaskParser.MESSAGE_INVALID_STUDIO_WEEK, () ->

@@ -189,7 +189,7 @@ public class LogicManagerTest {
         model.addStudent(BOB);
         JsonAddressBookStorage storage = new JsonAddressBookStorage(temporaryFolder.resolve("addressBook.json"));
 
-        assertEquals("Added Amy Bee's studio record for tutorial week 3.",
+        assertEquals("Added Amy Bee's studio record for studio week 3.",
                 logic.execute("addstudiorecord 1 w/3 ef/50").getFeedbackToUser());
         Student withWeekThree = new StudentBuilder(original)
                 .withStudioRecords(new StudioRecordSet(3, new StudioRecord(50))).build();
@@ -201,7 +201,7 @@ public class LogicManagerTest {
         assertEquals(savedJson, Files.readString(storage.getAddressBookFilePath()));
         assertStudioState(model, storage, withWeekThree);
 
-        assertEquals("Added Amy Bee's studio record for tutorial week 13.",
+        assertEquals("Added Amy Bee's studio record for studio week 13.",
                 logic.execute("addstudiorecord 1 w/13 ef/0").getFeedbackToUser());
         Student withBothWeeks = new StudentBuilder(original).withStudioRecords(
                 new StudioRecordSet(3, new StudioRecord(50)), new StudioRecordSet(13, new StudioRecord(0))).build();
@@ -211,7 +211,7 @@ public class LogicManagerTest {
         Logic reloadedLogic = new LogicManager(reloadedModel, new StorageManager(storage,
                 new JsonUserPrefsStorage(temporaryFolder.resolve("reloadedPrefs.json"))));
         savedJson = Files.readString(storage.getAddressBookFilePath());
-        assertEquals("Amy Bee’s studio has already been recorded for tutorial week 3. No changes made.",
+        assertEquals("Amy Bee’s studio has already been recorded for studio week 3. No changes made.",
                 reloadedLogic.execute("addstudiorecord 1 w/3 ef/100").getFeedbackToUser());
         assertEquals(savedJson, Files.readString(storage.getAddressBookFilePath()));
         assertStudioState(reloadedModel, storage, withBothWeeks);
