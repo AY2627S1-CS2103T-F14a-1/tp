@@ -97,6 +97,30 @@ public final class RegisteredStudioRecords {
     }
 
     /**
+     * Returns studio records including the new record
+     * for the given week, if the week is already recorded.
+     *
+     * @param week Studio week to edit
+     * @param studioRecord Studio record to include.
+     * @return RegisteredStudioRecords containing the existing weeks and updated record for given week.
+     */
+    public RegisteredStudioRecords editStudioRecord(int week, StudioRecord studioRecord) {
+        requireNonNull(studioRecord);
+        if (!hasStudioRecord(week)) {
+            return this;
+        }
+
+        if (getRecordsByWeek().get(week).equals(studioRecord)) {
+            return this;
+        }
+
+        Map<Integer, StudioRecord> updatedRecords = new HashMap<>(recordsByWeek);
+        updatedRecords.put(week, studioRecord);
+
+        return new RegisteredStudioRecords(updatedRecords);
+    }
+
+    /**
      * Returns an unmodifiable map of recorded studio weeks.
      *
      * @return Recorded weeks, with no guaranteed iteration order.
