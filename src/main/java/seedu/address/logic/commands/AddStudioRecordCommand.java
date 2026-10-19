@@ -30,10 +30,10 @@ public class AddStudioRecordCommand extends Command {
             + "Example: " + COMMAND_WORD + " 1 w/3 ef/30";
 
     public static final String MESSAGE_SUCCESS =
-            "Added %1$s's studio record for tutorial week %2$d.";
+            "Added %1$s's studio record for studio week %2$d.";
 
     public static final String MESSAGE_ALREADY_RECORDED =
-            "%1$s’s studio has already been recorded for tutorial week %2$d. No changes made.";
+            "%1$s’s studio has already been recorded for studio week %2$d. No changes made.";
 
     private final Index targetIndex;
     private final int week;

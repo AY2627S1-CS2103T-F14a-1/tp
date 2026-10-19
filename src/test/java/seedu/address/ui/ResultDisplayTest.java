@@ -264,22 +264,18 @@ public class ResultDisplayTest extends GuiUnitTest {
             Student recorded = new StudentBuilder(AMY).withStudioRecords(
                     new StudentBuilder.StudioRecordSet(3, new StudioRecord(50))).build();
             Student empty = new StudentBuilder(AMY).withStudioRecords().build();
+
+            // Populate the view first so the following update must replace existing record values.
             display.setCommandResult(new CommandResult("Recorded student", recorded));
             GridPane table = getTable(display, "#registeredStudioRecords");
 
+            // Switching to a student without records must not retain the previous attendance or effort.
             display.setCommandResult(new CommandResult("Empty student", empty));
-            assertEquals(3 * (RegisteredStudioRecords.MAX_WEEK - RegisteredStudioRecords.MIN_WEEK + 2),
-                    table.getChildren().size());
-            for (int rowStart = 3; rowStart < table.getChildren().size(); rowStart += 3) {
-                assertEquals("Absent", ((Label) table.getChildren().get(rowStart + 1)).getText());
-                assertEquals("0", ((Label) table.getChildren().get(rowStart + 2)).getText());
-            }
+            assertEveryWeekIsAbsentWithNoEffort(table);
 
+            // Switching back must restore the recorded student's values rather than the empty view's values.
             display.setCommandResult(new CommandResult("Recorded student", recorded));
-            assertEquals(3 * (RegisteredStudioRecords.MAX_WEEK - RegisteredStudioRecords.MIN_WEEK + 2),
-                    table.getChildren().size());
-            assertEquals("Present", ((Label) table.getChildren().get(4)).getText());
-            assertEquals("50", ((Label) table.getChildren().get(5)).getText());
+            assertStudioRecord(table, 3, "Present", "50");
         });
     }
 
@@ -406,6 +402,38 @@ public class ResultDisplayTest extends GuiUnitTest {
         display.getRoot().applyCss();
         display.getRoot().layout();
         return (GridPane) display.getRoot().lookup(selector);
+    }
+
+    /**
+     * Verifies that the table contains an absent, zero-effort entry for every supported week.
+     *
+     * @param table Studio-record table to verify.
+     */
+    private static void assertEveryWeekIsAbsentWithNoEffort(GridPane table) {
+        assertEquals(3 * (RegisteredStudioRecords.MAX_WEEK - RegisteredStudioRecords.MIN_WEEK + 2),
+                table.getChildren().size());
+
+        for (int week = RegisteredStudioRecords.MIN_WEEK; week <= RegisteredStudioRecords.MAX_WEEK; week++) {
+            assertStudioRecord(table, week, "Absent", "0");
+        }
+    }
+
+    /**
+     * Verifies the attendance and effort cells for one studio-record week.
+     *
+     * @param table Studio-record table to verify.
+     * @param week Week whose row is checked.
+     * @param expectedAttendance Expected attendance label.
+     * @param expectedEffort Expected effort label.
+     */
+    private static void assertStudioRecord(GridPane table, int week, String expectedAttendance, String expectedEffort) {
+        int rowStart = 3 * (week - RegisteredStudioRecords.MIN_WEEK + 1);
+        Label attendanceCell = (Label) table.getChildren().get(rowStart + 1);
+        Label effortCell = (Label) table.getChildren().get(rowStart + 2);
+
+        assertEquals(String.valueOf(week), ((Label) table.getChildren().get(rowStart)).getText());
+        assertEquals(expectedAttendance, attendanceCell.getText());
+        assertEquals(expectedEffort, effortCell.getText());
     }
 
     /**

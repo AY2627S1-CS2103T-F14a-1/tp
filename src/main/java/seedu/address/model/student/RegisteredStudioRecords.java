@@ -13,7 +13,7 @@ import java.util.Map;
  */
 public final class RegisteredStudioRecords {
 
-    public static final int MIN_WEEK = 3;
+    public static final int MIN_WEEK = 0;
     public static final int MAX_WEEK = 13;
 
     public static final String STUDIORECORD_MARKER = "Studio records: ";
