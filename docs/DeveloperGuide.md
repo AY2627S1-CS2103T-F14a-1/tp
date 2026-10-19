@@ -96,7 +96,7 @@ The sequence diagram below illustrates the interactions within the `Logic` compo
 
 <box type="info" seamless>
 
-**Note:** The lifeline for `DeleteStudentCommandParser` should end at the destroy marker (X), but due to a limitation of PlantUML, the lifeline continues till the end of diagram.
+**Note:** The following can be generalized for all sequence diagrams in the developer guide. The diagrams show successful paths through Logic, omitting validation branches and internal model operations. The parser destroy markers (X) indicate that the temporary parsers are no longer needed after parsing, rather than explicit destruction in Java. PlantUML may continue drawing a parser lifeline below its destroy marker. The common saving step described below is also omitted from the diagrams.
 </box>
 
 
@@ -199,12 +199,6 @@ The sequence diagram below illustrates `execute("markmission 1 m/M03")` when the
 The corresponding unmarking sequence uses `execute("unmarkmission 1 m/M03")` when the submission is recorded. The parameter names have the same meanings as above; the replacement student has `M03` removed from its submissions.
 
 <puml src="diagrams/UnmarkMissionSubmissionSequenceDiagram.puml" width="1000" />
-
-<box type="info" seamless>
-
-The diagrams show successful paths through Logic, omitting validation branches and internal model operations. The parser destroy markers (X) indicate that the temporary parsers are no longer needed after parsing, rather than explicit destruction in Java. PlantUML may continue drawing a parser lifeline below its destroy marker. The common saving step described below is also omitted from the diagrams.
-
-</box>
 
 ### Saving mission changes
 
