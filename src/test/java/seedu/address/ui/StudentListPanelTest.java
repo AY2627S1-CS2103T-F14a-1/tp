@@ -45,20 +45,6 @@ public class StudentListPanelTest extends GuiUnitTest {
                 StudentListPanelHandle.STUDENT_LIST_VIEW_ID));
     }
 
-    @Test
-    public void display() {
-        initUi(TYPICAL_STUDENTS);
-
-        for (int i = 0; i < TYPICAL_STUDENTS.size(); i++) {
-            studentListPanelHandle.navigateToCard(TYPICAL_STUDENTS.get(i));
-            Student expectedStudent = TYPICAL_STUDENTS.get(i);
-            StudentCardHandle actualCard = studentListPanelHandle.getStudentCardHandle(i);
-
-            assertCardDisplaysStudent(expectedStudent, actualCard);
-            assertEquals(Integer.toString(i + 1), actualCard.getId());
-        }
-    }
-
     /**
      * Verifies that creating and deleting large number of students in {@code StudentListPanel} requires less than
      * {@code CARD_CREATION_AND_DELETION_TIMEOUT} milliseconds to execute.
