@@ -3,6 +3,9 @@ package seedu.address.logic.commands;
 import static java.util.Objects.requireNonNull;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_MISSION;
 
+import java.util.logging.Logger;
+
+import seedu.address.commons.core.LogsCenter;
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.Messages;
 import seedu.address.logic.commands.exceptions.CommandException;
@@ -26,6 +29,8 @@ public class DeleteMissionCommand extends Command {
     public static final String MESSAGE_MISSION_NOT_FOUND =
             "Mission %1$s does not exist.";
 
+    private static final Logger logger = LogsCenter.getLogger(DeleteMissionCommand.class);
+
     private final MissionId missionId;
 
     /**
@@ -43,10 +48,12 @@ public class DeleteMissionCommand extends Command {
         requireNonNull(model);
 
         if (model.findMission(missionId).isEmpty()) {
+            logger.fine("DeleteMissionCommand rejected: mission " + missionId + " does not exist.");
             throw new CommandException(String.format(MESSAGE_MISSION_NOT_FOUND, missionId));
         }
 
         Mission deleted = model.deleteMission(missionId);
+        logger.info("Deleted mission " + missionId + " and its submission records from the in-memory address book.");
         return new CommandResult(String.format(MESSAGE_SUCCESS, Messages.format(deleted)));
     }
 
