@@ -3,6 +3,7 @@ package guitests.guihandles;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javafx.scene.Node;
 import javafx.scene.control.ListView;
@@ -102,6 +103,11 @@ public class StudentListPanelHandle extends NodeHandle<ListView<Student>> {
      * @throws IllegalStateException if the selected card is currently not in the scene graph.
      */
     public StudentCardHandle getStudentCardHandle(int index) {
+        Set<StudentCardHandle> allStudentCardHandles = getAllCardNodes().stream()
+                .map(StudentCardHandle::new)
+                .collect(Collectors.toSet());
+
+        Student targetStudent = getStudent(index);
         return getAllCardNodes().stream()
                 .map(StudentCardHandle::new)
                 .filter(handle -> handle.equals(getStudent(index)))

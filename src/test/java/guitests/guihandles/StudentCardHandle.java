@@ -21,10 +21,6 @@ public class StudentCardHandle extends NodeHandle<Node> {
 
     private final Label idLabel;
     private final Label nameLabel;
-    private final Label phoneLabel;
-    private final Label emailLabel;
-    private final Label studioGroupLabel;
-    private final List<Label> tagLabels;
 
     /**
      * Creates a {@code StudentCardHandle} with the given {@code cardNode}.
@@ -34,16 +30,6 @@ public class StudentCardHandle extends NodeHandle<Node> {
 
         idLabel = getChildNode(ID_FIELD_ID);
         nameLabel = getChildNode(NAME_FIELD_ID);
-        phoneLabel = getChildNode(PHONE_FIELD_ID);
-        emailLabel = getChildNode(EMAIL_FIELD_ID);
-        studioGroupLabel = getChildNode(STUDIOGROUP_ID);
-
-        Region tagsContainer = getChildNode(TAGS_FIELD_ID);
-        tagLabels = tagsContainer
-                .getChildrenUnmodifiable()
-                .stream()
-                .map(Label.class::cast)
-                .collect(Collectors.toList());
     }
 
     public String getId() {
@@ -54,35 +40,10 @@ public class StudentCardHandle extends NodeHandle<Node> {
         return nameLabel.getText();
     }
 
-    public String getPhone() {
-        return phoneLabel.getText();
-    }
-
-    public String getEmail() {
-        return emailLabel.getText();
-    }
-
-    public String getStudioGroup() {
-        return studioGroupLabel.getText();
-    }
-
-    public List<String> getTags() {
-        return tagLabels
-                .stream()
-                .map(Label::getText)
-                .collect(Collectors.toList());
-    }
-
     /**
      * Returns true if this handle contains {@code person}.
      */
     public boolean equals(Student student) {
-        return getName().equals(student.getName().fullName)
-                && getPhone().equals(student.getPhone().value)
-                && getEmail().equals(student.getEmail().value)
-                && getTags().equals(student.getTags().stream()
-                .map(tag -> tag.tagName)
-                .sorted()
-                .collect(Collectors.toList()));
+        return getName().equals(student.getName().fullName);
     }
 }

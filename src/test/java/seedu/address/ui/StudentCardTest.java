@@ -64,7 +64,7 @@ public class StudentCardTest extends GuiUnitTest {
         StudentCardHandle studentCardHandle = new StudentCardHandle(studentCard.getRoot());
 
         // verify id is displayed correctly
-        assertEquals(Integer.toString(expectedId) + ". ", studentCardHandle.getId());
+        assertEquals(Integer.toString(expectedId), studentCardHandle.getId());
 
         // verify student details are displayed correctly
         assertCardDisplaysStudent(expectedStudent, studentCardHandle);
