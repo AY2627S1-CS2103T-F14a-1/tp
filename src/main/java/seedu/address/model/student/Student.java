@@ -107,7 +107,7 @@ public class Student {
      * Returns student including the new studio records.
      *
      * @param registeredStudioRecords {@code RegisteredStudioRecords} to update.
-     * @return @{code Student} containing the updated studio records.
+     * @return {@code Student} containing the updated studio records.
      */
     public Student withRegisteredStudioRecords(RegisteredStudioRecords registeredStudioRecords) {
         requireNonNull(registeredStudioRecords);

@@ -69,15 +69,6 @@ public class DeleteStudioRecordCommand extends Command {
         return new CommandResult(String.format(MESSAGE_SUCCESS, studentToUpdate.getName(), week));
     }
 
-    private Student createUpdatedStudent(Student student, RegisteredStudioRecords registeredStudioRecords) {
-        assert student != null;
-        assert registeredStudioRecords != null;
-
-        return new Student(student.getName(), student.getPhone(), student.getEmail(),
-                student.getTags(), student.getStudioGroup(), student.getMissionSubmissions(),
-                registeredStudioRecords);
-    }
-
     @Override
     public boolean equals(Object other) {
         if (other == this) {
