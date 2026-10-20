@@ -5,11 +5,8 @@ import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_WEEK;
 
-import java.util.Optional;
-
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.parser.exceptions.ParseException;
-import seedu.address.model.student.RegisteredStudioRecords;
 
 /**
  * Validates the shared student index and week arguments for studio commands.
@@ -33,7 +30,10 @@ public class WeeklyTaskParser {
     public WeeklyTaskParser(String args, String usage, Prefix... additionalPrefixes) throws ParseException {
         requireNonNull(args);
         requireNonNull(usage);
-        requireAllNonNull(additionalPrefixes);
+        requireNonNull(additionalPrefixes);
+        for (Prefix prefix : additionalPrefixes) {
+            requireAllNonNull(prefix);
+        }
 
         this.usage = usage;
 
@@ -52,7 +52,7 @@ public class WeeklyTaskParser {
      * @param prefixes Prefixes to recognize in addition to the weekly prefix.
      * @return An array containing every recognized prefix.
      */
-    private Prefix[] prependWeekPrefix(Prefix[] prefixes) {
+    private Prefix[] prependWeekPrefix(Prefix... prefixes) {
         Prefix[] prefixArray = new Prefix[prefixes.length + 1];
         prefixArray[0] = PREFIX_WEEK;
         System.arraycopy(prefixes, 0, prefixArray, 1, prefixes.length);
