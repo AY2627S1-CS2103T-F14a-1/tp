@@ -372,6 +372,7 @@ Action     | Format, Examples
 **Delete mission** | `delmission m/MISSIONID`<br> e.g., `delmission m/M03`
 **Record mission submission** | `markmission INDEX m/MISSION_ID`<br> e.g., `markmission 1 m/M01`
 **Remove mission submission** | `unmarkmission INDEX m/MISSION_ID`<br> e.g., `unmarkmission 1 m/M01`
+**List mission submissions** | `listmissions m/MISSION_ID`<br> e.g., `listmissions m/M01`
 **Clear**  | `clear`
 **Find**   | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find James Jake`
 **List**   | `list`
