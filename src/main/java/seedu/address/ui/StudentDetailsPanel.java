@@ -65,12 +65,13 @@ public class StudentDetailsPanel extends UiPart<Region> {
     }
 
     /**
-     * Displays the details of the given student.
+     * Displays the profile and records of the specified student.
      *
      * <p>If {@code student} is {@code null}, the panel is reset to its
      * default empty state.</p>
      *
      * @param student student whose profile should be displayed
+     * @param missions missions used to display submission statuses
      */
     public void showStudent(
             Student student,
@@ -116,13 +117,13 @@ public class StudentDetailsPanel extends UiPart<Region> {
     }
 
     /**
-     * Populates the mission-submission grid for the given student.
+     * Populates the mission-submission grid.
      *
-     * <p>Each valid mission week is displayed together with either
-     * {@code Submitted} or {@code Not submitted}.</p>
+     * <p>Each mission is displayed with its name, deadline, and submission
+     * status for the specified student.</p>
      *
-     * @param student student whose mission-submission status is displayed
-     * @param missions list of all missions
+     * @param student student whose submissions are checked
+     * @param missions missions to display
      */
     private void populateMissionSubmissions(
             Student student,
@@ -161,7 +162,6 @@ public class StudentDetailsPanel extends UiPart<Region> {
 
         for (Mission mission : missions) {
             MissionId missionId = mission.getId();
-            System.out.println(mission.getDeadline());
 
             String status = submissions.hasSubmission(missionId)
                     ? "Submitted"
@@ -184,12 +184,12 @@ public class StudentDetailsPanel extends UiPart<Region> {
     }
 
     /**
-     * Populates the studio record grid for the given student.
+     * Populates the studio-record grid for the specified student.
      *
-     * <p>Each valid week is displayed together with either
-     * {@code Present} or {@code Absent}.</p>
+     * <p>Each supported week is displayed with its corresponding effort
+     * score. A score of zero is displayed when no record exists.</p>
      *
-     * @param student student whose studio record is displayed
+     * @param student student whose studio records are displayed
      */
     private void populateStudioRecord(Student student) {
         studioRecordGrid.getChildren().clear();
@@ -238,13 +238,13 @@ public class StudentDetailsPanel extends UiPart<Region> {
     }
 
     /**
-     * Creates and adds a label to the specified cell in a grid.
+     * Creates and adds a styled label to a grid cell.
      *
-     * @param grid grid to which the label should be added
+     * @param grid grid to which the label is added
      * @param text text displayed by the label
      * @param column zero-based column index
      * @param row zero-based row index
-     * @param isHeader whether the label represents a column header
+     * @param isHeader whether the label is a table header
      */
     private void addGridLabel(
             GridPane grid,
@@ -279,6 +279,15 @@ public class StudentDetailsPanel extends UiPart<Region> {
         grid.add(label, column, row);
     }
 
+    /**
+     * Creates and adds a mission-information cell to the mission grid.
+     *
+     * <p>The cell contains the mission name and deadline.</p>
+     *
+     * @param grid grid to which the cell is added
+     * @param mission mission whose information is displayed
+     * @param row zero-based row index
+     */
     private void addMissionCell(
             GridPane grid,
             Mission mission,

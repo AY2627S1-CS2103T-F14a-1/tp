@@ -33,7 +33,11 @@ public class StudentCard extends UiPart<Region> {
     private Label studioGroup;
 
     /**
-     * Creates a {@code StudentCard} with the given {@code Student} and index to display.
+     * Creates a {@code StudentCard} for the given student.
+     *
+     * @param student student represented by this card
+     * @param displayedIndex index displayed for the student
+     * @throws NullPointerException if {@code student} is null
      */
     public StudentCard(Student student, int displayedIndex) {
         super(FXML);

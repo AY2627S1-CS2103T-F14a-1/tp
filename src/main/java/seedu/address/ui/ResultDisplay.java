@@ -16,10 +16,19 @@ public class ResultDisplay extends UiPart<Region> {
     @FXML
     private Label resultDisplay;
 
+    /**
+     * Creates a {@code ResultDisplay} and loads its FXML layout.
+     */
     public ResultDisplay() {
         super(FXML);
     }
 
+    /**
+     * Displays feedback to the user.
+     *
+     * @param feedbackToUser feedback message to display
+     * @throws NullPointerException if {@code feedbackToUser} is null
+     */
     public void setFeedbackToUser(String feedbackToUser) {
         requireNonNull(feedbackToUser);
         resultDisplay.setText(feedbackToUser);

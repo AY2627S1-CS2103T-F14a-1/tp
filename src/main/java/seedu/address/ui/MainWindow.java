@@ -29,8 +29,6 @@ import seedu.address.logic.parser.exceptions.ParseException;
 public class MainWindow extends UiPart<Stage> {
 
     private static final String FXML = "MainWindow.fxml";
-    private static final double FEEDBACK_HEIGHT = 100;
-    private static final double STUDENT_VIEW_HEIGHT = 420;
 
     private final Logger logger = LogsCenter.getLogger(getClass());
 
@@ -90,17 +88,30 @@ public class MainWindow extends UiPart<Stage> {
         helpWindow = new HelpWindow();
     }
 
+    /**
+     * Returns the primary application stage.
+     *
+     * @return the primary stage
+     */
     public Stage getPrimaryStage() {
         return primaryStage;
     }
 
+    /**
+     * Registers keyboard shortcuts for menu actions.
+     */
     private void setAccelerators() {
         setAccelerator(helpMenuItem, KeyCombination.valueOf("F1"));
     }
 
     /**
-     * Sets the accelerator of a MenuItem.
-     * @param keyCombination the KeyCombination value of the accelerator
+     * Assigns a keyboard shortcut to a menu item.
+     *
+     * <p>An event filter is used because text input controls may consume
+     * keyboard events before menu accelerators receive them.</p>
+     *
+     * @param menuItem menu item that should be triggered
+     * @param keyCombination keyboard shortcut assigned to the menu item
      */
     private void setAccelerator(MenuItem menuItem, KeyCombination keyCombination) {
         menuItem.setAccelerator(keyCombination);
@@ -129,12 +140,9 @@ public class MainWindow extends UiPart<Stage> {
     }
 
     /**
-     * Fills up all the placeholders of this window.
+     * Creates and inserts all UI components into their FXML placeholders.
      */
     void fillInnerParts() {
-        System.out.println(
-                "Filtered students: "
-                        + logic.getFilteredStudentList().size());
         studentListPanel = new StudentListPanel(
                 logic.getFilteredStudentList());
 
@@ -172,8 +180,16 @@ public class MainWindow extends UiPart<Stage> {
         studentListPanel.getStudentListView()
                 .getSelectionModel()
                 .selectedItemProperty()
-                .addListener((observable, oldStudent, newStudent) ->
-                        studentDetailsPanel.showStudent(newStudent, logic.getMissions()));
+                .addListener(
+                        (observable, oldStudent, newStudent) -> {
+                            if (newStudent == null) {
+                                studentDetailsPanel.clearStudent();
+                            } else {
+                                studentDetailsPanel.showStudent(
+                                        newStudent,
+                                        logic.getMissions());
+                            }
+                        });
 
         resultDisplay = new ResultDisplay();
         resultDisplayPlaceholder.getChildren()
@@ -193,7 +209,9 @@ public class MainWindow extends UiPart<Stage> {
     }
 
     /**
-     * Sets the default size based on {@code guiSettings}.
+     * Applies the saved GUI settings to the primary stage.
+     *
+     * @param guiSettings GUI settings containing size and position
      */
     private void setWindowDefaultSize(GuiSettings guiSettings) {
         primaryStage.setHeight(guiSettings.getWindowHeight());
@@ -205,7 +223,7 @@ public class MainWindow extends UiPart<Stage> {
     }
 
     /**
-     * Opens the help window or focuses on it if it's already opened.
+     * Opens the help window or focuses it if already open.
      */
     @FXML
     public void handleHelp() {
@@ -216,6 +234,9 @@ public class MainWindow extends UiPart<Stage> {
         }
     }
 
+    /**
+     * Displays the primary application window.
+     */
     void show() {
         primaryStage.show();
     }
