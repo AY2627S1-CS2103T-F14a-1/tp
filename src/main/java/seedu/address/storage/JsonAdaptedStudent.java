@@ -1,6 +1,8 @@
 package seedu.address.storage;
 
+import java.sql.Date;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -110,7 +112,9 @@ class JsonAdaptedStudent {
                 .stream()
                 .sorted(Map.Entry.comparingByKey())
                 .map(entry ->
-                        List.of(entry.getKey(), entry.getValue().getAppointmentTime(), entry.getValue().isComplete()))
+                        List.of(entry.getKey(),
+                                entry.getValue().getAppointmentTime().toString(),
+                                entry.getValue().isComplete()))
                 .collect(Collectors.toList()));
     }
 
@@ -242,10 +246,23 @@ class JsonAdaptedStudent {
             }
 
             Object savedDateTime = checks.get(1);
-            if (!(savedDateTime instanceof LocalDateTime dateTime)) {
+            if (!(savedDateTime instanceof String dateTime)) {
                 throw new IllegalValueException(RegisteredMasteryChecks.MESSAGE_CONSTRAINTS);
             }
-            masteryAppointments.put(number, new MasteryCheck(dateTime));
+
+            Object savedCompleteness = checks.get(2);
+            if (!(savedCompleteness instanceof Boolean isComplete)) {
+                throw new IllegalValueException(RegisteredMasteryChecks.MESSAGE_CONSTRAINTS);
+            }
+            try {
+                MasteryCheck tempCheck = new MasteryCheck(LocalDateTime.parse(dateTime));
+                if (isComplete) {
+                    tempCheck.markComplete();
+                }
+                masteryAppointments.put(number, tempCheck);
+            } catch (DateTimeParseException _) {
+                throw new IllegalValueException(RegisteredMasteryChecks.MESSAGE_CONSTRAINTS);
+            }
         }
         return new RegisteredMasteryChecks(masteryAppointments);
     }

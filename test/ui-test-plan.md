@@ -37,3 +37,17 @@ Run the complete UI plan below to check existing studio behavior.
 | STUDIO-DELETE-001 | Run `delstudiorecord 1 w/3`, then view student 1. | Week 3 is absent with effort score 0; number 13 remains recorded. |
 | STUDIO-DELETE-002 | Run `delstudiorecord 1 w/14`, then view student 1. | Invalid-number feedback appears; records remain unchanged. |
 | STUDIO-SEQUENCE-001 | Start with two students, student 1 having no studio records. Run STUDIO-ADD-001, STUDIO-ADD-002, and STUDIO-ADD-003 in order, viewing student 1 after each command. Restart, then run STUDIO-ADD-004, STUDIO-DELETE-001, and STUDIO-DELETE-002, viewing student 1 after each command. Restart and view both students. | Each command produces the feedback and state above. The duplicate retains number 3 effort 50 despite requesting 100. After the final restart, only number 13 is recorded with effort 0; number 3 remains absent. Other student fields and student 2 remain unchanged throughout. The matching LogicManagerTest sequence checks exact feedback, in-memory state, reloaded state after every command, and unchanged saved JSON after rejected and duplicate commands. |
+
+## Mastery-check datetime parsing regression
+
+Run the `parseMasteryCheckDateTime_*` cases in `ParserUtilTest` for parser-level coverage.
+The following sequence applies when mastery-check command parsing is connected to the UI.
+After each rejected command, view the student and verify existing appointments are unchanged.
+
+| ID | Steps | Expected result |
+| --- | --- | --- |
+| MC-DATETIME-001 | Add an appointment using `2024-02-29\|00:00`. | The leap-day appointment is accepted at midnight. |
+| MC-DATETIME-002 | Attempt another appointment using `2026-02-29\|12:30` or `2026-04-31\|12:30`, then view the student. | Invalid-datetime feedback; existing appointments remain unchanged. |
+| MC-DATETIME-003 | Add another appointment using `2026-12-31\|23:59`. | The appointment is accepted at 23:59. |
+| MC-DATETIME-004 | Attempt appointments with `24:00`, `23:60`, a missing or repeated separator, or seconds; view the student after each attempt. | Invalid-datetime feedback; existing appointments remain unchanged. |
+| MC-DATETIME-005 | Add an appointment with surrounding whitespace around `2026-10-20\|09:05`. | Surrounding whitespace is trimmed and the appointment is accepted. |

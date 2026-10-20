@@ -34,6 +34,14 @@ public class MasteryCheck {
         return isComplete;
     }
 
+    public void markComplete() {
+        isComplete = true;
+    }
+
+    public void markIncomplete() {
+        isComplete = false;
+    }
+
     @Override
     public boolean equals(Object other) {
         if (other == this) {

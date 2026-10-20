@@ -6,6 +6,7 @@ import static seedu.address.logic.parser.ParserUtil.MESSAGE_INVALID_INDEX;
 import static seedu.address.testutil.Assert.assertThrows;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_STUDENT;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
@@ -190,5 +191,51 @@ public class ParserUtilTest {
         String studioGroupWithWhitespace = WHITESPACE + VALID_STUDIO_GROUP + WHITESPACE;
         StudioGroup expectedStudioGroup = new StudioGroup(VALID_STUDIO_GROUP);
         assertEquals(expectedStudioGroup, ParserUtil.parseStudioGroup(studioGroupWithWhitespace));
+    }
+
+    @Test
+    public void parseMasteryCheckDateTime_null_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> ParserUtil.parseMasteryCheckDateTime(null));
+    }
+
+    @Test
+    public void parseMasteryCheckDateTime_validValues_returnsDateTime() throws Exception {
+        assertEquals(LocalDateTime.of(2026, 10, 20, 0, 0),
+                ParserUtil.parseMasteryCheckDateTime("2026-10-20|00:00"));
+        assertEquals(LocalDateTime.of(2026, 12, 31, 23, 59),
+                ParserUtil.parseMasteryCheckDateTime("2026-12-31|23:59"));
+        assertEquals(LocalDateTime.of(2024, 2, 29, 12, 30),
+                ParserUtil.parseMasteryCheckDateTime("2024-02-29|12:30"));
+        assertEquals(LocalDateTime.of(2000, 2, 29, 12, 30),
+                ParserUtil.parseMasteryCheckDateTime("2000-02-29|12:30"));
+    }
+
+    @Test
+    public void parseMasteryCheckDateTime_surroundingWhitespace_returnsTrimmedDateTime() throws Exception {
+        assertEquals(LocalDateTime.of(2026, 10, 20, 9, 5),
+                ParserUtil.parseMasteryCheckDateTime(WHITESPACE + "2026-10-20|09:05" + WHITESPACE));
+    }
+
+    @Test
+    public void parseMasteryCheckDateTime_impossibleDatesAndTimes_throwsParseException() {
+        for (String dateTime : List.of("2026-02-29|12:30", "1900-02-29|12:30", "2026-02-30|12:30",
+                "2026-04-31|12:30", "2026-00-20|12:30", "2026-13-20|12:30", "2026-10-00|12:30",
+                "2026-10-32|12:30", "2026-10-20|24:00", "2026-10-20|25:00", "2026-10-20|23:60",
+                "2026-10-20|-1:00", "2026-10-20|12:-1")) {
+            assertThrows(ParseException.class, ParserUtil.MESSAGE_INVALID_MASTERY_CHECK_DATETIME,
+                    () -> ParserUtil.parseMasteryCheckDateTime(dateTime));
+        }
+    }
+
+    @Test
+    public void parseMasteryCheckDateTime_malformedInput_throwsParseException() {
+        for (String dateTime : List.of("", WHITESPACE, "2026-10-20", "12:30", "2026-10-20|",
+                "|12:30", "2026-10-20||12:30", "2026-10-20T12:30", "2026-10-20 12:30",
+                "2026-1-20|12:30", "2026-10-2|12:30", "26-10-20|12:30", "2026-10-20|9:05",
+                "2026-10-20|09:5", "2026-10-20 |12:30", "2026-10-20| 12:30",
+                "2026-10-20|12:30:00", "2026-10-20|12:30Z", "2026-10-20|12:30extra")) {
+            assertThrows(ParseException.class, ParserUtil.MESSAGE_INVALID_MASTERY_CHECK_DATETIME,
+                    () -> ParserUtil.parseMasteryCheckDateTime(dateTime));
+        }
     }
 }
