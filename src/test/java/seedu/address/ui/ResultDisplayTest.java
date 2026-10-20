@@ -8,16 +8,16 @@ import java.util.List;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 
-import javafx.scene.Node;
-import javafx.scene.layout.GridPane;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import guitests.guihandles.ResultDisplayHandle;
 import javafx.application.Platform;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.layout.GridPane;
 import seedu.address.model.mission.Mission;
 import seedu.address.model.mission.MissionId;
 
