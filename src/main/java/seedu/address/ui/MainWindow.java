@@ -237,18 +237,6 @@ public class MainWindow extends UiPart<Stage> {
     }
 
     /**
-     * Gives the student table more space while keeping ordinary feedback compact.
-     * The table scrolls when the available space cannot show every week.
-     *
-     * @param isStudentView Whether the result contains student details.
-     */
-    private void resizeResultDisplay(boolean isStudentView) {
-        double height = isStudentView ? STUDENT_VIEW_HEIGHT : FEEDBACK_HEIGHT;
-        resultDisplayPlaceholder.setPrefHeight(height);
-        resultDisplayPlaceholder.setMaxHeight(height);
-    }
-
-    /**
      * Executes the command and returns the result.
      *
      * @see seedu.address.logic.Logic#execute(String)
@@ -289,7 +277,6 @@ public class MainWindow extends UiPart<Stage> {
         } catch (CommandException | ParseException e) {
             logger.info("An error occurred while executing command: " + commandText);
             resultDisplay.setFeedbackToUser(e.getMessage());
-            resizeResultDisplay(false);
             throw e;
         }
     }
