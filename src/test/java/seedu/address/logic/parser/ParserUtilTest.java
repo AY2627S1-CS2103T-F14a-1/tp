@@ -55,6 +55,29 @@ public class ParserUtilTest {
     }
 
     @Test
+    public void parseWeek_nullInput_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> ParserUtil.parseWeek(null));
+    }
+
+    @Test
+    public void parseWeek_invalidInput_throwsParseException() {
+        String[] invalidWeeks = {"", " ", "-1", "+1", "1.0", "one", "1 2", "2147483648"};
+
+        for (String invalidWeek : invalidWeeks) {
+            assertThrows(ParseException.class, "Invalid week", () -> ParserUtil.parseWeek(invalidWeek));
+        }
+    }
+
+    @Test
+    public void parseWeek_validInput_returnsWeek() throws Exception {
+        assertEquals(0, ParserUtil.parseWeek("0"));
+        assertEquals(3, ParserUtil.parseWeek("3"));
+        assertEquals(14, ParserUtil.parseWeek("14"));
+        assertEquals(Integer.MAX_VALUE, ParserUtil.parseWeek(String.valueOf(Integer.MAX_VALUE)));
+        assertEquals(3, ParserUtil.parseWeek(" \t3 "));
+    }
+
+    @Test
     public void parseName_null_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> ParserUtil.parseName((String) null));
     }
