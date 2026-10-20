@@ -4,7 +4,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
-import seedu.address.model.student.RegisteredStudioRecords;
 import seedu.address.model.student.Student;
 
 /**
@@ -32,11 +31,13 @@ public class StudentCard extends UiPart<Region> {
     private Label id;
     @FXML
     private Label studioGroup;
-    @FXML
-    private Label registeredStudioRecords;
 
     /**
-     * Creates a {@code StudentCard} with the given {@code Student} and index to display.
+     * Creates a {@code StudentCard} for the given student.
+     *
+     * @param student student represented by this card
+     * @param displayedIndex index displayed for the student
+     * @throws NullPointerException if {@code student} is null
      */
     public StudentCard(Student student, int displayedIndex) {
         super(FXML);
@@ -45,8 +46,6 @@ public class StudentCard extends UiPart<Region> {
         id.setText(String.valueOf(displayedIndex));
         name.setText(student.getName().fullName);
         studioGroup.setText(student.getStudioGroup().studioGroup);
-        registeredStudioRecords.setText(
-                RegisteredStudioRecords.STUDIORECORD_MARKER + student.getRegisteredStudioRecords());
     }
 
     @Override
