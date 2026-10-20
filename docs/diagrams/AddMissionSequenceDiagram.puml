@@ -1,0 +1,55 @@
+@startuml
+!include style.puml
+skinparam ArrowFontStyle plain
+box Logic LOGIC_COLOR_T1
+participant ":LogicManager" as L LOGIC_COLOR
+participant ":AddressBookParser" as A LOGIC_COLOR
+participant ":AddMissionCommandParser" as P LOGIC_COLOR
+participant "c:AddMissionCommand" as C LOGIC_COLOR
+participant "r:CommandResult" as R LOGIC_COLOR
+end box
+box Model MODEL_COLOR_T1
+participant "m:Model" as M MODEL_COLOR
+end box
+[-> L : execute("addmission n/Rune Reading d/2026-10-20")
+activate L
+L -> A : parseCommand("addmission n/Rune Reading d/2026-10-20")
+activate A
+create P
+A -> P
+activate P
+P --> A
+deactivate P
+A -> P : parse("n/Rune Reading d/2026-10-20")
+activate P
+create C
+P -> C : AddMissionCommand("Rune Reading", deadline)
+activate C
+C --> P
+deactivate C
+P --> A : c
+deactivate P
+P -[hidden]-> A
+destroy P
+A --> L : c
+deactivate A
+L -> C : execute(m)
+activate C
+C -> M : hasMissionName("Rune Reading")
+activate M
+M --> C : false
+deactivate M
+C -> M : addMission("Rune Reading", deadline)
+activate M
+M --> C : added mission
+deactivate M
+create R
+C -> R : CommandResult(feedback)
+activate R
+R --> C
+deactivate R
+C --> L : r
+deactivate C
+[<-- L : r
+deactivate L
+@enduml

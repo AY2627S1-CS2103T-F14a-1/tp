@@ -24,7 +24,10 @@ public class ParserUtil {
 
     public static final String MESSAGE_INVALID_MISSION_NAME = "Mission name cannot be blank.";
     public static final String MESSAGE_INVALID_MISSION_DEADLINE =
-            "Deadline must be a real calendar date in YYYY-MM-DD format.";
+            "Deadline must use YYYY-MM-DD format, for example 2026-10-20.";
+    public static final String MESSAGE_INVALID_MISSION_CALENDAR_DATE =
+            "Deadline is not a valid calendar date. Month must be 01–12, "
+                    + "and day must be valid for the selected month and year.";
 
     public static final String MESSAGE_INVALID_INDEX = "Index must be a positive integer.";
 
@@ -160,7 +163,7 @@ public class ParserUtil {
         try {
             return LocalDate.parse(trimmedDeadline);
         } catch (DateTimeParseException e) {
-            throw new ParseException(MESSAGE_INVALID_MISSION_DEADLINE);
+            throw new ParseException(MESSAGE_INVALID_MISSION_CALENDAR_DATE);
         }
     }
 

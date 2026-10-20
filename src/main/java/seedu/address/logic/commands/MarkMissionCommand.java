@@ -2,6 +2,9 @@ package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.logging.Logger;
+
+import seedu.address.commons.core.LogsCenter;
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.commands.exceptions.CommandException;
@@ -33,6 +36,8 @@ public class MarkMissionCommand extends Command {
     public static final String MESSAGE_MISSION_NOT_FOUND =
             "Mission %1$s does not exist.";
 
+    private static final Logger logger = LogsCenter.getLogger(MarkMissionCommand.class);
+
     private final Index targetIndex;
     private final MissionId missionId;
 
@@ -60,6 +65,7 @@ public class MarkMissionCommand extends Command {
         requireNonNull(model);
 
         if (model.findMission(missionId).isEmpty()) {
+            logger.fine("MarkMissionCommand rejected: mission " + missionId + " does not exist.");
             throw new CommandException(String.format(MESSAGE_MISSION_NOT_FOUND, missionId));
         }
 
@@ -67,11 +73,17 @@ public class MarkMissionCommand extends Command {
         MissionSubmissions submissions = studentToUpdate.getMissionSubmissions();
 
         if (submissions.hasSubmission(missionId)) {
+            logger.fine("MarkMissionCommand made no changes for mission " + missionId
+                    + " for student " + studentToUpdate.getName()
+                    + " at displayed student index " + targetIndex.getOneBased() + ".");
             return new CommandResult(String.format(MESSAGE_ALREADY_RECORDED, studentToUpdate.getName(), missionId));
         }
 
         Student updatedStudent = createUpdatedStudent(studentToUpdate, submissions.withSubmission(missionId));
         model.setStudent(studentToUpdate, updatedStudent);
+        logger.info("Recorded submission for mission " + missionId
+                + " for student " + studentToUpdate.getName()
+                + " at displayed student index " + targetIndex.getOneBased() + " in memory.");
         return new CommandResult(String.format(MESSAGE_SUCCESS, studentToUpdate.getName(), missionId));
     }
 

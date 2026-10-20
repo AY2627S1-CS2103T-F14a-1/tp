@@ -38,9 +38,6 @@ public class JsonAdaptedStudentTest {
     private static final Student VALID_STUDENT = new Student(
             new Name("Benson Meier"), new Phone("98765432"), new Email("johnd@example.com"), Set.of(),
             new StudioGroup("1A"), new MissionSubmissions(), new RegisteredStudioRecords());
-    private static final Student DEFAULT_STUDENT = new Student(
-            new Name("Amy Bee"), new Phone("85355255"), new Email("amy@gmail.com"), Set.of(),
-            new StudioGroup("1A"), new MissionSubmissions(), new RegisteredStudioRecords());
 
     private static final String VALID_NAME = VALID_STUDENT.getName().toString();
     private static final String VALID_PHONE = VALID_STUDENT.getPhone().toString();
@@ -192,16 +189,16 @@ public class JsonAdaptedStudentTest {
     public void toModelType_missingMissionSubmissionsInJson_returnsStudentWithoutSubmissions() throws Exception {
         String json = """
                 {
-                  "name": "Amy Bee",
-                  "phone": "85355255",
-                  "email": "amy@gmail.com",
+                  "name": "Benson Meier",
+                  "phone": "98765432",
+                  "email": "johnd@example.com",
                   "tags": [],
                   "studio group": "1A",
                   "registeredStudioRecords": [[3, 50]]
                 }
                 """;
         JsonAdaptedStudent student = JsonUtil.fromJsonString(json, JsonAdaptedStudent.class);
-        Student expected = withStudioRecordsByWeek(DEFAULT_STUDENT,
+        Student expected = withStudioRecordsByWeek(VALID_STUDENT,
                 Map.of(3, new StudioRecord(50)));
 
         assertEquals(expected, student.toModelType());

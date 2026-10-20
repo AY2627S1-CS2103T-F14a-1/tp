@@ -4,30 +4,33 @@ skinparam arrowThickness 1.1
 skinparam arrowColor MODEL_COLOR
 skinparam classBackgroundColor MODEL_COLOR
 
-Package Model as ModelPackage <<Rectangle>>{
+Package Model as ModelPackage <<Rectangle>> {
 Class "<<interface>>\nReadOnlyAddressBook" as ReadOnlyAddressBook
 Class "<<interface>>\nReadOnlyUserPrefs" as ReadOnlyUserPrefs
 Class "<<interface>>\nModel" as Model
 Class AddressBook
 Class ModelManager
 Class UserPrefs
-
 Class UniqueStudentList
 Class Student
-Class Address
-Class Email
 Class Name
 Class Phone
+Class Email
 Class Tag
+Class StudioGroup
+Class RegisteredStudioRecords
+Class StudioRecord
 
-Class I #FFFFFF
+Class MissionSubmissions
+Class MissionCatalogue
+Class Mission
+Class MissionId
 }
 
 Class HiddenOutside #FFFFFF
 HiddenOutside ..> Model
 
 AddressBook .up.|> ReadOnlyAddressBook
-
 ModelManager .up.|> Model
 Model .right.> ReadOnlyUserPrefs
 Model .left.> ReadOnlyAddressBook
@@ -36,19 +39,34 @@ ModelManager -right-> "1" UserPrefs
 UserPrefs .up.|> ReadOnlyUserPrefs
 
 AddressBook *--> "1" UniqueStudentList
-UniqueStudentList --> "~* all" Student
-Student *--> Name
-Student *--> Phone
-Student *--> Email
-Student *--> Address
-Student *--> "*" Tag
-
-Student -[hidden]up--> I
-UniqueStudentList -[hidden]right-> I
+AddressBook *--> "1" MissionCatalogue
+UniqueStudentList --> "*" Student : all
+ModelManager --> "*" Student : filtered
+MissionCatalogue --> "*" Mission
+Mission *-down-> "1" MissionId
+Student *--> "1" Name
+Student *--> "1" Phone
+Student *--> "1" Email
+Student --> "*" Tag
+Student *--> "1" StudioGroup
+Student *--> "1" RegisteredStudioRecords
+Student *--> "1" MissionSubmissions
+MissionSubmissions -[norank]-> "        submitted IDs\n\n0..*                             " MissionId
 
 Name -[hidden]right-> Phone
-Phone -[hidden]right-> Address
-Address -[hidden]right-> Email
+Phone -[hidden]right-> Email
+Email -[hidden]right-> Tag
+Tag -[hidden]right-> StudioGroup
+StudioGroup -[hidden]right-> RegisteredStudioRecords
+RegisteredStudioRecords -[hidden]right-> MissionSubmissions
 
-ModelManager --> "~* filtered" Student
+'Keep the architecture and student values in the reference diagram's order.
+ReadOnlyAddressBook -[hidden]right-> Model
+Model -[hidden]right-> ReadOnlyUserPrefs
+AddressBook -[hidden]right-> ModelManager
+ModelManager -[hidden]right-> UserPrefs
+MissionCatalogue -[hidden]right-> UniqueStudentList
+RegisteredStudioRecords *--> "0..*" StudioRecord : records by week
+Mission -[hidden]right-> Name
+MissionId -[hidden]right-> StudioRecord
 @enduml

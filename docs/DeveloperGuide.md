@@ -96,7 +96,7 @@ The sequence diagram below illustrates the interactions within the `Logic` compo
 
 <box type="info" seamless>
 
-**Note:** The lifeline for `DeleteStudentCommandParser` should end at the destroy marker (X), but due to a limitation of PlantUML, the lifeline continues till the end of diagram.
+**Note:** The following can be generalized for all sequence diagrams in the developer guide. The diagrams show successful paths through Logic, omitting validation branches and internal model operations. The parser destroy markers (X) indicate that the temporary parsers are no longer needed after parsing, rather than explicit destruction in Java. PlantUML may continue drawing a parser lifeline below its destroy marker. The common saving step described below is also omitted from the diagrams.
 </box>
 
 
@@ -119,24 +119,27 @@ How the parsing works:
 ### Model component
 **API** : [`Model.java`](https://github.com/AY2627S1-CS2103T-F14a-1/tp/blob/master/src/main/java/seedu/address/model/Model.java)
 
-<puml src="diagrams/ModelClassDiagram.puml" width="450" />
-
+<puml src="diagrams/ModelClassDiagram.puml" width="850" />
 
 The `Model` component,
 
-* stores the address book data i.e., all `Student` objects (which are contained in a `UniqueStudentList` object).
-* stores the `Student` objects selected by the current filter, such as search results, in a separate _filtered_ list. It exposes this list as an unmodifiable `ObservableList<Student>` that the UI can observe and bind to, so the UI updates when the list changes.
-* stores a `UserPrefs` object that represents the user’s preferences (currently, just the GUI settings). This is exposed to the outside as a `ReadOnlyUserPrefs` object.
-* does not depend on any of the other three components (as the `Model` represents data entities of the domain, they should make sense on their own without depending on other components)
+* stores the address book data, including all `Student` objects (contained in a `UniqueStudentList`) and shared `Mission` objects (contained in a `MissionCatalogue`).
+* stores each student's contact details, studio group, tags, studio records, and mission submissions. Studio records track attendance and effort scores by week, while `MissionSubmissions` records the IDs of submitted missions. A mission without a recorded submission is treated as not submitted.
+* stores each mission's ID, description, and deadline. The mission catalogue allocates IDs and keeps track of the next mission number.
+* maintains a _filtered_ view of the students, such as search results. It exposes this view as an unmodifiable `ObservableList<Student>` that the UI can observe and bind to, so the UI updates when the list changes.
+* stores a `UserPrefs` object that represents the user's preferences (currently, just the GUI settings). This is exposed to the outside as a `ReadOnlyUserPrefs` object.
+* does not depend on any of the other three components (as the `Model` represents data entities of the domain, they should make sense on their own without depending on other components).
 
+Each student has one `RegisteredStudioRecords` object containing an immutable map from studio weeks to `StudioRecord` objects. Each recorded week is between 3 and 13 and has one record containing a non-negative effort score. The week is the map key; the presence of a record indicates attendance, even when its effort score is zero. Weeks without a record are displayed as absent with an effort score of zero. Each student also has one `MissionSubmissions` object containing zero or more submitted mission IDs. The `1` multiplicities count these containers, not the records inside them.
+
+Composition diamonds show conceptual ownership of the values that form a student record; immutable values may be reused internally when records are replaced. Submission IDs reference shared missions rather than owning them.
 
 <box type="info" seamless>
 
-**Note:** The alternative, arguably more object-oriented, design below keeps a unique list of tags in `AddressBook`, and each `Student` references tags from that list. This lets `AddressBook` maintain one `Tag` object per unique tag instead of each `Student` holding its own `Tag` objects.<br>
+**Note:** The diagram below illustrates a possible alternative for managing tags. Currently, each `Student` stores its own set of tags, and `AddressBook` has no `UniqueTagList`. In the alternative, `AddressBook` would store one `Tag` object per unique tag in a central `UniqueTagList`, and students would reference those shared tags. The student detail classes are retained to show that only tag ownership changes. The mission catalogue is omitted for clarity.
 
-<puml src="diagrams/BetterModelClassDiagram.puml" width="450" />
+<puml src="diagrams/BetterModelClassDiagram.puml" width="800" />
 </box>
-
 
 ### Storage component
 
@@ -158,6 +161,51 @@ Classes used by multiple components are in the `seedu.address.commons` package.
 ## **Implementation**
 
 This section describes some noteworthy details on how certain features are implemented.
+
+### Adding a mission
+
+For `addmission n/NAME d/DEADLINE`, `AddressBookParser` delegates to `AddMissionCommandParser`, which validates exactly one name and deadline and creates an `AddMissionCommand`. `ParserUtil` removes surrounding whitespace and collapses repeated whitespace in the name, while preserving case and punctuation. The deadline must be a real date in `YYYY-MM-DD` format; past dates are accepted. Missing, repeated, blank, or invalid fields and unexpected preamble text cause a `ParseException`.
+
+When executed, `AddMissionCommand` calls `Model#hasMissionName(...)` to reject duplicates, ignoring case and whitespace differences. It then calls `Model#addMission(...)`, which delegates to the shared `MissionCatalogue` through `ModelManager` and `AddressBook`. The catalogue allocates the next mission ID only when adding the validated mission. The command returns a `CommandResult` containing the added mission.
+
+The sequence diagram below illustrates the successful interaction flow using `execute("addmission n/Rune Reading d/2026-10-20")`. Here, `deadline` is the parsed `LocalDate` value for `2026-10-20`, and `feedback` is the formatted success message.
+
+<puml src="diagrams/AddMissionSequenceDiagram.puml" width="1000" />
+
+### Deleting a mission
+
+For `delmission m/M03`, `AddressBookParser` delegates to `DeleteMissionCommandParser`. The parser requires exactly one nonblank `m/` value and rejects unexpected preamble text. It uses `MissionParser#parseMissionId(...)` to trim and validate the ID and convert it to uppercase, then creates a `DeleteMissionCommand`. Thus, `m/m03` and `m/M03` identify the same mission; the ID is not a displayed list position.
+
+When executed, `DeleteMissionCommand` calls `Model#findMission(...)` and rejects a nonexistent mission before making changes. It then calls `Model#deleteMission(...)`. Within the model, `AddressBook` prepares replacement student records without the deleted mission's submission ID and removes the mission from the catalogue. This includes students hidden by the current filter and preserves their other details and submissions. The allocation counter is retained, so remaining IDs do not change and deleted IDs are not reused. The command returns a `CommandResult` identifying the deleted mission.
+
+Deleting a mission removes its submission records from every student. Recreating it—even with the same name and deadline—assigns a new ID and starts with no submissions recorded. Previous submission records are not restored.
+
+The sequence diagram below illustrates the successful interaction flow using `execute("delmission m/M03")`. Here, `missionId` is the parsed `MissionId` value `M03`, and `feedback` is the formatted success message. The model is shown as a single participant to keep the focus on the Logic component.
+
+<puml src="diagrams/DeleteMissionSequenceDiagram.puml" width="1000" />
+
+### Marking and unmarking mission submissions
+
+For `markmission INDEX m/MISSION_ID` or `unmarkmission INDEX m/MISSION_ID`, `AddressBookParser` delegates to `MarkMissionCommandParser` or `UnmarkMissionCommandParser`. Both reuse `MissionParser` to validate a positive student index and exactly one case-insensitive mission ID, then create the corresponding command. Invalid or extra arguments cause a `ParseException`; whether the mission and displayed student exist is checked during execution.
+
+When executed, the command calls `Model#findMission(...)` and retrieves the selected student from `Model#getFilteredStudentList()`. Marking uses `MissionSubmissions#withSubmission(...)`; unmarking uses `MissionSubmissions#withoutSubmission(...)`. Each produces updated immutable submission data, which the command places in a replacement `Student` before calling `Model#setStudent(...)`. Other student details and the current filter are preserved, and the observable student list notifies the UI of the replacement.
+
+Marking an already recorded submission or unmarking an absent submission returns a no-change `CommandResult` without replacing the student. A missing mission or out-of-range displayed index causes a `CommandException` before any update. The shared mission itself is unchanged by either command.
+
+The sequence diagram below illustrates `execute("markmission 1 m/M03")` when the mission and student exist and the submission is not yet recorded. Here, `targetIndex` is the parsed one-based index 1, `missionId` is the parsed `MissionId` value `M03`, and `feedback` is the formatted success message. `studentToUpdate` is the selected student and `updatedStudent` is its replacement.
+
+<puml src="diagrams/MissionSubmissionSequenceDiagram.puml" width="1000" />
+
+The corresponding unmarking sequence uses `execute("unmarkmission 1 m/M03")` when the submission is recorded. The parameter names have the same meanings as above; the replacement student has `M03` removed from its submissions.
+
+<puml src="diagrams/UnmarkMissionSubmissionSequenceDiagram.puml" width="1000" />
+
+### Saving mission changes
+
+After any of these commands returns successfully, `LogicManager` calls `Storage.saveAddressBook` with the current address book before returning the result to the UI. The saved data contains the mission catalogue, the next mission number, and each student's submitted mission IDs. This preserves additions, deletions, and submission changes across restarts. Successful no-change mark/unmark requests also trigger saving.
+
+Parsing and command-validation failures exit before the saving step. If saving itself fails, `LogicManager` reports a `CommandException`; the in-memory change has already occurred and is not rolled back. On loading, storage validates the catalogue and requires saved submission IDs to refer to existing missions.
+
 
 --------------------------------------------------------------------------------------------------------------------
 
@@ -376,6 +424,53 @@ The user stories above represent the main intended functionality and selected fu
     * 3b1. AvengerHub informs the tutor that the student is already absent and leaves the records unchanged.
 
       Use case ends.
+
+**Use case: Add mission**
+
+**MSS**
+
+1. Tutor requests to add a shared mission and provides the required details.
+2. AvengerHub creates the mission with a unique ID, saves it, and confirms success with the assigned ID.
+
+   Use case ends.
+
+**Extensions**
+
+* 1a. The tutor provides invalid or incomplete details.
+
+    * 1a1. AvengerHub shows an error message and leaves the records unchanged.
+
+      Use case resumes from step 1.
+
+* 1b. A mission with the same name already exists.
+
+    * 1b1. AvengerHub informs the tutor that the mission already exists and leaves the records unchanged.
+
+      Use case resumes from step 1.
+
+**Use case: Delete mission**
+
+**MSS**
+
+1. Tutor requests to delete a shared mission and provides the required details.
+2. AvengerHub removes the mission and its associated submission records from every student,
+   saves the updated records, and confirms success.
+
+   Use case ends.
+
+**Extensions**
+
+* 1a. The tutor provides invalid or incomplete details.
+
+    * 1a1. AvengerHub shows an error message and leaves the records unchanged.
+
+      Use case resumes from step 1.
+
+* 1b. No mission with the specified ID exists.
+
+    * 1b1. AvengerHub informs the tutor that the mission does not exist and leaves the records unchanged.
+
+      Use case resumes from step 1.
 
 **Use case: Add mission submission record**
 
