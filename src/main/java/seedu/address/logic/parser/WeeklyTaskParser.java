@@ -16,14 +16,6 @@ import seedu.address.model.student.RegisteredStudioRecords;
  */
 public class WeeklyTaskParser {
 
-    public static final String MESSAGE_MISSING_INDEX = "A student index must be provided.";
-    public static final String MESSAGE_MISSING_WEEK = "Specify a studio week using " + PREFIX_WEEK + "WEEK.";
-    public static final String MESSAGE_DUPLICATE_WEEK = "Studio week must be specified only once.";
-    public static final String MESSAGE_INVALID_STUDENT_INDEX =
-            "Student index must be a positive integer without a sign or decimal point.";
-    public static final String MESSAGE_INVALID_STUDIO_WEEK = RegisteredStudioRecords.MESSAGE_CONSTRAINTS
-            + " Enter an integer without a sign, decimal point, or leading zero.";
-
     private final ArgumentMultimap argumentMultimap;
     private final String usage;
     private final Index index;
@@ -90,8 +82,12 @@ public class WeeklyTaskParser {
      * @throws ParseException If the week does not conform to the expected format.
      */
     private int extractWeek(ArgumentMultimap argMultimap) throws ParseException {
+        requireNonNull(argumentMultimap);
+        if (!argumentMultimap.getValue(PREFIX_WEEK).isPresent()) {
+            throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, usage));
+        }
         argMultimap.verifyNoDuplicatePrefixesFor(PREFIX_WEEK);
-        return ParserUtil.parseWeek(argMultimap.getValue(PREFIX_WEEK).orElseThrow());
+        return ParserUtil.parseWeek(argMultimap.getValue(PREFIX_WEEK).get());
     }
 
     /**
@@ -120,9 +116,12 @@ public class WeeklyTaskParser {
      * @throws NullPointerException If the prefix is null.
      * @throws ParseException If the prefix occurs more than once.
      */
-    public Optional<String> getPrefixValue(Prefix prefix) throws ParseException {
+    public String getPrefixValue(Prefix prefix) throws ParseException {
         requireNonNull(prefix);
+        if (!argumentMultimap.getValue(prefix).isPresent()) {
+            throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, usage));
+        }
         argumentMultimap.verifyNoDuplicatePrefixesFor(prefix);
-        return argumentMultimap.getValue(prefix);
+        return argumentMultimap.getValue(prefix).get();
     }
 }

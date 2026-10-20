@@ -178,8 +178,25 @@ public class ParserUtil {
         if (!StringUtil.isNonNegativeUnsignedInteger(trimmedWeek)) {
             throw new ParseException("Invalid week");
         }
-        return Integer.parseInt(trimmedWeek);
+        int weekNumber = Integer.parseInt(trimmedWeek);
+        if (weekNumber < 0 || weekNumber > 13) {
+            throw new ParseException("Invalid week");
+        }
+        return weekNumber;
 
+    }
+
+    /**
+     * Parses a {@code String} into a {@code int} effort score.
+     * @throws ParseException if the specified effort is invalid (not a non-negative unsigned integer).
+     */
+    public static int parseEffortScore(String effort) throws ParseException {
+        requireNonNull(effort);
+        String trimmedEffort = effort.trim();
+        if (!StringUtil.isNonNegativeUnsignedInteger(trimmedEffort)) {
+            throw new ParseException("Invalid effort");
+        }
+        return Integer.parseInt(trimmedEffort);
     }
 
 }

@@ -31,7 +31,6 @@ public class AddStudioRecordCommand extends Command {
 
     public static final String MESSAGE_SUCCESS =
             "Added %1$s's studio record for studio week %2$d.";
-
     public static final String MESSAGE_ALREADY_RECORDED =
             "%1$s’s studio has already been recorded for studio week %2$d. No changes made.";
 
