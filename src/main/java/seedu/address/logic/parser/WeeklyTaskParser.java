@@ -5,10 +5,8 @@ import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_WEEK;
 
-import java.util.Locale;
 import java.util.Optional;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.parser.exceptions.ParseException;
@@ -121,32 +119,5 @@ public class WeeklyTaskParser {
         requireNonNull(prefix);
         argumentMultimap.verifyNoDuplicatePrefixesFor(prefix);
         return argumentMultimap.getValue(prefix);
-    }
-
-    /**
-     * Extracts the index while distinguishing missing inputs from misplaced arguments.
-     *
-     * @param argMultimap Tokenized command arguments.
-     * @return The validated displayed student index.
-     * @throws ParseException If the index is missing, invalid, or surrounded by extra arguments.
-     */
-    private Index extractIndex(ArgumentMultimap argMultimap) throws ParseException {
-        try {
-            return ParserUtil.parseIndex(argMultimap.getPreamble());
-        } catch (ParseException pe) {
-            throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, usage), pe);
-        }
-    }
-
-    /**
-     * Extracts the single required studio week value.
-     *
-     * @param argMultimap Tokenized command arguments.
-     * @return The non-empty week text.
-     * @throws ParseException If the week is missing, repeated, or has extra arguments.
-     */
-    private int extractWeek(ArgumentMultimap argMultimap) throws ParseException {
-        argMultimap.verifyNoDuplicatePrefixesFor(PREFIX_WEEK);
-        return ParserUtil.parseWeek(argMultimap.getValue(PREFIX_WEEK).orElseThrow());
     }
 }
