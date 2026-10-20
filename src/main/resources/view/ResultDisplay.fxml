@@ -9,10 +9,16 @@
 
 <StackPane fx:id="placeHolder" styleClass="pane-with-border" xmlns="http://javafx.com/javafx/17"
     xmlns:fx="http://javafx.com/fxml/1">
-  <Label fx:id="resultDisplay"
-         maxWidth="Infinity"
-         wrapText="true"
-         styleClass="command-result"/>
+  <ScrollPane fx:id="feedbackScrollPane"
+              fitToWidth="true"
+              hbarPolicy="NEVER">
+    <content>
+      <Label fx:id="resultDisplay"
+             maxWidth="Infinity"
+             wrapText="true"
+             styleClass="command-result"/>
+    </content>
+  </ScrollPane>
   <ScrollPane fx:id="studentDetails" fitToWidth="true" visible="false" managed="false"
               hbarPolicy="NEVER" styleClass="student-details-scroll">
     <VBox spacing="16" styleClass="student-details-content">

@@ -25,7 +25,8 @@ public class ResultDisplay extends UiPart<Region> {
 
     @FXML
     private Label resultDisplay;
-
+    @FXML
+    private ScrollPane feedbackScrollPane;
     @FXML
     private ScrollPane studentDetails;
     @FXML
@@ -39,10 +40,17 @@ public class ResultDisplay extends UiPart<Region> {
         super(FXML);
     }
 
+    /**
+     * Displays feedback and returns its scroll position to the beginning.
+     *
+     * @param feedbackToUser Feedback to display.
+     * @throws NullPointerException If the feedback is null.
+     */
     public void setFeedbackToUser(String feedbackToUser) {
         requireNonNull(feedbackToUser);
         resultDisplay.setText(feedbackToUser);
         showStudentDetails(false);
+        feedbackScrollPane.setVvalue(0);
         studentSummary.setText("");
         missionSubmissions.getChildren().clear();
     }
@@ -159,7 +167,7 @@ public class ResultDisplay extends UiPart<Region> {
     private void showStudentDetails(boolean isVisible) {
         studentDetails.setVisible(isVisible);
         studentDetails.setManaged(isVisible);
-        resultDisplay.setVisible(!isVisible);
-        resultDisplay.setManaged(!isVisible);
+        feedbackScrollPane.setVisible(!isVisible);
+        feedbackScrollPane.setManaged(!isVisible);
     }
 }
