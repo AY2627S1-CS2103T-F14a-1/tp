@@ -38,7 +38,7 @@ public class EditStudioRecordCommand extends Command {
     private final StudioRecord studioRecord;
 
     /**
-     * Creates a command to edit a week's studio.
+     * Creates a command to edit a week's studio record.
      *
      * @param targetIndex Index of the student in the displayed list.
      * @param week Studio week for the record.
@@ -56,7 +56,7 @@ public class EditStudioRecordCommand extends Command {
     }
 
     /**
-     * Edits studio without changing the current list filter.
+     * Edits studio record without changing the current list filter.
      *
      * @param model {@code Model} containing the students.
      * @return Feedback describing the edit or an existing studio record.
