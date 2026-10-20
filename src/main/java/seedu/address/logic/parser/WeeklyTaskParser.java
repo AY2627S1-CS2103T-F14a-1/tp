@@ -20,7 +20,7 @@ public class WeeklyTaskParser {
     public static final String MESSAGE_MISSING_WEEK = "Specify a studio week using " + PREFIX_WEEK + "WEEK.";
     public static final String MESSAGE_DUPLICATE_WEEK = "Studio week must be specified only once.";
     public static final String MESSAGE_INVALID_STUDENT_INDEX =
-            "Student index must be a positive integer without a sign, decimal point, or leading zero.";
+            "Student index must be a positive integer without a sign or decimal point.";
     public static final String MESSAGE_INVALID_STUDIO_WEEK = RegisteredStudioRecords.MESSAGE_CONSTRAINTS
             + " Enter an integer without a sign, decimal point, or leading zero.";
 
