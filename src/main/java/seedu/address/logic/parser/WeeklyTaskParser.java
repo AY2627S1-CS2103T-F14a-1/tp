@@ -45,7 +45,7 @@ public class WeeklyTaskParser {
 
         this.usage = usage;
 
-        Prefix[] prefixes = getPrefixArray(additionalPrefixes);
+        Prefix[] prefixes = prependWeekPrefix(additionalPrefixes);
         ArgumentMultimap arguments = ArgumentTokenizer.tokenize(args, prefixes);
         this.argumentMultimap = arguments;
 
@@ -53,9 +53,16 @@ public class WeeklyTaskParser {
         week = extractWeek(arguments);
     }
 
-    private Prefix[] getPrefixArray(Prefix... prefixes) {
+    /**
+     * Returns an array containing the weekly prefix followed by the supplied prefixes
+     * for map parsing.
+     *
+     * @param prefixes Prefixes to recognize in addition to the weekly prefix.
+     * @return An array containing every recognized prefix.
+     */
+    private Prefix[] prependWeekPrefix(Prefix[] prefixes) {
         Prefix[] prefixArray = new Prefix[prefixes.length + 1];
-        prefixes[0] = PREFIX_WEEK;
+        prefixArray[0] = PREFIX_WEEK;
         System.arraycopy(prefixes, 0, prefixArray, 1, prefixes.length);
         return prefixArray;
     }
