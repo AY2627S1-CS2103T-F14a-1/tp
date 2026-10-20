@@ -315,6 +315,41 @@ The user stories above represent the main intended functionality and selected fu
 
       Use case resumes at step 3.
 
+**Use case: View student profile**
+
+**MSS**
+
+1. Tutor requests to display all students or a filtered set of students.
+2. AvengerHub displays the requested student list.
+3. Tutor selects a student by clicking their entry or providing their
+   displayed index through the view command.
+4. AvengerHub displays the selected student's profile, including contact
+   details, studio group, tags, and mission submission statuses.
+
+   Use case ends.
+
+**Extensions**
+
+* 2a. The displayed student list is empty.
+
+  Use case ends.
+
+* 3a. The tutor provides a missing, invalid, or out-of-range index.
+
+    * 3a1. AvengerHub displays an error message without changing stored
+      records or the current student filter.
+
+      Use case resumes at step 3.
+
+* 4a. No missions are configured.
+
+    * 4a1. AvengerHub displays the student's profile with
+      `No missions configured.` in the mission section.
+
+      Use case ends.
+
+Viewing a profile does not modify student details, mission definitions,
+submission records, or the current student filter.
 
 **Use case: Delete student record**
 

@@ -97,6 +97,36 @@ Shows a list of all students in the address book.
 
 Format: `list`
 
+### Viewing a student: `view`
+
+Displays the profile of a student in the currently displayed student list.
+
+Format: `view INDEX`
+
+* `INDEX` refers to the student's index in the currently displayed list,
+  including results from `find`.
+* The index must be a positive integer identifying a displayed student.
+* The profile displays the student's name, studio group, phone number,
+  email address, tags, and configured missions with their submission statuses.
+* Mission statuses are `Submitted` or `Not submitted`, based on the records
+  maintained in AvengerHub.
+* An empty mission catalogue displays `No missions configured.`
+* Viewing preserves student records, submission records, and the current filter.
+* Missing, invalid, or out-of-range indexes produce an error without changing
+  stored records.
+* You can also click a student in the displayed list to open their profile.
+
+Examples:
+
+* `list`, followed by `view 2`, displays the second student's profile.
+* `find Betsy Crowe`, followed by `view 1`, displays the first student
+  in those search results.
+
+For example, viewing Amy Lee displays the feedback:
+
+```text
+Showing profile of Amy Lee
+
 ### Editing a student: `edit`
 
 Edits an existing student in the address book.
@@ -346,6 +376,7 @@ Action     | Format, Examples
 -----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 **Add student**    | `addstudent n/NAME p/PHONE_NUMBER e/EMAIL [t/TAG]... g/STUDIO_GROUP` <br> e.g., `addstudent n/James Ho p/22224444 e/jamesho@example.com  t/smart t/talkative g/1A`
 **Delete student** | `delstudent INDEX`<br> e.g., `delstudent 3`
+**View student** | `view INDEX`<br> e.g., `view 1`
 **Edit student**   | `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [t/TAG]... [g/STUDIO_GROUP]`<br> e.g.,`edit 2 n/James Lee e/jameslee@example.com g/1A`
 **Add studio record** | `addstudiorecord INDEX w/WEEK ef/EFFORT`<br> e.g., `addstudiorecord 1 w/3 ef/30`
 **Delete studio record** | `delstudiorecord INDEX w/WEEK`<br> e.g., `delstudiorecord 1 w/3`
