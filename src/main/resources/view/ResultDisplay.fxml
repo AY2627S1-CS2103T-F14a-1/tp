@@ -2,36 +2,26 @@
 
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.layout.VBox?>
 
-<StackPane fx:id="placeHolder" styleClass="pane-with-border" xmlns="http://javafx.com/javafx/17"
-    xmlns:fx="http://javafx.com/fxml/1">
-  <Label fx:id="resultDisplay"
-         maxWidth="Infinity"
-         wrapText="true"
-         styleClass="command-result"/>
-  <ScrollPane fx:id="studentDetails" fitToWidth="true" visible="false" managed="false"
-              hbarPolicy="NEVER" styleClass="student-details-scroll">
-    <VBox spacing="16" styleClass="student-details-content">
-      <Label fx:id="studentSummary" wrapText="true" maxWidth="Infinity" styleClass="student-summary"/>
-      <Label text="Mission submissions" styleClass="mission-title"/>
-      <GridPane fx:id="missionSubmissions">
-        <columnConstraints>
-          <ColumnConstraints percentWidth="70"/>
-          <ColumnConstraints percentWidth="30"/>
-        </columnConstraints>
-      </GridPane>
-      <Label text="Studio records" styleClass="mission-title"/>
-      <GridPane fx:id="registeredStudioRecords">
-        <columnConstraints>
-          <ColumnConstraints percentWidth="25"/>
-          <ColumnConstraints percentWidth="45"/>
-          <ColumnConstraints percentWidth="30"/>
-        </columnConstraints>
-      </GridPane>
-    </VBox>
+<StackPane xmlns="http://javafx.com/javafx/17"
+           xmlns:fx="http://javafx.com/fxml/1"
+           maxWidth="Infinity"
+           styleClass="result-display-container">
+
+  <ScrollPane fitToWidth="true"
+              hbarPolicy="NEVER"
+              vbarPolicy="AS_NEEDED"
+              maxWidth="Infinity"
+              styleClass="result-scroll-pane">
+
+    <content>
+      <Label fx:id="resultDisplay"
+             wrapText="true"
+             textOverrun="CLIP"
+             maxWidth="Infinity"
+             styleClass="command-result"/>
+    </content>
   </ScrollPane>
+
 </StackPane>
