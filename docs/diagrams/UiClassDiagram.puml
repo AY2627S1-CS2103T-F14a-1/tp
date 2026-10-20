@@ -1,67 +1,78 @@
 @startuml
 !include style.puml
+
+top to bottom direction
+skinparam linetype ortho
+skinparam nodesep 65
+skinparam ranksep 90
+skinparam padding 12
 skinparam arrowThickness 1.1
 skinparam arrowColor UI_COLOR_T4
 skinparam classBackgroundColor UI_COLOR
 
 package UI <<Rectangle>> {
-Class "<<interface>>\nUi" as Ui
-Class "{abstract}\nUiPart" as UiPart
-Class UiManager
-Class MainWindow
-Class HelpWindow
-Class ResultDisplay
-Class StudentListPanel
-Class StudentCard
-Class StudentDetailsPanel
-Class StatusBarFooter
-Class CommandBox
-}
+    class "<<interface>>\nUi" as Ui
+    class UiManager
+    class MainWindow
+    class "{abstract}\nUiPart" as UiPart
 
-package Model <<Rectangle>> {
-Class HiddenModel #FFFFFF
+    together {
+        class HelpWindow
+        class StatusBarFooter
+        class StudentListPanel
+        class StudentDetailsPanel
+        class ResultDisplay
+        class CommandBox
+    }
+
+    class StudentCard
+
+    UiManager .left.|> Ui
+    UiManager -down-> "1" MainWindow
+
+    MainWindow *-down-> "1" CommandBox
+    MainWindow *-down-> "1" ResultDisplay
+    MainWindow *-down-> "1" StudentListPanel
+    MainWindow *-down-> "1" StudentDetailsPanel
+    MainWindow *-down-> "1" StatusBarFooter
+    MainWindow -down-> "1" HelpWindow
+
+    StudentListPanel -down-> "*" StudentCard
+
+    MainWindow -down-|> UiPart
+    CommandBox -down-|> UiPart
+    ResultDisplay -down-|> UiPart
+    StudentListPanel -down-|> UiPart
+    StudentDetailsPanel -down-|> UiPart
+    StudentCard -down-|> UiPart
+    StatusBarFooter -down-|> UiPart
+    HelpWindow -down-|> UiPart
 }
 
 package Logic <<Rectangle>> {
-Class HiddenLogic #FFFFFF
+    class HiddenLogic #FFFFFF
 }
 
-Class HiddenOutside #FFFFFF
-HiddenOutside ..> Ui
+package Model <<Rectangle>> {
+    class HiddenModel #FFFFFF
+}
 
-UiManager .left.|> Ui
-UiManager -down-> "1" MainWindow
+class HiddenOutside #FFFFFF
+HiddenOutside .down.> Ui
 
-MainWindow *-down-> "1" CommandBox
-MainWindow *-down-> "1" ResultDisplay
-MainWindow *-down-> "1" StudentListPanel
-MainWindow *-down-> "1" StudentDetailsPanel
-MainWindow *-down-> "1" StatusBarFooter
-MainWindow --> "1" HelpWindow
+UiManager -[norank]-> Logic
+MainWindow -[norank]-> Logic
+ResultDisplay -[dashed,norank]-> Logic
+CommandBox -[dashed,norank]-> Logic
 
-StudentListPanel -down-> "*" StudentCard
+StudentListPanel -[dashed,norank]-> Model
+StudentCard -[dashed,norank]-> Model
+StudentDetailsPanel -[dashed,norank]-> Model
+ResultDisplay -[dashed,norank]-> Model
 
-MainWindow -left-|> UiPart
-ResultDisplay --|> UiPart
-CommandBox --|> UiPart
-StudentListPanel --|> UiPart
-StudentCard --|> UiPart
-StudentDetailsPanel --|> UiPart
-StatusBarFooter --|> UiPart
-HelpWindow --|> UiPart
-
-StudentCard ..> Model
-StudentListPanel ..> Model
-StudentDetailsPanel ..> Model
-ResultDisplay ..> Model
-
-UiManager -right-> Logic
-MainWindow -left-> Logic
-ResultDisplay ..> Logic
-
-StudentListPanel -[hidden]left- HelpWindow
-HelpWindow -[hidden]left- CommandBox
-CommandBox -[hidden]left- ResultDisplay
-ResultDisplay -[hidden]left- StatusBarFooter
+' Position external components without changing their relationships.
+MainWindow -[hidden]right-> Logic
+Logic -[hidden]down-> Model
+CommandBox -[hidden]down-> Model
 
 @enduml
