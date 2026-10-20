@@ -291,6 +291,34 @@ Example: `unmarkmission 1 m/M01`, followed by `view 1`, displays M01 as Not subm
 The profile displays configured mission descriptions and deadlines. An empty catalogue shows
 “No missions configured.”
 
+### Editing a mission: `editmission`
+
+Changes a shared mission's name, deadline, or both.
+
+Format: `editmission m/MISSION_ID [n/NAME] [d/DEADLINE]`
+
+* Supply exactly one lowercase `m/` prefix and an existing mission ID.
+* Supply at least one lowercase `n/` or `d/` prefix. Each may appear once.
+* Prefixes may appear in any order. Do not put text before the first prefix.
+* The command word and mission ID are case-insensitive.
+* Names and deadlines follow the same validation rules as `addmission`.
+* Omitted fields retain their existing values.
+* The new name must not duplicate another mission's name, ignoring case and
+  whitespace differences. Keeping the mission's own name is allowed.
+* The mission ID, submission records, student details, and student filter
+  remain unchanged.
+* Missions are shared: editing affects their displayed details for every
+  student, including students hidden by the current filter.
+* An unchanged name and deadline produce no-change feedback.
+* Successful edits are saved automatically. Invalid edits leave records unchanged.
+* Run `view INDEX` again to inspect updated mission details.
+
+Examples:
+
+* `editmission m/M01 n/Rune Reading`
+* `editmission m/M01 d/2026-10-22`
+* `editmission m/M01 n/Rune Reading d/2026-10-22`
+
 ### Clearing all entries: `clear`
 
 Clears all entries from the address book.
