@@ -144,7 +144,9 @@ public class ResultDisplayTest {
             assertEquals("Submitted", ((Label) table.getChildren().get(3)).getText());
             assertEquals("Not submitted", ((Label) table.getChildren().get(5)).getText());
             assertTrue(display.getRoot().lookup("#studentDetails").isVisible());
-            assertFalse(display.getRoot().lookup("#resultDisplay").isManaged());
+            ScrollPane feedbackScrollPane = (ScrollPane) display.getRoot().lookup("#feedbackScrollPane");
+            assertFalse(feedbackScrollPane.isVisible());
+            assertFalse(feedbackScrollPane.isManaged());
         });
     }
 
@@ -277,6 +279,10 @@ public class ResultDisplayTest {
             assertEquals("Second student", ((Label) display.getRoot().lookup("#studentSummary")).getText());
             assertEquals(0, ((ScrollPane) display.getRoot().lookup("#studentDetails")).getVvalue());
             display.setFeedbackToUser("Invalid index");
+            ScrollPane feedbackScrollPane = (ScrollPane) display.getRoot().lookup("#feedbackScrollPane");
+            assertTrue(feedbackScrollPane.isVisible());
+            assertTrue(feedbackScrollPane.isManaged());
+            assertEquals(0.0, feedbackScrollPane.getVvalue());
             assertFalse(display.getRoot().lookup("#studentDetails").isVisible());
             assertTrue(table.getChildren().isEmpty());
             Label feedback = (Label) display.getRoot().lookup("#resultDisplay");
