@@ -293,27 +293,40 @@ The profile displays configured mission descriptions and deadlines. An empty cat
 
 ### Listing overdue submissions: `listoverdue`
 
-Shows missing submissions whose mission deadlines have passed.
+Shows missing mission submissions for students in the currently displayed
+student list, where the mission deadline has passed.
 
 Format: `listoverdue`
 
 * Only students in the currently displayed student list are included.
-* A submission is overdue when it is not recorded and today's date is after
-  the mission's deadline. A mission due today is not overdue.
+  Students hidden by `find` are excluded.
+* A submission is overdue when no submission is recorded for the student
+  and today's date is after the mission's deadline.
+* A mission due today or in the future is not overdue.
 * Today's date follows your computer's local date and time zone.
+* Each result row identifies a student and a missing mission, including
+  the mission's name and deadline.
+* A student can appear more than once if they have multiple overdue submissions.
+* Student numbers match the indexes in the displayed student list.
+  Use `view INDEX` to inspect a student's profile.
+* Results are ordered by displayed student index, then numeric mission ID.
 * Recording a submission removes it from subsequent overdue results.
-  Submission timestamps are not recorded; this report does not identify
+  Submission timestamps are not recorded, so this report does not identify
   submissions that were completed late.
-* Each row identifies a student and a missing mission. A student can appear
-  more than once.
-* Student numbers match the displayed student list. Missions for each student
-  are ordered by numeric mission ID.
-* The student filter and all records remain unchanged.
+* If no overdue submissions exist within the current student list, the command
+  displays `No overdue submissions in the current student list.`
+* Student records, mission definitions, submission records, and the current
+  student filter remain unchanged.
 * Run `list` first to include all students.
 * Like `list`, this command ignores extra arguments.
 
-Example: `find g/1A`, followed by `listoverdue`, shows overdue submissions
-among students in studio group 1A.
+Examples:
+
+* `list`, followed by `listoverdue`, shows overdue submissions for all students.
+* `find g/1A`, followed by `listoverdue`, shows overdue submissions only for
+  students in studio group 1A.
+* `find Betsy Crowe`, followed by `listoverdue`, shows overdue submissions
+  for students matching that name.
 
 ### Clearing all entries: `clear`
 
@@ -377,6 +390,7 @@ Action     | Format, Examples
 **Delete mission** | `delmission m/MISSIONID`<br> e.g., `delmission m/M03`
 **Record mission submission** | `markmission INDEX m/MISSION_ID`<br> e.g., `markmission 1 m/M01`
 **Remove mission submission** | `unmarkmission INDEX m/MISSION_ID`<br> e.g., `unmarkmission 1 m/M01`
+**List overdue submissions** | `listoverdue`
 **Clear**  | `clear`
 **Find**   | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find James Jake`
 **List**   | `list`
