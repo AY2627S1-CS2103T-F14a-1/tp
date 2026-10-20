@@ -79,10 +79,8 @@ public class EditMissionCommand extends Command {
         Mission missionToEdit = model.findMission(missionId).orElseThrow(() ->
                 new CommandException(String.format(MESSAGE_MISSION_NOT_FOUND, missionId)));
         Mission editedMission = createEditedMission(missionToEdit, editMissionDescriptor);
-        boolean hasDuplicateName = model.getMissionList().stream()
-                .anyMatch(mission -> !mission.getId().equals(missionId)
-                        && mission.hasSameName(editedMission.getName()));
-        if (hasDuplicateName) {
+        if (!missionToEdit.hasSameName(editedMission.getName())
+                && model.hasMissionName(editedMission.getName())) {
             throw new CommandException(MESSAGE_DUPLICATE_MISSION);
         }
         if (editedMission.equals(missionToEdit)) {
