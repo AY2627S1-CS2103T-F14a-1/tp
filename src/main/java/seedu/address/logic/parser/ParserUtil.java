@@ -171,7 +171,7 @@ public class ParserUtil {
      * Parses a {@code String} into a {@code int} week value.
      * @throws ParseException if the specified index is invalid (not a non-negative unsigned integer).
      */
-    public static int parseWeek(String week)  throws ParseException {
+    public static int parseWeek(String week) throws ParseException {
         requireNonNull(week);
         String trimmedWeek = week.trim();
 
