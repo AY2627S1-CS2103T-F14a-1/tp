@@ -49,14 +49,46 @@ public class WeeklyTaskParser {
 
         this.usage = usage;
 
-        Prefix[] prefixes = new Prefix[additionalPrefixes.length + 1];
-        prefixes[0] = PREFIX_WEEK;
-        System.arraycopy(additionalPrefixes, 0, prefixes, 1, additionalPrefixes.length);
+        Prefix[] prefixes = getPrefixArray(additionalPrefixes);
         ArgumentMultimap arguments = ArgumentTokenizer.tokenize(args, prefixes);
         this.argumentMultimap = arguments;
 
         index = extractIndex(arguments);
         week = extractWeek(arguments);
+    }
+
+    private Prefix[] getPrefixArray(Prefix... prefixes) {
+        Prefix[] prefixArray = new Prefix[prefixes.length + 1];
+        prefixes[0] = PREFIX_WEEK;
+        System.arraycopy(prefixes, 0, prefixArray, 1, prefixes.length);
+        return prefixArray;
+    }
+
+    /**
+     * Extracts the index.
+     *
+     * @param argMultimap Tokenized command arguments.
+     * @return The validated displayed student index.
+     * @throws ParseException If the index is missing or invalid.
+     */
+    private Index extractIndex(ArgumentMultimap argMultimap) throws ParseException {
+        try {
+            return ParserUtil.parseIndex(argMultimap.getPreamble());
+        } catch (ParseException pe) {
+            throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, usage), pe);
+        }
+    }
+
+    /**
+     * Extracts the single required studio week value.
+     *
+     * @param argMultimap Tokenized command arguments.
+     * @return The non-empty week text.
+     * @throws ParseException If the week does not conform to the expected format.
+     */
+    private int extractWeek(ArgumentMultimap argMultimap) throws ParseException {
+        argMultimap.verifyNoDuplicatePrefixesFor(PREFIX_WEEK);
+        return ParserUtil.parseWeek(argMultimap.getValue(PREFIX_WEEK).orElseThrow());
     }
 
     /**
