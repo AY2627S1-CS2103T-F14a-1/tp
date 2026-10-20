@@ -113,6 +113,11 @@ public class AddStudentCommandTest {
         }
 
         @Override
+        public void setMission(Mission target, Mission editedMission) {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
         public ReadOnlyUserPrefs getUserPrefs() {
             throw new AssertionError("This method should not be called.");
         }
