@@ -228,4 +228,27 @@ public class EditMissionCommandTest {
         assertTrue(model.getFilteredStudentList().isEmpty());
         assertEquals(3, model.getAddressBook().getNextMissionNumber());
     }
+
+    @Test
+    public void toString_differentIdsAndEdits_distinguishesCommands() {
+        EditMissionDescriptor descriptor = new EditMissionDescriptor();
+        descriptor.setName("Runes");
+        descriptor.setDeadline(LocalDate.of(2026, 10, 22));
+        EditMissionCommand command = new EditMissionCommand(new MissionId("M01"), descriptor);
+        String description = command.toString();
+
+        EditMissionCommand differentMission =
+                new EditMissionCommand(new MissionId("M02"), descriptor);
+        assertNotEquals(description, differentMission.toString());
+
+        EditMissionDescriptor differentName = new EditMissionDescriptor(descriptor);
+        differentName.setName("Curves");
+        assertNotEquals(description,
+                new EditMissionCommand(new MissionId("M01"), differentName).toString());
+
+        EditMissionDescriptor differentDeadline = new EditMissionDescriptor(descriptor);
+        differentDeadline.setDeadline(LocalDate.of(2026, 10, 23));
+        assertNotEquals(description,
+                new EditMissionCommand(new MissionId("M01"), differentDeadline).toString());
+    }
 }
