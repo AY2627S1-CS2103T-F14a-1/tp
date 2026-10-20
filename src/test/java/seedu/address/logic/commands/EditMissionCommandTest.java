@@ -195,4 +195,37 @@ public class EditMissionCommandTest {
         assertEquals(original, model.getAddressBook());
         assertTrue(model.getFilteredStudentList().isEmpty());
     }
+
+    @Test
+    public void execute_equivalentOwnName_reportsNoChanges() throws Exception {
+        AddressBook original = new AddressBook(model.getAddressBook());
+        EditMissionDescriptor descriptor = new EditMissionDescriptor();
+        descriptor.setName("  Runes  ");
+
+        CommandResult result =
+                new EditMissionCommand(new MissionId("M01"), descriptor).execute(model);
+
+        assertEquals("Mission M01 is unchanged. No changes made.",
+                result.getFeedbackToUser());
+        assertEquals(original, model.getAddressBook());
+        assertTrue(model.getFilteredStudentList().isEmpty());
+    }
+
+    @Test
+    public void execute_caseOnlyNameChange_updatesDisplayWithoutDuplicateError() throws Exception {
+        EditMissionDescriptor descriptor = new EditMissionDescriptor();
+        descriptor.setName("RUNES");
+
+        CommandResult result =
+                new EditMissionCommand(new MissionId("M01"), descriptor).execute(model);
+
+        assertEquals("Edited mission: M01 · RUNES (Due: 2026-10-20).",
+                result.getFeedbackToUser());
+        assertEquals("RUNES", model.getMissionList().getFirst().getName());
+        assertEquals(LocalDate.of(2026, 10, 20),
+                model.getMissionList().getFirst().getDeadline());
+        assertEquals(List.of(john), model.getAddressBook().getStudentList());
+        assertTrue(model.getFilteredStudentList().isEmpty());
+        assertEquals(3, model.getAddressBook().getNextMissionNumber());
+    }
 }
