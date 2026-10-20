@@ -138,12 +138,10 @@ public class EditMissionCommandTest {
         String saved = Files.readString(file);
         assertEquals(model.getAddressBook(), storage.readAddressBook().orElseThrow());
 
-        assertThrows(ParseException.class,
-                () -> logic.execute("editmission m/M01 d/2026-02-30"));
+        assertThrows(ParseException.class, () -> logic.execute("editmission m/M01 d/2026-02-30"));
         assertEquals(saved, Files.readString(file));
 
-        assertThrows(CommandException.class,
-                () -> logic.execute("editmission m/M01 n/Curves"));
+        assertThrows(CommandException.class, () -> logic.execute("editmission m/M01 n/Curves"));
         assertEquals(saved, Files.readString(file));
 
         AddressBook reloaded = new AddressBook(storage.readAddressBook().orElseThrow());
@@ -155,16 +153,18 @@ public class EditMissionCommandTest {
 
     @Test
     public void constructorAndExecute_invalidArguments_rejectsInvalidConstruction() {
+        MissionId missionId = new MissionId("M01");
         EditMissionDescriptor descriptor = new EditMissionDescriptor();
         descriptor.setName("New Runes");
 
-        assertThrows(NullPointerException.class, () -> new EditMissionCommand(null, descriptor));
-        assertThrows(NullPointerException.class,
-                () -> new EditMissionCommand(new MissionId("M01"), null));
-        assertThrows(IllegalArgumentException.class,
-                () -> new EditMissionCommand(new MissionId("M01"), new EditMissionDescriptor()));
-        assertThrows(NullPointerException.class,
-                () -> new EditMissionCommand(new MissionId("M01"), descriptor).execute(null));
+        assertThrows(NullPointerException.class, () ->
+                new EditMissionCommand(null, descriptor));
+        assertThrows(NullPointerException.class, () ->
+                new EditMissionCommand(missionId, null));
+        assertThrows(IllegalArgumentException.class, () ->
+                new EditMissionCommand(missionId, new EditMissionDescriptor()));
+        assertThrows(NullPointerException.class, () ->
+                new EditMissionCommand(missionId, descriptor).execute(null));
     }
 
     @Test
@@ -190,8 +190,7 @@ public class EditMissionCommandTest {
     public void parse_invalidEdit_doesNotChangeModel() {
         AddressBook original = new AddressBook(model.getAddressBook());
 
-        assertThrows(ParseException.class,
-                () -> new AddressBookParser().parseCommand("editmission m/M01 n/"));
+        assertThrows(ParseException.class, () -> new AddressBookParser().parseCommand("editmission m/M01 n/"));
 
         assertEquals(original, model.getAddressBook());
         assertTrue(model.getFilteredStudentList().isEmpty());

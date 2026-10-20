@@ -9,7 +9,23 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import seedu.address.commons.core.LogsCenter;
-import seedu.address.logic.commands.*;
+import seedu.address.logic.commands.AddMissionCommand;
+import seedu.address.logic.commands.AddStudentCommand;
+import seedu.address.logic.commands.AddStudioRecordCommand;
+import seedu.address.logic.commands.ClearCommand;
+import seedu.address.logic.commands.Command;
+import seedu.address.logic.commands.DeleteMissionCommand;
+import seedu.address.logic.commands.DeleteStudentCommand;
+import seedu.address.logic.commands.DeleteStudioRecordCommand;
+import seedu.address.logic.commands.EditCommand;
+import seedu.address.logic.commands.EditMissionCommand;
+import seedu.address.logic.commands.ExitCommand;
+import seedu.address.logic.commands.FindCommand;
+import seedu.address.logic.commands.HelpCommand;
+import seedu.address.logic.commands.ListCommand;
+import seedu.address.logic.commands.MarkMissionCommand;
+import seedu.address.logic.commands.UnmarkMissionCommand;
+import seedu.address.logic.commands.ViewCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
 
 /**
