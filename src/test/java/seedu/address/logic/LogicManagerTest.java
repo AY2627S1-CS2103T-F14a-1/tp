@@ -27,13 +27,13 @@ import seedu.address.logic.commands.CommandResult;
 import seedu.address.logic.commands.ListCommand;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.logic.parser.AddStudioRecordCommandParser;
-import seedu.address.logic.parser.WeeklyTaskParser;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.ReadOnlyAddressBook;
 import seedu.address.model.UserPrefs;
 import seedu.address.model.mission.MissionId;
+import seedu.address.model.student.RegisteredStudioRecords;
 import seedu.address.model.student.Student;
 import seedu.address.model.student.StudioRecord;
 import seedu.address.storage.JsonAddressBookStorage;
@@ -223,7 +223,7 @@ public class LogicManagerTest {
         assertStudioState(reloadedModel, storage, withWeekThirteen);
 
         String savedAfterDeletion = Files.readString(storage.getAddressBookFilePath());
-        assertThrows(ParseException.class, WeeklyTaskParser.MESSAGE_INVALID_STUDIO_WEEK, () ->
+        assertThrows(IllegalArgumentException.class, RegisteredStudioRecords.MESSAGE_CONSTRAINTS, () ->
                 reloadedLogic.execute("delstudiorecord 1 w/14"));
         assertEquals(savedAfterDeletion, Files.readString(storage.getAddressBookFilePath()));
         assertStudioState(reloadedModel, storage, withWeekThirteen);

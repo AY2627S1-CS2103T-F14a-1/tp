@@ -1,5 +1,7 @@
 package seedu.address.logic.parser;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_STUDENT;
@@ -20,7 +22,7 @@ public class AddStudioRecordCommandParserTest {
     public void parse_validArguments_returnsStudioRecordCommand() {
         assertParseSuccess(parser, "1 w/3 ef/0",
                 new AddStudioRecordCommand(INDEX_FIRST_STUDENT, 3, new StudioRecord(0)));
-        assertParseSuccess(parser, " 1\tW/13 EF/50 ",
+        assertParseSuccess(parser, " 1\tw/13 ef/50 ",
                 new AddStudioRecordCommand(INDEX_FIRST_STUDENT, 13, new StudioRecord(50)));
         assertParseSuccess(parser, "1 ef/2147483647 w/3",
                 new AddStudioRecordCommand(INDEX_FIRST_STUDENT, 3, new StudioRecord(Integer.MAX_VALUE)));
@@ -42,9 +44,11 @@ public class AddStudioRecordCommandParserTest {
 
     @Test
     public void parse_invalidIndexOrWeek_reportsValidationMessage() {
-        assertParseFailure(parser, "0 w/3 ef/50", WeeklyTaskParser.MESSAGE_INVALID_STUDENT_INDEX);
-        assertParseFailure(parser, "1 w/-1 ef/50", WeeklyTaskParser.MESSAGE_INVALID_STUDIO_WEEK);
-        assertParseFailure(parser, "1 w/14 ef/50", WeeklyTaskParser.MESSAGE_INVALID_STUDIO_WEEK);
+        String invalidFormat = String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddStudioRecordCommand.MESSAGE_USAGE);
+
+        assertParseFailure(parser, "0 w/3 ef/50", invalidFormat);
+        assertParseFailure(parser, "1 w/-1 ef/50", "Invalid week");
+        assertThrows(IllegalArgumentException.class, () -> parser.parse("1 w/14 ef/50"));
     }
 }
 

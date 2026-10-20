@@ -162,13 +162,15 @@ public class AddressBookParserTest {
 
         assertEquals(expected, parser.parseCommand("addstudiorecord 1 w/3 ef/0"));
         assertEquals(expected, parser.parseCommand("ADDSTUDIORECORD 1 w/3 ef/0"));
-        assertEquals(expected, parser.parseCommand("AddStudioRecord 1 W/3 EF/0"));
+        assertEquals(expected, parser.parseCommand("AddStudioRecord 1 w/3 ef/0"));
         assertEquals(expected, parser.parseCommand("  addstudiorecord\t1\tw/3 ef/0  "));
     }
 
     @Test
-    public void parseCommand_addStudioRecordMissingIndex_reportsMissingIndex() {
-        assertThrows(ParseException.class, WeeklyTaskParser.MESSAGE_MISSING_INDEX, () ->
+    public void parseCommand_addStudioRecordMissingIndex_reportsInvalidFormat() {
+        String expected = String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddStudioRecordCommand.MESSAGE_USAGE);
+
+        assertThrows(ParseException.class, expected, () ->
                 parser.parseCommand("addstudiorecord"));
     }
 
@@ -184,13 +186,15 @@ public class AddressBookParserTest {
 
         assertEquals(expected, parser.parseCommand("delstudiorecord 1 w/3"));
         assertEquals(expected, parser.parseCommand("DELSTUDIORECORD 1 w/3"));
-        assertEquals(expected, parser.parseCommand("DelStudioRecord 1 W/3"));
+        assertEquals(expected, parser.parseCommand("DelStudioRecord 1 w/3"));
         assertEquals(expected, parser.parseCommand("  delstudiorecord\t1\tw/3  "));
     }
 
     @Test
-    public void parseCommand_deleteStudioRecordMissingIndex_reportsMissingIndex() {
-        assertThrows(ParseException.class, WeeklyTaskParser.MESSAGE_MISSING_INDEX, () ->
+    public void parseCommand_deleteStudioRecordMissingIndex_reportsInvalidFormat() {
+        String expected = String.format(MESSAGE_INVALID_COMMAND_FORMAT, DeleteStudioRecordCommand.MESSAGE_USAGE);
+
+        assertThrows(ParseException.class, expected, () ->
                 parser.parseCommand("delstudiorecord"));
     }
 
