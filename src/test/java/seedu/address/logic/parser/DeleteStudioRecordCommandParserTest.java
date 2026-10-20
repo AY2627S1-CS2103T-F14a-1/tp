@@ -1,10 +1,10 @@
 package seedu.address.logic.parser;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_WEEK;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
+import static seedu.address.logic.parser.ParserUtil.MESSAGE_INVALID_WEEK;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_STUDENT;
 
 import org.junit.jupiter.api.Test;
@@ -41,13 +41,15 @@ public class DeleteStudioRecordCommandParserTest {
     }
 
     @Test
-    public void parse_missingWeekPrefix_throwsNoSuchElementException() {
-        assertThrows(java.util.NoSuchElementException.class, () -> parser.parse("1"));
+    public void parse_missingWeekPrefix_reportsInvalidFormat() {
+        String expected = String.format(MESSAGE_INVALID_COMMAND_FORMAT, DeleteStudioRecordCommand.MESSAGE_USAGE);
+
+        assertParseFailure(parser, "1", expected);
     }
 
     @Test
     public void parse_emptyWeek_reportsInvalidWeek() {
-        assertParseFailure(parser, "1 w/", "Invalid week");
+        assertParseFailure(parser, "1 w/", MESSAGE_INVALID_WEEK);
     }
 
     @Test
@@ -62,8 +64,8 @@ public class DeleteStudioRecordCommandParserTest {
 
     @Test
     public void parse_invalidValues_reportsValidationMessages() {
-        assertParseFailure(parser, "1 w/-1", "Invalid week");
-        assertThrows(IllegalArgumentException.class, () -> parser.parse("1 w/14"));
+        assertParseFailure(parser, "1 w/-1", MESSAGE_INVALID_WEEK);
+        assertParseFailure(parser, "1 w/14", MESSAGE_INVALID_WEEK);
     }
 
     @Test
@@ -86,7 +88,7 @@ public class DeleteStudioRecordCommandParserTest {
         String[] inputs = {"1 w/3 W/4", "1 w/3 extra", "1 w/3 x/4", "1 w/3w/4"};
 
         for (String input : inputs) {
-            assertParseFailure(parser, input, "Invalid week");
+            assertParseFailure(parser, input, MESSAGE_INVALID_WEEK);
         }
     }
 }

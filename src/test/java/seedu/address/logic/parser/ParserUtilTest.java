@@ -2,7 +2,9 @@ package seedu.address.logic.parser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static seedu.address.logic.parser.ParserUtil.MESSAGE_INVALID_EFFORT;
 import static seedu.address.logic.parser.ParserUtil.MESSAGE_INVALID_INDEX;
+import static seedu.address.logic.parser.ParserUtil.MESSAGE_INVALID_WEEK;
 import static seedu.address.testutil.Assert.assertThrows;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_STUDENT;
 
@@ -61,10 +63,10 @@ public class ParserUtilTest {
 
     @Test
     public void parseWeek_invalidInput_throwsParseException() {
-        String[] invalidWeeks = {"", " ", "-1", "+1", "1.0", "one", "1 2", "2147483648"};
+        String[] invalidWeeks = {"", " ", "-1", "+1", "1.0", "one", "1 2", "14", "2147483648"};
 
         for (String invalidWeek : invalidWeeks) {
-            assertThrows(ParseException.class, "Invalid week", () -> ParserUtil.parseWeek(invalidWeek));
+            assertThrows(ParseException.class, MESSAGE_INVALID_WEEK, () -> ParserUtil.parseWeek(invalidWeek));
         }
     }
 
@@ -72,9 +74,31 @@ public class ParserUtilTest {
     public void parseWeek_validInput_returnsWeek() throws Exception {
         assertEquals(0, ParserUtil.parseWeek("0"));
         assertEquals(3, ParserUtil.parseWeek("3"));
-        assertEquals(14, ParserUtil.parseWeek("14"));
-        assertEquals(Integer.MAX_VALUE, ParserUtil.parseWeek(String.valueOf(Integer.MAX_VALUE)));
+        assertEquals(13, ParserUtil.parseWeek("13"));
         assertEquals(3, ParserUtil.parseWeek(" \t3 "));
+    }
+
+    @Test
+    public void parseEffortScore_nullInput_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> ParserUtil.parseEffortScore(null));
+    }
+
+    @Test
+    public void parseEffortScore_invalidInput_throwsParseException() {
+        String[] invalidEffortScores = {"", " ", "-1", "+1", "1.0", "one", "1 2", "2147483648"};
+
+        for (String invalidEffortScore : invalidEffortScores) {
+            assertThrows(ParseException.class, MESSAGE_INVALID_EFFORT, () ->
+                    ParserUtil.parseEffortScore(invalidEffortScore));
+        }
+    }
+
+    @Test
+    public void parseEffortScore_validInput_returnsEffortScore() throws Exception {
+        assertEquals(0, ParserUtil.parseEffortScore("0"));
+        assertEquals(50, ParserUtil.parseEffortScore("50"));
+        assertEquals(Integer.MAX_VALUE, ParserUtil.parseEffortScore(String.valueOf(Integer.MAX_VALUE)));
+        assertEquals(50, ParserUtil.parseEffortScore(" \t50 "));
     }
 
     @Test

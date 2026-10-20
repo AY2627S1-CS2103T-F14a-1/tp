@@ -24,6 +24,10 @@ public class WeeklyTaskParserTest {
     public void constructor_nullArguments_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> new WeeklyTaskParser(null, "usage"));
         assertThrows(NullPointerException.class, () -> new WeeklyTaskParser("1 w/3", null));
+        assertThrows(NullPointerException.class, () ->
+                new WeeklyTaskParser("1 w/3", "usage", (Prefix[]) null));
+        assertThrows(NullPointerException.class, () ->
+                new WeeklyTaskParser("1 w/3", "usage", PREFIX_STUDIO_EFFORT, null));
     }
 
     @Test
@@ -32,7 +36,7 @@ public class WeeklyTaskParserTest {
 
         assertEquals(INDEX_FIRST_STUDENT, parser.getIndex());
         assertEquals(3, parser.getWeek());
-        assertEquals("8", parser.getPrefixValue(PREFIX_STUDIO_EFFORT).orElseThrow());
+        assertEquals("8", parser.getPrefixValue(PREFIX_STUDIO_EFFORT));
     }
 
     @Test

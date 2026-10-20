@@ -1,9 +1,10 @@
 package seedu.address.logic.parser;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
+import static seedu.address.logic.parser.ParserUtil.MESSAGE_INVALID_EFFORT;
+import static seedu.address.logic.parser.ParserUtil.MESSAGE_INVALID_WEEK;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_STUDENT;
 
 import org.junit.jupiter.api.Test;
@@ -29,8 +30,10 @@ public class AddStudioRecordCommandParserTest {
     }
 
     @Test
-    public void parse_missingEffort_reportsMissingEffort() {
-        assertParseFailure(parser, "1 w/3", AddStudioRecordCommandParser.MESSAGE_MISSING_EFFORT);
+    public void parse_missingEffort_reportsInvalidFormat() {
+        String invalidFormat = String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddStudioRecordCommand.MESSAGE_USAGE);
+
+        assertParseFailure(parser, "1 w/3", invalidFormat);
     }
 
     @Test
@@ -38,7 +41,7 @@ public class AddStudioRecordCommandParserTest {
         String[] effortScores = {"", "-1", "1.5", "abc", "2147483648"};
         for (String effortScore : effortScores) {
             assertParseFailure(parser, "1 w/3 ef/" + effortScore,
-                    AddStudioRecordCommandParser.MESSAGE_INVALID_EFFORT);
+                    MESSAGE_INVALID_EFFORT);
         }
     }
 
@@ -47,8 +50,8 @@ public class AddStudioRecordCommandParserTest {
         String invalidFormat = String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddStudioRecordCommand.MESSAGE_USAGE);
 
         assertParseFailure(parser, "0 w/3 ef/50", invalidFormat);
-        assertParseFailure(parser, "1 w/-1 ef/50", "Invalid week");
-        assertThrows(IllegalArgumentException.class, () -> parser.parse("1 w/14 ef/50"));
+        assertParseFailure(parser, "1 w/-1 ef/50", MESSAGE_INVALID_WEEK);
+        assertParseFailure(parser, "1 w/14 ef/50", MESSAGE_INVALID_WEEK);
     }
 }
 
