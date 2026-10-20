@@ -1,5 +1,12 @@
 # UI Test Plan
 
+## Integer validation regression
+
+Integer validation is not exposed independently through the UI. Run the JUnit
+cases named `isNonNegativeUnsignedInteger_*` in `StringUtilTest` to verify that
+the utility accepts zero and positive integers while rejecting null, signed,
+malformed, whitespace-containing, and overflowing values.
+
 ## Constructor validation regression
 
 Null studio-record values cannot be entered through the UI. Run the JUnit case
