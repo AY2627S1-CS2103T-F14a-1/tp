@@ -180,16 +180,15 @@ public class MainWindow extends UiPart<Stage> {
         studentListPanel.getStudentListView()
                 .getSelectionModel()
                 .selectedItemProperty()
-                .addListener(
-                        (observable, oldStudent, newStudent) -> {
-                            if (newStudent == null) {
-                                studentDetailsPanel.clearStudent();
-                            } else {
-                                studentDetailsPanel.showStudent(
-                                        newStudent,
-                                        logic.getMissions());
-                            }
-                        });
+                .addListener((observable, oldStudent, newStudent) -> {
+                    if (newStudent == null) {
+                        studentDetailsPanel.clearStudent();
+                    } else {
+                        studentDetailsPanel.showStudent(
+                                newStudent,
+                                logic.getMissions());
+                    }
+                });
 
         resultDisplay = new ResultDisplay();
         resultDisplayPlaceholder.getChildren()
