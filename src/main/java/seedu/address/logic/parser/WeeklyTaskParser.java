@@ -6,7 +6,6 @@ import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_WEEK;
 
 import java.util.Optional;
-import java.util.regex.Pattern;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.parser.exceptions.ParseException;
@@ -24,7 +23,6 @@ public class WeeklyTaskParser {
             "Student index must be a positive integer without a sign, decimal point, or leading zero.";
     public static final String MESSAGE_INVALID_STUDIO_WEEK = RegisteredStudioRecords.MESSAGE_CONSTRAINTS
             + " Enter an integer without a sign, decimal point, or leading zero.";
-    private static final Pattern POSITIVE_INTEGER = Pattern.compile("[1-9][0-9]*");
 
     private final ArgumentMultimap argumentMultimap;
     private final String usage;
