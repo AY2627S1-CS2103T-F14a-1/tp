@@ -66,7 +66,7 @@ Model -[hidden]right-> ReadOnlyUserPrefs
 AddressBook -[hidden]right-> ModelManager
 ModelManager -[hidden]right-> UserPrefs
 MissionCatalogue -[hidden]right-> UniqueStudentList
-RegisteredStudioRecords *--> "0..*" StudioRecord : records by week
+RegisteredStudioRecords *--> "0..*" StudioRecord : records by number
 Mission -[hidden]right-> Name
 MissionId -[hidden]right-> StudioRecord
 @enduml

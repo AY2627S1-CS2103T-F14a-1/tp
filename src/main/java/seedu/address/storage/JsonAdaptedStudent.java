@@ -1,5 +1,6 @@
 package seedu.address.storage;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -12,11 +13,13 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import seedu.address.commons.exceptions.IllegalValueException;
+import seedu.address.model.masterycheck.MasteryCheck;
 import seedu.address.model.mission.MissionId;
 import seedu.address.model.student.Email;
 import seedu.address.model.student.MissionSubmissions;
 import seedu.address.model.student.Name;
 import seedu.address.model.student.Phone;
+import seedu.address.model.student.RegisteredMasteryChecks;
 import seedu.address.model.student.RegisteredStudioRecords;
 import seedu.address.model.student.Student;
 import seedu.address.model.student.StudioGroup;
@@ -37,6 +40,7 @@ class JsonAdaptedStudent {
     private final String studioGroup;
     private final List<Object> missionSubmissions = new ArrayList<>();
     private final List<Object> registeredStudioRecords = new ArrayList<>();
+    private final List<Object> registeredMasteryChecks = new ArrayList<>();
 
     /**
      * Constructs a {@code JsonAdaptedStudent} with the given student details.
@@ -51,13 +55,15 @@ class JsonAdaptedStudent {
      * @param studioGroup Student's studio group.
      * @param registeredStudioRecords Recorded weekly studio records, or null for no records.
      * @param missionSubmissions Recorded mission IDs, or null for no submissions.
+     * @param registeredMasteryChecks Saved mastery check strings, or null for no appointments.
      */
     @JsonCreator
     public JsonAdaptedStudent(@JsonProperty("name") String name, @JsonProperty("phone") String phone,
             @JsonProperty("email") String email,
             @JsonProperty("tags") List<JsonAdaptedTag> tags, @JsonProperty("studio group") String studioGroup,
             @JsonProperty("missionSubmissions") List<?> missionSubmissions,
-            @JsonProperty("registeredStudioRecords") List<?> registeredStudioRecords) {
+            @JsonProperty("registeredStudioRecords") List<?> registeredStudioRecords,
+            @JsonProperty("registeredMasteryChecks") List<?> registeredMasteryChecks) {
         this.name = name;
         this.phone = phone;
         this.email = email;
@@ -70,6 +76,9 @@ class JsonAdaptedStudent {
         }
         if (registeredStudioRecords != null) {
             this.registeredStudioRecords.addAll(registeredStudioRecords);
+        }
+        if (registeredMasteryChecks != null) {
+            this.registeredMasteryChecks.addAll(registeredMasteryChecks);
         }
     }
 
@@ -96,6 +105,12 @@ class JsonAdaptedStudent {
                 .stream()
                 .sorted(Map.Entry.comparingByKey())
                 .map(entry -> List.of(entry.getKey(), entry.getValue().getEffortScore()))
+                .collect(Collectors.toList()));
+        registeredMasteryChecks.addAll(source.getRegisteredMasteryChecks().getMasteryCheckAppointments().entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByKey())
+                .map(entry ->
+                        List.of(entry.getKey(), entry.getValue().getAppointmentTime(), entry.getValue().isComplete()))
                 .collect(Collectors.toList()));
     }
 
@@ -150,8 +165,9 @@ class JsonAdaptedStudent {
         final Set<Tag> modelTags = new HashSet<>(studentTags);
         final MissionSubmissions modelMissionSubmissions = toModelMissionSubmissions();
         final RegisteredStudioRecords modelRegisteredStudioRecords = toModelRegisteredStudioRecords();
+        final RegisteredMasteryChecks modelRegisteredMasteryChecks = toModelRegisteredMasteryChecks();
         return new Student(modelName, modelPhone, modelEmail, modelTags, modelStudioGroup,
-                modelMissionSubmissions, modelRegisteredStudioRecords);
+                modelMissionSubmissions, modelRegisteredStudioRecords, modelRegisteredMasteryChecks);
     }
 
     /**
@@ -204,5 +220,33 @@ class JsonAdaptedStudent {
         }
 
         return new RegisteredStudioRecords(recordedWeeks);
+    }
+
+    /**
+     * Validates saved mastery check appointments and converts them into immutable records.
+     * Identical appointments are retained only once. If a mastery check number is repeated, only the last instance
+     * is retained.
+     *
+     * @return Mastery check appointments containing the saved IDs and appointment times.
+     * @throws IllegalValueException If a saved entry has an invalid format, number, datetime, or completion state.
+     */
+    public RegisteredMasteryChecks toModelRegisteredMasteryChecks() throws IllegalValueException {
+        Map<Integer, MasteryCheck> masteryAppointments = new HashMap<>();
+        for (Object value : registeredMasteryChecks) {
+            if (!(value instanceof List<?> checks) || checks.size() != 3) {
+                throw new IllegalValueException(RegisteredMasteryChecks.MESSAGE_CONSTRAINTS);
+            }
+            Object savedNumber = checks.get(0);
+            if (!(savedNumber instanceof Integer number) || number <= 0) {
+                throw new IllegalValueException(RegisteredMasteryChecks.MESSAGE_CONSTRAINTS);
+            }
+
+            Object savedDateTime = checks.get(1);
+            if (!(savedDateTime instanceof LocalDateTime dateTime)) {
+                throw new IllegalValueException(RegisteredMasteryChecks.MESSAGE_CONSTRAINTS);
+            }
+            masteryAppointments.put(number, new MasteryCheck(dateTime));
+        }
+        return new RegisteredMasteryChecks(masteryAppointments);
     }
 }

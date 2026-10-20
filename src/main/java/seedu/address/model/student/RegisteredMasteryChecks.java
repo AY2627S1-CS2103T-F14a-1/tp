@@ -1,10 +1,12 @@
 package seedu.address.model.student;
 
 import static java.util.Objects.requireNonNull;
+import static seedu.address.commons.util.AppUtil.checkArgument;
 
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import seedu.address.model.masterycheck.MasteryCheck;
@@ -14,13 +16,15 @@ import seedu.address.model.masterycheck.MasteryCheck;
  */
 public final class RegisteredMasteryChecks {
 
-    private final Set<MasteryCheck> masteryAppointments;
+    public static final String MESSAGE_CONSTRAINTS = "Mastery check number should be an integer greater than 0";
+
+    private final Map<Integer, MasteryCheck> masteryAppointments;
 
     /**
      * Creates an empty collection of mastery check appointments.
      */
     public RegisteredMasteryChecks() {
-        masteryAppointments = Collections.emptySet();
+        masteryAppointments = Collections.emptyMap();
     }
 
     /**
@@ -29,41 +33,45 @@ public final class RegisteredMasteryChecks {
      * @param givenAppointments Mission IDs with recorded submissions.
      * @throws NullPointerException If the set or any of its elements is null.
      */
-    public RegisteredMasteryChecks(Set<MasteryCheck> givenAppointments) {
+    public RegisteredMasteryChecks(Map<Integer, MasteryCheck> givenAppointments) {
         requireNonNull(givenAppointments);
 
-        Set<MasteryCheck> copiedIds = new HashSet<>(givenAppointments);
-        for (MasteryCheck masteryCheck : copiedIds) {
-            requireNonNull(masteryCheck);
+        Map<Integer, MasteryCheck> copiedAppointments = new HashMap<>(givenAppointments);
+        for (Integer number : copiedAppointments.keySet()) {
+            requireNonNull(number);
+            checkArgument(isValidMasteryCheckNumber(number), MESSAGE_CONSTRAINTS);
+            requireNonNull(copiedAppointments.get(number));
         }
-        this.masteryAppointments = Collections.unmodifiableSet(copiedIds);
+        this.masteryAppointments = Collections.unmodifiableMap(copiedAppointments);
     }
 
     /**
-     * Returns whether a Mastery check has been recorded for the given ID.
+     * Returns whether a Mastery check has been recorded for the given number.
      *
-     * @param masteryCheckId Mastery check ID to check.
-     * @return True if a mastery check is recorded for the ID.
+     * @param masteryCheckNumber Mastery check number to check.
+     * @return True if a mastery check is recorded for the number.
      */
-    public boolean hasMasteryCheck(int masteryCheckId) {
-        return masteryAppointments.stream().anyMatch(check -> check.getId() == masteryCheckId);
+    public boolean hasMasteryCheck(int masteryCheckNumber) {
+        checkArgument(isValidMasteryCheckNumber(masteryCheckNumber), MESSAGE_CONSTRAINTS);
+        return masteryAppointments.containsKey(masteryCheckNumber);
     }
 
     /**
      * Returns mission submissions including the given mission ID without changing
      * this object. Returns this object if the mission ID is already recorded.
      *
-     * @param masteryCheckId Mission ID to record.
+     * @param masteryCheckNumber Mastery check number to record.
      * @return Mission submissions containing the existing mission IDs and given mission ID.
      * @throws NullPointerException If the mission ID is null.
      */
-    public RegisteredMasteryChecks withMasteryCheck(int masteryCheckId, MasteryCheck check) {
-        if (hasMasteryCheck(masteryCheckId)) {
+    public RegisteredMasteryChecks withMasteryCheck(int masteryCheckNumber, MasteryCheck check) {
+        if (hasMasteryCheck(masteryCheckNumber)) {
             return this;
         }
 
-        Set<MasteryCheck> updatedAppointments = new HashSet<>(masteryAppointments);
-        updatedAppointments.add(check);
+        Map<Integer, MasteryCheck> updatedAppointments = new HashMap<>(masteryAppointments);
+        updatedAppointments.put(masteryCheckNumber, check);
+
         return new RegisteredMasteryChecks(updatedAppointments);
     }
 
@@ -71,13 +79,18 @@ public final class RegisteredMasteryChecks {
      * Returns submissions excluding the given mission ID without modifying this object.
      * Returns this object if the mission ID is not recorded.
      *
-     * @param masteryCheckId Mission ID to remove.
+     * @param masteryCheckNumber Mastery check number to remove.
      * @return Submissions containing all existing mission IDs except the given mission ID.
      * @throws NullPointerException If the mission ID is null.
      */
-    public RegisteredMasteryChecks withoutSubmission(int masteryCheckId) {
-        Set<MasteryCheck> updatedAppointments = new HashSet<>(masteryAppointments);
-        updatedAppointments.removeIf(check -> check.getId() == masteryCheckId);
+    public RegisteredMasteryChecks withoutSubmission(int masteryCheckNumber) {
+        if (!hasMasteryCheck(masteryCheckNumber)) {
+            return this;
+        }
+
+        Map<Integer, MasteryCheck> updatedAppointments = new HashMap<>(masteryAppointments);
+        updatedAppointments.remove(masteryCheckNumber);
+
         return new RegisteredMasteryChecks(updatedAppointments);
     }
 
@@ -86,8 +99,12 @@ public final class RegisteredMasteryChecks {
      *
      * @return Recorded mission IDs, with no guaranteed iteration order.
      */
-    public Set<MasteryCheck> getMasteryCheckAppointments() {
+    public Map<Integer, MasteryCheck> getMasteryCheckAppointments() {
         return masteryAppointments;
+    }
+
+    public static boolean isValidMasteryCheckNumber(int num) {
+        return num > 0;
     }
 
     @Override
@@ -116,8 +133,11 @@ public final class RegisteredMasteryChecks {
      */
     @Override
     public String toString() {
-        return masteryAppointments.stream().sorted(Comparator.comparingInt(MasteryCheck::getId))
-                .map(MasteryCheck::toString).toList().toString();
+        return masteryAppointments.entrySet().stream()
+                .sorted(Map.Entry.comparingByKey())
+                .map(entry -> entry.getKey() + ". " + entry.getValue().getAppointmentTime()
+                        + " " + entry.getValue().isComplete())
+                .collect(java.util.stream.Collectors.joining(", "));
     }
 
 }

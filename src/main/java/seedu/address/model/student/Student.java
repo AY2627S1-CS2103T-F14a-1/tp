@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import jdk.jfr.Registered;
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.model.tag.Tag;
 
@@ -26,6 +27,7 @@ public class Student {
     private final StudioGroup studioGroup;
     private final MissionSubmissions missionSubmissions;
     private final RegisteredStudioRecords registeredStudioRecords;
+    private final RegisteredMasteryChecks registeredMasteryChecks;
 
     /**
      * Creates a student with no recorded mission submissions.
@@ -39,7 +41,8 @@ public class Student {
     public Student(
             Name name, Phone phone, Email email, Set<Tag> tags,
             StudioGroup studioGroup) {
-        this(name, phone, email, tags, studioGroup, new MissionSubmissions(), new RegisteredStudioRecords());
+        this(name, phone, email, tags, studioGroup, new MissionSubmissions(), new RegisteredStudioRecords(),
+                new RegisteredMasteryChecks());
     }
 
     /**
@@ -54,7 +57,8 @@ public class Student {
      * @throws NullPointerException If any argument is null.
      */
     public Student(Name name, Phone phone, Email email, Set<Tag> tags, StudioGroup studioGroup,
-                   MissionSubmissions missionSubmissions, RegisteredStudioRecords registeredStudioRecords) {
+                   MissionSubmissions missionSubmissions, RegisteredStudioRecords registeredStudioRecords,
+                   RegisteredMasteryChecks registeredMasteryChecks) {
         requireAllNonNull(name, phone, email, tags, missionSubmissions, registeredStudioRecords);
         this.name = name;
         this.phone = phone;
@@ -63,6 +67,7 @@ public class Student {
         this.studioGroup = studioGroup;
         this.missionSubmissions = missionSubmissions;
         this.registeredStudioRecords = registeredStudioRecords;
+        this.registeredMasteryChecks = registeredMasteryChecks;
     }
 
     public Name getName() {
@@ -102,6 +107,10 @@ public class Student {
         return registeredStudioRecords;
     }
 
+    public RegisteredMasteryChecks getRegisteredMasteryChecks() {
+        return registeredMasteryChecks;
+    }
+
     /**
      * Returns true if both students have the same name.
      * This defines a weaker notion of equality between two students.
@@ -136,13 +145,15 @@ public class Student {
                 && tags.equals(otherStudent.tags)
                 && studioGroup.equals(otherStudent.studioGroup)
                 && missionSubmissions.equals(otherStudent.missionSubmissions)
-                && registeredStudioRecords.equals(otherStudent.registeredStudioRecords);
+                && registeredStudioRecords.equals(otherStudent.registeredStudioRecords)
+                && registeredMasteryChecks.equals(otherStudent.registeredMasteryChecks);
     }
 
     @Override
     public int hashCode() {
         // use this method for custom fields hashing instead of implementing your own
-        return Objects.hash(name, phone, email, tags, studioGroup, missionSubmissions, registeredStudioRecords);
+        return Objects.hash(name, phone, email, tags, studioGroup, missionSubmissions, registeredStudioRecords,
+                registeredMasteryChecks);
     }
 
     @Override
@@ -155,6 +166,7 @@ public class Student {
                 .add("studioGroup", studioGroup)
                 .add("missionSubmissions", missionSubmissions)
                 .add("registeredStudioRecords", registeredStudioRecords)
+                .add("registeredMasteryChecks", registeredMasteryChecks)
                 .toString();
     }
 

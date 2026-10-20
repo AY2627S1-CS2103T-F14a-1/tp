@@ -11,20 +11,14 @@ import seedu.address.commons.util.ToStringBuilder;
  * Represents a numbered mastery check task for a student with a fixed appointment time.
  */
 public class MasteryCheck {
-    private final int id;
     private final LocalDateTime appointmentTime;
     private boolean isComplete;
 
-    public MasteryCheck(int id, LocalDateTime appointmentTime) {
+    public MasteryCheck(LocalDateTime appointmentTime) {
         requireNonNull(appointmentTime);
 
-        this.id = id;
         this.appointmentTime = appointmentTime;
         isComplete = false;
-    }
-
-    public int getId() {
-        return id;
     }
 
     /**
@@ -47,20 +41,18 @@ public class MasteryCheck {
         }
 
         return other instanceof MasteryCheck otherMasteryCheck
-                && id == otherMasteryCheck.id
                 && appointmentTime.isEqual(otherMasteryCheck.appointmentTime)
                 && isComplete == otherMasteryCheck.isComplete;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, appointmentTime, isComplete);
+        return Objects.hash(appointmentTime, isComplete);
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .add("id", id)
                 .add("appointment time", appointmentTime)
                 .add("is complete", isComplete)
                 .toString();
