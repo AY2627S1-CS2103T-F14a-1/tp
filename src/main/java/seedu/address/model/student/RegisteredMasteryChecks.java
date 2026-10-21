@@ -86,7 +86,7 @@ public final class RegisteredMasteryChecks {
      * @return Registrations excluding the number, or this object if the number was absent.
      * @throws IllegalArgumentException If the mastery check number is not positive.
      */
-    public RegisteredMasteryChecks withoutSubmission(int masteryCheckNumber) {
+    public RegisteredMasteryChecks withoutMasteryCheck(int masteryCheckNumber) {
         if (!hasMasteryCheck(masteryCheckNumber)) {
             return this;
         }

@@ -68,7 +68,7 @@ public class MasteryCheckStorageTest {
         JsonAddressBookStorage storage = new JsonAddressBookStorage(temporaryDirectory.resolve("addressbook.json"));
         storage.saveAddressBook(book);
         Student updated = new StudentBuilder(original).withMasteryChecks(
-                original.getRegisteredMasteryChecks().withoutSubmission(1).getMasteryCheckAppointments()).build();
+                original.getRegisteredMasteryChecks().withoutMasteryCheck(1).getMasteryCheckAppointments()).build();
         book.setStudent(original, updated);
         storage.saveAddressBook(book);
         assertEquals(List.of(updated), storage.readAddressBook().orElseThrow().getStudentList());

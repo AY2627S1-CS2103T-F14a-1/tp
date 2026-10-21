@@ -27,7 +27,9 @@ import seedu.address.logic.commands.ExitCommand;
 import seedu.address.logic.commands.FindCommand;
 import seedu.address.logic.commands.HelpCommand;
 import seedu.address.logic.commands.ListCommand;
+import seedu.address.logic.commands.MarkMasteryCheckCommand;
 import seedu.address.logic.commands.MarkMissionCommand;
+import seedu.address.logic.commands.UnmarkMasteryCheckCommand;
 import seedu.address.logic.commands.UnmarkMissionCommand;
 import seedu.address.logic.commands.ViewCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
@@ -240,6 +242,34 @@ public class AddressBookParserTest {
     public void parseCommand_masteryCheckInvalidDate_throwsParseException() {
         assertThrows(ParseException.class, ParserUtil.MESSAGE_INVALID_MASTERY_CHECK_DATETIME, () ->
                 parser.parseCommand("addmc 1 num/1 dt/31-04|14:30"));
+    }
+
+
+    @Test
+    public void parseCommand_markmcIgnoringCase_returnsCommand() throws Exception {
+        MarkMasteryCheckCommand expected = new MarkMasteryCheckCommand(INDEX_FIRST_STUDENT, 1);
+        assertEquals(expected, parser.parseCommand("markmc 1 num/1"));
+        assertEquals(expected, parser.parseCommand("MARKMC 1 num/1"));
+    }
+
+    @Test
+    public void parseCommand_markmcMissingIndex_reportsMissingIndex() {
+        assertThrows(ParseException.class, MasteryCheckParser.MESSAGE_MISSING_INDEX, () ->
+                parser.parseCommand("markmc"));
+    }
+
+
+    @Test
+    public void parseCommand_unmarkmcIgnoringCase_returnsCommand() throws Exception {
+        UnmarkMasteryCheckCommand expected = new UnmarkMasteryCheckCommand(INDEX_FIRST_STUDENT, 1);
+        assertEquals(expected, parser.parseCommand("unmarkmc 1 num/1"));
+        assertEquals(expected, parser.parseCommand("UNMARKMC 1 num/1"));
+    }
+
+    @Test
+    public void parseCommand_unmarkmcMissingIndex_reportsMissingIndex() {
+        assertThrows(ParseException.class, MasteryCheckParser.MESSAGE_MISSING_INDEX, () ->
+                parser.parseCommand("unmarkmc"));
     }
 
 }

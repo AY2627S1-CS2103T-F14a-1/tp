@@ -67,3 +67,19 @@ round trips, and preservation by other commands. JavaFX cases run on the JavaFX 
 | MC-STATE-001 | Edit a student, add/delete a studio record, mark/unmark a mission, and delete the mission. Restart and view the student. | Mastery-check numbers, appointment times, and completion statuses remain unchanged. |
 | MC-VIEW-001 | View a student with appointments, then a student without appointments, then the first student again. | The empty student shows the headers and No mastery checks registered. Returning restores only the correct rows, without duplicates. |
 | MC-STORAGE-001 | Load a fixture containing completed and incomplete mastery checks, save, and reload. Separately attempt to load malformed number, datetime, and status records. | Valid times, including seconds and fractional seconds, and completion flags survive reloading. Malformed files produce a loading error and remain unchanged. |
+
+## Mark and unmark mastery check regression
+
+JUnit follows the mission mark/unmark suites for argument validation, preserved student state,
+filtered-list targeting, logging, and accepted/rejected command persistence.
+
+| ID | Steps | Expected result |
+| --- | --- | --- |
+| MC-MARK-001 | Start with two students and student 1 having incomplete appointment 1 and complete appointment 2. Run `markmc 1 num/1`, then view both students. | Appointment 1 becomes Completed; its full saved time, appointment 2, other records, and student 2 stay unchanged. |
+| MC-MARK-002 | Run `markmc 1 num/0` and `unmarkmc 1 num/3`, viewing student 1 after each rejection. | Invalid-number and missing-registration feedback respectively; model and saved JSON are unchanged. |
+| MC-MARK-003 | Restart and run `MARKMC 1 num/1`. | Already-complete feedback; no state changes and no saved-data changes. |
+| MC-UNMARK-001 | Run `UNMARKMC 1 num/1`, restart, and view student 1. | Appointment 1 is Not completed; its time and other records remain unchanged. |
+| MC-UNMARK-002 | Repeat `unmarkmc 1 num/1`, then attempt mark/unmark with a student index outside the displayed list. | Already-incomplete or invalid-index feedback; appointments and saved data are unchanged. |
+| MC-STATUS-BOUNDARY-001 | Mark and unmark existing appointments numbered 1 and 2147483647. | Both positive boundary numbers are supported; original student objects retain their prior states. |
+| MC-STATUS-PARSE-001 | Omit the student index, omit num/, repeat num/, or supply malformed numbers for each command. | Relevant missing-index, command-usage, duplicate-prefix, or number-validation feedback appears without changing state. |
+| MC-STATUS-LOG-001 | Filter to a student, execute mark/unmark followed by repeated requests, and inspect the command logs. | Each command logs under its own class, with INFO for a state change and FINE for a repeated request, identifying the student and displayed index. |
