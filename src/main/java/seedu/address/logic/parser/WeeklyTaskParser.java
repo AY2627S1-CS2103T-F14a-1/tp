@@ -7,7 +7,6 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_WEEK;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.parser.exceptions.ParseException;
@@ -108,7 +107,7 @@ public class WeeklyTaskParser {
         }
 
         String[] fields = indexText.split(" ");
-        if (!arePrefixesPresent(arguments, PREFIX_WEEK) && fields.length == 2
+        if (!arguments.arePrefixesPresent(PREFIX_WEEK) && fields.length == 2
                 && POSITIVE_INTEGER.matcher(fields[1]).matches()) {
             parseStudentIndex(fields[0]);
             throw new ParseException(MESSAGE_MISSING_WEEK);
@@ -187,7 +186,7 @@ public class WeeklyTaskParser {
      * @throws ParseException If the week is missing, repeated, or has extra arguments.
      */
     private String extractWeek(ArgumentMultimap argMultimap) throws ParseException {
-        if (!arePrefixesPresent(argMultimap, PREFIX_WEEK)) {
+        if (!argMultimap.arePrefixesPresent(PREFIX_WEEK)) {
             throw new ParseException(MESSAGE_MISSING_WEEK);
         }
 
@@ -216,17 +215,4 @@ public class WeeklyTaskParser {
                     MESSAGE_INVALID_COMMAND_FORMAT, usage));
         }
     }
-
-    /**
-     * Returns whether every specified prefix is present.
-     * A present prefix may still have an empty value.
-     *
-     * @param argumentMultimap Tokenized arguments.
-     * @param prefixes Required prefixes.
-     * @return True if all required prefixes are present.
-     */
-    private static boolean arePrefixesPresent(ArgumentMultimap argumentMultimap, Prefix... prefixes) {
-        return Stream.of(prefixes).allMatch(prefix -> argumentMultimap.getValue(prefix).isPresent());
-    }
-
 }

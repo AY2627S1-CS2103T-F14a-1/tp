@@ -529,6 +529,48 @@ The user stories above represent the main intended functionality and selected fu
     * 3b1. AvengerHub informs the tutor that no submission is recorded and leaves the records unchanged.
 
       Use case ends.
+      
+Student records, mission definitions, submission records, and the current
+student filter remain unchanged throughout this use case.
+
+**Use case: List mission submissions**
+
+**MSS**
+
+1. Tutor requests to display all students or a filtered set of students.
+2. AvengerHub displays the requested student list.
+3. Tutor requests to list submissions for a specified mission ID.
+4. AvengerHub displays the students in the current list who have a recorded
+   submission for that mission, retaining their displayed student indexes.
+
+   Use case ends.
+
+**Extensions**
+
+* 3a. The tutor provides invalid or incomplete details.
+
+    * 3a1. AvengerHub shows an error message and leaves the records and current
+      student filter unchanged.
+
+      Use case resumes from step 3.
+
+* 3b. No mission with the specified ID exists.
+
+    * 3b1. AvengerHub informs the tutor that the mission does not exist and
+      leaves the records and current student filter unchanged.
+
+      Use case resumes from step 3.
+
+* 4a. No students in the current list have a recorded submission for the mission,
+  including when the current student list is empty.
+
+    * 4a1. AvengerHub reports that no submissions are recorded for the mission
+      within the current student list.
+
+      Use case ends.
+
+Student records, mission definitions, submission records, and the current
+student filter remain unchanged throughout this use case.
 
 **Use case: List overdue mission submissions**
 
@@ -537,7 +579,10 @@ The user stories above represent the main intended functionality and selected fu
 1. Tutor requests to display all students or a filtered set of students.
 2. AvengerHub displays the requested student list.
 3. Tutor requests to list overdue mission submissions.
-4. AvengerHub displays each missing submission whose mission deadline is before today's local date, restricted to students in the current list. Each result identifies the student using their displayed index and includes the mission's ID, name, and deadline.
+4. AvengerHub displays each missing submission whose mission deadline is
+   before today's local date, restricted to students in the current list.
+   Each result identifies the student using their displayed index and
+   includes the mission's ID, name, and deadline.
 
    Use case ends.
 
@@ -567,9 +612,6 @@ The user stories above represent the main intended functionality and selected fu
 Deadlines are inclusive: missions due today are not overdue. The current
 date follows the computer's local date and time zone. Recorded submissions
 are excluded, regardless of when they were recorded.
-
-Student records, mission definitions, submission records, and the current
-student filter remain unchanged throughout this use case.
 
 *{More to be added}*
 
