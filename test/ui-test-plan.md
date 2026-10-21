@@ -67,3 +67,19 @@ round trips, and preservation by other commands. JavaFX cases run on the JavaFX 
 | MC-STATE-001 | Edit a student, add/delete a studio record, mark/unmark a mission, and delete the mission. Restart and view the student. | Mastery-check numbers, appointment times, and completion statuses remain unchanged. |
 | MC-VIEW-001 | View a student with appointments, then a student without appointments, then the first student again. | The empty student shows the headers and No mastery checks registered. Returning restores only the correct rows, without duplicates. |
 | MC-STORAGE-001 | Load a fixture containing completed and incomplete mastery checks, save, and reload. Separately attempt to load malformed number, datetime, and status records. | Valid times, including seconds and fractional seconds, and completion flags survive reloading. Malformed files produce a loading error and remain unchanged. |
+
+## Delete mastery check regression
+
+JUnit follows the studio-record deletion suites and checks command state, parser errors,
+case-insensitive dispatch, and real-file persistence after accepted and rejected commands.
+The number-validation and usage-message cases also expose current copy-paste defects.
+
+| ID | Steps | Expected result |
+| --- | --- | --- |
+| MC-DELETE-001 | Start with two students and student 1 having appointments 1 and 2. Run `delmc 1 num/1`, then view both students. | Appointment 1 is removed; appointment 2 retains its time and status. Other student fields and student 2 are unchanged. |
+| MC-DELETE-002 | Run `delmc 1 num/0`, then view student 1 and inspect saved data. | Invalid-number feedback; appointments and saved data remain unchanged. |
+| MC-DELETE-003 | Restart and run `delmc 1 num/1`. | Not-found feedback; saved data and remaining appointments are unchanged. |
+| MC-DELETE-004 | Run `delmc 3 num/2` when only two students exist, then view both students. | Invalid-index feedback; both students and saved data are unchanged. |
+| MC-DELETE-005 | Run `delmc 1 num/2`, restart, and view student 1. | No appointments remain; the empty-table message appears. Other records remain intact. |
+| MC-DELETE-006 | Register numbers 14 and 2147483647, then delete each by number. | Every positive mastery check number can be deleted; studio-week limits do not apply. |
+| MC-DELETE-007 | Run `delmc` and `delmc 1`. | Invalid-format feedback shows the deletion command usage, including `delmc` and `num/`. |

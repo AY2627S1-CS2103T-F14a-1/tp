@@ -40,6 +40,7 @@ import seedu.address.model.ReadOnlyAddressBook;
 import seedu.address.model.UserPrefs;
 import seedu.address.model.masterycheck.MasteryCheck;
 import seedu.address.model.mission.MissionId;
+import seedu.address.model.student.RegisteredMasteryChecks;
 import seedu.address.model.student.Student;
 import seedu.address.model.student.StudioRecord;
 import seedu.address.storage.JsonAddressBookStorage;
@@ -408,6 +409,50 @@ public class LogicManagerTest {
             logic.execute(commands.get(i));
             assertStudioState(model, storage, expectedStudents.get(i));
         }
+    }
+
+
+    @Test
+    public void execute_deleteMasteryCheckAndReload_preservesDeletionAndRejectsInvalidInput() throws Exception {
+        model.addMission("Mission 1", LocalDate.of(2026, 10, 15));
+        MasteryCheck first = new MasteryCheck(LocalDateTime.of(2026, 8, 18, 14, 30));
+        first.markComplete();
+        MasteryCheck second = new MasteryCheck(first.getAppointmentTime().plusDays(1));
+        Student original = new StudentBuilder(AMY).withMissionSubmissions("M01")
+                .withStudioRecords(new StudioRecordSet(3, new StudioRecord(50)))
+                .withMasteryChecks(Map.of(1, first, 2, second)).build();
+        model.addStudent(original);
+        model.addStudent(BOB);
+        JsonAddressBookStorage storage = new JsonAddressBookStorage(temporaryFolder.resolve("addressBook.json"));
+        assertEquals("Removed Amy Bee's mastery check numbered 1.",
+                logic.execute("delmc 1 num/1").getFeedbackToUser());
+        Student withSecond = new StudentBuilder(original).withMasteryChecks(Map.of(2, second)).build();
+        assertStudioState(model, storage, withSecond);
+
+        String saved = Files.readString(storage.getAddressBookFilePath());
+        assertThrows(ParseException.class, RegisteredMasteryChecks.MESSAGE_CONSTRAINTS, () ->
+                logic.execute("delmc 1 num/0"));
+        assertEquals(saved, Files.readString(storage.getAddressBookFilePath()));
+        assertStudioState(model, storage, withSecond);
+
+        Model restored = new ModelManager(storage.readAddressBook().orElseThrow(), new UserPrefs());
+        Logic restoredLogic = new LogicManager(restored, new StorageManager(storage,
+                new JsonUserPrefsStorage(temporaryFolder.resolve("deleteMasteryPrefs.json"))));
+        assertEquals("Amy Bee has no mastery check numbered 1. No changes made.",
+                restoredLogic.execute("DELMC 1 num/1").getFeedbackToUser());
+        assertEquals(saved, Files.readString(storage.getAddressBookFilePath()));
+        assertStudioState(restored, storage, withSecond);
+
+        assertEquals("Removed Amy Bee's mastery check numbered 2.",
+                restoredLogic.execute("delmc 1 num/2").getFeedbackToUser());
+        Student empty = new StudentBuilder(original).withMasteryChecks(Map.of()).build();
+        assertStudioState(restored, storage, empty);
+        String savedAfterDeletion = Files.readString(storage.getAddressBookFilePath());
+        assertThrows(CommandException.class, MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX, () ->
+                restoredLogic.execute("delmc 3 num/1"));
+        assertEquals(savedAfterDeletion, Files.readString(storage.getAddressBookFilePath()));
+        assertStudioState(restored, storage, empty);
+        assertEquals(Map.of(1, first, 2, second), original.getRegisteredMasteryChecks().getMasteryCheckAppointments());
     }
 
 }

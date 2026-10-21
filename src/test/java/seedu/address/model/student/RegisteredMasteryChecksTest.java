@@ -103,26 +103,26 @@ public class RegisteredMasteryChecksTest {
     }
 
     @Test
-    public void withoutSubmission_existingNumber_returnsUpdatedCopy() {
+    public void withoutMasteryCheck_existingNumber_returnsUpdatedCopy() {
         MasteryCheck first = new MasteryCheck(APPOINTMENT);
         MasteryCheck second = new MasteryCheck(APPOINTMENT.plusDays(1));
         RegisteredMasteryChecks original = new RegisteredMasteryChecks(Map.of(1, first, 2, second));
-        assertEquals(Map.of(2, second), original.withoutSubmission(1).getMasteryCheckAppointments());
+        assertEquals(Map.of(2, second), original.withoutMasteryCheck(1).getMasteryCheckAppointments());
         assertEquals(Map.of(1, first, 2, second), original.getMasteryCheckAppointments());
-        assertTrue(original.withoutSubmission(1).withoutSubmission(2).getMasteryCheckAppointments().isEmpty());
+        assertTrue(original.withoutMasteryCheck(1).withoutMasteryCheck(2).getMasteryCheckAppointments().isEmpty());
     }
 
     @Test
-    public void withoutSubmission_missingNumber_returnsSameInstance() {
+    public void withoutMasteryCheck_missingNumber_returnsSameInstance() {
         RegisteredMasteryChecks registrations = new RegisteredMasteryChecks(Map.of(1, new MasteryCheck(APPOINTMENT)));
-        assertSame(registrations, registrations.withoutSubmission(2));
+        assertSame(registrations, registrations.withoutMasteryCheck(2));
     }
 
     @Test
-    public void withoutSubmission_invalidNumber_leavesRegistrationsUnchanged() {
+    public void withoutMasteryCheck_invalidNumber_leavesRegistrationsUnchanged() {
         RegisteredMasteryChecks registrations = new RegisteredMasteryChecks(Map.of(1, new MasteryCheck(APPOINTMENT)));
         for (int number : new int[] {0, -1, Integer.MIN_VALUE}) {
-            assertThrows(IllegalArgumentException.class, () -> registrations.withoutSubmission(number));
+            assertThrows(IllegalArgumentException.class, () -> registrations.withoutMasteryCheck(number));
             assertTrue(registrations.hasMasteryCheck(1));
         }
     }

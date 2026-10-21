@@ -18,6 +18,7 @@ import seedu.address.logic.commands.AddMasteryCheckCommand;
 import seedu.address.logic.commands.AddStudentCommand;
 import seedu.address.logic.commands.AddStudioRecordCommand;
 import seedu.address.logic.commands.ClearCommand;
+import seedu.address.logic.commands.DeleteMasteryCheckCommand;
 import seedu.address.logic.commands.DeleteStudentCommand;
 import seedu.address.logic.commands.DeleteStudioRecordCommand;
 import seedu.address.logic.commands.EditCommand;
@@ -34,6 +35,7 @@ import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.masterycheck.MasteryCheck;
 import seedu.address.model.mission.MissionId;
 import seedu.address.model.student.NameContainsKeywordsPredicate;
+import seedu.address.model.student.RegisteredMasteryChecks;
 import seedu.address.model.student.Student;
 import seedu.address.model.student.StudioRecord;
 import seedu.address.testutil.EditStudentDescriptorBuilder;
@@ -240,6 +242,22 @@ public class AddressBookParserTest {
     public void parseCommand_masteryCheckInvalidDate_throwsParseException() {
         assertThrows(ParseException.class, ParserUtil.MESSAGE_INVALID_MASTERY_CHECK_DATETIME, () ->
                 parser.parseCommand("addmc 1 num/1 dt/31-04|14:30"));
+    }
+
+
+    @Test
+    public void parseCommand_deleteMasteryCheckIgnoringCase_returnsDeletionCommand() throws Exception {
+        DeleteMasteryCheckCommand expected = new DeleteMasteryCheckCommand(INDEX_FIRST_STUDENT, 1);
+        assertEquals(expected, parser.parseCommand("delmc 1 num/1"));
+        assertEquals(expected, parser.parseCommand("DELMC 1 num/1"));
+        assertEquals(expected, parser.parseCommand("  DelMc 1 num/1  "));
+    }
+
+    @Test
+    public void parseCommand_deleteMasteryCheckInvalidNumber_reportsMasteryCheckConstraint() {
+        assertThrows(ParseException.class,
+                RegisteredMasteryChecks.MESSAGE_CONSTRAINTS, () ->
+                parser.parseCommand("delmc 1 num/0"));
     }
 
 }
