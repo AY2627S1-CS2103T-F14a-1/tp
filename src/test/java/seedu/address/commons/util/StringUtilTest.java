@@ -45,6 +45,31 @@ public class StringUtilTest {
         assertTrue(StringUtil.isNonZeroUnsignedInteger("10"));
     }
 
+    //---------------- Tests for isNonNegativeUnsignedInteger ---------------------------------
+
+    @Test
+    public void isNonNegativeUnsignedInteger_nullInput_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> StringUtil.isNonNegativeUnsignedInteger(null));
+    }
+
+    @Test
+    public void isNonNegativeUnsignedInteger_validInput_returnsTrue() {
+        assertTrue(StringUtil.isNonNegativeUnsignedInteger("0"));
+        assertTrue(StringUtil.isNonNegativeUnsignedInteger("00"));
+        assertTrue(StringUtil.isNonNegativeUnsignedInteger("1"));
+        assertTrue(StringUtil.isNonNegativeUnsignedInteger(Integer.toString(Integer.MAX_VALUE)));
+    }
+
+    @Test
+    public void isNonNegativeUnsignedInteger_invalidInput_returnsFalse() {
+        String[] invalidInputs = {"", "  ", "-1", "+1", "1.0", "one", "1 2",
+            Long.toString((long) Integer.MAX_VALUE + 1)};
+
+        for (String invalidInput : invalidInputs) {
+            assertFalse(StringUtil.isNonNegativeUnsignedInteger(invalidInput));
+        }
+    }
+
 
     //---------------- Tests for containsWordIgnoreCase --------------------------------------
 

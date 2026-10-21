@@ -149,4 +149,9 @@ public class ModelManager implements Model {
     public ObservableList<Mission> getMissionList() {
         return addressBook.getMissionList();
     }
+
+    @Override
+    public void setMission(Mission target, Mission editedMission) {
+        addressBook.setMission(target, editedMission);
+    }
 }

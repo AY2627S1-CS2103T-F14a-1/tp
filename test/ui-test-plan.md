@@ -1,5 +1,23 @@
 # UI Test Plan
 
+## Studio parsing regression
+
+Studio argument parsing is most precisely checked at the parser level. Run the
+complete `WeeklyTaskParserTest`, `ParserUtilTest`,
+`AddStudioRecordCommandParserTest`, and `DeleteStudioRecordCommandParserTest`
+JUnit classes. Verify that missing required prefixes show command usage,
+duplicate prefixes are rejected, weeks outside 0 to 13 are rejected, and
+effort scores accept only unsigned integers from 0 to 2147483647. Then run the
+positive and negative studio command cases below to verify the same behavior
+through the UI without changing student state after invalid input.
+
+## Integer validation regression
+
+Integer validation is not exposed independently through the UI. Run the JUnit
+cases named `isNonNegativeUnsignedInteger_*` in `StringUtilTest` to verify that
+the utility accepts zero and positive integers while rejecting null, signed,
+malformed, whitespace-containing, and overflowing values.
+
 ## Constructor validation regression
 
 Null studio-record values cannot be entered through the UI. Run the JUnit case
@@ -67,3 +85,11 @@ round trips, and preservation by other commands. JavaFX cases run on the JavaFX 
 | MC-STATE-001 | Edit a student, add/delete a studio record, mark/unmark a mission, and delete the mission. Restart and view the student. | Mastery-check numbers, appointment times, and completion statuses remain unchanged. |
 | MC-VIEW-001 | View a student with appointments, then a student without appointments, then the first student again. | The empty student shows the headers and No mastery checks registered. Returning restores only the correct rows, without duplicates. |
 | MC-STORAGE-001 | Load a fixture containing completed and incomplete mastery checks, save, and reload. Separately attempt to load malformed number, datetime, and status records. | Valid times, including seconds and fractional seconds, and completion flags survive reloading. Malformed files produce a loading error and remain unchanged. |
+
+## Feedback scrolling
+
+| ID | Steps | Expected result |
+| --- | --- | --- |
+| FEEDBACK-001 | Run `help`, then enter an unknown command. | Help feedback and unknown-command feedback remain readable. |
+| FEEDBACK-002 | Run `view 1`, then `list`. | The student profile remains usable; ordinary command feedback appears normally. |
+| FEEDBACK-003 | After submission listing is implemented, generate enough results to exceed the feedback area's height. Scroll to the bottom, then run another command. | Every result is reachable by scrolling. The next feedback starts at the top. |
