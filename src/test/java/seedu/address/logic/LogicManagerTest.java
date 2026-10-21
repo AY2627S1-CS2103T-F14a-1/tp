@@ -7,6 +7,8 @@ import static seedu.address.logic.commands.CommandTestUtil.EMAIL_DESC_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.NAME_DESC_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.PHONE_DESC_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.STUDIO_GROUP_DESC_AMY;
+import static seedu.address.logic.parser.ParserUtil.MESSAGE_INVALID_EFFORT;
+import static seedu.address.logic.parser.ParserUtil.MESSAGE_INVALID_WEEK;
 import static seedu.address.testutil.Assert.assertThrows;
 import static seedu.address.testutil.TypicalStudents.AMY;
 import static seedu.address.testutil.TypicalStudents.BOB;
@@ -27,8 +29,6 @@ import seedu.address.logic.commands.CommandResult;
 import seedu.address.logic.commands.EditStudioRecordCommand;
 import seedu.address.logic.commands.ListCommand;
 import seedu.address.logic.commands.exceptions.CommandException;
-import seedu.address.logic.parser.AddStudioRecordCommandParser;
-import seedu.address.logic.parser.WeeklyTaskParser;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
@@ -197,7 +197,7 @@ public class LogicManagerTest {
         assertStudioState(model, storage, withWeekThree);
 
         String savedJson = Files.readString(storage.getAddressBookFilePath());
-        assertThrows(ParseException.class, AddStudioRecordCommandParser.MESSAGE_INVALID_EFFORT, () ->
+        assertThrows(ParseException.class, MESSAGE_INVALID_EFFORT, () ->
                 logic.execute("addstudiorecord 1 w/4 ef/-1"));
         assertEquals(savedJson, Files.readString(storage.getAddressBookFilePath()));
         assertStudioState(model, storage, withWeekThree);
@@ -241,7 +241,7 @@ public class LogicManagerTest {
         assertStudioState(reloadedModel, storage, withWeekThirteen);
 
         String savedAfterDeletion = Files.readString(storage.getAddressBookFilePath());
-        assertThrows(ParseException.class, WeeklyTaskParser.MESSAGE_INVALID_STUDIO_WEEK, () ->
+        assertThrows(ParseException.class, MESSAGE_INVALID_WEEK, () ->
                 reloadedLogic.execute("delstudiorecord 1 w/14"));
         assertEquals(savedAfterDeletion, Files.readString(storage.getAddressBookFilePath()));
         assertStudioState(reloadedModel, storage, withWeekThirteen);

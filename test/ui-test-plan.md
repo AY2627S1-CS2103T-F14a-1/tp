@@ -1,5 +1,23 @@
 # UI Test Plan
 
+## Studio parsing regression
+
+Studio argument parsing is most precisely checked at the parser level. Run the
+complete `WeeklyTaskParserTest`, `ParserUtilTest`,
+`AddStudioRecordCommandParserTest`, and `DeleteStudioRecordCommandParserTest`
+JUnit classes. Verify that missing required prefixes show command usage,
+duplicate prefixes are rejected, weeks outside 0 to 13 are rejected, and
+effort scores accept only unsigned integers from 0 to 2147483647. Then run the
+positive and negative studio command cases below to verify the same behavior
+through the UI without changing student state after invalid input.
+
+## Integer validation regression
+
+Integer validation is not exposed independently through the UI. Run the JUnit
+cases named `isNonNegativeUnsignedInteger_*` in `StringUtilTest` to verify that
+the utility accepts zero and positive integers while rejecting null, signed,
+malformed, whitespace-containing, and overflowing values.
+
 ## Constructor validation regression
 
 Null studio-record values cannot be entered through the UI. Run the JUnit case
