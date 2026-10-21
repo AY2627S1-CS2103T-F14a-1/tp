@@ -120,6 +120,10 @@ How the parsing works:
 * When called upon to parse a user command, the `AddressBookParser` class creates an `XYZCommandParser` (`XYZ` is a placeholder for the specific command name, e.g., `AddStudentCommandParser`). The parser uses the other classes shown above to parse the user command and create an `XYZCommand` object (e.g., `AddStudentCommand`). The `AddressBookParser` returns that object as a `Command` object.
 * All `XYZCommandParser` classes, such as `AddStudentCommandParser` and `DeleteStudentCommandParser`, implement the `Parser` interface so they can be treated similarly where appropriate, for example during testing.
 
+Some parser classes also use a helper class to share common parsing behavior. For example, `AddStudioRecordCommandParser`, `DeleteStudioRecordCommandParser`, and `EditStudioRecordCommandParser` each use a `WeeklyTaskParser`, as they share a common need to parse `week` values, and some share the need to parse `effort` values. The following simplified class diagram shows the classes used by `AddStudioRecordCommandParser`:
+
+<puml src="diagrams/AddStudioRecordParserClasses.puml" width="600"/>
+
 ### Model component
 **API** : [`Model.java`](https://github.com/AY2627S1-CS2103T-F14a-1/tp/blob/master/src/main/java/seedu/address/model/Model.java)
 
@@ -155,6 +159,13 @@ The `Storage` component,
 * can save both address book data and user preference data in JSON format, and read them back into corresponding objects.
 * is implemented by `StorageManager`, which delegates the actual JSON file access to `JsonAddressBookStorage` and `JsonUserPrefsStorage` (one class per data file).
 * depends on some classes in the `Model` component (because the `Storage` component's job is to save/retrieve objects that belong to the `Model`)
+
+The component a developer is most likely to interact with is `JsonAdaptedStudent`, which governs the actual conversion of student data between JSON and `Model`. Hence, when adding a new data field to `Student`, its JSON storage format and the validation when loading must be specified.
+
+We illustrate the involvement of `JsonAdaptedStudent` in both load and save scenarios as such:
+
+<puml src="diagrams/LoadAdaptedStudentActivityDiagram.puml" width="800" />
+<puml src="diagrams/SaveAdaptedStudentActivityDiagram.puml" width="600" />
 
 ### Common classes
 
