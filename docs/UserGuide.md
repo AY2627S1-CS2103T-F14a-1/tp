@@ -262,15 +262,74 @@ Edited Amy Bee's studio record for studio week 3.
 
 ### Adding a mastery check: `addmc`
 
-Adds a number Mastery Check appointment for a student at a specified date-time.
+Adds a numbered mastery check appointment for a student.
 
-Format: `addmc INDEX num/NUMBER dt/dd-MM|HH:MM`
+Format: `addmc INDEX num/NUMBER dt/DATE-TIME`
+
+* `INDEX` must be a positive integer identifying a student in the **currently displayed list**, including `find` results.
+* `NUMBER` must be an integer from **1 to 2147483647**, inclusive. Numbers are unique within each student's appointments.
+* `DATE-TIME` must be a real date and 24-hour time in `dd-MM|HH:mm` format, such as `29-10|13:30`.
+  The current year is filled in automatically. Impossible dates, `24:00`, and times with seconds are rejected.
+* Supply lowercase `num/` and `dt/` exactly once each, in either order, after `INDEX`.
+* New appointments show **Not completed**. Adding an existing number leaves its time and status unchanged.
+* Any invalid input produces an error without changing records.
+
+All four mastery check commands use the same `INDEX` and `NUMBER` rules. They preserve other student records
+and the current list filter. Changes are saved automatically and retained after restart.
+Run `view INDEX` to inspect the Number, Appointment time, and Status columns.
+
+Example: 
+
+`addmc 1 num/2 dt/29-10|13:30`, followed by `view 1`, shows appointment 2 at `Oct 29, 13:30` as Not completed.
 
 ### Deleting a mastery check: `delmc`
 
+Removes a numbered mastery check appointment for a student, including its completion status.
+
+Format: `delmc INDEX num/NUMBER`
+
+* `INDEX` must be a positive integer identifying a student in the **currently displayed list**, including `find` results.
+* `NUMBER` must be an integer from **1 to 2147483647**, inclusive. Numbers are unique within each student's appointments.
+* Supply the lowercase `num/` prefix exactly once.
+* If the number is not registered for that student, the command reports that no changes were made.
+* Other appointments and the student remain in the address book.
+* Any invalid input produces an error without changing records.
+
+Example: 
+
+`delmc 1 num/2` removes appointment 2 from the first displayed student, if registered.
+
 ### Marking a mastery check as completed: `markmc`
 
+Marks an existing appointment as **Completed** without changing its appointment time.
+
+Format: `markmc INDEX num/NUMBER`
+
+* `INDEX` must be a positive integer identifying a student in the **currently displayed list**, including `find` results.
+* `NUMBER` must be an integer from **1 to 2147483647**, inclusive. Numbers are unique within each student's appointments.
+* Supply the lowercase `num/` prefix exactly once. The number must be registered for that student.
+* Marking an already completed appointment reports that no changes were made.
+* Any invalid input produces an error without changing records.
+
+Example: 
+
+`markmc 1 num/2`, followed by `view 1`, shows appointment 2 as Completed.
+
 ### Unmarking a mastery check as completed: `unmarkmc`
+
+Changes an existing appointment's status to **Not completed** without deleting it or changing its time.
+
+Format: `unmarkmc INDEX num/NUMBER`
+
+* `INDEX` must be a positive integer identifying a student in the **currently displayed list**, including `find` results.
+* `NUMBER` must be an integer from **1 to 2147483647**, inclusive. Numbers are unique within each student's appointments.
+* Uses the same index, number, and registration rules as `markmc`. 
+* Unmarking an appointment that is already incomplete reports that no changes were made. 
+* Any invalid input produces an error without changing records.
+
+Example: 
+
+`unmarkmc 1 num/2`, followed by `view 1`, shows appointment 2 as Not completed.
 
 ### Adding a mission: `addmission`
 
