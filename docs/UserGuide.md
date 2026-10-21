@@ -125,6 +125,7 @@ For example, viewing Amy Lee displays the feedback:
 
 ```text
 Showing profile of Amy Lee
+```
 
 ### Editing a student: `edit`
 
@@ -258,6 +259,18 @@ For example, if the first student is Amy Bee and her week 3 studio record is rec
 ```text
 Edited Amy Bee's studio record for studio week 3.
 ```
+
+### Adding a mastery check: `addmc`
+
+Adds a number Mastery Check appointment for a student at a specified date-time.
+
+Format: `addmc INDEX num/NUMBER dt/dd-MM|HH:MM`
+
+### Deleting a mastery check: `delmc`
+
+### Marking a mastery check as completed: `markmc`
+
+### Unmarking a mastery check as completed: `unmarkmc`
 
 ### Adding a mission: `addmission`
 
