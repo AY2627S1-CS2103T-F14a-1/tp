@@ -2,11 +2,13 @@ package seedu.address.logic.parser;
 
 import static java.util.Objects.requireNonNull;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.DateTimeParseException;
 import java.time.format.ResolverStyle;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoField;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Locale;
@@ -15,7 +17,6 @@ import java.util.Set;
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.StringUtil;
 import seedu.address.logic.parser.exceptions.ParseException;
-import seedu.address.model.masterycheck.MasteryCheck;
 import seedu.address.model.student.Email;
 import seedu.address.model.student.Name;
 import seedu.address.model.student.Phone;
@@ -36,10 +37,14 @@ public class ParserUtil {
                     + "and day must be valid for the selected month and year.";
 
     public static final String MESSAGE_INVALID_MASTERY_CHECK_DATETIME =
-            "Mastery check appointment must be a valid date and 24-hour time in YYYY-MM-DD|HH:MM format.";
+            "Mastery check appointment must be a valid date and 24-hour time in DD-MM|HH:MM format.";
 
+    /** Strict input formatter whose default year is captured when this class is initialized. */
     private static final DateTimeFormatter MASTERY_CHECK_DATETIME_FORMATTER =
-            DateTimeFormatter.ofPattern("uuuu-MM-dd'|'HH:mm", Locale.ROOT)
+            new DateTimeFormatterBuilder()
+                    .appendPattern("dd-MM'|'HH:mm")
+                    .parseDefaulting(ChronoField.YEAR, LocalDate.now().getYear())
+                    .toFormatter(Locale.ROOT)
                     .withResolverStyle(ResolverStyle.STRICT);
 
     public static final String MESSAGE_INVALID_INDEX = "Index must be a positive integer.";
@@ -180,6 +185,14 @@ public class ParserUtil {
         }
     }
 
+    /**
+     * Parses a positive mastery check number, trimming leading and trailing whitespace.
+     *
+     * @param number Text containing the mastery check number.
+     * @return A positive integer identifying the mastery check registration.
+     * @throws NullPointerException If number is null.
+     * @throws ParseException If the text is not an integer from 1 to {@link Integer#MAX_VALUE}.
+     */
     public static int parseMasteryCheckNumber(String number) throws ParseException {
         requireNonNull(number);
         try {
@@ -194,8 +207,9 @@ public class ParserUtil {
     }
 
     /**
-     * Parses an appointment in uuuu-MM-dd|HH:mm format using strict date and time validation.
-     * Leading and trailing whitespace is trimmed.
+     * Parses an appointment in dd-MM|HH:mm format using strict date and time validation.
+     * Leading and trailing whitespace is trimmed. The omitted year defaults to the system's
+     * local year when this class is initialized, as captured by the shared formatter.
      *
      * @param dateTime The appointment date and 24-hour time separated by a vertical bar.
      * @return The validated appointment date and time.

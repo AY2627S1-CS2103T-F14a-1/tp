@@ -41,13 +41,29 @@ Run the complete UI plan below to check existing studio behavior.
 ## Mastery-check datetime parsing regression
 
 Run the `parseMasteryCheckDateTime_*` cases in `ParserUtilTest` for parser-level coverage.
-The following sequence applies when mastery-check command parsing is connected to the UI.
+The following sequence uses the current-year DD-MM|HH:MM input format.
 After each rejected command, view the student and verify existing appointments are unchanged.
 
 | ID | Steps | Expected result |
 | --- | --- | --- |
-| MC-DATETIME-001 | Add an appointment using `2024-02-29\|00:00`. | The leap-day appointment is accepted at midnight. |
-| MC-DATETIME-002 | Attempt another appointment using `2026-02-29\|12:30` or `2026-04-31\|12:30`, then view the student. | Invalid-datetime feedback; existing appointments remain unchanged. |
-| MC-DATETIME-003 | Add another appointment using `2026-12-31\|23:59`. | The appointment is accepted at 23:59. |
+| MC-DATETIME-001 | Add an appointment using `28-02\|00:00`; in a leap year also use `29-02\|00:00`. | The appointment is accepted at midnight in the current year; February 29 is accepted only in leap years. |
+| MC-DATETIME-002 | Attempt another appointment using `30-02\|12:30` or `31-04\|12:30`, then view the student. | Invalid-datetime feedback; existing appointments remain unchanged. |
+| MC-DATETIME-003 | Add another appointment using `31-12\|23:59`. | The appointment is accepted at 23:59. |
 | MC-DATETIME-004 | Attempt appointments with `24:00`, `23:60`, a missing or repeated separator, or seconds; view the student after each attempt. | Invalid-datetime feedback; existing appointments remain unchanged. |
-| MC-DATETIME-005 | Add an appointment with surrounding whitespace around `2026-10-20\|09:05`. | Surrounding whitespace is trimmed and the appointment is accepted. |
+| MC-DATETIME-005 | Add an appointment with surrounding whitespace around `20-10\|09:05`. | Surrounding whitespace is trimmed and the appointment is accepted. |
+
+## Mastery-check registration and details regression
+
+The mastery-check JUnit suites cover model validation, defensive map copying, completion
+transitions, command parsing and execution, student equality, JSON validation, real-file
+round trips, and preservation by other commands. JavaFX cases run on the JavaFX thread.
+
+| ID | Steps | Expected result |
+| --- | --- | --- |
+| MC-ADD-001 | Start with two students. Run `addmc 1 num/1 dt/18-08\|14:30`, then view student 1. | Feedback identifies appointment 1 at `Aug 18, 14:30`. The grid has Number, Appointment time, and Status columns and shows Not completed. Student 2 is unchanged. |
+| MC-ADD-002 | Run `addmc 1 num/2 dt/31-04\|14:30`, then view student 1. | Invalid-datetime feedback; appointment 1 and saved data are unchanged. |
+| MC-ADD-003 | Run `addmc 1 num/2 dt/19-08\|00:05`, exit, restart, and view student 1. | Numbers 1 and 2 appear in ascending order with the saved times. |
+| MC-ADD-004 | Run `addmc 1 num/1 dt/20-08\|15:00`, then view student 1. | Duplicate-number feedback; number 1 retains its original time and status. |
+| MC-STATE-001 | Edit a student, add/delete a studio record, mark/unmark a mission, and delete the mission. Restart and view the student. | Mastery-check numbers, appointment times, and completion statuses remain unchanged. |
+| MC-VIEW-001 | View a student with appointments, then a student without appointments, then the first student again. | The empty student shows the headers and No mastery checks registered. Returning restores only the correct rows, without duplicates. |
+| MC-STORAGE-001 | Load a fixture containing completed and incomplete mastery checks, save, and reload. Separately attempt to load malformed number, datetime, and status records. | Valid times, including seconds and fractional seconds, and completion flags survive reloading. Malformed files produce a loading error and remain unchanged. |

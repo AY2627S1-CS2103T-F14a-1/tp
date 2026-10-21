@@ -45,10 +45,9 @@ class JsonAdaptedStudent {
     private final List<Object> registeredMasteryChecks = new ArrayList<>();
 
     /**
-     * Constructs a {@code JsonAdaptedStudent} with the given student details.
      * Constructs a storage representation, deferring validation until model conversion.
-     * Missing or null studio records default to empty collections.
-     * Missing or null mission submissions represent no recorded submissions.
+     * Missing or null mission submissions, studio records, and mastery check registrations
+     * default to empty collections.
      *
      * @param name Student's name.
      * @param phone Student's phone number.
@@ -57,7 +56,8 @@ class JsonAdaptedStudent {
      * @param studioGroup Student's studio group.
      * @param registeredStudioRecords Recorded weekly studio records, or null for no records.
      * @param missionSubmissions Recorded mission IDs, or null for no submissions.
-     * @param registeredMasteryChecks Saved mastery check strings, or null for no appointments.
+     * @param registeredMasteryChecks Saved records containing a number, ISO local date-time string,
+     *         and completion flag, or null for no appointments.
      */
     @JsonCreator
     public JsonAdaptedStudent(@JsonProperty("name") String name, @JsonProperty("phone") String phone,
@@ -85,7 +85,9 @@ class JsonAdaptedStudent {
     }
 
     /**
-     * Copies a student into a storage representation with mission IDs sorted in numeric order.
+     * Copies a student into a storage representation with mission IDs, studio weeks, and mastery check
+     * numbers sorted in ascending order. Each mastery check record contains its number, ISO local
+     * date-time string, and completion flag.
      *
      * @param source Student to save.
      * @throws NullPointerException If the source is null.
@@ -227,12 +229,14 @@ class JsonAdaptedStudent {
     }
 
     /**
-     * Validates saved mastery check appointments and converts them into immutable records.
-     * Identical appointments are retained only once. If a mastery check number is repeated, only the last instance
-     * is retained.
+     * Validates stored mastery checks from saved records containing a positive integer number,
+     * ISO local date-time string, and boolean completion flag, in that order.
+     * If a number is repeated, the last record for that number is retained. Missing or null
+     * registration lists are treated as empty by the storage constructor.
      *
-     * @return Mastery check appointments containing the saved IDs and appointment times.
-     * @throws IllegalValueException If a saved entry has an invalid format, number, datetime, or completion state.
+     * @return Registrations containing the saved appointment numbers, times, and completion statuses.
+     * @throws IllegalValueException If an entry has the wrong structure or types, a non-positive number,
+     *         or an invalid appointment date and time.
      */
     public RegisteredMasteryChecks toModelRegisteredMasteryChecks() throws IllegalValueException {
         Map<Integer, MasteryCheck> masteryAppointments = new HashMap<>();

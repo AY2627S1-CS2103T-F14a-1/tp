@@ -1,6 +1,9 @@
 package seedu.address.ui;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import javafx.fxml.FXML;
 import javafx.geometry.VPos;
@@ -11,6 +14,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import seedu.address.model.masterycheck.MasteryCheck;
 import seedu.address.model.mission.Mission;
 import seedu.address.model.mission.MissionId;
 import seedu.address.model.student.MissionSubmissions;
@@ -20,11 +24,13 @@ import seedu.address.model.student.StudioRecord;
 
 /**
  * UI panel that displays the selected student's profile, attendance,
- * and mission-submission information.
+ * mission-submission information, and mastery check appointments.
  */
 public class StudentDetailsPanel extends UiPart<Region> {
 
     private static final String FXML = "StudentDetailsPanel.fxml";
+    private static final DateTimeFormatter APPOINTMENT_TIME_FORMATTER =
+            DateTimeFormatter.ofPattern("MMM d, HH:mm", Locale.ENGLISH);
 
     @FXML
     private Label studentName;
@@ -52,6 +58,9 @@ public class StudentDetailsPanel extends UiPart<Region> {
 
     @FXML
     private GridPane missionSubmissionsGrid;
+
+    @FXML
+    private GridPane masteryChecksGrid;
 
     @FXML
     private ScrollPane studentDetailsScrollPane;
@@ -100,6 +109,7 @@ public class StudentDetailsPanel extends UiPart<Region> {
 
         populateMissionSubmissions(student, missions);
         populateStudioRecord(student);
+        populateMasteryChecks(student);
     }
 
     /**
@@ -233,6 +243,38 @@ public class StudentDetailsPanel extends UiPart<Region> {
                     row,
                     false);
 
+            row++;
+        }
+    }
+
+    /**
+     * Populates the registered mastery checks grid with appointments in ascending registration-number order.
+     * Rows show the number, appointment time in English MMM d, HH:mm format, and completion status.
+     * Displays an empty-state message below the headers when the student has no registered appointments.
+     *
+     * @param student Student whose mastery check appointments are displayed.
+     */
+    private void populateMasteryChecks(Student student) {
+        masteryChecksGrid.getChildren().clear();
+        addGridLabel(masteryChecksGrid, "Number", 0, 0, true);
+        addGridLabel(masteryChecksGrid, "Appointment time", 1, 0, true);
+        addGridLabel(masteryChecksGrid, "Status", 2, 0, true);
+
+        Map<Integer, MasteryCheck> appointments = student.getRegisteredMasteryChecks().getMasteryCheckAppointments();
+        if (appointments.isEmpty()) {
+            addGridLabel(masteryChecksGrid, "No mastery checks registered.", 0, 1, false);
+            GridPane.setColumnSpan(masteryChecksGrid.getChildren().getLast(), 3);
+            return;
+        }
+
+        int row = 1;
+        for (Map.Entry<Integer, MasteryCheck> entry : appointments.entrySet().stream()
+                .sorted(Map.Entry.comparingByKey()).toList()) {
+            MasteryCheck check = entry.getValue();
+            addGridLabel(masteryChecksGrid, String.valueOf(entry.getKey()), 0, row, false);
+            addGridLabel(masteryChecksGrid,
+                    check.getAppointmentTime().format(APPOINTMENT_TIME_FORMATTER), 1, row, false);
+            addGridLabel(masteryChecksGrid, check.isComplete() ? "Completed" : "Not completed", 2, row, false);
             row++;
         }
     }

@@ -12,8 +12,8 @@ import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.model.tag.Tag;
 
 /**
- * Represents a Student in the address book.
- * Guarantees: details are present and not null, field values are validated, immutable.
+ * Represents a student with profile details, mission submissions, studio records, and mastery check registrations.
+ * Mastery check completion status remains mutable through the registered appointment objects.
  */
 public class Student {
 
@@ -30,13 +30,14 @@ public class Student {
     private final RegisteredMasteryChecks registeredMasteryChecks;
 
     /**
-     * Creates a student with no recorded mission submissions.
+     * Creates a student with no mission submissions, studio records, or mastery check registrations.
      *
      * @param name Student's name.
      * @param phone Student's phone number.
      * @param email Student's email address.
      * @param tags Student's tags.
-     * @throws NullPointerException If any argument is null.
+     * @param studioGroup Student's studio group.
+     * @throws NullPointerException If the name, phone, email, or tag set is null.
      */
     public Student(
             Name name, Phone phone, Email email, Set<Tag> tags,
@@ -46,15 +47,17 @@ public class Student {
     }
 
     /**
-     * Creates a student with the given details and mission submissions.
+     * Creates a student with the supplied profile details and recorded student activities.
      *
      * @param name Student's name.
      * @param phone Student's phone number.
      * @param email Student's email address.
      * @param tags Student's tags.
+     * @param studioGroup Student's studio group.
      * @param missionSubmissions Student's recorded mission submissions.
      * @param registeredStudioRecords Student's registered studio records.
-     * @throws NullPointerException If any argument is null.
+     * @param registeredMasteryChecks Student's numbered mastery check appointments.
+     * @throws NullPointerException If the name, phone, email, tag set, or any activity collection is null.
      */
     public Student(Name name, Phone phone, Email email, Set<Tag> tags, StudioGroup studioGroup,
                    MissionSubmissions missionSubmissions, RegisteredStudioRecords registeredStudioRecords,
@@ -108,6 +111,12 @@ public class Student {
         return registeredStudioRecords;
     }
 
+    /**
+     * Returns the student's mastery check registrations.
+     * The registration mapping is unmodifiable, but appointment completion statuses remain mutable.
+     *
+     * @return Numbered mastery check appointments registered for this student.
+     */
     public RegisteredMasteryChecks getRegisteredMasteryChecks() {
         return registeredMasteryChecks;
     }

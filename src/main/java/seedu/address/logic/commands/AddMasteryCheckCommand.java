@@ -5,7 +5,9 @@ import static seedu.address.commons.util.AppUtil.checkArgument;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_DATETIME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NUMBER;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.ToStringBuilder;
@@ -16,6 +18,10 @@ import seedu.address.model.masterycheck.MasteryCheck;
 import seedu.address.model.student.RegisteredMasteryChecks;
 import seedu.address.model.student.Student;
 
+/**
+ * Records a numbered mastery check appointment for a student in the displayed list.
+ * An existing appointment with the same number is retained without changes.
+ */
 public class AddMasteryCheckCommand extends Command {
     public static final String COMMAND_WORD = "addmc";
 
@@ -27,21 +33,26 @@ public class AddMasteryCheckCommand extends Command {
             + "Example: " + COMMAND_WORD + " 1 num/1 dt/2026-09-27|23:59";
 
     public static final String MESSAGE_SUCCESS =
-            "Added %1$s's mastery check: %2$s.";
+            "Added %1$s's mastery check %2$s at %3$s.";
 
     public static final String MESSAGE_ALREADY_RECORDED =
             "%1$s’s mastery check has already been recorded for number %2$d. No changes made.";
+
+    private static final DateTimeFormatter APPOINTMENT_TIME_FORMATTER =
+            DateTimeFormatter.ofPattern("MMM d, HH:mm", Locale.ENGLISH);
 
     private final Index targetIndex;
     private final int number;
     private final MasteryCheck masteryCheck;
 
     /**
-     * Creates a command to record a number's studio.
+     * Creates a command to register a numbered mastery check appointment.
      *
      * @param targetIndex Index of the student in the displayed list.
-     * @param number Studio number for the record.
-     * @param masteryCheck studio to record.
+     * @param number Positive mastery check number used to identify the appointment.
+     * @param masteryCheck Appointment to register for the student.
+     * @throws NullPointerException If the index or mastery check is null.
+     * @throws IllegalArgumentException If the mastery check number is not positive.
      */
     public AddMasteryCheckCommand(Index targetIndex, int number, MasteryCheck masteryCheck) {
         requireNonNull(targetIndex);
@@ -55,10 +66,12 @@ public class AddMasteryCheckCommand extends Command {
     }
 
     /**
-     * Records studio without changing the current list filter.
+     * Registers the appointment without changing the current student-list filter.
+     * If the number is already registered, leaves the existing appointment unchanged.
      *
      * @param model Model containing the students.
-     * @return Feedback describing the addition or an existing studio.
+     * @return Feedback describing the registered appointment or an already registered number.
+     * @throws NullPointerException If the model is null.
      * @throws CommandException If the index does not identify a displayed student.
      */
     @Override
@@ -80,9 +93,18 @@ public class AddMasteryCheckCommand extends Command {
         Student updatedStudent = createUpdatedStudent(
                 studentToUpdate, registeredMasteryChecks.withMasteryCheck(number, masteryCheck));
         model.setStudent(studentToUpdate, updatedStudent);
-        return new CommandResult(String.format(MESSAGE_SUCCESS, studentToUpdate.getName(), number));
+        return new CommandResult(String.format(
+                MESSAGE_SUCCESS, studentToUpdate.getName(), number,
+                masteryCheck.getAppointmentTime().format(APPOINTMENT_TIME_FORMATTER)));
     }
 
+    /**
+     * Copies a student with replacement mastery check registrations, retaining all other details.
+     *
+     * @param student Non-null student whose other details are preserved.
+     * @param registeredMasteryChecks Non-null mastery check registrations to use in the copy.
+     * @return A student containing the supplied registrations and the original remaining details.
+     */
     private Student createUpdatedStudent(Student student, RegisteredMasteryChecks registeredMasteryChecks) {
         assert student != null;
         assert registeredMasteryChecks != null;
@@ -92,6 +114,12 @@ public class AddMasteryCheckCommand extends Command {
                 student.getRegisteredStudioRecords(), registeredMasteryChecks);
     }
 
+    /**
+     * Compares commands by their student index, mastery check number, and appointment details.
+     *
+     * @param other Object to compare with this command.
+     * @return True if the other object is a command with the same target and appointment details.
+     */
     @Override
     public boolean equals(Object other) {
         if (other == this) {
@@ -108,6 +136,11 @@ public class AddMasteryCheckCommand extends Command {
                 && masteryCheck.equals(otherAddMasteryCheckCommand.masteryCheck);
     }
 
+    /**
+     * Returns the target index, mastery check number, and appointment details for diagnostic output.
+     *
+     * @return A diagnostic representation of this command.
+     */
     @Override
     public String toString() {
         return new ToStringBuilder(this)

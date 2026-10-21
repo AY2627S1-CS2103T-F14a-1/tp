@@ -7,11 +7,14 @@ import static seedu.address.logic.Messages.MESSAGE_UNKNOWN_COMMAND;
 import static seedu.address.testutil.Assert.assertThrows;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_STUDENT;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
+import seedu.address.logic.commands.AddMasteryCheckCommand;
 import seedu.address.logic.commands.AddStudentCommand;
 import seedu.address.logic.commands.AddStudioRecordCommand;
 import seedu.address.logic.commands.ClearCommand;
@@ -27,6 +30,7 @@ import seedu.address.logic.commands.MarkMissionCommand;
 import seedu.address.logic.commands.UnmarkMissionCommand;
 import seedu.address.logic.commands.ViewCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.model.masterycheck.MasteryCheck;
 import seedu.address.model.mission.MissionId;
 import seedu.address.model.student.NameContainsKeywordsPredicate;
 import seedu.address.model.student.Student;
@@ -199,4 +203,19 @@ public class AddressBookParserTest {
         assertThrows(ParseException.class, MESSAGE_UNKNOWN_COMMAND, () ->
                 parser.parseCommand("delstudorecord 1 w/3"));
     }
+
+    @Test
+    public void parseCommand_masteryCheck_dispatchesCaseInsensitiveCommand() throws Exception {
+        AddMasteryCheckCommand expected = new AddMasteryCheckCommand(INDEX_FIRST_STUDENT, 1,
+                new MasteryCheck(LocalDateTime.of(LocalDate.now().getYear(), 8, 18, 14, 30)));
+        assertEquals(expected, parser.parseCommand("addmc 1 num/1 dt/18-08|14:30"));
+        assertEquals(expected, parser.parseCommand("ADDMC 1 num/1 dt/18-08|14:30"));
+    }
+
+    @Test
+    public void parseCommand_masteryCheckInvalidDate_throwsParseException() {
+        assertThrows(ParseException.class, ParserUtil.MESSAGE_INVALID_MASTERY_CHECK_DATETIME, () ->
+                parser.parseCommand("addmc 1 num/1 dt/31-04|14:30"));
+    }
+
 }

@@ -5,21 +5,24 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_DATETIME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NUMBER;
 
 import java.time.LocalDateTime;
-import java.util.stream.Stream;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.AddMasteryCheckCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.masterycheck.MasteryCheck;
 
+/**
+ * Parses a displayed student index and the number and appointment time of a mastery check to register.
+ */
 public class AddMasteryCheckCommandParser implements Parser<AddMasteryCheckCommand> {
     /**
-     * Parses the student index, studio week, and studio effort.
+     * Parses the student index, mastery check number, and the appointment date-time.
      *
      * @param args Arguments following the command word.
-     * @return A command containing the validated index and week.
+     * @return A command containing the validated index, number, and date-time.
      * @throws NullPointerException If the arguments are null.
-     * @throws ParseException If required information is missing or invalid.
+     * @throws ParseException If the index, number, or appointment time is invalid, or required prefixes
+     *         are missing or repeated.
      */
     @Override
     public AddMasteryCheckCommand parse(String args) throws ParseException {
@@ -33,7 +36,7 @@ public class AddMasteryCheckCommandParser implements Parser<AddMasteryCheckComma
                     String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddMasteryCheckCommand.MESSAGE_USAGE), pe);
         }
 
-        if (!arePrefixesPresent(argMultimap, PREFIX_NUMBER, PREFIX_DATETIME)) {
+        if (!argMultimap.arePrefixesPresent(PREFIX_NUMBER, PREFIX_DATETIME)) {
             throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT,
                     AddMasteryCheckCommand.MESSAGE_USAGE));
         }
@@ -43,17 +46,5 @@ public class AddMasteryCheckCommandParser implements Parser<AddMasteryCheckComma
         LocalDateTime dateTime = ParserUtil.parseMasteryCheckDateTime(argMultimap.getValue(PREFIX_DATETIME).get());
 
         return new AddMasteryCheckCommand(index, number, new MasteryCheck(dateTime));
-    }
-
-    /**
-     * Returns whether every specified prefix is present.
-     * A present prefix may still have an empty value.
-     *
-     * @param argumentMultimap Tokenized arguments.
-     * @param prefixes Required prefixes.
-     * @return True if all required prefixes are present.
-     */
-    private static boolean arePrefixesPresent(ArgumentMultimap argumentMultimap, Prefix... prefixes) {
-        return Stream.of(prefixes).allMatch(prefix -> argumentMultimap.getValue(prefix).isPresent());
     }
 }
