@@ -29,7 +29,7 @@ import seedu.address.model.tag.Tag;
  */
 public class ParserUtil {
 
-    public static final String MESSAGE_INVALID_MISSION_NAME = "Mission name cannot be blank.";
+    public static final String MESSAGE_INVALID_MISSION_NAME = "Provide a mission name using n/NAME.";
     public static final String MESSAGE_INVALID_MISSION_DEADLINE =
             "Deadline must use YYYY-MM-DD format, for example 2026-10-20.";
     public static final String MESSAGE_INVALID_MISSION_CALENDAR_DATE =
@@ -38,6 +38,7 @@ public class ParserUtil {
 
     public static final String MESSAGE_INVALID_MASTERY_CHECK_DATETIME =
             "Mastery check appointment must be a valid date and 24-hour time in DD-MM|HH:MM format.";
+
     public static final String MESSAGE_INVALID_EFFORT = "Effort score must be a positive integer.";
     public static final String MESSAGE_INVALID_INDEX = "Index must be a positive integer.";
     public static final String MESSAGE_INVALID_WEEK = "Week must be a positive integer.";
