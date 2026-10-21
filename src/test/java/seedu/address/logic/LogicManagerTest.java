@@ -32,12 +32,7 @@ import seedu.address.logic.commands.CommandResult;
 import seedu.address.logic.commands.EditStudioRecordCommand;
 import seedu.address.logic.commands.ListCommand;
 import seedu.address.logic.commands.exceptions.CommandException;
-<<<<<<< HEAD
-import seedu.address.logic.parser.AddStudioRecordCommandParser;
 import seedu.address.logic.parser.ParserUtil;
-import seedu.address.logic.parser.WeeklyTaskParser;
-=======
->>>>>>> master
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
