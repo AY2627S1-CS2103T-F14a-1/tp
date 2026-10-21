@@ -3,15 +3,20 @@ package seedu.address.ui;
 import java.util.List;
 
 import javafx.fxml.FXML;
+import javafx.geometry.VPos;
 import javafx.scene.control.Label;
+import javafx.scene.control.OverrunStyle;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import seedu.address.model.mission.Mission;
 import seedu.address.model.mission.MissionId;
 import seedu.address.model.student.MissionSubmissions;
+import seedu.address.model.student.RegisteredStudioRecords;
 import seedu.address.model.student.Student;
+import seedu.address.model.student.StudioRecord;
 
 /**
  * UI panel that displays the selected student's profile, attendance,
@@ -43,7 +48,7 @@ public class StudentDetailsPanel extends UiPart<Region> {
     private VBox studentDetails;
 
     @FXML
-    private GridPane attendanceGrid;
+    private GridPane studioRecordGrid;
 
     @FXML
     private GridPane missionSubmissionsGrid;
@@ -60,12 +65,13 @@ public class StudentDetailsPanel extends UiPart<Region> {
     }
 
     /**
-     * Displays the details of the given student.
+     * Displays the profile and records of the specified student.
      *
      * <p>If {@code student} is {@code null}, the panel is reset to its
      * default empty state.</p>
      *
      * @param student student whose profile should be displayed
+     * @param missions missions used to display submission statuses
      */
     public void showStudent(
             Student student,
@@ -93,7 +99,7 @@ public class StudentDetailsPanel extends UiPart<Region> {
         tags.setText("Tags: " + student.getTags());
 
         populateMissionSubmissions(student, missions);
-        populateAttendance(student);
+        populateStudioRecord(student);
     }
 
     /**
@@ -111,13 +117,13 @@ public class StudentDetailsPanel extends UiPart<Region> {
     }
 
     /**
-     * Populates the mission-submission grid for the given student.
+     * Populates the mission-submission grid.
      *
-     * <p>Each valid mission week is displayed together with either
-     * {@code Submitted} or {@code Not submitted}.</p>
+     * <p>Each mission is displayed with its name, deadline, and submission
+     * status for the specified student.</p>
      *
-     * @param student student whose mission-submission status is displayed
-     * @param missions list of all missions
+     * @param student student whose submissions are checked
+     * @param missions missions to display
      */
     private void populateMissionSubmissions(
             Student student,
@@ -161,16 +167,10 @@ public class StudentDetailsPanel extends UiPart<Region> {
                     ? "Submitted"
                     : "Not submitted";
 
-            addGridLabel(
+            addMissionCell(
                     missionSubmissionsGrid,
-                    mission.getId()
-                            + " · "
-                            + mission.toString()
-                            + "\nDue: "
-                            + mission.getDeadline(),
-                    0,
-                    row,
-                    false);
+                    mission,
+                    row);
 
             addGridLabel(
                     missionSubmissionsGrid,
@@ -184,39 +184,67 @@ public class StudentDetailsPanel extends UiPart<Region> {
     }
 
     /**
-     * Populates the attendance grid for the given student.
+     * Populates the studio-record grid for the specified student.
      *
-     * <p>Each valid week is displayed together with either
-     * {@code Present} or {@code Absent}.</p>
+     * <p>Each supported week is displayed with its corresponding effort
+     * score. A score of zero is displayed when no record exists.</p>
      *
-     * @param student student whose attendance is displayed
+     * @param student student whose studio records are displayed
      */
-    private void populateAttendance(Student student) {
-        attendanceGrid.getChildren().clear();
+    private void populateStudioRecord(Student student) {
+        studioRecordGrid.getChildren().clear();
+
+        RegisteredStudioRecords studioRecord = student.getRegisteredStudioRecords();
+
+        int row = 1;
 
         addGridLabel(
-                attendanceGrid,
+                studioRecordGrid,
                 "Week",
                 0,
                 0,
                 true);
 
         addGridLabel(
-                attendanceGrid,
-                "Status",
+                studioRecordGrid,
+                "Effort Score",
                 1,
                 0,
                 true);
+
+        for (int week = RegisteredStudioRecords.MIN_WEEK;
+             week <= RegisteredStudioRecords.MAX_WEEK; week++) {
+
+            StudioRecord record = studioRecord.getRecordsByWeek().get(week);
+            boolean hasAttended = record != null;
+            int score = hasAttended ? record.getEffortScore() : 0;
+
+            addGridLabel(
+                    studioRecordGrid,
+                    String.valueOf(week),
+                    0,
+                    row,
+                    false);
+
+            addGridLabel(
+                    studioRecordGrid,
+                    String.valueOf(score),
+                    1,
+                    row,
+                    false);
+
+            row++;
+        }
     }
 
     /**
-     * Creates and adds a label to the specified cell in a grid.
+     * Creates and adds a styled label to a grid cell.
      *
-     * @param grid grid to which the label should be added
+     * @param grid grid to which the label is added
      * @param text text displayed by the label
      * @param column zero-based column index
      * @param row zero-based row index
-     * @param isHeader whether the label represents a column header
+     * @param isHeader whether the label is a table header
      */
     private void addGridLabel(
             GridPane grid,
@@ -227,18 +255,78 @@ public class StudentDetailsPanel extends UiPart<Region> {
 
         Label label = new Label(text);
 
+        label.setWrapText(true);
+        label.setTextOverrun(OverrunStyle.CLIP);
+        label.setMinHeight(Region.USE_PREF_SIZE);
+        label.setMaxWidth(Double.MAX_VALUE);
+        label.setMaxHeight(Double.MAX_VALUE);
+
+        GridPane.setHgrow(label, Priority.ALWAYS);
+        GridPane.setVgrow(label, Priority.ALWAYS);
+        GridPane.setFillWidth(label, true);
+        GridPane.setFillHeight(label, true);
+        GridPane.setValignment(label, VPos.TOP);
+        GridPane.setHalignment(label, javafx.geometry.HPos.LEFT);
+
+        label.getStyleClass().add("grid-cell");
+
         if (isHeader) {
             label.getStyleClass().add("grid-header");
         } else {
             label.getStyleClass().add("grid-value");
         }
 
-        GridPane.setHalignment(
-                label,
-                column == 0
-                        ? javafx.geometry.HPos.LEFT
-                        : javafx.geometry.HPos.LEFT);
-
         grid.add(label, column, row);
+    }
+
+    /**
+     * Creates and adds a mission-information cell to the mission grid.
+     *
+     * <p>The cell contains the mission name and deadline.</p>
+     *
+     * @param grid grid to which the cell is added
+     * @param mission mission whose information is displayed
+     * @param row zero-based row index
+     */
+    private void addMissionCell(
+            GridPane grid,
+            Mission mission,
+            int row) {
+
+        VBox missionDetails = new VBox(2);
+
+        missionDetails.getStyleClass().add("grid-cell");
+        missionDetails.setMaxWidth(Double.MAX_VALUE);
+
+        Label missionName = new Label(
+                mission.getId()
+                        + " · "
+                        + mission.getName());
+
+        Label deadline = new Label(
+                "Due: " + mission.getDeadline());
+
+        missionName.getStyleClass().add("grid-value");
+        deadline.getStyleClass().add("mission-deadline");
+
+        missionName.setWrapText(true);
+        deadline.setWrapText(true);
+
+        missionName.setMaxWidth(Double.MAX_VALUE);
+        deadline.setMaxWidth(Double.MAX_VALUE);
+
+        missionDetails.getChildren().addAll(
+                missionName,
+                deadline);
+
+        GridPane.setHgrow(
+                missionDetails,
+                javafx.scene.layout.Priority.ALWAYS);
+
+        GridPane.setFillWidth(
+                missionDetails,
+                true);
+
+        grid.add(missionDetails, 0, row);
     }
 }
