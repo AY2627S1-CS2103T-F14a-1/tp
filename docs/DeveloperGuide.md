@@ -156,6 +156,13 @@ The `Storage` component,
 * is implemented by `StorageManager`, which delegates the actual JSON file access to `JsonAddressBookStorage` and `JsonUserPrefsStorage` (one class per data file).
 * depends on some classes in the `Model` component (because the `Storage` component's job is to save/retrieve objects that belong to the `Model`)
 
+The component a developer is most likely to interact with is `JsonAdaptedStudent`, which governs the actual conversion of student data between JSON and `Model`. Hence, when adding a new data field to `Student`, its JSON storage format and the validation when loading must be specified.
+
+We illustrate the involvement of `JsonAdaptedStudent` in both load and save scenarios as such:
+
+<puml src="diagrams/LoadAdaptedStudentActivityDiagram.puml" width="800" />
+<puml src="diagrams/SaveAdaptedStudentActivityDiagram.puml" width="600" />
+
 ### Common classes
 
 Classes used by multiple components are in the `seedu.address.commons` package.

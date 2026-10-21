@@ -1,0 +1,30 @@
+@startuml
+skin rose
+skinparam ActivityFontSize 15
+skinparam ArrowFontSize 12
+title Save students to the JSON address book
+
+start
+:Prepare the storage file and parent folders;
+if () then ([storage preparation succeeds])
+    :Convert each Student into
+    JSON-friendly values for saving;
+    note right
+        For each Student, JsonSerializableAddressBook calls
+        public JsonAdaptedStudent(Student source)
+    end note
+    :Include missions and the next mission number;
+    :Serialize the address book to JSON and write the file;
+    note right
+        Done by Jackson.
+    end note
+    if () then ([serialization and writing succeed])
+        :Complete the save;
+    else ([else])
+        :Report a storage error;
+    endif
+else ([else])
+    :Report a storage error;
+endif
+stop
+@enduml
