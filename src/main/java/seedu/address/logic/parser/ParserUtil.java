@@ -2,12 +2,12 @@ package seedu.address.logic.parser;
 
 import static java.util.Objects.requireNonNull;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.DateTimeParseException;
 import java.time.format.ResolverStyle;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.temporal.ChronoField;
 import java.util.Collection;
 import java.util.HashSet;
@@ -39,6 +39,8 @@ public class ParserUtil {
     public static final String MESSAGE_INVALID_MASTERY_CHECK_DATETIME =
             "Mastery check appointment must be a valid date and 24-hour time in DD-MM|HH:MM format.";
 
+    public static final String MESSAGE_INVALID_INDEX = "Index must be a positive integer.";
+
     /** Strict input formatter whose default year is captured when this class is initialized. */
     private static final DateTimeFormatter MASTERY_CHECK_DATETIME_FORMATTER =
             new DateTimeFormatterBuilder()
@@ -46,8 +48,6 @@ public class ParserUtil {
                     .parseDefaulting(ChronoField.YEAR, LocalDate.now().getYear())
                     .toFormatter(Locale.ROOT)
                     .withResolverStyle(ResolverStyle.STRICT);
-
-    public static final String MESSAGE_INVALID_INDEX = "Index must be a positive integer.";
 
     /**
      * Parses {@code oneBasedIndex} into an {@code Index} and returns it. Leading and trailing whitespaces will be

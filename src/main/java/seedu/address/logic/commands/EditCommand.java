@@ -89,7 +89,7 @@ public class EditCommand extends Command {
      * @param studentToEdit Student whose details are being edited.
      * @param editStudentDescriptor Details to replace on the student.
      * @return A student with the requested edits and the original studio group, mission submissions, studio records,
-     * and mastery checks.
+     *      and mastery checks.
      */
     private static Student createEditedStudent(Student studentToEdit, EditStudentDescriptor editStudentDescriptor) {
         assert studentToEdit != null;

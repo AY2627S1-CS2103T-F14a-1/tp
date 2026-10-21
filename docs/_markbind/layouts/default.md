@@ -19,8 +19,8 @@
   </navbar>
 </header>
 
-<div number="flex-body">
-  <nav number="site-nav">
+<div id="flex-body">
+  <nav id="site-nav">
     <div class="site-nav-top">
       <div class="fw-bold mb-2" style="font-size: 1.25rem;">Site Map</div>
     </div>
@@ -44,10 +44,10 @@
       </site-nav>
     </div>
   </nav>
-  <div number="content-wrapper">
+  <div id="content-wrapper">
     {{ content }}
   </div>
-  <nav number="page-nav">
+  <nav id="page-nav">
     <div class="nav-component slim-scroll">
       <page-nav />
     </div>

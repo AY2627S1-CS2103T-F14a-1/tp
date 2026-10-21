@@ -18,7 +18,7 @@ Student *--> "1" Phone
 Student *--> "1" Email
 Student *--> "1" StudioGroup
 Student *--> "1" RegisteredStudioRecords
-RegisteredStudioRecords *--> "0..*" StudioRecord : records by number
+RegisteredStudioRecords *--> "0..*" StudioRecord : records by week
 Student *--> "1" MissionSubmissions
 
 Name -[hidden]right-> Phone
