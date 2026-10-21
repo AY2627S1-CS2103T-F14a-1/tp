@@ -73,7 +73,7 @@ The **API** of this component is specified in [`Ui.java`](https://github.com/AY2
 
 The UI consists of a `MainWindow` and its parts: `CommandBox`, `ResultDisplay`, `StudentListPanel`, `StudentDetailsPanel`, `StatusBarFooter`, and `HelpWindow`. These classes inherit from `UiPart`, which loads their JavaFX layouts.
 
-`MainWindow` connects the student list, command feedback, and student details. Selecting a student updates `StudentDetailsPanel`; executing `view INDEX` also displays the requested student's profile and mission statuses.
+`MainWindow` connects the student list, command feedback, and student details. Executing `view INDEX` displays the requested student's profile and mission statuses in `StudentDetailsPanel`, using the index in the currently displayed student list.
 
 `ResultDisplay` presents command feedback, including submission and overdue reports, in a scrollable area. Listing commands produce textual feedback without replacing the current student filter. Student details use model objects and the mission catalogue supplied through the logic component.
 
@@ -321,8 +321,7 @@ The user stories above represent the main intended functionality and selected fu
 
 1. Tutor requests to display all students or a filtered set of students.
 2. AvengerHub displays the requested student list.
-3. Tutor selects a student by clicking their entry or providing their
-   displayed index through the view command.
+3. Tutor enters `view INDEX`, using the student's index in the displayed list.
 4. AvengerHub displays the selected student's profile, including contact
    details, studio group, tags, and mission submission statuses.
 
@@ -373,38 +372,6 @@ submission records, or the current student filter.
     * 3a1. AvengerHub explains the error.
 
       Use case resumes at step 3.
-
-
-**Use case: View student profile**
-
-**MSS**
-
-1. Tutor requests to view or search student records.
-2. AvengerHub displays the corresponding student records.
-3. Tutor selects a student record to view.
-4. AvengerHub displays the student's details, studio records,
-   and mission submission records.
-
-   Use case ends.
-
-**Extensions**
-
-* 2a. No student records are displayed.
-
-  Use case ends.
-
-* 3a. The student selection is invalid or incomplete.
-
-    * 3a1. AvengerHub explains the error.
-
-      Use case resumes at step 3.
-
-* 4a. Some student data is unavailable or corrupted.
-
-    * 4a1. AvengerHub displays the available details.
-
-      Use case ends.
-
 
 **Use case: Mark studio record**
 

@@ -114,7 +114,6 @@ Format: `view INDEX`
 * Viewing preserves student records, submission records, and the current filter.
 * Missing, invalid, or out-of-range indexes produce an error without changing
   stored records.
-* You can also click a student in the displayed list to open their profile.
 
 Examples:
 
