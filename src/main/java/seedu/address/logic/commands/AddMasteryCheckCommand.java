@@ -29,8 +29,8 @@ public class AddMasteryCheckCommand extends Command {
             + ": Records a mastery check appointment for the selected student.\n"
             + "Parameters: INDEX " + PREFIX_NUMBER + "NUMBER" + PREFIX_DATETIME + "DATE-TIME\n"
             + "NUMBER must be a positive integer identifying a mastery check.\n"
-            + "DATE-TIME must be a real date in YYYY-MM-DD|HH:MM format.\n"
-            + "Example: " + COMMAND_WORD + " 1 num/1 dt/2026-09-27|23:59";
+            + "DATE-TIME must be a real date in dd-MM|HH:mm format.\n"
+            + "Example: " + COMMAND_WORD + " 1 num/1 dt/27-09|23:59";
 
     public static final String MESSAGE_SUCCESS =
             "Added %1$s's mastery check %2$s at %3$s.";
