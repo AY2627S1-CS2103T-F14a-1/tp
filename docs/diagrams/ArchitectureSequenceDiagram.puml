@@ -1,5 +1,6 @@
 @startuml
 !include style.puml
+
 skinparam ArrowFontStyle plain
 
 Actor User as user USER_COLOR
@@ -8,32 +9,39 @@ Participant ":Logic" as logic LOGIC_COLOR
 Participant ":Model" as model MODEL_COLOR
 Participant ":Storage" as storage STORAGE_COLOR
 
-user -[USER_COLOR]> ui : "delete 1"
-activate ui UI_COLOR
+user -[USER_COLOR]> ui : "view 1"
+activate ui USER_COLOR
 
-ui -[UI_COLOR]> logic : execute("delete 1")
+ui -[UI_COLOR]> logic : execute("view 1")
 activate logic LOGIC_COLOR
 
-logic -[LOGIC_COLOR]> model : deleteStudent(p)
+logic -[LOGIC_COLOR]> model : getFilteredStudentList()
 activate model MODEL_COLOR
 
-model -[MODEL_COLOR]-> logic
+model -[MODEL_COLOR]-> logic : displayed student list
 deactivate model
+
+logic -[LOGIC_COLOR]> logic : Get student at index 1
 
 logic -[LOGIC_COLOR]> storage : saveAddressBook(addressBook)
 activate storage STORAGE_COLOR
 
 storage -[STORAGE_COLOR]> storage : Save to file
 activate storage STORAGE_COLOR_T1
+
 storage --[STORAGE_COLOR]> storage
 deactivate storage
 
 storage --[STORAGE_COLOR]> logic
 deactivate storage
 
-logic --[LOGIC_COLOR]> ui
+logic --[LOGIC_COLOR]> ui : CommandResult(student)
 deactivate logic
 
-ui--[UI_COLOR]> user
+ui -[UI_COLOR]> ui : Select student in left panel
+ui -[UI_COLOR]> ui : Display profile on right panel
+
+ui --[UI_COLOR]> user : Show student profile
 deactivate ui
+
 @enduml
