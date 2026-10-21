@@ -62,15 +62,9 @@ HiddenOutside .down.> Ui
 
 UiManager -[norank]-> Logic
 MainWindow -[norank]-> Logic
-ResultDisplay -[dashed,norank]-> Logic
-CommandBox -[dashed,norank]-> Logic
-
-StudentListPanel -[dashed,norank]-> Model
 StudentCard -[dashed,norank]-> Model
-StudentDetailsPanel -[dashed,norank]-> Model
-ResultDisplay -[dashed,norank]-> Model
 
-' Position external components without changing their relationships.
+' Layout constraints only.
 MainWindow -[hidden]right-> Logic
 Logic -[hidden]down-> Model
 CommandBox -[hidden]down-> Model
