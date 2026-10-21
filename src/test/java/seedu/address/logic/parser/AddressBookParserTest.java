@@ -19,6 +19,7 @@ import seedu.address.logic.commands.DeleteStudentCommand;
 import seedu.address.logic.commands.DeleteStudioRecordCommand;
 import seedu.address.logic.commands.EditCommand;
 import seedu.address.logic.commands.EditCommand.EditStudentDescriptor;
+import seedu.address.logic.commands.EditStudioRecordCommand;
 import seedu.address.logic.commands.ExitCommand;
 import seedu.address.logic.commands.FindCommand;
 import seedu.address.logic.commands.HelpCommand;
@@ -196,6 +197,22 @@ public class AddressBookParserTest {
 
         assertThrows(ParseException.class, expected, () ->
                 parser.parseCommand("delstudiorecord"));
+    }
+
+    @Test
+    public void parseCommand_editStudioRecordIgnoringCase_returnsCommand() throws Exception {
+        EditStudioRecordCommand expected = new EditStudioRecordCommand(
+                INDEX_FIRST_STUDENT, 3, new StudioRecord(50));
+
+        assertEquals(expected, parser.parseCommand("editstudiorecord 1 w/3 ef/50"));
+        assertEquals(expected, parser.parseCommand("EDITSTUDIORECORD 1 w/3 ef/50"));
+        assertEquals(expected, parser.parseCommand("  editstudiorecord\t1\tw/3 ef/50  "));
+    }
+
+    @Test
+    public void parseCommand_misspelledEditStudioRecord_reportsUnknownCommand() {
+        assertThrows(ParseException.class, MESSAGE_UNKNOWN_COMMAND, () ->
+                parser.parseCommand("editstudiorecor 1 w/3 ef/50"));
     }
 
     @Test

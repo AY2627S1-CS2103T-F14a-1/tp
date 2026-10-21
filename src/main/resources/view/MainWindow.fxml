@@ -75,8 +75,8 @@
                      styleClass="pane-with-border"/>
 
           <StackPane fx:id="resultDisplayPlaceholder"
-                     styleClass="pane-with-border"
-                     VBox.vgrow="NEVER"/>
+                     maxWidth="Infinity"
+                     styleClass="result-display-container"/>
         </VBox>
 
         <SplitPane fx:id="mainSplitPane"

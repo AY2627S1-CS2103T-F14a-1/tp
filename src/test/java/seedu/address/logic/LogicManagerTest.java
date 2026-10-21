@@ -26,6 +26,7 @@ import org.junit.jupiter.api.io.TempDir;
 
 import seedu.address.logic.commands.AddStudentCommand;
 import seedu.address.logic.commands.CommandResult;
+import seedu.address.logic.commands.EditStudioRecordCommand;
 import seedu.address.logic.commands.ListCommand;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.logic.parser.exceptions.ParseException;
@@ -207,6 +208,23 @@ public class LogicManagerTest {
                 new StudioRecordSet(3, new StudioRecord(50)), new StudioRecordSet(13, new StudioRecord(0))).build();
         assertStudioState(model, storage, withBothWeeks);
 
+        assertEquals(String.format(EditStudioRecordCommand.MESSAGE_SUCCESS, original.getName(), 3),
+                logic.execute("editstudiorecord 1 w/3 ef/75").getFeedbackToUser());
+        Student withEditedWeekThree = new StudentBuilder(original).withStudioRecords(
+                new StudioRecordSet(3, new StudioRecord(75)), new StudioRecordSet(13, new StudioRecord(0))).build();
+        assertStudioState(model, storage, withEditedWeekThree);
+
+        savedJson = Files.readString(storage.getAddressBookFilePath());
+        assertEquals(String.format(EditStudioRecordCommand.MESSAGE_ALREADY_RECORDED, original.getName(), 3),
+                logic.execute("editstudiorecord 1 w/3 ef/75").getFeedbackToUser());
+        assertEquals(savedJson, Files.readString(storage.getAddressBookFilePath()));
+        assertStudioState(model, storage, withEditedWeekThree);
+
+        assertEquals(String.format(EditStudioRecordCommand.MESSAGE_WEEK_NOT_RECORDED, original.getName(), 4),
+                logic.execute("editstudiorecord 1 w/4 ef/50").getFeedbackToUser());
+        assertEquals(savedJson, Files.readString(storage.getAddressBookFilePath()));
+        assertStudioState(model, storage, withEditedWeekThree);
+
         Model reloadedModel = new ModelManager(storage.readAddressBook().orElseThrow(), new UserPrefs());
         Logic reloadedLogic = new LogicManager(reloadedModel, new StorageManager(storage,
                 new JsonUserPrefsStorage(temporaryFolder.resolve("reloadedPrefs.json"))));
@@ -214,7 +232,7 @@ public class LogicManagerTest {
         assertEquals("Amy Bee’s studio has already been recorded for studio week 3. No changes made.",
                 reloadedLogic.execute("addstudiorecord 1 w/3 ef/100").getFeedbackToUser());
         assertEquals(savedJson, Files.readString(storage.getAddressBookFilePath()));
-        assertStudioState(reloadedModel, storage, withBothWeeks);
+        assertStudioState(reloadedModel, storage, withEditedWeekThree);
 
         assertEquals("Removed Amy Bee's record for studio week 3.",
                 reloadedLogic.execute("delstudiorecord 1 w/3").getFeedbackToUser());

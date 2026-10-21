@@ -203,6 +203,33 @@ For example, if the first student is Amy Bee and her week 3 studio record is rec
 Removed Amy Bee's record for studio week 3.
 ```
 
+### Editing studio records: `editstudiorecord`
+
+Edit a student's studio effort for a studio week.
+
+Format: `editstudiorecord INDEX w/WEEK ef/EFFORT`
+
+* `INDEX` identifies a student in the **currently displayed list**, including results from `find`. It must be a positive integer that corresponds to a displayed student.
+* `WEEK` must be an integer from **0 to 13**, inclusive. AvengerHub uses these week numbers to allow tutors to flexibly mark studio records across the semester's 13 weeks. Use the actual week number as defined in the NUS student calendar.
+* Weeks outside this range, such as `-1` or `14`, are rejected with an error message. The existing studio records remain unchanged.
+* `EFFORT` is the student's effort score for that studio week. It must be a whole number from **0 to 2147483647**, inclusive. Negative numbers, decimals, non-numeric values, and values above this range are rejected without changing existing records.
+* All three arguments are required. Put `INDEX` before the prefixed arguments, and specify `w/` and `ef/` exactly once each. Extra arguments are rejected. Omitting `ef/EFFORT` displays `Specify an effort score using ef/EFFORT.`
+* Enter `INDEX` and `WEEK` as integers without signs, decimal points, or leading zeros. For example, use `3`, not `+3`, `3.0`, or `03`.
+* The command word and the `w/` and `ef/` prefixes are case-insensitive: `EDITSTUDIORECORD 1 W/3 EF/30` is also accepted.
+* If the studio record was initially not recorded, the records remain unchanged and a message explains that no changes were made.
+* The current list filter stays active.
+
+Examples:
+
+* `list` followed by `editstudiorecord 1 w/3 ef/30` edits studio record's effort score to 30 for week 3 for the first student displayed, if any.
+* `find Betsy` followed by `editstudiorecord 1 w/13 ef/0` edits studio's effort score to 0 for week 13 for the first student in the search results, if any.
+
+For example, if the first student is Amy Bee and her week 3 studio record is recorded, `editstudiorecord 1 w/3 ef/30` displays:
+
+```text
+Edited Amy Bee's studio record for studio week 3.
+```
+
 ### Adding a mission: `addmission`
 
 Creates one mission shared by all students. Adding a mission does not mark anyone as having
@@ -287,6 +314,61 @@ Example: `unmarkmission 1 m/M01`, followed by `view 1`, displays M01 as Not subm
 The profile displays configured mission descriptions and deadlines. An empty catalogue shows
 “No missions configured.”
 
+### Listing overdue submissions: `listoverdue`
+
+Shows missing mission submissions for students in the currently displayed
+student list, where the mission deadline has passed.
+
+Format: `listoverdue`
+
+* Only students in the currently displayed student list are included.
+  Students hidden by `find` are excluded.
+* A submission is overdue when no submission is recorded for the student
+  and today's date is after the mission's deadline.
+* A mission due today or in the future is not overdue.
+* Today's date follows your computer's local date and time zone.
+* Each result row identifies a student and a missing mission, including
+  the mission's name and deadline.
+* A student can appear more than once if they have multiple overdue submissions.
+* Student numbers match the indexes in the displayed student list.
+  Use `view INDEX` to inspect a student's profile.
+* Results are ordered by displayed student index, then numeric mission ID.
+* Recording a submission removes it from subsequent overdue results.
+  Submission timestamps are not recorded, so this report does not identify
+  submissions that were completed late.
+* If no overdue submissions exist within the current student list, the command
+  displays `No overdue submissions in the current student list.`
+* Student records, mission definitions, submission records, and the current
+  student filter remain unchanged.
+* Run `list` first to include all students.
+* Like `list`, this command ignores extra arguments.
+
+Examples:
+
+* `list`, followed by `listoverdue`, shows overdue submissions for all students.
+* `find g/1A`, followed by `listoverdue`, shows overdue submissions only for
+  students in studio group 1A.
+* `find Betsy Crowe`, followed by `listoverdue`, shows overdue submissions
+  for students matching that name.
+### Listing mission submissions: `listmissions`
+
+Shows which students in the currently displayed student list submitted a mission.
+
+Format: `listmissions m/MISSION_ID`
+
+* Supply exactly one lowercase `m/` prefix and an existing mission ID.
+* The command word and mission ID are case-insensitive.
+* Students hidden by `find` are excluded.
+* Result numbers retain the indexes in the displayed student list.
+  A result numbered `3` can therefore be inspected using `view 3`.
+* The student filter, submission records, and mission catalogue are unchanged.
+* If no displayed students submitted the mission, the command reports that no
+  submissions are recorded within the current student list.
+* Run `list` first to include all students.
+
+Example: `find g/1A`, followed by `listmissions m/M01`, lists students in
+studio group 1A with a recorded submission for M01.
+
 ### Clearing all entries: `clear`
 
 Clears all entries from the address book.
@@ -345,10 +427,13 @@ Action     | Format, Examples
 **Edit student**   | `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [t/TAG]... [g/STUDIO_GROUP]`<br> e.g.,`edit 2 n/James Lee e/jameslee@example.com g/1A`
 **Add studio record** | `addstudiorecord INDEX w/WEEK ef/EFFORT`<br> e.g., `addstudiorecord 1 w/3 ef/30`
 **Delete studio record** | `delstudiorecord INDEX w/WEEK`<br> e.g., `delstudiorecord 1 w/3`
+**Edit studio record** | `editstudiorecord INDEX w/WEEK ef/EFFORT`<br> e.g., `editstudiorecord 1 w/3 ef/30`
 **Add mission** | `addmission n/NAME d/DEADLINE`<br> e.g., `addmission n/Rune Reading d/2026-10-20`
 **Delete mission** | `delmission m/MISSIONID`<br> e.g., `delmission m/M03`
 **Record mission submission** | `markmission INDEX m/MISSION_ID`<br> e.g., `markmission 1 m/M01`
 **Remove mission submission** | `unmarkmission INDEX m/MISSION_ID`<br> e.g., `unmarkmission 1 m/M01`
+**List overdue submissions** | `listoverdue`
+**List mission submissions** | `listmissions m/MISSION_ID`<br> e.g., `listmissions m/M01`
 **Clear**  | `clear`
 **Find**   | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find James Jake`
 **List**   | `list`

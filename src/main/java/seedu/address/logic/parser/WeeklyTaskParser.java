@@ -21,11 +21,11 @@ public class WeeklyTaskParser {
     /**
      * Parses the common student index and week arguments, with any additional prefixes.
      *
-     * @param args Arguments following the command word.
-     * @param usage Usage instructions for the calling command.
+     * @param args               Arguments following the command word.
+     * @param usage              Usage instructions for the calling command.
      * @param additionalPrefixes Prefixes to recognize in addition to the week prefix.
      * @throws NullPointerException If an argument or prefix is null.
-     * @throws ParseException If required information is missing or invalid.
+     * @throws ParseException       If required information is missing or invalid.
      */
     public WeeklyTaskParser(String args, String usage, Prefix... additionalPrefixes) throws ParseException {
         requireNonNull(args);
@@ -114,7 +114,7 @@ public class WeeklyTaskParser {
      * @param prefix Prefix whose value should be returned.
      * @return An {@code Optional} containing the prefix value, if any.
      * @throws NullPointerException If the prefix is null.
-     * @throws ParseException If the prefix occurs more than once.
+     * @throws ParseException       If the prefix occurs more than once.
      */
     public String getPrefixValue(Prefix prefix) throws ParseException {
         requireNonNull(prefix);
