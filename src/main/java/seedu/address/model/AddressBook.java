@@ -109,6 +109,19 @@ public class AddressBook implements ReadOnlyAddressBook {
     }
 
     /**
+     * Replaces a mission without modifying student submissions or ID allocation.
+     *
+     * @param target Mission to replace.
+     * @param editedMission Replacement retaining the target's ID.
+     * @throws NullPointerException If either mission is null.
+     * @throws IllegalArgumentException If the target is absent, its ID changes,
+     *     or another mission already has the replacement's name.
+     */
+    public void setMission(Mission target, Mission editedMission) {
+        missions.setMission(target, editedMission);
+    }
+
+    /**
      * Restores the catalogue after validating all records and allocation state.
      *
      * @param records Saved missions.
