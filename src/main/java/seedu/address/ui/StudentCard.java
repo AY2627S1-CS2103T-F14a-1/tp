@@ -47,4 +47,20 @@ public class StudentCard extends UiPart<Region> {
         name.setText(student.getName().fullName);
         studioGroup.setText(student.getStudioGroup().studioGroup);
     }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other == this) {
+            return true;
+        }
+
+        if (!(other instanceof StudentCard)) {
+            return false;
+        }
+
+        // state check
+        StudentCard card = (StudentCard) other;
+        return id.getText().equals(card.id.getText())
+                && student.equals(card.student);
+    }
 }
