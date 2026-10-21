@@ -28,7 +28,9 @@ import seedu.address.logic.commands.HelpCommand;
 import seedu.address.logic.commands.ListCommand;
 import seedu.address.logic.commands.ListMissionsCommand;
 import seedu.address.logic.commands.ListOverdueCommand;
+import seedu.address.logic.commands.MarkMasteryCheckCommand;
 import seedu.address.logic.commands.MarkMissionCommand;
+import seedu.address.logic.commands.UnmarkMasteryCheckCommand;
 import seedu.address.logic.commands.UnmarkMissionCommand;
 import seedu.address.logic.commands.ViewCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
@@ -84,6 +86,8 @@ public class AddressBookParser {
             case UnmarkMissionCommand.COMMAND_WORD -> new UnmarkMissionCommandParser().parse(arguments);
             case EditMissionCommand.COMMAND_WORD -> new EditMissionCommandParser().parse(arguments);
             case ListOverdueCommand.COMMAND_WORD -> new ListOverdueCommand();
+            case MarkMasteryCheckCommand.COMMAND_WORD -> new MarkMasteryCheckCommandParser().parse(arguments);
+            case UnmarkMasteryCheckCommand.COMMAND_WORD -> new UnmarkMasteryCheckCommandParser().parse(arguments);
             case ExitCommand.COMMAND_WORD -> new ExitCommand();
             case HelpCommand.COMMAND_WORD -> new HelpCommand();
             case ViewCommand.COMMAND_WORD -> new ViewCommandParser().parse(arguments);
