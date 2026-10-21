@@ -1,5 +1,23 @@
 # UI Test Plan
 
+## Studio parsing regression
+
+Studio argument parsing is most precisely checked at the parser level. Run the
+complete `WeeklyTaskParserTest`, `ParserUtilTest`,
+`AddStudioRecordCommandParserTest`, and `DeleteStudioRecordCommandParserTest`
+JUnit classes. Verify that missing required prefixes show command usage,
+duplicate prefixes are rejected, weeks outside 0 to 13 are rejected, and
+effort scores accept only unsigned integers from 0 to 2147483647. Then run the
+positive and negative studio command cases below to verify the same behavior
+through the UI without changing student state after invalid input.
+
+## Integer validation regression
+
+Integer validation is not exposed independently through the UI. Run the JUnit
+cases named `isNonNegativeUnsignedInteger_*` in `StringUtilTest` to verify that
+the utility accepts zero and positive integers while rejecting null, signed,
+malformed, whitespace-containing, and overflowing values.
+
 ## Constructor validation regression
 
 Null studio-record values cannot be entered through the UI. Run the JUnit case
@@ -83,3 +101,11 @@ filtered-list targeting, logging, and accepted/rejected command persistence.
 | MC-STATUS-BOUNDARY-001 | Mark and unmark existing appointments numbered 1 and 2147483647. | Both positive boundary numbers are supported; original student objects retain their prior states. |
 | MC-STATUS-PARSE-001 | Omit the student index, omit num/, repeat num/, or supply malformed numbers for each command. | Relevant missing-index, command-usage, duplicate-prefix, or number-validation feedback appears without changing state. |
 | MC-STATUS-LOG-001 | Filter to a student, execute mark/unmark followed by repeated requests, and inspect the command logs. | Each command logs under its own class, with INFO for a state change and FINE for a repeated request, identifying the student and displayed index. |
+
+## Feedback scrolling
+
+| ID | Steps | Expected result |
+| --- | --- | --- |
+| FEEDBACK-001 | Run `help`, then enter an unknown command. | Help feedback and unknown-command feedback remain readable. |
+| FEEDBACK-002 | Run `view 1`, then `list`. | The student profile remains usable; ordinary command feedback appears normally. |
+| FEEDBACK-003 | After submission listing is implemented, generate enough results to exceed the feedback area's height. Scroll to the bottom, then run another command. | Every result is reachable by scrolling. The next feedback starts at the top. |
