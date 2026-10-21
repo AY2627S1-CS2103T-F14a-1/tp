@@ -333,7 +333,7 @@ The user stories above represent the main intended functionality and selected fu
 
   Use case ends.
 
-* 3a. The tutor provides a missing, invalid, or out-of-range index.
+* 3a. The tutor provides invalid or incomplete details.
 
     * 3a1. AvengerHub displays an error message without changing stored
       records or the current student filter.
