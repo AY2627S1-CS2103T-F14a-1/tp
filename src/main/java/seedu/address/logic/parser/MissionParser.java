@@ -6,7 +6,6 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_MISSION;
 
 import java.util.Locale;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.parser.exceptions.ParseException;
@@ -81,7 +80,7 @@ public class MissionParser {
         }
 
         String[] fields = indexText.split(" ");
-        if (!arePrefixesPresent(arguments, PREFIX_MISSION) && fields.length == 2
+        if (!arguments.arePrefixesPresent(PREFIX_MISSION) && fields.length == 2
                 && fields[1].matches("(?i)M[0-9]+")) {
             parseStudentIndex(fields[0]);
             throw new ParseException(MESSAGE_MISSING_MISSION);
@@ -151,7 +150,7 @@ public class MissionParser {
      * @throws ParseException If the mission ID is missing, repeated, or has extra arguments.
      */
     private String extractMissionId(ArgumentMultimap argMultimap) throws ParseException {
-        if (!arePrefixesPresent(argMultimap, PREFIX_MISSION)) {
+        if (!argMultimap.arePrefixesPresent(PREFIX_MISSION)) {
             throw new ParseException(MESSAGE_MISSING_MISSION);
         }
 
@@ -180,17 +179,4 @@ public class MissionParser {
                     MESSAGE_INVALID_COMMAND_FORMAT, usage));
         }
     }
-
-    /**
-     * Returns whether every specified prefix is present.
-     * A present prefix may still have an empty value.
-     *
-     * @param argumentMultimap Tokenized arguments.
-     * @param prefixes Required prefixes.
-     * @return True if all required prefixes are present.
-     */
-    private static boolean arePrefixesPresent(ArgumentMultimap argumentMultimap, Prefix... prefixes) {
-        return Stream.of(prefixes).allMatch(prefix -> argumentMultimap.getValue(prefix).isPresent());
-    }
-
 }

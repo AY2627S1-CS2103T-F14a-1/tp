@@ -1,0 +1,50 @@
+package seedu.address.logic.parser;
+
+import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_DATETIME;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_NUMBER;
+
+import java.time.LocalDateTime;
+
+import seedu.address.commons.core.index.Index;
+import seedu.address.logic.commands.AddMasteryCheckCommand;
+import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.model.masterycheck.MasteryCheck;
+
+/**
+ * Parses a displayed student index and the number and appointment time of a mastery check to register.
+ */
+public class AddMasteryCheckCommandParser implements Parser<AddMasteryCheckCommand> {
+    /**
+     * Parses the student index, mastery check number, and the appointment date-time.
+     *
+     * @param args Arguments following the command word.
+     * @return A command containing the validated index, number, and date-time.
+     * @throws NullPointerException If the arguments are null.
+     * @throws ParseException If the index, number, or appointment time is invalid, or required prefixes
+     *         are missing or repeated.
+     */
+    @Override
+    public AddMasteryCheckCommand parse(String args) throws ParseException {
+        ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args, PREFIX_NUMBER, PREFIX_DATETIME);
+        Index index;
+
+        try {
+            index = ParserUtil.parseIndex(argMultimap.getPreamble());
+        } catch (ParseException pe) {
+            throw new ParseException(
+                    String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddMasteryCheckCommand.MESSAGE_USAGE), pe);
+        }
+
+        if (!argMultimap.arePrefixesPresent(PREFIX_NUMBER, PREFIX_DATETIME)) {
+            throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT,
+                    AddMasteryCheckCommand.MESSAGE_USAGE));
+        }
+
+        argMultimap.verifyNoDuplicatePrefixesFor(PREFIX_NUMBER, PREFIX_DATETIME);
+        int number = ParserUtil.parseMasteryCheckNumber(argMultimap.getValue(PREFIX_NUMBER).get());
+        LocalDateTime dateTime = ParserUtil.parseMasteryCheckDateTime(argMultimap.getValue(PREFIX_DATETIME).get());
+
+        return new AddMasteryCheckCommand(index, number, new MasteryCheck(dateTime));
+    }
+}

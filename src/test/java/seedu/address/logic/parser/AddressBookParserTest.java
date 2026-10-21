@@ -7,11 +7,14 @@ import static seedu.address.logic.Messages.MESSAGE_UNKNOWN_COMMAND;
 import static seedu.address.testutil.Assert.assertThrows;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_STUDENT;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
+import seedu.address.logic.commands.AddMasteryCheckCommand;
 import seedu.address.logic.commands.AddStudentCommand;
 import seedu.address.logic.commands.AddStudioRecordCommand;
 import seedu.address.logic.commands.ClearCommand;
@@ -19,6 +22,7 @@ import seedu.address.logic.commands.DeleteStudentCommand;
 import seedu.address.logic.commands.DeleteStudioRecordCommand;
 import seedu.address.logic.commands.EditCommand;
 import seedu.address.logic.commands.EditCommand.EditStudentDescriptor;
+import seedu.address.logic.commands.EditStudioRecordCommand;
 import seedu.address.logic.commands.ExitCommand;
 import seedu.address.logic.commands.FindCommand;
 import seedu.address.logic.commands.HelpCommand;
@@ -27,6 +31,7 @@ import seedu.address.logic.commands.MarkMissionCommand;
 import seedu.address.logic.commands.UnmarkMissionCommand;
 import seedu.address.logic.commands.ViewCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.model.masterycheck.MasteryCheck;
 import seedu.address.model.mission.MissionId;
 import seedu.address.model.student.NameContainsKeywordsPredicate;
 import seedu.address.model.student.Student;
@@ -162,13 +167,15 @@ public class AddressBookParserTest {
 
         assertEquals(expected, parser.parseCommand("addstudiorecord 1 w/3 ef/0"));
         assertEquals(expected, parser.parseCommand("ADDSTUDIORECORD 1 w/3 ef/0"));
-        assertEquals(expected, parser.parseCommand("AddStudioRecord 1 W/3 EF/0"));
+        assertEquals(expected, parser.parseCommand("AddStudioRecord 1 w/3 ef/0"));
         assertEquals(expected, parser.parseCommand("  addstudiorecord\t1\tw/3 ef/0  "));
     }
 
     @Test
-    public void parseCommand_addStudioRecordMissingIndex_reportsMissingIndex() {
-        assertThrows(ParseException.class, WeeklyTaskParser.MESSAGE_MISSING_INDEX, () ->
+    public void parseCommand_addStudioRecordMissingIndex_reportsInvalidFormat() {
+        String expected = String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddStudioRecordCommand.MESSAGE_USAGE);
+
+        assertThrows(ParseException.class, expected, () ->
                 parser.parseCommand("addstudiorecord"));
     }
 
@@ -184,14 +191,32 @@ public class AddressBookParserTest {
 
         assertEquals(expected, parser.parseCommand("delstudiorecord 1 w/3"));
         assertEquals(expected, parser.parseCommand("DELSTUDIORECORD 1 w/3"));
-        assertEquals(expected, parser.parseCommand("DelStudioRecord 1 W/3"));
+        assertEquals(expected, parser.parseCommand("DelStudioRecord 1 w/3"));
         assertEquals(expected, parser.parseCommand("  delstudiorecord\t1\tw/3  "));
     }
 
     @Test
-    public void parseCommand_deleteStudioRecordMissingIndex_reportsMissingIndex() {
-        assertThrows(ParseException.class, WeeklyTaskParser.MESSAGE_MISSING_INDEX, () ->
+    public void parseCommand_deleteStudioRecordMissingIndex_reportsInvalidFormat() {
+        String expected = String.format(MESSAGE_INVALID_COMMAND_FORMAT, DeleteStudioRecordCommand.MESSAGE_USAGE);
+
+        assertThrows(ParseException.class, expected, () ->
                 parser.parseCommand("delstudiorecord"));
+    }
+
+    @Test
+    public void parseCommand_editStudioRecordIgnoringCase_returnsCommand() throws Exception {
+        EditStudioRecordCommand expected = new EditStudioRecordCommand(
+                INDEX_FIRST_STUDENT, 3, new StudioRecord(50));
+
+        assertEquals(expected, parser.parseCommand("editstudiorecord 1 w/3 ef/50"));
+        assertEquals(expected, parser.parseCommand("EDITSTUDIORECORD 1 w/3 ef/50"));
+        assertEquals(expected, parser.parseCommand("  editstudiorecord\t1\tw/3 ef/50  "));
+    }
+
+    @Test
+    public void parseCommand_misspelledEditStudioRecord_reportsUnknownCommand() {
+        assertThrows(ParseException.class, MESSAGE_UNKNOWN_COMMAND, () ->
+                parser.parseCommand("editstudiorecor 1 w/3 ef/50"));
     }
 
     @Test
@@ -199,4 +224,19 @@ public class AddressBookParserTest {
         assertThrows(ParseException.class, MESSAGE_UNKNOWN_COMMAND, () ->
                 parser.parseCommand("delstudorecord 1 w/3"));
     }
+
+    @Test
+    public void parseCommand_masteryCheck_dispatchesCaseInsensitiveCommand() throws Exception {
+        AddMasteryCheckCommand expected = new AddMasteryCheckCommand(INDEX_FIRST_STUDENT, 1,
+                new MasteryCheck(LocalDateTime.of(LocalDate.now().getYear(), 8, 18, 14, 30)));
+        assertEquals(expected, parser.parseCommand("addmc 1 num/1 dt/18-08|14:30"));
+        assertEquals(expected, parser.parseCommand("ADDMC 1 num/1 dt/18-08|14:30"));
+    }
+
+    @Test
+    public void parseCommand_masteryCheckInvalidDate_throwsParseException() {
+        assertThrows(ParseException.class, ParserUtil.MESSAGE_INVALID_MASTERY_CHECK_DATETIME, () ->
+                parser.parseCommand("addmc 1 num/1 dt/31-04|14:30"));
+    }
+
 }

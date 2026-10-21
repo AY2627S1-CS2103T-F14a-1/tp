@@ -97,7 +97,7 @@ public class UnmarkMissionCommand extends Command {
 
         return new Student(student.getName(), student.getPhone(), student.getEmail(),
                 student.getTags(), student.getStudioGroup(), submissions,
-                student.getRegisteredStudioRecords());
+                student.getRegisteredStudioRecords(), student.getRegisteredMasteryChecks());
     }
 
     @Override

@@ -1,5 +1,7 @@
 package seedu.address.storage;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -12,11 +14,13 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import seedu.address.commons.exceptions.IllegalValueException;
+import seedu.address.model.masterycheck.MasteryCheck;
 import seedu.address.model.mission.MissionId;
 import seedu.address.model.student.Email;
 import seedu.address.model.student.MissionSubmissions;
 import seedu.address.model.student.Name;
 import seedu.address.model.student.Phone;
+import seedu.address.model.student.RegisteredMasteryChecks;
 import seedu.address.model.student.RegisteredStudioRecords;
 import seedu.address.model.student.Student;
 import seedu.address.model.student.StudioGroup;
@@ -37,12 +41,12 @@ class JsonAdaptedStudent {
     private final String studioGroup;
     private final List<Object> missionSubmissions = new ArrayList<>();
     private final List<Object> registeredStudioRecords = new ArrayList<>();
+    private final List<Object> registeredMasteryChecks = new ArrayList<>();
 
     /**
-     * Constructs a {@code JsonAdaptedStudent} with the given student details.
      * Constructs a storage representation, deferring validation until model conversion.
-     * Missing or null studio records default to empty collections.
-     * Missing or null mission submissions represent no recorded submissions.
+     * Missing or null mission submissions, studio records, and mastery check registrations
+     * default to empty collections.
      *
      * @param name Student's name.
      * @param phone Student's phone number.
@@ -51,13 +55,16 @@ class JsonAdaptedStudent {
      * @param studioGroup Student's studio group.
      * @param registeredStudioRecords Recorded weekly studio records, or null for no records.
      * @param missionSubmissions Recorded mission IDs, or null for no submissions.
+     * @param registeredMasteryChecks Saved records containing a number, ISO local date-time string,
+     *         and completion flag, or null for no appointments.
      */
     @JsonCreator
     public JsonAdaptedStudent(@JsonProperty("name") String name, @JsonProperty("phone") String phone,
             @JsonProperty("email") String email,
             @JsonProperty("tags") List<JsonAdaptedTag> tags, @JsonProperty("studio group") String studioGroup,
             @JsonProperty("missionSubmissions") List<?> missionSubmissions,
-            @JsonProperty("registeredStudioRecords") List<?> registeredStudioRecords) {
+            @JsonProperty("registeredStudioRecords") List<?> registeredStudioRecords,
+            @JsonProperty("registeredMasteryChecks") List<?> registeredMasteryChecks) {
         this.name = name;
         this.phone = phone;
         this.email = email;
@@ -71,10 +78,15 @@ class JsonAdaptedStudent {
         if (registeredStudioRecords != null) {
             this.registeredStudioRecords.addAll(registeredStudioRecords);
         }
+        if (registeredMasteryChecks != null) {
+            this.registeredMasteryChecks.addAll(registeredMasteryChecks);
+        }
     }
 
     /**
-     * Copies a student into a storage representation with mission IDs sorted in numeric order.
+     * Copies a student into a storage representation with mission IDs, studio weeks, and mastery check
+     * numbers sorted in ascending order. Each mastery check record contains its number, ISO local
+     * date-time string, and completion flag.
      *
      * @param source Student to save.
      * @throws NullPointerException If the source is null.
@@ -96,6 +108,14 @@ class JsonAdaptedStudent {
                 .stream()
                 .sorted(Map.Entry.comparingByKey())
                 .map(entry -> List.of(entry.getKey(), entry.getValue().getEffortScore()))
+                .collect(Collectors.toList()));
+        registeredMasteryChecks.addAll(source.getRegisteredMasteryChecks().getMasteryCheckAppointments().entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByKey())
+                .map(entry ->
+                        List.of(entry.getKey(),
+                                entry.getValue().getAppointmentTime().toString(),
+                                entry.getValue().isComplete()))
                 .collect(Collectors.toList()));
     }
 
@@ -150,8 +170,9 @@ class JsonAdaptedStudent {
         final Set<Tag> modelTags = new HashSet<>(studentTags);
         final MissionSubmissions modelMissionSubmissions = toModelMissionSubmissions();
         final RegisteredStudioRecords modelRegisteredStudioRecords = toModelRegisteredStudioRecords();
+        final RegisteredMasteryChecks modelRegisteredMasteryChecks = toModelRegisteredMasteryChecks();
         return new Student(modelName, modelPhone, modelEmail, modelTags, modelStudioGroup,
-                modelMissionSubmissions, modelRegisteredStudioRecords);
+                modelMissionSubmissions, modelRegisteredStudioRecords, modelRegisteredMasteryChecks);
     }
 
     /**
@@ -204,5 +225,48 @@ class JsonAdaptedStudent {
         }
 
         return new RegisteredStudioRecords(recordedWeeks);
+    }
+
+    /**
+     * Validates stored mastery checks from saved records containing a positive integer number,
+     * ISO local date-time string, and boolean completion flag, in that order.
+     * If a number is repeated, the last record for that number is retained. Missing or null
+     * registration lists are treated as empty by the storage constructor.
+     *
+     * @return Registrations containing the saved appointment numbers, times, and completion statuses.
+     * @throws IllegalValueException If an entry has the wrong structure or types, a non-positive number,
+     *         or an invalid appointment date and time.
+     */
+    public RegisteredMasteryChecks toModelRegisteredMasteryChecks() throws IllegalValueException {
+        Map<Integer, MasteryCheck> masteryAppointments = new HashMap<>();
+        for (Object value : registeredMasteryChecks) {
+            if (!(value instanceof List<?> checks) || checks.size() != 3) {
+                throw new IllegalValueException(RegisteredMasteryChecks.MESSAGE_CONSTRAINTS);
+            }
+            Object savedNumber = checks.get(0);
+            if (!(savedNumber instanceof Integer number) || number <= 0) {
+                throw new IllegalValueException(RegisteredMasteryChecks.MESSAGE_CONSTRAINTS);
+            }
+
+            Object savedDateTime = checks.get(1);
+            if (!(savedDateTime instanceof String dateTime)) {
+                throw new IllegalValueException(RegisteredMasteryChecks.MESSAGE_CONSTRAINTS);
+            }
+
+            Object savedCompleteness = checks.get(2);
+            if (!(savedCompleteness instanceof Boolean isComplete)) {
+                throw new IllegalValueException(RegisteredMasteryChecks.MESSAGE_CONSTRAINTS);
+            }
+            try {
+                MasteryCheck tempCheck = new MasteryCheck(LocalDateTime.parse(dateTime));
+                if (isComplete) {
+                    tempCheck.markComplete();
+                }
+                masteryAppointments.put(number, tempCheck);
+            } catch (DateTimeParseException _) {
+                throw new IllegalValueException(RegisteredMasteryChecks.MESSAGE_CONSTRAINTS);
+            }
+        }
+        return new RegisteredMasteryChecks(masteryAppointments);
     }
 }

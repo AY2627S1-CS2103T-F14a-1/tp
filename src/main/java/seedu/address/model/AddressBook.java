@@ -89,7 +89,7 @@ public class AddressBook implements ReadOnlyAddressBook {
         List<Student> updatedStudents = students.asUnmodifiableObservableList().stream().map(student ->
                 new Student(student.getName(), student.getPhone(), student.getEmail(), student.getTags(),
                         student.getStudioGroup(), student.getMissionSubmissions().withoutSubmission(id),
-                        student.getRegisteredStudioRecords())).toList();
+                        student.getRegisteredStudioRecords(), student.getRegisteredMasteryChecks())).toList();
         List<Mission> remaining = missions.getMissions().stream()
                 .filter(mission -> !mission.getId().equals(id)).toList();
         students.setStudents(updatedStudents);
@@ -106,6 +106,19 @@ public class AddressBook implements ReadOnlyAddressBook {
      */
     public Optional<Mission> findMission(MissionId id) {
         return missions.find(id);
+    }
+
+    /**
+     * Replaces a mission without modifying student submissions or ID allocation.
+     *
+     * @param target Mission to replace.
+     * @param editedMission Replacement retaining the target's ID.
+     * @throws NullPointerException If either mission is null.
+     * @throws IllegalArgumentException If the target is absent, its ID changes,
+     *     or another mission already has the replacement's name.
+     */
+    public void setMission(Mission target, Mission editedMission) {
+        missions.setMission(target, editedMission);
     }
 
     /**

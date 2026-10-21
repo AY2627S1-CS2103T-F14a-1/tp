@@ -100,7 +100,7 @@ public class MarkMissionCommand extends Command {
 
         return new Student(student.getName(), student.getPhone(), student.getEmail(),
                 student.getTags(), student.getStudioGroup(),
-                submissions, student.getRegisteredStudioRecords());
+                submissions, student.getRegisteredStudioRecords(), student.getRegisteredMasteryChecks());
     }
 
     @Override
