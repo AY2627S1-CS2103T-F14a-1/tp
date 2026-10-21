@@ -476,10 +476,10 @@ The user stories above represent the main intended functionality and selected fu
 
 **MSS**
 
-1. Tutor requests to edit a shared mission, specifying its mission ID and
-   a replacement name, deadline, or both.
-2. AvengerHub updates the specified fields, saves the updated mission,
-   and confirms success.
+**MSS**
+
+1. Tutor requests to edit a shared mission and provides the required details.
+2. AvengerHub updates the mission, saves the changes, and confirms success.
 
    Use case ends.
 
