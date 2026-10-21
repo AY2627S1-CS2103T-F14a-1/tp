@@ -195,6 +195,39 @@ public class RegisteredStudioRecordsTest {
     }
 
     @Test
+    public void editStudioRecord_weekExists_returnsNewRegisteredStudentRecords() {
+        RegisteredStudioRecords registeredStudioRecords = new RegisteredStudioRecords()
+                .withStudioRecord(RegisteredStudioRecords.MIN_WEEK, ZERO_EFFORT_RECORD);
+        RegisteredStudioRecords updated = registeredStudioRecords.editStudioRecord(
+                RegisteredStudioRecords.MIN_WEEK, FULL_EFFORT_RECORD
+        );
+        assertEquals(updated.getRecordsByWeek(), Map.of(
+                RegisteredStudioRecords.MIN_WEEK, FULL_EFFORT_RECORD
+        ));
+    }
+
+    @Test
+    public void editStudioRecord_weekDoesNotExist_returnsSameRegisteredStudentRecords() {
+        RegisteredStudioRecords registeredStudioRecords = new RegisteredStudioRecords();
+        RegisteredStudioRecords updated = registeredStudioRecords.editStudioRecord(
+                RegisteredStudioRecords.MIN_WEEK, ZERO_EFFORT_RECORD
+        );
+        assertEquals(updated.getRecordsByWeek(), Map.of());
+    }
+
+    @Test
+    public void editStudioRecord_sameStudioRecord_returnsSameRegisteredStudentRecords() {
+        RegisteredStudioRecords registeredStudioRecords = new RegisteredStudioRecords()
+                .withStudioRecord(RegisteredStudioRecords.MIN_WEEK, ZERO_EFFORT_RECORD);
+        RegisteredStudioRecords updated = registeredStudioRecords.editStudioRecord(
+                RegisteredStudioRecords.MIN_WEEK, ZERO_EFFORT_RECORD
+        );
+        assertEquals(updated.getRecordsByWeek(), Map.of(
+                RegisteredStudioRecords.MIN_WEEK, ZERO_EFFORT_RECORD
+        ));
+    }
+
+    @Test
     public void getRecordsByWeek_modifyMap_throwsUnsupportedOperationException() {
         RegisteredStudioRecords registeredStudioRecords = new RegisteredStudioRecords(
                 Map.of(RegisteredStudioRecords.MIN_WEEK, ZERO_EFFORT_RECORD));

@@ -44,7 +44,7 @@ public class AddStudioRecordCommand extends Command {
      *
      * @param targetIndex Index of the student in the displayed list.
      * @param week Studio week for the record.
-     * @param studioRecord studio to record.
+     * @param studioRecord Record to add.
      */
     public AddStudioRecordCommand(Index targetIndex, int week, StudioRecord studioRecord) {
         requireNonNull(targetIndex);
@@ -61,7 +61,7 @@ public class AddStudioRecordCommand extends Command {
      * Records studio without changing the current list filter.
      *
      * @param model Model containing the students.
-     * @return Feedback describing the addition or an existing studio.
+     * @return Feedback describing the addition or an existing studio record.
      * @throws CommandException If the index does not identify a displayed student.
      */
     @Override
