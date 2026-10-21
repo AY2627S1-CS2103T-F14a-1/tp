@@ -71,7 +71,11 @@ The **API** of this component is specified in [`Ui.java`](https://github.com/AY2
 
 <puml src="diagrams/UiClassDiagram.puml" alt="Structure of the UI Component"/>
 
-The UI consists of a `MainWindow` and its parts, such as `CommandBox`, `ResultDisplay`, `StudentListPanel`, and `StatusBarFooter`. All of these, including `MainWindow`, inherit from the abstract `UiPart` class, which captures common behavior among classes that represent visible GUI parts.
+The UI consists of a `MainWindow` and its parts: `CommandBox`, `ResultDisplay`, `StudentListPanel`, `StudentDetailsPanel`, `StatusBarFooter`, and `HelpWindow`. These classes inherit from `UiPart`, which loads their JavaFX layouts.
+
+`MainWindow` connects the student list, command feedback, and student details. Executing `view INDEX` displays the requested student's profile and mission statuses in `StudentDetailsPanel`, using the index in the currently displayed student list.
+
+`ResultDisplay` presents command feedback, including submission and overdue reports, in a scrollable area. Listing commands produce textual feedback without replacing the current student filter. Student details use model objects and the mission catalogue supplied through the logic component.
 
 The `UI` component uses the JavaFX UI framework. The layouts of these UI parts are defined in matching `.fxml` files in `src/main/resources/view`. For example, [`MainWindow.fxml`](https://github.com/AY2627S1-CS2103T-F14a-1/tp/blob/master/src/main/resources/view/MainWindow.fxml) specifies the layout of [`MainWindow`](https://github.com/AY2627S1-CS2103T-F14a-1/tp/blob/master/src/main/java/seedu/address/ui/MainWindow.java).
 
@@ -80,7 +84,7 @@ The `UI` component,
 * executes user commands using the `Logic` component.
 * listens for changes to `Model` data so that the UI can be updated with the modified data.
 * keeps a reference to the `Logic` component, because the `UI` relies on the `Logic` to execute commands.
-* depends on some classes in the `Model` component because it displays `Student` objects from the model.
+* depends on model classes because it displays students, mission definitions, and their recorded statuses.
 
 ### Logic component
 
@@ -311,6 +315,40 @@ The user stories above represent the main intended functionality and selected fu
 
       Use case resumes at step 3.
 
+**Use case: View student profile**
+
+**MSS**
+
+1. Tutor requests to display all students or a filtered set of students.
+2. AvengerHub displays the requested student list.
+3. Tutor enters `view INDEX`, using the student's index in the displayed list.
+4. AvengerHub displays the selected student's profile, including contact
+   details, studio group, tags, and mission submission statuses.
+
+   Use case ends.
+
+**Extensions**
+
+* 2a. The displayed student list is empty.
+
+  Use case ends.
+
+* 3a. The tutor provides invalid or incomplete details.
+
+    * 3a1. AvengerHub displays an error message without changing stored
+      records or the current student filter.
+
+      Use case resumes at step 3.
+
+* 4a. No missions are configured.
+
+    * 4a1. AvengerHub displays the student's profile with
+      `No missions configured.` in the mission section.
+
+      Use case ends.
+
+Viewing a profile does not modify student details, mission definitions,
+submission records, or the current student filter.
 
 **Use case: Delete student record**
 
@@ -334,38 +372,6 @@ The user stories above represent the main intended functionality and selected fu
     * 3a1. AvengerHub explains the error.
 
       Use case resumes at step 3.
-
-
-**Use case: View student profile**
-
-**MSS**
-
-1. Tutor requests to view or search student records.
-2. AvengerHub displays the corresponding student records.
-3. Tutor selects a student record to view.
-4. AvengerHub displays the student's details, studio records,
-   and mission submission records.
-
-   Use case ends.
-
-**Extensions**
-
-* 2a. No student records are displayed.
-
-  Use case ends.
-
-* 3a. The student selection is invalid or incomplete.
-
-    * 3a1. AvengerHub explains the error.
-
-      Use case resumes at step 3.
-
-* 4a. Some student data is unavailable or corrupted.
-
-    * 4a1. AvengerHub displays the available details.
-
-      Use case ends.
-
 
 **Use case: Mark studio record**
 

@@ -1,60 +1,72 @@
 @startuml
 !include style.puml
+
+top to bottom direction
+skinparam linetype ortho
+skinparam nodesep 65
+skinparam ranksep 90
+skinparam padding 12
 skinparam arrowThickness 1.1
 skinparam arrowColor UI_COLOR_T4
 skinparam classBackgroundColor UI_COLOR
 
-package UI <<Rectangle>>{
-Class "<<interface>>\nUi" as Ui
-Class "{abstract}\nUiPart" as UiPart
-Class UiManager
-Class MainWindow
-Class HelpWindow
-Class ResultDisplay
-Class StudentListPanel
-Class StudentCard
-Class StatusBarFooter
-Class CommandBox
-}
+package UI <<Rectangle>> {
+    class "<<interface>>\nUi" as Ui
+    class UiManager
+    class MainWindow
+    class "{abstract}\nUiPart" as UiPart
 
-package Model <<Rectangle>> {
-Class HiddenModel #FFFFFF
+    together {
+        class HelpWindow
+        class StatusBarFooter
+        class StudentListPanel
+        class StudentDetailsPanel
+        class ResultDisplay
+        class CommandBox
+    }
+
+    class StudentCard
+
+    UiManager .left.|> Ui
+    UiManager -down-> "1" MainWindow
+
+    MainWindow *-down-> "1" CommandBox
+    MainWindow *-down-> "1" ResultDisplay
+    MainWindow *-down-> "1" StudentListPanel
+    MainWindow *-down-> "1" StudentDetailsPanel
+    MainWindow *-down-> "1" StatusBarFooter
+    MainWindow -down-> "1" HelpWindow
+
+    StudentListPanel -down-> "*" StudentCard
+
+    MainWindow -down-|> UiPart
+    CommandBox -down-|> UiPart
+    ResultDisplay -down-|> UiPart
+    StudentListPanel -down-|> UiPart
+    StudentDetailsPanel -down-|> UiPart
+    StudentCard -down-|> UiPart
+    StatusBarFooter -down-|> UiPart
+    HelpWindow -down-|> UiPart
 }
 
 package Logic <<Rectangle>> {
-Class HiddenLogic #FFFFFF
+    class HiddenLogic #FFFFFF
 }
 
-Class HiddenOutside #FFFFFF
-HiddenOutside ..> Ui
+package Model <<Rectangle>> {
+    class HiddenModel #FFFFFF
+}
 
-UiManager .left.|> Ui
-UiManager -down-> "1" MainWindow
-MainWindow *-down->  "1" CommandBox
-MainWindow *-down-> "1" ResultDisplay
-MainWindow *-down-> "1" StudentListPanel
-MainWindow *-down-> "1" StatusBarFooter
-MainWindow --> "0..1" HelpWindow
+class HiddenOutside #FFFFFF
+HiddenOutside .down.> Ui
 
-StudentListPanel -down-> "*" StudentCard
+UiManager -[norank]-> Logic
+MainWindow -[norank]-> Logic
+StudentCard -[dashed,norank]-> Model
 
-MainWindow -left-|> UiPart
+' Layout constraints only.
+MainWindow -[hidden]right-> Logic
+Logic -[hidden]down-> Model
+CommandBox -[hidden]down-> Model
 
-ResultDisplay --|> UiPart
-CommandBox --|> UiPart
-StudentListPanel --|> UiPart
-StudentCard --|> UiPart
-StatusBarFooter --|> UiPart
-HelpWindow --|> UiPart
-
-StudentCard ..> Model
-UiManager -right-> Logic
-MainWindow -left-> Logic
-
-StudentListPanel -[hidden]left- HelpWindow
-HelpWindow -[hidden]left- CommandBox
-CommandBox -[hidden]left- ResultDisplay
-ResultDisplay -[hidden]left- StatusBarFooter
-
-MainWindow -[hidden]-|> UiPart
 @enduml
