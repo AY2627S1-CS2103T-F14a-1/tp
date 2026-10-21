@@ -17,7 +17,10 @@ import java.io.IOException;
 import java.nio.file.AccessDeniedException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -29,11 +32,13 @@ import seedu.address.logic.commands.CommandResult;
 import seedu.address.logic.commands.EditStudioRecordCommand;
 import seedu.address.logic.commands.ListCommand;
 import seedu.address.logic.commands.exceptions.CommandException;
+import seedu.address.logic.parser.ParserUtil;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.ReadOnlyAddressBook;
 import seedu.address.model.UserPrefs;
+import seedu.address.model.masterycheck.MasteryCheck;
 import seedu.address.model.mission.MissionId;
 import seedu.address.model.student.Student;
 import seedu.address.model.student.StudioRecord;
@@ -343,4 +348,66 @@ public class LogicManagerTest {
 
         assertEquals(model.getMissionList(), logic.getMissions());
     }
+
+    @Test
+    public void execute_masteryCheckSequenceAndReload_preservesAcceptedAndRejectedState() throws Exception {
+        Student original = new StudentBuilder(AMY).withMasteryChecks(Map.of()).build();
+        model.addStudent(original);
+        model.addStudent(BOB);
+        LocalDateTime firstTime = LocalDateTime.of(LocalDate.now().getYear(), 8, 18, 14, 30);
+        JsonAddressBookStorage storage = new JsonAddressBookStorage(temporaryFolder.resolve("addressBook.json"));
+        assertEquals("Added Amy Bee's mastery check 1 at Aug 18, 14:30.",
+                logic.execute("addmc 1 num/1 dt/18-08|14:30").getFeedbackToUser());
+        Student expected = new StudentBuilder(original)
+                .withMasteryChecks(Map.of(1, new MasteryCheck(firstTime))).build();
+        assertStudioState(model, storage, expected);
+
+        String saved = Files.readString(storage.getAddressBookFilePath());
+        for (String invalid : List.of("addmc 1 num/2 dt/31-04|14:30", "addmc 1 num/2 dt/18-08|24:00")) {
+            assertThrows(ParseException.class, ParserUtil.MESSAGE_INVALID_MASTERY_CHECK_DATETIME, () ->
+                    logic.execute(invalid));
+            assertEquals(saved, Files.readString(storage.getAddressBookFilePath()));
+            assertStudioState(model, storage, expected);
+        }
+        assertThrows(CommandException.class, MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX, () ->
+                logic.execute("addmc 3 num/2 dt/19-08|14:30"));
+        assertEquals(saved, Files.readString(storage.getAddressBookFilePath()));
+        assertStudioState(model, storage, expected);
+
+        Model restored = new ModelManager(storage.readAddressBook().orElseThrow(), new UserPrefs());
+        Logic restoredLogic = new LogicManager(restored, new StorageManager(storage,
+                new JsonUserPrefsStorage(temporaryFolder.resolve("restoredPrefs.json"))));
+        assertEquals("Amy Bee’s mastery check has already been recorded for number 1. No changes made.",
+                restoredLogic.execute("addmc 1 num/1 dt/19-08|14:30").getFeedbackToUser());
+        assertEquals(saved, Files.readString(storage.getAddressBookFilePath()));
+        assertStudioState(restored, storage, expected);
+        assertEquals("Added Amy Bee's mastery check 2 at Aug 19, 14:30.",
+                restoredLogic.execute("addmc 1 num/2 dt/19-08|14:30").getFeedbackToUser());
+        Student withBoth = new StudentBuilder(original).withMasteryChecks(Map.of(1, new MasteryCheck(firstTime),
+                2, new MasteryCheck(firstTime.plusDays(1)))).build();
+        assertStudioState(restored, storage, withBoth);
+    }
+
+    @Test
+    public void execute_otherStudentCommands_preservesMasteryChecksThroughReloads() throws Exception {
+        model.addMission("Mission 1", LocalDate.of(2026, 10, 15));
+        MasteryCheck check = new MasteryCheck(LocalDateTime.of(2026, 8, 18, 14, 30));
+        check.markComplete();
+        Student original = new StudentBuilder(AMY).withMasteryChecks(Map.of(1, check)).build();
+        model.addStudent(original);
+        model.addStudent(BOB);
+        JsonAddressBookStorage storage = new JsonAddressBookStorage(temporaryFolder.resolve("addressBook.json"));
+        List<String> commands = List.of("addstudiorecord 1 w/3 ef/50", "delstudiorecord 1 w/3",
+                "markmission 1 m/M01", "unmarkmission 1 m/M01", "edit 1 p/91234567", "delmission m/M01");
+        List<Student> expectedStudents = List.of(
+                new StudentBuilder(original).withStudioRecords(new StudioRecordSet(3, new StudioRecord(50))).build(),
+                original, new StudentBuilder(original).withMissionSubmissions("M01").build(), original,
+                new StudentBuilder(original).withPhone("91234567").build(),
+                new StudentBuilder(original).withPhone("91234567").build());
+        for (int i = 0; i < commands.size(); i++) {
+            logic.execute(commands.get(i));
+            assertStudioState(model, storage, expectedStudents.get(i));
+        }
+    }
+
 }

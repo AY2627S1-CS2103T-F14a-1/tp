@@ -11,8 +11,8 @@ import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.model.tag.Tag;
 
 /**
- * Represents a Student in the address book.
- * Guarantees: details are present and not null, field values are validated, immutable.
+ * Represents a student with profile details, mission submissions, studio records, and mastery check registrations.
+ * Mastery check completion status remains mutable through the registered appointment objects.
  */
 public class Student {
 
@@ -26,36 +26,43 @@ public class Student {
     private final StudioGroup studioGroup;
     private final MissionSubmissions missionSubmissions;
     private final RegisteredStudioRecords registeredStudioRecords;
+    private final RegisteredMasteryChecks registeredMasteryChecks;
 
     /**
-     * Creates a student with no recorded mission submissions.
+     * Creates a student with no mission submissions, studio records, or mastery check registrations.
      *
      * @param name Student's name.
      * @param phone Student's phone number.
      * @param email Student's email address.
      * @param tags Student's tags.
-     * @throws NullPointerException If any argument is null.
+     * @param studioGroup Student's studio group.
+     * @throws NullPointerException If the name, phone, email, or tag set is null.
      */
     public Student(
             Name name, Phone phone, Email email, Set<Tag> tags,
             StudioGroup studioGroup) {
-        this(name, phone, email, tags, studioGroup, new MissionSubmissions(), new RegisteredStudioRecords());
+        this(name, phone, email, tags, studioGroup, new MissionSubmissions(), new RegisteredStudioRecords(),
+                new RegisteredMasteryChecks());
     }
 
     /**
-     * Creates a student with the given details and mission submissions.
+     * Creates a student with the supplied profile details and recorded student activities.
      *
      * @param name Student's name.
      * @param phone Student's phone number.
      * @param email Student's email address.
      * @param tags Student's tags.
+     * @param studioGroup Student's studio group.
      * @param missionSubmissions Student's recorded mission submissions.
      * @param registeredStudioRecords Student's registered studio records.
-     * @throws NullPointerException If any argument is null.
+     * @param registeredMasteryChecks Student's numbered mastery check appointments.
+     * @throws NullPointerException If the name, phone, email, tag set, or any activity collection is null.
      */
     public Student(Name name, Phone phone, Email email, Set<Tag> tags, StudioGroup studioGroup,
-                   MissionSubmissions missionSubmissions, RegisteredStudioRecords registeredStudioRecords) {
-        requireAllNonNull(name, phone, email, tags, missionSubmissions, registeredStudioRecords);
+                   MissionSubmissions missionSubmissions, RegisteredStudioRecords registeredStudioRecords,
+                   RegisteredMasteryChecks registeredMasteryChecks) {
+        requireAllNonNull(
+                name, phone, email, tags, missionSubmissions, registeredStudioRecords, registeredMasteryChecks);
         this.name = name;
         this.phone = phone;
         this.email = email;
@@ -63,6 +70,7 @@ public class Student {
         this.studioGroup = studioGroup;
         this.missionSubmissions = missionSubmissions;
         this.registeredStudioRecords = registeredStudioRecords;
+        this.registeredMasteryChecks = registeredMasteryChecks;
     }
 
     public Name getName() {
@@ -103,6 +111,16 @@ public class Student {
     }
 
     /**
+     * Returns the student's mastery check registrations.
+     * The registration mapping is unmodifiable, but appointment completion statuses remain mutable.
+     *
+     * @return Numbered mastery check appointments registered for this student.
+     */
+    public RegisteredMasteryChecks getRegisteredMasteryChecks() {
+        return registeredMasteryChecks;
+    }
+
+    /**
      * Returns true if both students have the same name.
      * This defines a weaker notion of equality between two students.
      */
@@ -136,13 +154,15 @@ public class Student {
                 && tags.equals(otherStudent.tags)
                 && studioGroup.equals(otherStudent.studioGroup)
                 && missionSubmissions.equals(otherStudent.missionSubmissions)
-                && registeredStudioRecords.equals(otherStudent.registeredStudioRecords);
+                && registeredStudioRecords.equals(otherStudent.registeredStudioRecords)
+                && registeredMasteryChecks.equals(otherStudent.registeredMasteryChecks);
     }
 
     @Override
     public int hashCode() {
         // use this method for custom fields hashing instead of implementing your own
-        return Objects.hash(name, phone, email, tags, studioGroup, missionSubmissions, registeredStudioRecords);
+        return Objects.hash(name, phone, email, tags, studioGroup, missionSubmissions, registeredStudioRecords,
+                registeredMasteryChecks);
     }
 
     @Override
@@ -155,6 +175,7 @@ public class Student {
                 .add("studioGroup", studioGroup)
                 .add("missionSubmissions", missionSubmissions)
                 .add("registeredStudioRecords", registeredStudioRecords)
+                .add("registeredMasteryChecks", registeredMasteryChecks)
                 .toString();
     }
 

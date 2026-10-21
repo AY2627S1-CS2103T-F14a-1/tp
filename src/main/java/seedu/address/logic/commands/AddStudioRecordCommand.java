@@ -91,7 +91,7 @@ public class AddStudioRecordCommand extends Command {
 
         return new Student(student.getName(), student.getPhone(), student.getEmail(),
                 student.getTags(), student.getStudioGroup(), student.getMissionSubmissions(),
-                registeredStudioRecords);
+                registeredStudioRecords, student.getRegisteredMasteryChecks());
     }
 
     @Override

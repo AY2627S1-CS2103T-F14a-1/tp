@@ -7,11 +7,13 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import seedu.address.model.masterycheck.MasteryCheck;
 import seedu.address.model.mission.MissionId;
 import seedu.address.model.student.Email;
 import seedu.address.model.student.MissionSubmissions;
 import seedu.address.model.student.Name;
 import seedu.address.model.student.Phone;
+import seedu.address.model.student.RegisteredMasteryChecks;
 import seedu.address.model.student.RegisteredStudioRecords;
 import seedu.address.model.student.Student;
 import seedu.address.model.student.StudioGroup;
@@ -44,6 +46,7 @@ public class StudentBuilder {
     private StudioGroup studioGroup;
     private MissionSubmissions missionSubmissions;
     private RegisteredStudioRecords registeredStudioRecords;
+    private RegisteredMasteryChecks registeredMasteryChecks;
 
     /**
      * Creates a {@code StudentBuilder} with the default details.
@@ -56,6 +59,7 @@ public class StudentBuilder {
         studioGroup = new StudioGroup(DEFAULT_STUDIO_GROUP);
         missionSubmissions = new MissionSubmissions();
         registeredStudioRecords = new RegisteredStudioRecords();
+        registeredMasteryChecks = new RegisteredMasteryChecks();
     }
 
     /**
@@ -69,6 +73,7 @@ public class StudentBuilder {
         studioGroup = studentToCopy.getStudioGroup();
         missionSubmissions = studentToCopy.getMissionSubmissions();
         registeredStudioRecords = studentToCopy.getRegisteredStudioRecords();
+        registeredMasteryChecks = studentToCopy.getRegisteredMasteryChecks();
     }
 
     /**
@@ -151,12 +156,26 @@ public class StudentBuilder {
     }
 
     /**
+     * Sets the numbered mastery check appointments of the student being built.
+     *
+     * @param appointments Appointments keyed by positive mastery check number.
+     * @return This builder.
+     * @throws NullPointerException If the map, a key, or an appointment is null.
+     * @throws IllegalArgumentException If a mastery check number is not positive.
+     */
+    public StudentBuilder withMasteryChecks(Map<Integer, MasteryCheck> appointments) {
+        this.registeredMasteryChecks = new RegisteredMasteryChecks(appointments);
+        return this;
+    }
+
+    /**
      * Builds a student using this builder's current values.
      *
      * @return A student with the configured details.
      */
     public Student build() {
-        return new Student(name, phone, email, tags, studioGroup, missionSubmissions, registeredStudioRecords);
+        return new Student(name, phone, email, tags, studioGroup, missionSubmissions, registeredStudioRecords,
+                registeredMasteryChecks);
     }
 
 }

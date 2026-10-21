@@ -88,7 +88,8 @@ public class EditCommand extends Command {
      *
      * @param studentToEdit Student whose details are being edited.
      * @param editStudentDescriptor Details to replace on the student.
-     * @return A student with the requested edits and the original studio group & mission submissions.
+     * @return A student with the requested edits and the original studio group, mission submissions, studio records,
+     *      and mastery checks.
      */
     private static Student createEditedStudent(Student studentToEdit, EditStudentDescriptor editStudentDescriptor) {
         assert studentToEdit != null;
@@ -100,7 +101,8 @@ public class EditCommand extends Command {
         StudioGroup updatedStudioGroup = editStudentDescriptor.getStudioGroup().orElse(studentToEdit.getStudioGroup());
 
         return new Student(updatedName, updatedPhone, updatedEmail, updatedTags,
-                updatedStudioGroup, studentToEdit.getMissionSubmissions(), studentToEdit.getRegisteredStudioRecords());
+                updatedStudioGroup, studentToEdit.getMissionSubmissions(), studentToEdit.getRegisteredStudioRecords(),
+                studentToEdit.getRegisteredMasteryChecks());
     }
 
     @Override
