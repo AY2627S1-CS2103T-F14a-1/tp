@@ -38,18 +38,18 @@ Run the complete UI plan below to check existing studio behavior.
 
 | ID | Steps | Expected result |
 | --- | --- | --- |
-| STUDIO-SUMMARY-001 | View a student with records for weeks 3, 4, and 13, including an effort score of 0 for number 4. | The summary lists every number from 3 to 13 under `Week`, `Attendance`, and `Effort`. Recorded weeks show `Present` and their saved effort score, including 0; weeks without a record show `Absent` and effort score `0`. |
+| STUDIO-SUMMARY-001 | View a student with records for weeks 3, 4, and 13, including an effort score of 0 for week 4. | The summary lists every week from 3 to 13 under `Week`, `Attendance`, and `Effort`. Recorded weeks show `Present` and their saved effort score, including 0; weeks without a record show `Absent` and effort score `0`. |
 | STUDIO-LABEL-001 | View the student list after adding a studio record. | The student card prefixes the weekly record summary with `Studio records:` and does not expose a Java class name. |
-| STUDIO-LAYOUT-001 | View a student with a number 13 effort score of 2147483647. Resize the window from narrow to wide and back. | All three columns and their headers remain inside the studio table. Effort values remain readable, wrapping when necessary, without horizontal scrolling. JUnit also checks every cell at table widths of 240 and 900 pixels. |
-| STUDIO-SWITCH-001 | View a student with number 3 effort 50, then view another student without studio records, then view the first student again. | The second student shows every number as `Absent` with effort `0`. Returning to the first student restores `Present` and effort `50` for number 3, without duplicated rows. |
-| STUDIO-PERSISTENCE-001 | Add studio records with different effort scores, exit the application, inspect the saved student record, restart the application, and view the same student. | The saved JSON uses the `registeredStudioRecords` property. Each recorded number and its corresponding effort score are restored unchanged. |
+| STUDIO-LAYOUT-001 | View a student with a week 13 effort score of 2147483647. Resize the window from narrow to wide and back. | All three columns and their headers remain inside the studio table. Effort values remain readable, wrapping when necessary, without horizontal scrolling. JUnit also checks every cell at table widths of 240 and 900 pixels. |
+| STUDIO-SWITCH-001 | View a student with week 3 effort 50, then view another student without studio records, then view the first student again. | The second student shows every week as `Absent` with effort `0`. Returning to the first student restores `Present` and effort `50` for week 3, without duplicated rows. |
+| STUDIO-PERSISTENCE-001 | Add studio records with different effort scores, exit the application, inspect the saved student record, restart the application, and view the same student. | The saved JSON uses the `registeredStudioRecords` property. Each recorded week and its corresponding effort score are restored unchanged. |
 
 ## Studio commands
 
 | ID | Steps | Expected result |
 | --- | --- | --- |
 | STUDIO-ADD-001 | Run `addstudiorecord 1 w/3 ef/50`, then view student 1. | Week 3 is attended with effort score 50. Other weeks and students remain unchanged. |
-| STUDIO-ADD-002 | Run `addstudiorecord 1 w/4 ef/-1`, then view student 1. | Invalid-effort feedback appears; number 4 remains absent. |
+| STUDIO-ADD-002 | Run `addstudiorecord 1 w/4 ef/-1`, then view student 1. | Invalid-effort feedback appears; week 4 remains absent. |
 | STUDIO-ADD-003 | Run `addstudiorecord 1 w/13 ef/0`, then view student 1. | Week 13 is attended with effort score 0. |
 | STUDIO-ADD-004 | Run `addstudiorecord 1 w/3 ef/100`, then view student 1. | Already-recorded feedback appears; number 3 retains effort score 50. |
 | STUDIO-DELETE-001 | Run `delstudiorecord 1 w/3`, then view student 1. | Week 3 is absent with effort score 0; number 13 remains recorded. |
@@ -86,10 +86,22 @@ round trips, and preservation by other commands. JavaFX cases run on the JavaFX 
 | MC-VIEW-001 | View a student with appointments, then a student without appointments, then the first student again. | The empty student shows the headers and No mastery checks registered. Returning restores only the correct rows, without duplicates. |
 | MC-STORAGE-001 | Load a fixture containing completed and incomplete mastery checks, save, and reload. Separately attempt to load malformed number, datetime, and status records. | Valid times, including seconds and fractional seconds, and completion flags survive reloading. Malformed files produce a loading error and remain unchanged. |
 
-## Feedback scrolling
+## Delete mastery check regression
+
+JUnit follows the studio-record deletion suites and checks command state, parser errors,
+case-insensitive dispatch, and real-file persistence after accepted and rejected commands.
+The number-validation and usage-message cases also expose current copy-paste defects.
 
 | ID | Steps | Expected result |
 | --- | --- | --- |
-| FEEDBACK-001 | Run `help`, then enter an unknown command. | Help feedback and unknown-command feedback remain readable. |
-| FEEDBACK-002 | Run `view 1`, then `list`. | The student profile remains usable; ordinary command feedback appears normally. |
-| FEEDBACK-003 | After submission listing is implemented, generate enough results to exceed the feedback area's height. Scroll to the bottom, then run another command. | Every result is reachable by scrolling. The next feedback starts at the top. |
+| MC-DELETE-001 | Start with two students and student 1 having appointments 1 and 2. Run `delmc 1 num/1`, then view both students. | Appointment 1 is removed; appointment 2 retains its time and status. Other student fields and student 2 are unchanged. |
+| MC-DELETE-002 | Run `delmc 1 num/0`, then view student 1 and inspect saved data. | Invalid-number feedback; appointments and saved data remain unchanged. |
+| MC-DELETE-003 | Restart and run `delmc 1 num/1`. | Not-found feedback; saved data and remaining appointments are unchanged. |
+| MC-DELETE-004 | Run `delmc 3 num/2` when only two students exist, then view both students. | Invalid-index feedback; both students and saved data are unchanged. |
+| MC-DELETE-005 | Run `delmc 1 num/2`, restart, and view student 1. | No appointments remain; the empty-table message appears. Other records remain intact. |
+| MC-DELETE-006 | Register numbers 14 and 2147483647, then delete each by number. | Every positive mastery check number can be deleted; studio-week limits do not apply. |
+| MC-DELETE-007 | Run `delmc` and `delmc 1`. | Invalid-format feedback shows the deletion command usage, including `delmc` and `num/`. |
+| STUDIO-ADD-004 | Run `addstudiorecord 1 w/3 ef/100`, then view student 1. | Already-recorded feedback appears; number 3 retains effort score 50. |
+| STUDIO-DELETE-001 | Run `delstudiorecord 1 w/3`, then view student 1. | Week 3 is absent with effort score 0; number 13 remains recorded. |
+| STUDIO-DELETE-002 | Run `delstudiorecord 1 w/14`, then view student 1. | Invalid-number feedback appears; records remain unchanged. |
+| STUDIO-SEQUENCE-001 | Start with two students, student 1 having no studio records. Run STUDIO-ADD-001, STUDIO-ADD-002, and STUDIO-ADD-003 in order, viewing student 1 after each command. Restart, then run STUDIO-ADD-004, STUDIO-DELETE-001, and STUDIO-DELETE-002, viewing student 1 after each command. Restart and view both students. | Each command produces the feedback and state above. The duplicate retains number 3 effort 50 despite requesting 100. After the final restart, only number 13 is recorded with effort 0; number 3 remains absent. Other student fields and student 2 remain unchanged throughout. The matching LogicManagerTest sequence checks exact feedback, in-memory state, reloaded state after every command, and unchanged saved JSON after rejected and duplicate commands. |
