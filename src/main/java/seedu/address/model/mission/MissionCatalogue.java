@@ -2,6 +2,7 @@ package seedu.address.model.mission;
 
 import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.AppUtil.checkArgument;
+import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -92,5 +93,29 @@ public final class MissionCatalogue {
      */
     public long getNextMissionNumber() {
         return nextMissionNumber;
+    }
+
+    /**
+     * Replaces an existing mission while preserving its ID and list position.
+     *
+     * @param target Mission to replace.
+     * @param editedMission Replacement mission.
+     * @throws NullPointerException If either mission is null.
+     * @throws IllegalArgumentException If the target does not exist, the ID
+     *     changes, or another mission already has the replacement's name.
+     */
+    public void setMission(Mission target, Mission editedMission) {
+        requireAllNonNull(target, editedMission);
+
+        int index = missions.indexOf(target);
+        checkArgument(index != -1, "Mission does not exist: " + target.getId());
+        checkArgument(target.getId().equals(editedMission.getId()),
+                "A mission's ID cannot be changed.");
+        boolean hasDuplicateName = missions.stream()
+                .anyMatch(mission -> !mission.getId().equals(target.getId())
+                        && mission.hasSameName(editedMission.getName()));
+        checkArgument(!hasDuplicateName, "Another mission already uses this name.");
+
+        missions.set(index, editedMission);
     }
 }

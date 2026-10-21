@@ -123,4 +123,15 @@ public interface Model {
      * @return Configured missions.
      */
     ObservableList<Mission> getMissionList();
+
+    /**
+     * Replaces a configured mission without modifying student submissions.
+     *
+     * @param target Mission to replace.
+     * @param editedMission Replacement retaining the target's ID.
+     * @throws NullPointerException If either mission is null.
+     * @throws IllegalArgumentException If the target is absent, its ID changes,
+     *     or another mission already has the replacement's name.
+     */
+    void setMission(Mission target, Mission editedMission);
 }

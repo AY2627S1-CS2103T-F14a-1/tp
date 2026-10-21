@@ -472,6 +472,47 @@ The user stories above represent the main intended functionality and selected fu
 
       Use case resumes from step 1.
 
+**Use case: Edit mission**
+
+**MSS**
+
+**MSS**
+
+1. Tutor requests to edit a shared mission and provides the required details.
+2. AvengerHub updates the mission, saves the changes, and confirms success.
+
+   Use case ends.
+
+**Extensions**
+
+* 1a. The tutor provides invalid or incomplete details, including no
+  replacement fields.
+
+    * 1a1. AvengerHub shows an error message and leaves the records unchanged.
+
+      Use case resumes from step 1.
+
+* 1b. No mission with the specified ID exists.
+
+    * 1b1. AvengerHub informs the tutor that the mission does not exist and
+      leaves the records unchanged.
+
+      Use case resumes from step 1.
+
+* 1c. The replacement name matches another mission's name, ignoring case
+  and whitespace differences.
+
+    * 1c1. AvengerHub informs the tutor that the mission name already exists
+      and leaves the records unchanged.
+
+      Use case resumes from step 1.
+
+* 2a. The supplied values do not change the mission's name or deadline.
+
+    * 2a1. AvengerHub informs the tutor that no changes were made.
+
+      Use case ends.
+
 **Use case: Add mission submission record**
 
 **MSS**
