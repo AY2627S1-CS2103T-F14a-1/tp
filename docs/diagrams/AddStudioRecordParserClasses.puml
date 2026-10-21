@@ -46,6 +46,7 @@ ParserUtil .down.> Prefix
 WeeklyTaskParser --> ArgumentMultimap
 WeeklyTaskParser ..> ArgumentTokenizer
 ArgumentTokenizer .left.> ArgumentMultimap
+ArgumentTokenizer ..> Prefix
 
 AddStudioRecordCommandParser .up.|> Parser
 
