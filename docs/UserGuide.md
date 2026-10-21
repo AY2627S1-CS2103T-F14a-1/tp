@@ -318,6 +318,42 @@ Example: `unmarkmission 1 m/M01`, followed by `view 1`, displays M01 as Not subm
 The profile displays configured mission descriptions and deadlines. An empty catalogue shows
 “No missions configured.”
 
+### Listing overdue submissions: `listoverdue`
+
+Shows missing mission submissions for students in the currently displayed
+student list, where the mission deadline has passed.
+
+Format: `listoverdue`
+
+* Only students in the currently displayed student list are included.
+  Students hidden by `find` are excluded.
+* A submission is overdue when no submission is recorded for the student
+  and today's date is after the mission's deadline.
+* A mission due today or in the future is not overdue.
+* Today's date follows your computer's local date and time zone.
+* Each result row identifies a student and a missing mission, including
+  the mission's name and deadline.
+* A student can appear more than once if they have multiple overdue submissions.
+* Student numbers match the indexes in the displayed student list.
+  Use `view INDEX` to inspect a student's profile.
+* Results are ordered by displayed student index, then numeric mission ID.
+* Recording a submission removes it from subsequent overdue results.
+  Submission timestamps are not recorded, so this report does not identify
+  submissions that were completed late.
+* If no overdue submissions exist within the current student list, the command
+  displays `No overdue submissions in the current student list.`
+* Student records, mission definitions, submission records, and the current
+  student filter remain unchanged.
+* Run `list` first to include all students.
+* Like `list`, this command ignores extra arguments.
+
+Examples:
+
+* `list`, followed by `listoverdue`, shows overdue submissions for all students.
+* `find g/1A`, followed by `listoverdue`, shows overdue submissions only for
+  students in studio group 1A.
+* `find Betsy Crowe`, followed by `listoverdue`, shows overdue submissions
+  for students matching that name.
 ### Listing mission submissions: `listmissions`
 
 Shows which students in the currently displayed student list submitted a mission.
@@ -400,6 +436,7 @@ Action     | Format, Examples
 **Delete mission** | `delmission m/MISSIONID`<br> e.g., `delmission m/M03`
 **Record mission submission** | `markmission INDEX m/MISSION_ID`<br> e.g., `markmission 1 m/M01`
 **Remove mission submission** | `unmarkmission INDEX m/MISSION_ID`<br> e.g., `unmarkmission 1 m/M01`
+**List overdue submissions** | `listoverdue`
 **List mission submissions** | `listmissions m/MISSION_ID`<br> e.g., `listmissions m/M01`
 **Clear**  | `clear`
 **Find**   | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find James Jake`
