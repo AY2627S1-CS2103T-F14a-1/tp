@@ -1,0 +1,32 @@
+@startuml
+skin rose
+skinparam ActivityFontSize 15
+skinparam ArrowFontSize 12
+start
+:Check for the stored address book file;
+if () then ([file exists])
+    :Read JSON and build storage representations;
+    note right
+        Jackson creates a JsonAdaptedStudent for each saved student
+        using the @JsonCreator tagged constructor.
+    end note
+    if () then ([reading and deserialization succeed])
+        :Validate and rebuild the address book;
+        note right
+            Uses JsonAdaptedStudent::toModelType()
+            to validate and convert each saved student's
+            data records.
+        end note
+        if () then ([all data is valid])
+            :Return the loaded address book;
+        else ([else])
+            :Report a data loading error;
+        endif
+    else ([else])
+        :Report a data loading error;
+    endif
+else ([else])
+    :Return no saved address book;
+endif
+stop
+@enduml
