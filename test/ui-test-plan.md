@@ -1,5 +1,23 @@
 # UI Test Plan
 
+## Studio parsing regression
+
+Studio argument parsing is most precisely checked at the parser level. Run the
+complete `WeeklyTaskParserTest`, `ParserUtilTest`,
+`AddStudioRecordCommandParserTest`, and `DeleteStudioRecordCommandParserTest`
+JUnit classes. Verify that missing required prefixes show command usage,
+duplicate prefixes are rejected, weeks outside 0 to 13 are rejected, and
+effort scores accept only unsigned integers from 0 to 2147483647. Then run the
+positive and negative studio command cases below to verify the same behavior
+through the UI without changing student state after invalid input.
+
+## Integer validation regression
+
+Integer validation is not exposed independently through the UI. Run the JUnit
+cases named `isNonNegativeUnsignedInteger_*` in `StringUtilTest` to verify that
+the utility accepts zero and positive integers while rejecting null, signed,
+malformed, whitespace-containing, and overflowing values.
+
 ## Constructor validation regression
 
 Null studio-record values cannot be entered through the UI. Run the JUnit case
@@ -83,3 +101,11 @@ The number-validation and usage-message cases also expose current copy-paste def
 | MC-DELETE-005 | Run `delmc 1 num/2`, restart, and view student 1. | No appointments remain; the empty-table message appears. Other records remain intact. |
 | MC-DELETE-006 | Register numbers 14 and 2147483647, then delete each by number. | Every positive mastery check number can be deleted; studio-week limits do not apply. |
 | MC-DELETE-007 | Run `delmc` and `delmc 1`. | Invalid-format feedback shows the deletion command usage, including `delmc` and `num/`. |
+
+## Feedback scrolling
+
+| ID | Steps | Expected result |
+| --- | --- | --- |
+| FEEDBACK-001 | Run `help`, then enter an unknown command. | Help feedback and unknown-command feedback remain readable. |
+| FEEDBACK-002 | Run `view 1`, then `list`. | The student profile remains usable; ordinary command feedback appears normally. |
+| FEEDBACK-003 | After submission listing is implemented, generate enough results to exceed the feedback area's height. Scroll to the bottom, then run another command. | Every result is reachable by scrolling. The next feedback starts at the top. |
