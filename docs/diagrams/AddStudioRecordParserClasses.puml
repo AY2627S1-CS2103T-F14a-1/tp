@@ -1,0 +1,53 @@
+@startuml
+!include style.puml
+skinparam arrowThickness 1.1
+skinparam arrowColor LOGIC_COLOR_T4
+skinparam classBackgroundColor LOGIC_COLOR
+
+Class "{abstract}\nCommand" as Command
+Class AddStudioRecordCommand
+
+package "Parser classes"{
+Class "<<interface>>\nParser" as Parser
+Class AddressBookParser
+Class AddStudioRecordCommandParser
+Class WeeklyTaskParser {
+    - index: Index
+    - usage: String
+    - week: int
+    + getIndex(): Index
+    + getPrefixValue(Prefix): String
+    + getWeek(): int
+}
+show WeeklyTaskParser members
+Class CliSyntax
+Class ParserUtil
+Class Prefix
+Class ArgumentMultimap
+Class ArgumentTokenizer
+}
+
+Class HiddenOutside #FFFFFF
+HiddenOutside ..> AddressBookParser
+
+AddressBookParser .down.> AddStudioRecordCommandParser: <<create>>
+AddStudioRecordCommandParser ..> CliSyntax
+AddStudioRecordCommandParser ..> ParserUtil
+
+AddStudioRecordCommandParser ..> AddStudioRecordCommand : <<create>>
+AddStudioRecordCommandParser .down.> WeeklyTaskParser : <<create>>
+
+AddressBookParser ..> Command : <<use>>
+
+WeeklyTaskParser ..> CliSyntax
+CliSyntax ..> Prefix
+WeeklyTaskParser ..> ParserUtil
+ParserUtil .down.> Prefix
+WeeklyTaskParser --> ArgumentMultimap
+WeeklyTaskParser ..> ArgumentTokenizer
+ArgumentTokenizer .left.> ArgumentMultimap
+
+AddStudioRecordCommandParser .up.|> Parser
+
+AddStudioRecordCommand -up-|> Command
+@enduml
