@@ -22,7 +22,7 @@ import seedu.address.model.tag.Tag;
  */
 public class ParserUtil {
 
-    public static final String MESSAGE_INVALID_MISSION_NAME = "Mission name cannot be blank.";
+    public static final String MESSAGE_INVALID_MISSION_NAME = "Provide a mission name using n/NAME.";
     public static final String MESSAGE_INVALID_MISSION_DEADLINE =
             "Deadline must use YYYY-MM-DD format, for example 2026-10-20.";
     public static final String MESSAGE_INVALID_MISSION_CALENDAR_DATE =

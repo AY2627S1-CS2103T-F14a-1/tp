@@ -74,17 +74,34 @@ public class AddMissionCommandParserTest {
     public void parse_invalidFields_reportsSpecificMessage() {
         String usage = String.format(Messages.MESSAGE_INVALID_COMMAND_FORMAT, AddMissionCommand.MESSAGE_USAGE);
         String[][] cases = {
-            {"", usage},
-            {"d/2026-10-20", usage},
-            {"n/Runes", usage},
+            {"", ParserUtil.MESSAGE_INVALID_MISSION_NAME},
+            {"d/2026-10-20", ParserUtil.MESSAGE_INVALID_MISSION_NAME},
+            {"n/Runes", AddMissionCommandParser.MESSAGE_MISSING_DEADLINE},
             {"n/ \t d/2026-10-20", ParserUtil.MESSAGE_INVALID_MISSION_NAME},
             {"n/A n/A d/2026-10-20", Messages.getErrorMessageForDuplicatePrefixes(CliSyntax.PREFIX_NAME)},
             {"n/A d/2026-10-20 d/2026-10-21", Messages.getErrorMessageForDuplicatePrefixes(CliSyntax.PREFIX_DATE)},
-            {"extra n/A d/2026-10-20", String.format(Messages.MESSAGE_INVALID_COMMAND_FORMAT,
-                    AddMissionCommand.MESSAGE_USAGE)}
+            {"extra n/A d/2026-10-20", usage}
         };
         for (String[] testCase : cases) {
             ParseException error = assertThrows(ParseException.class, () -> parser.parse(testCase[0]));
+            assertEquals(testCase[1], error.getMessage());
+        }
+    }
+
+    @Test
+    public void parseCommand_missingMissionFields_reportsFirstMissingField() {
+        String[][] cases = {
+            {"addmission n/", ParserUtil.MESSAGE_INVALID_MISSION_NAME},
+            {"addmission n/ \t", ParserUtil.MESSAGE_INVALID_MISSION_NAME},
+            {"addmission n/\u2003", ParserUtil.MESSAGE_INVALID_MISSION_NAME},
+            {"addmission n/ d/invalid", ParserUtil.MESSAGE_INVALID_MISSION_NAME},
+            {"addmission n/Track my time", AddMissionCommandParser.MESSAGE_MISSING_DEADLINE},
+            {"addmission n/ Track my time  ", AddMissionCommandParser.MESSAGE_MISSING_DEADLINE},
+            {"addmission n/A n/B", Messages.getErrorMessageForDuplicatePrefixes(CliSyntax.PREFIX_NAME)}
+        };
+        for (String[] testCase : cases) {
+            ParseException error = assertThrows(ParseException.class, () ->
+                    new AddressBookParser().parseCommand(testCase[0]));
             assertEquals(testCase[1], error.getMessage());
         }
     }
