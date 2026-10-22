@@ -20,7 +20,7 @@ public class EditNoteCommand extends Command {
     public static final String COMMAND_WORD = "editnote";
 
     public static final String MESSAGE_ID_NOT_RECORDED =
-            "%1$s’s does not have a registered note with ID %2$d. No changes made.";
+            "%1$s does not have a registered note with ID %2$d. No changes made.";
     public static final String MESSAGE_SAME_NOTE =
             "%1$s’s note with ID %2$d is already the same. No changes made.";
     public static final String MESSAGE_SUCCESS =

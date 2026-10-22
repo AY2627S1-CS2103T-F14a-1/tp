@@ -104,12 +104,14 @@ public final class RegisteredNotes {
     }
 
     /**
-     * Returns {@code RegisteredNotes} including the new record
-     * for the given week, if the week is already recorded.
+     * Returns {@code RegisteredNotes} with the note for the given ID replaced by the given note.
+     * Returns this instance when no note is registered for the given ID or the registered note is unchanged.
      *
-     * @param noteId Note ID to edit
-     * @param note Note to include.
-     * @return RegisteredNotes containing the existing notes and updated note for given ID.
+     * @param noteId Note ID to edit.
+     * @param note Replacement note.
+     * @return {@code RegisteredNotes} containing the existing notes and the replacement note for the given ID.
+     * @throws NullPointerException If the note is {@code null}.
+     * @throws IllegalArgumentException If the note ID is outside the valid range.
      */
     public RegisteredNotes editNote(int noteId, Note note) {
         requireNonNull(note);
