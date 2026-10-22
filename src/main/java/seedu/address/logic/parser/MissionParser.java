@@ -2,6 +2,7 @@ package seedu.address.logic.parser;
 
 import static java.util.Objects.requireNonNull;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_INDEX;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_MISSION;
 
 import java.util.Locale;
@@ -16,7 +17,7 @@ import seedu.address.model.mission.MissionId;
  */
 public class MissionParser {
 
-    public static final String MESSAGE_MISSING_INDEX = "A student index must be provided.";
+    public static final String MESSAGE_MISSING_INDEX = "Specify a student index using " + PREFIX_INDEX + "INDEX.";
     public static final String MESSAGE_MISSING_MISSION = "Specify a mission ID using "
             + PREFIX_MISSION + "MISSION_ID.";
     public static final String MESSAGE_DUPLICATE_MISSION = "Mission ID must be specified only once.";
@@ -40,7 +41,8 @@ public class MissionParser {
     public MissionParser(String args, String usage) throws ParseException {
         requireNonNull(args);
         this.usage = requireNonNull(usage);
-        ArgumentMultimap arguments = ArgumentTokenizer.tokenize(normalizeArguments(args), PREFIX_MISSION);
+        ArgumentMultimap arguments = ArgumentTokenizer.tokenize(
+                normalizeArguments(args), PREFIX_INDEX, PREFIX_MISSION);
         index = extractIndex(arguments);
         missionId = parseMissionId(extractMissionId(arguments));
     }
@@ -64,28 +66,20 @@ public class MissionParser {
     }
 
     /**
-     * Extracts the index while distinguishing missing inputs from misplaced arguments.
+     * Extracts and validates the student index from the required index prefix.
      *
      * @param arguments Tokenized command arguments.
      * @return The validated displayed student index.
-     * @throws ParseException If the index is missing, invalid, or surrounded by extra arguments.
+     * @throws ParseException If the index prefix is missing or repeated, its value is invalid, or a preamble exists.
      */
     private Index extractIndex(ArgumentMultimap arguments) throws ParseException {
-        String indexText = arguments.getPreamble();
-        if (indexText.isEmpty()) {
-            for (String value : arguments.getAllValues(PREFIX_MISSION)) {
-                rejectExtraArguments(value);
-            }
-            throw new ParseException(MESSAGE_MISSING_INDEX);
+        if (!arguments.arePrefixesPresent(PREFIX_INDEX)
+                || !arguments.getPreamble().isEmpty()) {
+            throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, usage));
         }
 
-        String[] fields = indexText.split(" ");
-        if (!arguments.arePrefixesPresent(PREFIX_MISSION) && fields.length == 2
-                && fields[1].matches("(?i)M[0-9]+")) {
-            parseStudentIndex(fields[0]);
-            throw new ParseException(MESSAGE_MISSING_MISSION);
-        }
-
+        arguments.verifyNoDuplicatePrefixesFor(PREFIX_INDEX);
+        String indexText = arguments.getValue(PREFIX_INDEX).get();
         rejectExtraArguments(indexText);
         return parseStudentIndex(indexText);
     }

@@ -2,6 +2,7 @@ package seedu.address.logic.parser;
 
 import static java.util.Objects.requireNonNull;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_INDEX;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NUMBER;
 
 import seedu.address.commons.core.index.Index;
@@ -28,7 +29,7 @@ public class MasteryCheckParser {
     public MasteryCheckParser(String args, String usage) throws ParseException {
         requireNonNull(args);
         this.usage = requireNonNull(usage);
-        ArgumentMultimap arguments = ArgumentTokenizer.tokenize(args, PREFIX_NUMBER);
+        ArgumentMultimap arguments = ArgumentTokenizer.tokenize(args, PREFIX_INDEX, PREFIX_NUMBER);
         index = extractIndex(arguments);
         number = extractMasteryCheckNumber(arguments);
     }
@@ -52,18 +53,20 @@ public class MasteryCheckParser {
     }
 
     /**
-     * Extracts and validates the displayed student index from the argument preamble.
+     * Extracts and validates the displayed student index from the required index prefix.
      *
      * @param arguments Tokenized command arguments.
      * @return The validated displayed student index.
-     * @throws ParseException If the index is missing, invalid, or surrounded by extra arguments.
+     * @throws ParseException If the index prefix is missing or repeated, its value is invalid, or a preamble exists.
      */
     private Index extractIndex(ArgumentMultimap arguments) throws ParseException {
-        String indexText = arguments.getPreamble();
-        if (indexText.isEmpty()) {
-            throw new ParseException(MESSAGE_MISSING_INDEX);
+        if (!arguments.arePrefixesPresent(PREFIX_INDEX)
+                || !arguments.getPreamble().isEmpty()) {
+            throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, usage));
         }
-        return ParserUtil.parseIndex(indexText);
+
+        arguments.verifyNoDuplicatePrefixesFor(PREFIX_INDEX);
+        return ParserUtil.parseIndex(arguments.getValue(PREFIX_INDEX).get());
     }
 
     /**

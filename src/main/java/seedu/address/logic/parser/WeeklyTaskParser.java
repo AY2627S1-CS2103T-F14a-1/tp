@@ -3,6 +3,7 @@ package seedu.address.logic.parser;
 import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_INDEX;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_WEEK;
 
 import seedu.address.commons.core.index.Index;
@@ -23,7 +24,7 @@ public class WeeklyTaskParser {
      *
      * @param args               Arguments following the command word.
      * @param usage              Usage instructions for the calling command.
-     * @param additionalPrefixes Prefixes to recognize in addition to the week prefix.
+     * @param additionalPrefixes Prefixes to recognize in addition to the index and week prefixes.
      * @throws NullPointerException If an argument or prefix is null.
      * @throws ParseException       If required information is missing or invalid.
      */
@@ -37,7 +38,7 @@ public class WeeklyTaskParser {
 
         this.usage = usage;
 
-        Prefix[] prefixes = prependWeekPrefix(additionalPrefixes);
+        Prefix[] prefixes = prependRequiredPrefixes(additionalPrefixes);
         ArgumentMultimap arguments = ArgumentTokenizer.tokenize(args, prefixes);
         this.argumentMultimap = arguments;
 
@@ -46,32 +47,35 @@ public class WeeklyTaskParser {
     }
 
     /**
-     * Returns an array containing the weekly prefix followed by the supplied prefixes
+     * Returns an array containing the index and week prefixes followed by the supplied prefixes
      * for map parsing.
      *
-     * @param prefixes Prefixes to recognize in addition to the weekly prefix.
+     * @param prefixes Prefixes to recognize in addition to the index and week prefixes.
      * @return An array containing every recognized prefix.
      */
-    private Prefix[] prependWeekPrefix(Prefix... prefixes) {
-        Prefix[] prefixArray = new Prefix[prefixes.length + 1];
-        prefixArray[0] = PREFIX_WEEK;
-        System.arraycopy(prefixes, 0, prefixArray, 1, prefixes.length);
+    private Prefix[] prependRequiredPrefixes(Prefix... prefixes) {
+        Prefix[] prefixArray = new Prefix[prefixes.length + 2];
+        prefixArray[0] = PREFIX_INDEX;
+        prefixArray[1] = PREFIX_WEEK;
+        System.arraycopy(prefixes, 0, prefixArray, 2, prefixes.length);
         return prefixArray;
     }
 
     /**
-     * Extracts the index.
+     * Extracts and validates the student index from the required index prefix.
      *
      * @param argMultimap Tokenized command arguments.
      * @return The validated displayed student index.
-     * @throws ParseException If the index is missing or invalid.
+     * @throws ParseException If the index prefix is missing or repeated, its value is invalid, or a preamble exists.
      */
     private Index extractIndex(ArgumentMultimap argMultimap) throws ParseException {
-        try {
-            return ParserUtil.parseIndex(argMultimap.getPreamble());
-        } catch (ParseException pe) {
-            throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, usage), pe);
+        if (!argMultimap.arePrefixesPresent(PREFIX_INDEX)
+                || !argMultimap.getPreamble().isEmpty()) {
+            throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, usage));
         }
+
+        argMultimap.verifyNoDuplicatePrefixesFor(PREFIX_INDEX);
+        return ParserUtil.parseIndex(argMultimap.getValue(PREFIX_INDEX).get());
     }
 
     /**
