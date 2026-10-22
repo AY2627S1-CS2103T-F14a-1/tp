@@ -9,8 +9,9 @@ import static seedu.address.commons.util.AppUtil.checkArgument;
 public final class MissionId {
 
     public static final String MESSAGE_CONSTRAINTS =
-            "Mission IDs must start with M followed by a positive number, "
-                    + "for example M01 or M105.";
+            "Invalid Mission ID. Mission IDs must start with 'M' followed by a "
+                    + "positive integer of at least two digits, with no unnecessary " +
+                    "leading zeros (e.g., M01, M02, M105).";
 
     private static final String VALIDATION_REGEX = "M(?:0[1-9]|[1-9][0-9]+)";
 
