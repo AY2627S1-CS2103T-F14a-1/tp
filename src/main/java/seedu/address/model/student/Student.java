@@ -73,7 +73,7 @@ public class Student {
         this.missionSubmissions = missionSubmissions;
         this.registeredStudioRecords = registeredStudioRecords;
         this.registeredMasteryChecks = registeredMasteryChecks;
-        this.registeredNotes =  registeredNotes;
+        this.registeredNotes = registeredNotes;
     }
 
     public Name getName() {

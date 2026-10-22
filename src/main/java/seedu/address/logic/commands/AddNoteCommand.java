@@ -34,6 +34,11 @@ public class AddNoteCommand extends Command {
     private final int noteId;
     private final Note note;
 
+    /**
+     * @param targetIndex Index of the student in the filtered student list to edit.
+     * @param noteId ID to assign note with.
+     * @param note Note to register to student.
+     */
     public AddNoteCommand(Index targetIndex, int noteId, Note note) {
         requireNonNull(targetIndex);
         requireNonNull(note);

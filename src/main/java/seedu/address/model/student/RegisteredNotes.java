@@ -91,7 +91,7 @@ public final class RegisteredNotes {
      *
      * @param id Note ID to remove.
      * @return {@code RegisteredNotes} containing the existing notes without
-     * the note with the given ID.
+     *      the note with the given ID.
      */
     public RegisteredNotes withoutNote(int id) {
         if (!hasNote(id)) {
