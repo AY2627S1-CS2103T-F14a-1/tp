@@ -7,11 +7,11 @@ package seedu.address.model.student;
 public class Note {
 
     public static final int MAX_NOTE_LENGTH = 100;
-    public static final String MESSAGE_CONSTRAINTS = "Note text should not be blank, " +
-            "and note ID must be a non-zero unsigned integer";
+    public static final String MESSAGE_CONSTRAINTS = "Note text should not be blank, "
+            + "and note ID must be a non-zero unsigned integer";
 
     /*
-     * The first character of the name must not be a whitespace,
+     * The first character of the text must not be a whitespace,
      * otherwise " " (a blank string) becomes a valid input.
      */
     public static final String VALIDATION_REGEX = "[\\p{Alnum}][\\p{Alnum} ]*";
