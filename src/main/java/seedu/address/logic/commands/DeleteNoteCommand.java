@@ -4,6 +4,7 @@ import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.AppUtil.checkArgument;
 
 import seedu.address.commons.core.index.Index;
+import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 import seedu.address.model.student.RegisteredNotes;
@@ -22,7 +23,7 @@ public class DeleteNoteCommand extends Command {
             + "INDEX must be a positive integer identifying a displayed student.\n"
             + "ID must be between " + RegisteredNotes.MIN_NOTE_ID
             + " and " + RegisteredNotes.MAX_NOTE_ID + " inclusive.\n"
-            + "Example: " + COMMAND_WORD + " 1 ni/3 nt/30";
+            + "Example: " + COMMAND_WORD + " 1 ni/3";
 
     public static final String MESSAGE_SUCCESS =
             "Deleted %1$s's note at ID %2$d.";
@@ -60,5 +61,27 @@ public class DeleteNoteCommand extends Command {
                 registeredNotes.withoutNote(noteId));
         model.setStudent(studentToUpdate, updatedStudent);
         return new CommandResult(String.format(MESSAGE_SUCCESS, studentToUpdate.getName(), noteId));
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other == this) {
+            return true;
+        }
+
+        if (!(other instanceof DeleteNoteCommand otherDeleteNoteCommand)) {
+            return false;
+        }
+
+        return targetIndex.equals(otherDeleteNoteCommand.targetIndex)
+                && noteId == otherDeleteNoteCommand.noteId;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .add("targetIndex", targetIndex)
+                .add("noteId", noteId)
+                .toString();
     }
 }

@@ -4,6 +4,7 @@ import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.AppUtil.checkArgument;
 
 import seedu.address.commons.core.index.Index;
+import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 import seedu.address.model.student.Note;
@@ -23,8 +24,9 @@ public class AddNoteCommand extends Command {
             + "INDEX must be a positive integer identifying a displayed student.\n"
             + "ID must be between " + RegisteredNotes.MIN_NOTE_ID
             + " and " + RegisteredNotes.MAX_NOTE_ID + " inclusive.\n"
-            + "TEXT must be only contain alphanumeric characters and spaces, and should not be blank.\n"
-            + "Example: " + COMMAND_WORD + " 1 ni/3 nt/30";
+            + "TEXT must only contain alphanumeric characters and spaces, should not be blank, and "
+            + "be less than or equal to " + Note.MAX_NOTE_LENGTH + " characters.\n"
+            + "Example: " + COMMAND_WORD + " 1 ni/3 nt/hello";
 
     public static final String MESSAGE_SUCCESS =
             "Added %1$s's note as ID %2$d.";
@@ -66,5 +68,29 @@ public class AddNoteCommand extends Command {
                 registeredNotes.withNote(noteId, note));
         model.setStudent(studentToUpdate, updatedStudent);
         return new CommandResult(String.format(MESSAGE_SUCCESS, studentToUpdate.getName(), noteId));
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other == this) {
+            return true;
+        }
+
+        if (!(other instanceof AddNoteCommand otherAddNoteCommand)) {
+            return false;
+        }
+
+        return targetIndex.equals(otherAddNoteCommand.targetIndex)
+                && noteId == otherAddNoteCommand.noteId
+                && note.equals(otherAddNoteCommand.note);
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .add("targetIndex", targetIndex)
+                .add("noteId", noteId)
+                .add("note", note)
+                .toString();
     }
 }
