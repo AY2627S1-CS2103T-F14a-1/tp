@@ -370,6 +370,8 @@ instructions. Repeated prefixes identify the repeated fields; blank names and in
 produce their respective constraint messages. An existing name produces
 `This mission already exists in the mission list.`
 
+![result for adding a mission](images/addMissionResult.png)
+
 ### Deleting a mission: `delmission`
 
 Format: `delmission m/MISSIONID`
@@ -385,6 +387,8 @@ students hidden by the current filter. Student details, studio records, and othe
 preserved. The current student filter stays active. The result area shows deletion feedback;
 run `view INDEX` to see the updated profile. Deletion is automatically saved and survives restart.
 Deleted IDs are not reused. Unknown or invalid IDs leave data unchanged.
+
+![result for deleting a mission](images/delMissionResult.png)
 
 ### Recording a mission submission: `markmission`
 
@@ -402,6 +406,8 @@ Format: `markmission INDEX m/MISSION_ID`
 Example: `markmission 1 m/M01`, followed by `view 1`, displays M01 as Submitted.
 An unknown mission ID or invalid command leaves existing records unchanged.
 
+![result for marking a mission](images/markMissionResult.png)
+
 ### Removing a submission record: `unmarkmission`
 
 Format: `unmarkmission INDEX m/MISSION_ID`
@@ -414,6 +420,8 @@ Example: `unmarkmission 1 m/M01`, followed by `view 1`, displays M01 as Not subm
 
 The profile displays configured mission descriptions and deadlines. An empty catalogue shows
 “No missions configured.”
+
+![result for unmarking a mission](images/unmarkMissionResult.png)
 
 ### Editing a mission: `editmission`
 
