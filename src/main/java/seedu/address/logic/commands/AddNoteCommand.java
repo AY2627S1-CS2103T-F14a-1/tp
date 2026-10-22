@@ -23,6 +23,7 @@ public class AddNoteCommand extends Command {
             + "INDEX must be a positive integer identifying a displayed student.\n"
             + "ID must be between " + RegisteredNotes.MIN_NOTE_ID
             + " and " + RegisteredNotes.MAX_NOTE_ID + " inclusive.\n"
+            + "TEXT must be only contain alphanumeric characters and spaces, and should not be blank.\n"
             + "Example: " + COMMAND_WORD + " 1 ni/3 nt/30";
 
     public static final String MESSAGE_SUCCESS =
@@ -30,7 +31,7 @@ public class AddNoteCommand extends Command {
     public static final String MESSAGE_ALREADY_RECORDED =
             "%1$s’s note ID has already been registered. No changes made.";
 
-    private final Index index;
+    private final Index targetIndex;
     private final int noteId;
     private final Note note;
 
@@ -45,7 +46,7 @@ public class AddNoteCommand extends Command {
 
         checkArgument(RegisteredNotes.isValidNoteId(noteId), RegisteredNotes.MESSAGE_CONSTRAINTS);
 
-        this.index = targetIndex;
+        this.targetIndex = targetIndex;
         this.noteId = noteId;
         this.note = note;
     }
@@ -54,7 +55,7 @@ public class AddNoteCommand extends Command {
     public CommandResult execute(Model model) throws CommandException {
         requireNonNull(model);
 
-        Student studentToUpdate = getStudentAtDisplayedIndex(model, index);
+        Student studentToUpdate = getStudentAtDisplayedIndex(model, targetIndex);
         RegisteredNotes registeredNotes = studentToUpdate.getRegisteredNotes();
 
         if (registeredNotes.hasNote(noteId)) {
