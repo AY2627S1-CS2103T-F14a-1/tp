@@ -102,7 +102,7 @@ public class EditCommand extends Command {
 
         return new Student(updatedName, updatedPhone, updatedEmail, updatedTags,
                 updatedStudioGroup, studentToEdit.getMissionSubmissions(), studentToEdit.getRegisteredStudioRecords(),
-                studentToEdit.getRegisteredMasteryChecks());
+                studentToEdit.getRegisteredMasteryChecks(), studentToEdit.getRegisteredNotes());
     }
 
     @Override

@@ -89,7 +89,7 @@ public class EditStudioRecordCommand extends Command {
 
         return new Student(student.getName(), student.getPhone(), student.getEmail(),
                 student.getTags(), student.getStudioGroup(), student.getMissionSubmissions(),
-                registeredStudioRecords, student.getRegisteredMasteryChecks());
+                registeredStudioRecords, student.getRegisteredMasteryChecks(), student.getRegisteredNotes());
     }
 
     @Override

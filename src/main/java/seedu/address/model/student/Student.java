@@ -28,6 +28,7 @@ public class Student {
     private final MissionSubmissions missionSubmissions;
     private final RegisteredStudioRecords registeredStudioRecords;
     private final RegisteredMasteryChecks registeredMasteryChecks;
+    private final RegisteredNotes registeredNotes;
 
     /**
      * Creates a student with no mission submissions, studio records, or mastery check registrations.
@@ -43,7 +44,7 @@ public class Student {
             Name name, Phone phone, Email email, Set<Tag> tags,
             StudioGroup studioGroup) {
         this(name, phone, email, tags, studioGroup, new MissionSubmissions(), new RegisteredStudioRecords(),
-                new RegisteredMasteryChecks());
+                new RegisteredMasteryChecks(), new RegisteredNotes());
     }
 
     /**
@@ -61,7 +62,7 @@ public class Student {
      */
     public Student(Name name, Phone phone, Email email, Set<Tag> tags, StudioGroup studioGroup,
                    MissionSubmissions missionSubmissions, RegisteredStudioRecords registeredStudioRecords,
-                   RegisteredMasteryChecks registeredMasteryChecks) {
+                   RegisteredMasteryChecks registeredMasteryChecks, RegisteredNotes registeredNotes) {
         requireAllNonNull(
                 name, phone, email, tags, missionSubmissions, registeredStudioRecords, registeredMasteryChecks);
         this.name = name;
@@ -72,6 +73,7 @@ public class Student {
         this.missionSubmissions = missionSubmissions;
         this.registeredStudioRecords = registeredStudioRecords;
         this.registeredMasteryChecks = registeredMasteryChecks;
+        this.registeredNotes =  registeredNotes;
     }
 
     public Name getName() {
@@ -120,8 +122,21 @@ public class Student {
     public Student withRegisteredStudioRecords(RegisteredStudioRecords registeredStudioRecords) {
         requireNonNull(registeredStudioRecords);
         return new Student(name, phone, email, tags, studioGroup, missionSubmissions,
-                registeredStudioRecords, registeredMasteryChecks);
+                registeredStudioRecords, registeredMasteryChecks, registeredNotes);
     }
+
+    /**
+     * Returns student including the new registered notes.
+     *
+     * @param registeredNotes {@code RegisteredNotes} to update.
+     * @return {@code Student} containing the updated registered notes.
+     */
+    public Student withRegisteredNotes(RegisteredNotes registeredNotes) {
+        requireNonNull(registeredNotes);
+        return new Student(name, phone, email, tags, studioGroup, missionSubmissions, registeredStudioRecords,
+                registeredMasteryChecks, registeredNotes);
+    }
+
     /**
      * Returns the student's mastery check registrations.
      * The registration mapping is unmodifiable, but appointment completion statuses remain mutable.
@@ -130,6 +145,15 @@ public class Student {
      */
     public RegisteredMasteryChecks getRegisteredMasteryChecks() {
         return registeredMasteryChecks;
+    }
+
+    /**
+     * Returns this student's immutable registered notes.
+     *
+     * @return Registered notes.
+     */
+    public RegisteredNotes getRegisteredNotes() {
+        return registeredNotes;
     }
 
     /**

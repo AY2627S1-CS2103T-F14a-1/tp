@@ -87,7 +87,7 @@ public class DeleteMasteryCheckCommand extends Command {
 
         return new Student(student.getName(), student.getPhone(), student.getEmail(),
                 student.getTags(), student.getStudioGroup(), student.getMissionSubmissions(),
-                student.getRegisteredStudioRecords(), registeredMasteryChecks);
+                student.getRegisteredStudioRecords(), registeredMasteryChecks, student.getRegisteredNotes());
     }
 
     /**
