@@ -57,7 +57,7 @@ public class DeleteMissionCommandParserTest {
         for (String input : List.of("", " ", "m/", "m/ \t")) {
             ParseException error = assertThrows(ParseException.class, () ->
                     new DeleteMissionCommandParser().parse(input));
-            assertEquals(DeleteMissionCommandParser.MESSAGE_MISSING_MISSION, error.getMessage());
+            assertEquals(MissionParser.MESSAGE_MISSING_MISSION, error.getMessage());
         }
         assertEquals(Messages.getErrorMessageForDuplicatePrefixes(CliSyntax.PREFIX_MISSION),
                 assertThrows(ParseException.class, () ->
