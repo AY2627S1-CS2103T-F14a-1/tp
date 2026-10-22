@@ -4,7 +4,7 @@ import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.AppUtil.checkArgument;
 
 /**
- * Identifies a mission independently of its description and deadline.
+ * Identifies a mission independently of its name and deadline.
  */
 public final class MissionId {
 

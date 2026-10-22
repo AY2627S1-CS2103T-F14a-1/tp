@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import seedu.address.logic.LogicManager;
+import seedu.address.logic.Messages;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.AddressBook;
@@ -69,7 +70,7 @@ public class AddMissionCommandTest {
         AddressBook book = new AddressBook();
         book.restoreMissions(List.of(), Long.MAX_VALUE);
         Model model = new ModelManager(book, new UserPrefs());
-        assertThrows(IllegalStateException.class, () ->
+        assertThrows(CommandException.class, () ->
                 new AddMissionCommand("Runes", LocalDate.of(2026, 10, 20)).execute(model));
         assertEquals(book, model.getAddressBook());
     }
@@ -106,7 +107,7 @@ public class AddMissionCommandTest {
                 "Rune\u00a0Reading!", "Rune\u2003Reading!", "\u00a0Rune Reading!\u00a0")) {
             CommandException error = assertThrows(CommandException.class, () ->
                     logic.execute("addmission n/" + name + " d/2027-01-01"));
-            assertEquals(AddMissionCommand.MESSAGE_DUPLICATE_MISSION, error.getMessage());
+            assertEquals(Messages.MESSAGE_DUPLICATE_MISSION, error.getMessage());
             assertEquals(1, model.getMissionList().size());
             assertEquals(2, model.getAddressBook().getNextMissionNumber());
             assertEquals(saved, Files.readString(file));

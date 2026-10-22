@@ -120,6 +120,9 @@ public class MainAppMissionStorageTest {
                     + ",\"nextMissionNumber\":2}");
         }
         documents.add(valid.deepCopy().put("nextMissionNumber", 0).toString());
+        String duplicateName = mission.replace("M01", "M02").replace("Runes", " RUNES ");
+        documents.add("{\"students\":[" + student + "],\"missions\":[" + mission + "," + duplicateName
+                + "],\"nextMissionNumber\":3}");
         return documents;
     }
 

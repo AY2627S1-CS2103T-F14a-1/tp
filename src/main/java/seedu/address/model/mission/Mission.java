@@ -51,9 +51,9 @@ public final class Mission {
     }
 
     /**
-     * Returns this mission's description.
+     * Returns this mission's name.
      *
-     * @return Mission description.
+     * @return Mission name.
      */
     public String getName() {
         return name;
@@ -90,7 +90,7 @@ public final class Mission {
      */
     public boolean hasSameName(String otherName) {
         requireNonNull(otherName);
-        return normalizeName(name).equalsIgnoreCase(normalizeName(otherName));
+        return name.equalsIgnoreCase(normalizeName(otherName));
     }
 
     /**
@@ -98,8 +98,10 @@ public final class Mission {
      *
      * @param value Name whose whitespace should be normalized.
      * @return Name with Unicode whitespace collapsed and surrounding spaces removed.
+     * @throws NullPointerException If the name is null.
      */
-    private static String normalizeName(String value) {
+    public static String normalizeName(String value) {
+        requireNonNull(value);
         return value.replaceAll("(?U)\\s+", " ").strip();
     }
 

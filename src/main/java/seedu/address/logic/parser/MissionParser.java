@@ -132,6 +132,30 @@ public class MissionParser {
     }
 
     /**
+     * Parses commands whose only argument is one mission-ID prefix.
+     *
+     * @param args Arguments after the command word.
+     * @param usage Calling command's usage text.
+     * @return Validated canonical mission ID.
+     * @throws NullPointerException If either argument is null.
+     * @throws ParseException If the preamble, prefix count, or ID is invalid.
+     */
+    public static MissionId parseMissionIdArgument(String args, String usage) throws ParseException {
+        requireNonNull(args);
+        requireNonNull(usage);
+        ArgumentMultimap arguments = ArgumentTokenizer.tokenize(args, PREFIX_MISSION);
+        if (!arguments.getPreamble().isEmpty()) {
+            throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, usage));
+        }
+        arguments.verifyNoDuplicatePrefixesFor(PREFIX_MISSION);
+        String value = arguments.getValue(PREFIX_MISSION).orElse("").strip();
+        if (value.isEmpty()) {
+            throw new ParseException(MESSAGE_MISSING_MISSION);
+        }
+        return parseMissionId(value);
+    }
+
+    /**
      * Normalizes whitespace while preserving the required lowercase prefix.
      * The leading space allows the tokenizer to detect an initial prefix.
      *

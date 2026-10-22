@@ -62,15 +62,15 @@ public class AddressBook implements ReadOnlyAddressBook {
     /**
      * Creates a mission without changing existing student records.
      *
-     * @param description Nonblank assignment description.
+     * @param name Nonblank assignment name.
      * @param deadline Assignment deadline.
      * @return Newly allocated mission.
-     * @throws IllegalArgumentException If the description is blank.
+     * @throws IllegalArgumentException If the name is blank or duplicates another mission.
      * @throws NullPointerException If either argument is null.
      * @throws IllegalStateException If mission IDs are exhausted.
      */
-    public Mission addMission(String description, LocalDate deadline) {
-        return missions.add(description, deadline);
+    public Mission addMission(String name, LocalDate deadline) {
+        return missions.add(name, deadline);
     }
 
     /**
@@ -87,9 +87,7 @@ public class AddressBook implements ReadOnlyAddressBook {
         Mission deleted = missions.find(id).orElseThrow(() ->
                 new IllegalArgumentException("Mission does not exist: " + id));
         List<Student> updatedStudents = students.asUnmodifiableObservableList().stream().map(student ->
-                new Student(student.getName(), student.getPhone(), student.getEmail(), student.getTags(),
-                        student.getStudioGroup(), student.getMissionSubmissions().withoutSubmission(id),
-                        student.getRegisteredStudioRecords(), student.getRegisteredMasteryChecks())).toList();
+                student.withMissionSubmissions(student.getMissionSubmissions().withoutSubmission(id))).toList();
         List<Mission> remaining = missions.getMissions().stream()
                 .filter(mission -> !mission.getId().equals(id)).toList();
         students.setStudents(updatedStudents);
@@ -126,7 +124,7 @@ public class AddressBook implements ReadOnlyAddressBook {
      *
      * @param records Saved missions.
      * @param nextNumber Next unused mission number.
-     * @throws IllegalArgumentException If IDs are duplicated or the counter is invalid.
+     * @throws IllegalArgumentException If IDs or names are duplicated, or the counter is invalid.
      * @throws NullPointerException If the list or a mission is null.
      */
     public void restoreMissions(List<Mission> records, long nextNumber) {

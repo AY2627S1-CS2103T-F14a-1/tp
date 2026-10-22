@@ -2,11 +2,13 @@ package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.Objects;
 import java.util.logging.Logger;
 
 import seedu.address.commons.core.LogsCenter;
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.ToStringBuilder;
+import seedu.address.logic.Messages;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 import seedu.address.model.mission.MissionId;
@@ -32,9 +34,6 @@ public class MarkMissionCommand extends Command {
 
     public static final String MESSAGE_ALREADY_RECORDED =
             "%1$s’s mission submission has already been recorded for mission %2$s. No changes made.";
-
-    public static final String MESSAGE_MISSION_NOT_FOUND =
-            "Mission %1$s does not exist.";
 
     private static final Logger logger = LogsCenter.getLogger(MarkMissionCommand.class);
 
@@ -66,7 +65,7 @@ public class MarkMissionCommand extends Command {
 
         if (model.findMission(missionId).isEmpty()) {
             logger.fine("MarkMissionCommand rejected: mission " + missionId + " does not exist.");
-            throw new CommandException(String.format(MESSAGE_MISSION_NOT_FOUND, missionId));
+            throw new CommandException(String.format(Messages.MESSAGE_MISSION_NOT_FOUND, missionId));
         }
 
         Student studentToUpdate = getStudentAtDisplayedIndex(model, targetIndex);
@@ -79,28 +78,12 @@ public class MarkMissionCommand extends Command {
             return new CommandResult(String.format(MESSAGE_ALREADY_RECORDED, studentToUpdate.getName(), missionId));
         }
 
-        Student updatedStudent = createUpdatedStudent(studentToUpdate, submissions.withSubmission(missionId));
+        Student updatedStudent = studentToUpdate.withMissionSubmissions(submissions.withSubmission(missionId));
         model.setStudent(studentToUpdate, updatedStudent);
         logger.info("Recorded submission for mission " + missionId
                 + " for student " + studentToUpdate.getName()
                 + " at displayed student index " + targetIndex.getOneBased() + " in memory.");
         return new CommandResult(String.format(MESSAGE_SUCCESS, studentToUpdate.getName(), missionId));
-    }
-
-    /**
-     * Copies a student with updated mission submissions.
-     *
-     * @param student Student whose other details are preserved.
-     * @param submissions Updated mission submissions.
-     * @return A student containing the updated submissions and original details.
-     */
-    private Student createUpdatedStudent(Student student, MissionSubmissions submissions) {
-        assert student != null;
-        assert submissions != null;
-
-        return new Student(student.getName(), student.getPhone(), student.getEmail(),
-                student.getTags(), student.getStudioGroup(),
-                submissions, student.getRegisteredStudioRecords(), student.getRegisteredMasteryChecks());
     }
 
     @Override
@@ -116,6 +99,11 @@ public class MarkMissionCommand extends Command {
 
         return targetIndex.equals(otherMissionCommand.targetIndex)
                 && missionId.equals(otherMissionCommand.missionId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(targetIndex.getZeroBased(), missionId);
     }
 
     @Override
