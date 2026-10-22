@@ -28,6 +28,7 @@ CLAUDE.md
 /.codex/
 /.gradle-codex/
 /.gradle-user/
+/.gradle-user-home/
 
 # Temp files
 _temp/

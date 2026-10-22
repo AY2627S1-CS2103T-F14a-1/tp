@@ -1,5 +1,15 @@
 # UI Test Plan
 
+## Edit-note command regression
+
+`EditNoteCommand` is currently not registered with a parser or command
+dispatcher, so it cannot be invoked through the UI. Run the complete
+`EditNoteCommandTest` JUnit class to verify replacement of an existing note,
+preservation of other notes, and no state change for missing note IDs,
+unchanged text, invalid student indexes, and invalid constructor arguments.
+Add interactive cases only after the command is wired into the parser and
+dispatcher.
+
 ## Studio parsing regression
 
 Studio argument parsing is most precisely checked at the parser level. Run the

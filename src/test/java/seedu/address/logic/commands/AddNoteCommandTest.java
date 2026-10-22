@@ -91,6 +91,14 @@ public class AddNoteCommandTest {
     }
 
     @Test
+    public void hashCode_equalCommands_returnsEqualHashes() {
+        AddNoteCommand command = new AddNoteCommand(INDEX_FIRST_STUDENT, NOTE_ID, NOTE);
+        AddNoteCommand equalCommand = new AddNoteCommand(INDEX_FIRST_STUDENT, NOTE_ID, NOTE);
+
+        assertEquals(command.hashCode(), equalCommand.hashCode());
+    }
+
+    @Test
     public void toString_validCommand_includesCommandDetails() {
         AddNoteCommand command = new AddNoteCommand(INDEX_FIRST_STUDENT, NOTE_ID, NOTE);
 

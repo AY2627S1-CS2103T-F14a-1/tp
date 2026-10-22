@@ -89,6 +89,14 @@ public class DeleteNoteCommandTest {
     }
 
     @Test
+    public void hashCode_equalCommands_returnsEqualHashes() {
+        DeleteNoteCommand command = new DeleteNoteCommand(INDEX_FIRST_STUDENT, NOTE_ID);
+        DeleteNoteCommand equalCommand = new DeleteNoteCommand(INDEX_FIRST_STUDENT, NOTE_ID);
+
+        assertEquals(command.hashCode(), equalCommand.hashCode());
+    }
+
+    @Test
     public void toString_validCommand_includesCommandDetails() {
         DeleteNoteCommand command = new DeleteNoteCommand(INDEX_FIRST_STUDENT, NOTE_ID);
 

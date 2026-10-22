@@ -118,6 +118,43 @@ public class RegisteredNotesTest {
     }
 
     @Test
+    public void editNote_existingIdWithDifferentNote_returnsUpdatedCopy() {
+        RegisteredNotes registeredNotes = new RegisteredNotes(Map.of(
+                RegisteredNotes.MIN_NOTE_ID, FIRST_NOTE,
+                RegisteredNotes.MAX_NOTE_ID, SECOND_NOTE));
+        Note updatedNote = new Note("Prepare tutorial");
+
+        RegisteredNotes updatedNotes = registeredNotes.editNote(RegisteredNotes.MIN_NOTE_ID, updatedNote);
+
+        assertEquals(Map.of(
+                RegisteredNotes.MIN_NOTE_ID, FIRST_NOTE,
+                RegisteredNotes.MAX_NOTE_ID, SECOND_NOTE), registeredNotes.getNotesById());
+        assertEquals(Map.of(
+                RegisteredNotes.MIN_NOTE_ID, updatedNote,
+                RegisteredNotes.MAX_NOTE_ID, SECOND_NOTE), updatedNotes.getNotesById());
+    }
+
+    @Test
+    public void editNote_missingIdOrSameNote_returnsSameInstance() {
+        RegisteredNotes registeredNotes = new RegisteredNotes(Map.of(RegisteredNotes.MIN_NOTE_ID, FIRST_NOTE));
+
+        assertSame(registeredNotes, registeredNotes.editNote(2, SECOND_NOTE));
+        assertSame(registeredNotes, registeredNotes.editNote(RegisteredNotes.MIN_NOTE_ID, FIRST_NOTE));
+    }
+
+    @Test
+    public void editNote_nullNoteOrInvalidId_throwsException() {
+        RegisteredNotes registeredNotes = new RegisteredNotes(Map.of(RegisteredNotes.MIN_NOTE_ID, FIRST_NOTE));
+
+        assertThrows(NullPointerException.class, () -> registeredNotes.editNote(RegisteredNotes.MIN_NOTE_ID, null));
+        assertThrows(IllegalArgumentException.class, () ->
+                registeredNotes.editNote(RegisteredNotes.MIN_NOTE_ID - 1, SECOND_NOTE));
+        assertThrows(IllegalArgumentException.class, () ->
+                registeredNotes.editNote(RegisteredNotes.MAX_NOTE_ID + 1, SECOND_NOTE));
+        assertEquals(Map.of(RegisteredNotes.MIN_NOTE_ID, FIRST_NOTE), registeredNotes.getNotesById());
+    }
+
+    @Test
     public void hasNote_presentAbsentAndInvalidIds_returnsExpectedResult() {
         RegisteredNotes registeredNotes = new RegisteredNotes(Map.of(RegisteredNotes.MIN_NOTE_ID, FIRST_NOTE));
 
