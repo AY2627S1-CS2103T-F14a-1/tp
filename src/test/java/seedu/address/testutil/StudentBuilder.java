@@ -14,6 +14,7 @@ import seedu.address.model.student.MissionSubmissions;
 import seedu.address.model.student.Name;
 import seedu.address.model.student.Phone;
 import seedu.address.model.student.RegisteredMasteryChecks;
+import seedu.address.model.student.RegisteredNotes;
 import seedu.address.model.student.RegisteredStudioRecords;
 import seedu.address.model.student.Student;
 import seedu.address.model.student.StudioGroup;
@@ -47,6 +48,7 @@ public class StudentBuilder {
     private MissionSubmissions missionSubmissions;
     private RegisteredStudioRecords registeredStudioRecords;
     private RegisteredMasteryChecks registeredMasteryChecks;
+    private RegisteredNotes registeredNotes;
 
     /**
      * Creates a {@code StudentBuilder} with the default details.
@@ -60,6 +62,7 @@ public class StudentBuilder {
         missionSubmissions = new MissionSubmissions();
         registeredStudioRecords = new RegisteredStudioRecords();
         registeredMasteryChecks = new RegisteredMasteryChecks();
+        registeredNotes = new RegisteredNotes();
     }
 
     /**
@@ -74,6 +77,7 @@ public class StudentBuilder {
         missionSubmissions = studentToCopy.getMissionSubmissions();
         registeredStudioRecords = studentToCopy.getRegisteredStudioRecords();
         registeredMasteryChecks = studentToCopy.getRegisteredMasteryChecks();
+        registeredNotes = studentToCopy.getRegisteredNotes();
     }
 
     /**
@@ -175,7 +179,7 @@ public class StudentBuilder {
      */
     public Student build() {
         return new Student(name, phone, email, tags, studioGroup, missionSubmissions, registeredStudioRecords,
-                registeredMasteryChecks);
+                registeredMasteryChecks, registeredNotes);
     }
 
 }

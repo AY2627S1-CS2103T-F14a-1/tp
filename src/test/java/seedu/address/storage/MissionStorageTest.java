@@ -33,7 +33,7 @@ public class MissionStorageTest {
         Student student = new Student(ALICE.getName(), ALICE.getPhone(), ALICE.getEmail(),
                 ALICE.getTags(), ALICE.getStudioGroup(), new MissionSubmissions(Set.of(new MissionId("M105"))),
                 ALICE.getRegisteredStudioRecords(),
-                ALICE.getRegisteredMasteryChecks());
+                ALICE.getRegisteredMasteryChecks(), ALICE.getRegisteredNotes());
         original.addStudent(student);
         original.restoreMissions(List.of(), 105);
         original.addMission("Curve Manipulation", LocalDate.of(2026, 10, 15));
@@ -62,7 +62,7 @@ public class MissionStorageTest {
         Student student = new Student(ALICE.getName(), ALICE.getPhone(), ALICE.getEmail(),
                 ALICE.getTags(), ALICE.getStudioGroup(), new MissionSubmissions(Set.of(new MissionId("M05"))),
                 ALICE.getRegisteredStudioRecords(),
-                ALICE.getRegisteredMasteryChecks());
+                ALICE.getRegisteredMasteryChecks(), ALICE.getRegisteredNotes());
         String json = "{\"students\":[" + JsonUtil.toJsonString(new JsonAdaptedStudent(student))
                 + "],\"missions\":[],\"nextMissionNumber\":1}";
         Path file = temporaryDirectory.resolve("dangling.json");

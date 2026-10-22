@@ -124,7 +124,7 @@ public class StudentTest {
         assertThrows(NullPointerException.class, () ->
                 new Student(ALICE.getName(), ALICE.getPhone(), ALICE.getEmail(),
                         ALICE.getTags(), ALICE.getStudioGroup(), null, ALICE.getRegisteredStudioRecords(),
-                        ALICE.getRegisteredMasteryChecks()));
+                        ALICE.getRegisteredMasteryChecks(), ALICE.getRegisteredNotes()));
     }
 
     @Test
@@ -188,7 +188,7 @@ public class StudentTest {
     public void constructor_nullMasteryChecks_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> new Student(ALICE.getName(), ALICE.getPhone(), ALICE.getEmail(),
                 ALICE.getTags(), ALICE.getStudioGroup(), ALICE.getMissionSubmissions(),
-                ALICE.getRegisteredStudioRecords(), null));
+                ALICE.getRegisteredStudioRecords(), null, ALICE.getRegisteredNotes()));
     }
 
     @Test
@@ -224,7 +224,8 @@ public class StudentTest {
                 + ", studioGroup=" + student.getStudioGroup()
                 + ", missionSubmissions=" + student.getMissionSubmissions()
                 + ", registeredStudioRecords=" + student.getRegisteredStudioRecords()
-                + ", registeredMasteryChecks=" + student.getRegisteredMasteryChecks() + "}";
+                + ", registeredMasteryChecks=" + student.getRegisteredMasteryChecks()
+                + ", registeredNotes=" + student.getRegisteredNotes() + "}";
         assertEquals(expected, student.toString());
     }
 }
