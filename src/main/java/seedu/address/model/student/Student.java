@@ -64,7 +64,8 @@ public class Student {
                    MissionSubmissions missionSubmissions, RegisteredStudioRecords registeredStudioRecords,
                    RegisteredMasteryChecks registeredMasteryChecks, RegisteredNotes registeredNotes) {
         requireAllNonNull(
-                name, phone, email, tags, missionSubmissions, registeredStudioRecords, registeredMasteryChecks);
+                name, phone, email, tags, missionSubmissions, registeredStudioRecords,
+                registeredMasteryChecks, registeredNotes);
         this.name = name;
         this.phone = phone;
         this.email = email;
@@ -191,14 +192,15 @@ public class Student {
                 && studioGroup.equals(otherStudent.studioGroup)
                 && missionSubmissions.equals(otherStudent.missionSubmissions)
                 && registeredStudioRecords.equals(otherStudent.registeredStudioRecords)
-                && registeredMasteryChecks.equals(otherStudent.registeredMasteryChecks);
+                && registeredMasteryChecks.equals(otherStudent.registeredMasteryChecks)
+                && registeredNotes.equals(otherStudent.registeredNotes);
     }
 
     @Override
     public int hashCode() {
         // use this method for custom fields hashing instead of implementing your own
         return Objects.hash(name, phone, email, tags, studioGroup, missionSubmissions, registeredStudioRecords,
-                registeredMasteryChecks);
+                registeredMasteryChecks, registeredNotes);
     }
 
     @Override
@@ -212,6 +214,7 @@ public class Student {
                 .add("missionSubmissions", missionSubmissions)
                 .add("registeredStudioRecords", registeredStudioRecords)
                 .add("registeredMasteryChecks", registeredMasteryChecks)
+                .add("registeredNotes", registeredNotes)
                 .toString();
     }
 
