@@ -1,8 +1,7 @@
 package seedu.address.logic.parser;
 
-import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
+import static java.util.Objects.requireNonNull;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_INDEX;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_NUMBER;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.DeleteStudentCommand;
@@ -19,14 +18,10 @@ public class DeleteStudentCommandParser implements Parser<DeleteStudentCommand> 
      * @throws ParseException if the user input does not conform to the expected format
      */
     public DeleteStudentCommand parse(String args) throws ParseException {
-        ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args, PREFIX_INDEX);
-        if (!argMultimap.arePrefixesPresent(PREFIX_INDEX)
-                || !argMultimap.getPreamble().isEmpty()) {
-            throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT,
-                    DeleteStudentCommand.MESSAGE_USAGE));
-        }
+        requireNonNull(args);
+        ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
+                args, DeleteStudentCommand.MESSAGE_USAGE, PREFIX_INDEX);
 
-        argMultimap.verifyNoDuplicatePrefixesFor(PREFIX_INDEX);
         Index index = ParserUtil.parseIndex(argMultimap.getValue(PREFIX_INDEX).get());
         return new DeleteStudentCommand(index);
     }

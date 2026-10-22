@@ -17,6 +17,7 @@ import java.util.Set;
 import org.junit.jupiter.api.Test;
 
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.model.mission.MissionId;
 import seedu.address.model.student.Email;
 import seedu.address.model.student.Name;
 import seedu.address.model.student.Phone;
@@ -310,4 +311,21 @@ public class ParserUtilTest {
         }
     }
 
+
+    @Test
+    public void parseMissionId_validCaseWhitespaceAndBoundary_returnsCanonicalId() throws ParseException {
+        assertEquals(new MissionId("M01"), ParserUtil.parseMissionId(" \tm01\n"));
+        assertEquals(new MissionId("M105"), ParserUtil.parseMissionId("M105"));
+        assertEquals(new MissionId("M9223372036854775807"),
+                ParserUtil.parseMissionId("m9223372036854775807"));
+    }
+
+    @Test
+    public void parseMissionId_invalidValues_throwsParseException() {
+        for (String value : List.of("", " ", "M1", "M00", "M001", "M-1", "M+1", "M1.0", "1",
+                "M01 extra", "M01 x/test", "M9223372036854775808")) {
+            assertThrows(ParseException.class, MissionId.MESSAGE_CONSTRAINTS, () -> ParserUtil.parseMissionId(value));
+        }
+        assertThrows(NullPointerException.class, () -> ParserUtil.parseMissionId(null));
+    }
 }

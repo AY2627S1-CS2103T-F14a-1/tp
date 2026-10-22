@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import seedu.address.logic.Messages;
 import seedu.address.logic.parser.exceptions.ParseException;
 
 /**
@@ -63,16 +62,34 @@ public class ArgumentMultimap {
     }
 
     /**
-     * Throws a {@code ParseException} if any of the prefixes given in {@code prefixes} appeared more than
-     * once among the arguments.
+     * Verifies that each supplied prefix appears at most once, checking in the supplied order.
+     *
+     * @param prefixes Prefixes that must not be repeated.
+     * @throws ParseException If a prefix is repeated, using the first repeated prefix's duplicate message.
      */
     public void verifyNoDuplicatePrefixesFor(Prefix... prefixes) throws ParseException {
-        Prefix[] duplicatedPrefixes = Stream.of(prefixes).distinct()
-                .filter(prefix -> argMultimap.containsKey(prefix) && argMultimap.get(prefix).size() > 1)
-                .toArray(Prefix[]::new);
+        for (Prefix prefix : prefixes) {
+            if (argMultimap.containsKey(prefix) && argMultimap.get(prefix).size() > 1) {
+                throw new ParseException(prefix.getDuplicateMessage());
+            }
+        }
+    }
 
-        if (duplicatedPrefixes.length > 0) {
-            throw new ParseException(Messages.getErrorMessageForDuplicatePrefixes(duplicatedPrefixes));
+    /**
+     * Verifies that each supplied prefix is present, reporting each missing prefix once in the supplied order.
+     * A prefix with an empty value is still considered present.
+     *
+     * @param prefixes Prefixes that must be present.
+     * @throws ParseException If any prefixes are missing, combining their messages with line breaks.
+     */
+    public void verifyPrefixesPresentFor(Prefix... prefixes) throws ParseException {
+        List<String> missingMessages = Stream.of(prefixes).distinct()
+                .filter(prefix -> getValue(prefix).isEmpty())
+                .map(Prefix::getMissingMessage)
+                .toList();
+
+        if (!missingMessages.isEmpty()) {
+            throw new ParseException(String.join("\n", missingMessages));
         }
     }
 
