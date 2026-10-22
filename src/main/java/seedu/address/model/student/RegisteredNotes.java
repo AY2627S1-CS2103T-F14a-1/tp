@@ -49,10 +49,61 @@ public class RegisteredNotes {
         this.notesById = Collections.unmodifiableMap(copiedNotes);
     }
 
-    public boolean hasNoteId(int id) {
+    /**
+     * Returns whether a note with the same ID has been registered.
+     *
+     * @param id Note ID to check.
+     * @return True if note ID has been registered.
+     */
+    public boolean hasNote(int id) {
         return notesById.containsKey(id);
     }
 
+    /**
+     * Returns {@code RegisteredNotes} including the given note
+     * without changing this object. Returns this object if a note with
+     * the same ID is already registered.
+     *
+     * @param id Note ID to use.
+     * @param note Note to include.
+     * @return {@code RegisteredNotes} containing the existing notes and given note.
+     */
+    public RegisteredNotes withNote(int id, Note note) {
+        requireNonNull(note);
+        if (hasNote(id)) {
+            return this;
+        }
+
+        Map<Integer, Note> updatedNotes = new HashMap<>(notesById);
+        updatedNotes.put(id, note);
+
+        return new RegisteredNotes(updatedNotes);
+    }
+
+    /**
+     * Returns {@code RegisteredNotes} not including the given note
+     * without changing this object. Returns this object if a note with
+     * the same ID was already not registered.
+     *
+     * @param id Note ID to remove.
+     * @return {@code RegisteredNotes} containing the existing notes without
+     * the note with the given ID.
+     */
+    public RegisteredNotes withoutNote(int id) {
+        if (!hasNote(id)) {
+            return this;
+        }
+
+        Map<Integer, Note> updatedNotes = new HashMap<>(notesById);
+        updatedNotes.remove(id);
+        return new RegisteredNotes(updatedNotes);
+    }
+
+    /**
+     * Returns an unmodifiable map of registered notes.
+     *
+     * @return Registered notes, with no guaranteed iteration order.
+     */
     public Map<Integer, Note> getNotesById() {
         return notesById;
     }
@@ -63,7 +114,7 @@ public class RegisteredNotes {
      * @param noteId Note ID to check.
      * @return True if the ID is between {@value #MIN_NOTE_ID} and {@value #MAX_NOTE_ID}, inclusive.
      */
-    public static boolean isValidNoteId(Integer noteId) {
+    public static boolean isValidNoteId(int noteId) {
         return noteId >= MIN_NOTE_ID && noteId <= MAX_NOTE_ID;
     }
 
