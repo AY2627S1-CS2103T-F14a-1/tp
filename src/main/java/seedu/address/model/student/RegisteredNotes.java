@@ -104,6 +104,30 @@ public final class RegisteredNotes {
     }
 
     /**
+     * Returns {@code RegisteredNotes} including the new record
+     * for the given week, if the week is already recorded.
+     *
+     * @param noteId Note ID to edit
+     * @param note Note to include.
+     * @return RegisteredNotes containing the existing notes and updated note for given ID.
+     */
+    public RegisteredNotes editNote(int noteId, Note note) {
+        requireNonNull(note);
+        if (!hasNote(noteId)) {
+            return this;
+        }
+
+        if (getNotesById().get(noteId).equals(note)) {
+            return this;
+        }
+
+        Map<Integer, Note> updatedNotes = new HashMap<>(notesById);
+        updatedNotes.put(noteId, note);
+
+        return new RegisteredNotes(updatedNotes);
+    }
+
+    /**
      * Returns an unmodifiable map of registered notes.
      *
      * @return Registered notes, with no guaranteed iteration order.
