@@ -1,5 +1,6 @@
 package seedu.address.logic.commands;
 
+import static java.util.Objects.hash;
 import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.AppUtil.checkArgument;
 
@@ -75,6 +76,11 @@ public class DeleteNoteCommand extends Command {
 
         return targetIndex.equals(otherDeleteNoteCommand.targetIndex)
                 && noteId == otherDeleteNoteCommand.noteId;
+    }
+
+    @Override
+    public int hashCode() {
+        return hash(targetIndex, noteId);
     }
 
     @Override

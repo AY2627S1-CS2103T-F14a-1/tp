@@ -1,5 +1,6 @@
 package seedu.address.logic.commands;
 
+import static java.util.Objects.hash;
 import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.AppUtil.checkArgument;
 
@@ -83,6 +84,11 @@ public class AddNoteCommand extends Command {
         return targetIndex.equals(otherAddNoteCommand.targetIndex)
                 && noteId == otherAddNoteCommand.noteId
                 && note.equals(otherAddNoteCommand.note);
+    }
+
+    @Override
+    public int hashCode() {
+        return hash(targetIndex, noteId, note);
     }
 
     @Override

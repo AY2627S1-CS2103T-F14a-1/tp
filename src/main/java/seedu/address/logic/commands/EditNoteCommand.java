@@ -1,5 +1,6 @@
 package seedu.address.logic.commands;
 
+import static java.util.Objects.hash;
 import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.AppUtil.checkArgument;
 
@@ -71,5 +72,34 @@ public class EditNoteCommand extends Command {
                 registeredNotes.editNote(noteId, updatedNote));
         model.setStudent(studentToUpdate, updatedStudent);
         return new CommandResult(String.format(MESSAGE_SUCCESS, studentToUpdate.getName(), noteId));
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other == this) {
+            return true;
+        }
+
+        if (!(other instanceof EditNoteCommand otherEditNoteCommand)) {
+            return false;
+        }
+
+        return targetIndex.equals(otherEditNoteCommand.targetIndex)
+                && noteId == otherEditNoteCommand.noteId
+                && updatedNote.equals(otherEditNoteCommand.updatedNote);
+    }
+
+    @Override
+    public int hashCode() {
+        return hash(targetIndex, noteId, updatedNote);
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .add("targetIndex", targetIndex)
+                .add("noteId", noteId)
+                .add("note", updatedNote)
+                .toString();
     }
 }
