@@ -12,7 +12,7 @@ import java.util.Map;
  * Represents an immutable collection of a student's notes.
  * Each note ID is between {@value MIN_NOTE_ID} and {@value MAX_NOTE_ID}, inclusive.
  */
-public class RegisteredNotes {
+public final class RegisteredNotes {
 
     public static final int MIN_NOTE_ID = 1;
     public static final int MAX_NOTE_ID = 10;
@@ -34,6 +34,7 @@ public class RegisteredNotes {
      *
      * @param notesById Notes and their ID.
      * @throws NullPointerException If the map, any ID, or any note is {@code null}.
+     * @throws IllegalArgumentException If any note ID is outside the valid range.
      */
     public RegisteredNotes(Map<Integer, Note> notesById) {
         requireNonNull(notesById);
@@ -54,8 +55,10 @@ public class RegisteredNotes {
      *
      * @param id Note ID to check.
      * @return True if note ID has been registered.
+     * @throws IllegalArgumentException If the note ID is outside the valid range.
      */
     public boolean hasNote(int id) {
+        checkArgument(isValidNoteId(id), MESSAGE_CONSTRAINTS);
         return notesById.containsKey(id);
     }
 
@@ -67,6 +70,7 @@ public class RegisteredNotes {
      * @param id Note ID to use.
      * @param note Note to include.
      * @return {@code RegisteredNotes} containing the existing notes and given note.
+     * @throws NullPointerException If the note is {@code null}.
      */
     public RegisteredNotes withNote(int id, Note note) {
         requireNonNull(note);

@@ -1,14 +1,17 @@
 package seedu.address.model.student;
 
+import static java.util.Objects.requireNonNull;
+import static seedu.address.commons.util.AppUtil.checkArgument;
+
 /**
  * Represents a note for a Student in the address book.
  * Guarantees: immutable; is valid as declared in {@link #isValidNoteText(String)}
  */
-public class Note {
+public final class Note {
 
     public static final int MAX_NOTE_LENGTH = 100;
-    public static final String MESSAGE_CONSTRAINTS = "Note text should not be blank, "
-            + "and note ID must be a non-zero unsigned integer";
+    public static final String MESSAGE_CONSTRAINTS =
+            "Notes should only contain alphanumeric characters and spaces, and should not be blank";
 
     /*
      * The first character of the text must not be a whitespace,
@@ -24,6 +27,8 @@ public class Note {
      * @param noteText A valid note text.
      */
     public Note(String noteText) {
+        requireNonNull(noteText);
+        checkArgument(isValidNoteText(noteText), MESSAGE_CONSTRAINTS);
         this.noteText = noteText;
     }
 
