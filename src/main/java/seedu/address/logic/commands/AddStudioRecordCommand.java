@@ -67,12 +67,7 @@ public class AddStudioRecordCommand extends Command {
     public CommandResult execute(Model model) throws CommandException {
         requireNonNull(model);
 
-        List<Student> lastShownList = model.getFilteredStudentList();
-        if (targetIndex.getZeroBased() >= lastShownList.size()) {
-            throw new CommandException(Messages.MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX);
-        }
-
-        Student studentToUpdate = lastShownList.get(targetIndex.getZeroBased());
+        Student studentToUpdate = getStudentAtDisplayedIndex(model, targetIndex);
         RegisteredStudioRecords registeredStudioRecords = studentToUpdate.getRegisteredStudioRecords();
 
         if (registeredStudioRecords.hasStudioRecord(week)) {
