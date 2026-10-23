@@ -72,8 +72,7 @@ public class EditStudioRecordCommand extends Command {
             return new CommandResult(String.format(MESSAGE_WEEK_NOT_RECORDED, studentToUpdate.getName(), week));
         }
 
-        // if studio record to update is equal to current
-        if (registeredStudioRecords.getRecordsByWeek().get(week).equals(studioRecord)) {
+        if (registeredStudioRecords.hasEqualStudioRecord(week, studioRecord)) {
             return new CommandResult(String.format(MESSAGE_ALREADY_RECORDED, studentToUpdate.getName(), week));
         }
 
