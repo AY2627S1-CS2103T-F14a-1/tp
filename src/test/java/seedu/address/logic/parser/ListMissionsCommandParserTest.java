@@ -25,6 +25,7 @@ public class ListMissionsCommandParserTest {
 
         assertParseSuccess(parser, " m/M01 ", expectedCommand);
         assertParseSuccess(parser, "\tm/m01\t", expectedCommand);
+        assertParseSuccess(parser, " M/M01 ", expectedCommand);
         assertEquals(expectedCommand,
                 new AddressBookParser().parseCommand("LISTMISSIONS m/m01"));
     }
@@ -46,12 +47,11 @@ public class ListMissionsCommandParserTest {
     }
 
     @Test
-    public void parse_preambleOrUppercasePrefix_reportsUsage() {
+    public void parse_preamble_reportsUsage() {
         String expectedMessage = String.format(
                 MESSAGE_INVALID_COMMAND_FORMAT, ListMissionsCommand.MESSAGE_USAGE);
 
         assertParseFailure(parser, "1 m/M01", expectedMessage);
-        assertParseFailure(parser, "M/M01", expectedMessage);
     }
 
     @Test

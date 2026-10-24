@@ -150,6 +150,7 @@ Run `PrefixTest`, `ArgumentMultimapTest`, `ArgumentStructureValidatorTest`,
 | PREFIX-006 | Run `editstudiorecord id/1 w/3 ef/`, then `view id/1`. | Invalid-effort message; effort remains 75. |
 | PREFIX-007 | Run `editstudiorecord 1 w/3 ef/100`, then `view id/1`. | Invalid-command-format message rejects the preamble; effort remains 75. |
 | PREFIX-008 | Restart and run `view id/1`, then view student 2. | Student 1 retains week 3 effort 75; student 2 is unchanged. |
+| PREFIX-009 | With two students, run `addstudent N/Alice Example P/12345678 E/alice@example.com G/1A`, then list students. | Uppercase prefixes are recognized and the student is added with the supplied values. |
 
 ## Mission parser removal and edit/prefix branch regression
 
