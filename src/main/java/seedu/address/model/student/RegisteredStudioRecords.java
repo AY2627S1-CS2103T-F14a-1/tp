@@ -59,6 +59,25 @@ public final class RegisteredStudioRecords {
     }
 
     /**
+     * Returns whether the same studio status has been recorded for the given week.
+     *
+     * @param week Studio week to check.
+     * @param studioRecord Studio record to check.
+     * @return True if the same studio status has been recorded for the given week.
+     * @throws IllegalArgumentException If {@code week} is outside the valid studio-week range.
+     * @throws NullPointerException If {@code studioRecord} is {@code null}.
+     */
+    public boolean hasEqualStudioRecord(int week, StudioRecord studioRecord) {
+        requireNonNull(studioRecord);
+        checkArgument(isValidWeek(week), MESSAGE_CONSTRAINTS);
+
+        if (!recordsByWeek.containsKey(week)) {
+            return false;
+        }
+        return recordsByWeek.get(week).equals(studioRecord);
+    }
+
+    /**
      * Returns studio records including the given week without changing
      * this object. Returns this object if the week is already recorded.
      *
@@ -110,7 +129,7 @@ public final class RegisteredStudioRecords {
             return this;
         }
 
-        if (getRecordsByWeek().get(week).equals(studioRecord)) {
+        if (hasEqualStudioRecord(week, studioRecord)) {
             return this;
         }
 

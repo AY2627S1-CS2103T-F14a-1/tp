@@ -72,24 +72,14 @@ public class EditStudioRecordCommand extends Command {
             return new CommandResult(String.format(MESSAGE_WEEK_NOT_RECORDED, studentToUpdate.getName(), week));
         }
 
-        // if studio record to update is equal to current
-        if (registeredStudioRecords.getRecordsByWeek().get(week).equals(studioRecord)) {
+        if (registeredStudioRecords.hasEqualStudioRecord(week, studioRecord)) {
             return new CommandResult(String.format(MESSAGE_ALREADY_RECORDED, studentToUpdate.getName(), week));
         }
 
-        Student updatedStudent = createUpdatedStudent(
-                studentToUpdate, registeredStudioRecords.editStudioRecord(week, studioRecord));
+        Student updatedStudent = studentToUpdate.withRegisteredStudioRecords(
+                registeredStudioRecords.editStudioRecord(week, studioRecord));
         model.setStudent(studentToUpdate, updatedStudent);
         return new CommandResult(String.format(MESSAGE_SUCCESS, studentToUpdate.getName(), week));
-    }
-
-    private Student createUpdatedStudent(Student student, RegisteredStudioRecords registeredStudioRecords) {
-        assert student != null;
-        assert registeredStudioRecords != null;
-
-        return new Student(student.getName(), student.getPhone(), student.getEmail(),
-                student.getTags(), student.getStudioGroup(), student.getMissionSubmissions(),
-                registeredStudioRecords, student.getRegisteredMasteryChecks());
     }
 
     @Override

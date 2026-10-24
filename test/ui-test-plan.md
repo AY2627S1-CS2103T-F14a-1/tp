@@ -68,6 +68,15 @@ Run the complete UI plan below to check existing studio behavior.
 
 | ID | Steps | Expected result |
 | --- | --- | --- |
+| STUDIO-ADD-001 | Run `addstudiorecord 1 w/3 ef/50`, then view student 1. | Week 3 is attended with effort score 50. Other weeks and students remain unchanged. |
+| STUDIO-ADD-002 | Run `addstudiorecord 1 w/4 ef/-1`, then view student 1. | Invalid-effort feedback appears; week 4 remains absent. |
+| STUDIO-ADD-003 | Run `addstudiorecord 1 w/13 ef/0`, then view student 1. | Week 13 is attended with effort score 0. |
+| STUDIO-ADD-004 | Run `addstudiorecord 1 w/3 ef/100`, then view student 1. | Already-recorded feedback appears; number 3 retains effort score 50. |
+| STUDIO-EDIT-001 | Run `editstudiorecord 1 w/3 ef/75`, then view student 1. | Success feedback appears; week 3 remains attended with effort score 75, while week 13 remains attended with effort score 0. |
+| STUDIO-EDIT-002 | Run `editstudiorecord 1 w/3 ef/75`, then view student 1. | Already-the-same feedback appears; week 3 retains effort score 75. |
+| STUDIO-EDIT-003 | Run `editstudiorecord 1 w/4 ef/20`, then view student 1. | Not-recorded feedback appears; week 4 remains absent. |
+| STUDIO-DELETE-001 | Run `delstudiorecord 1 w/3`, then view student 1. | Week 3 is absent with effort score 0; week 13 remains recorded. |
+| STUDIO-DELETE-002 | Run `delstudiorecord 1 w/14`, then view student 1. | Invalid-number feedback appears; records remain unchanged. |
 | STUDIO-ADD-001 | Run `addstudiorecord id/1 w/3 ef/50`, then view student 1. | Week 3 is attended with effort score 50. Other weeks and students remain unchanged. |
 | STUDIO-ADD-002 | Run `addstudiorecord id/1 w/4 ef/-1`, then view student 1. | Invalid-effort feedback appears; week 4 remains absent. |
 | STUDIO-ADD-003 | Run `addstudiorecord id/1 w/13 ef/0`, then view student 1. | Week 13 is attended with effort score 0. |
