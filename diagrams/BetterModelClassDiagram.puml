@@ -19,10 +19,10 @@ Student *--> "1" Phone
 Student *--> "1" Email
 Student *--> "1" StudioGroup
 Student *--> "1" RegisteredStudioRecords
-RegisteredStudioRecords *--> "*" StudioRecord : records by week
+RegisteredStudioRecords *--> "*" StudioRecord
 Student *--> "1" MissionSubmissions
 Student *--> "1" RegisteredMasteryChecks
-RegisteredMasteryChecks *-down-> "*" MasteryCheck : assessment\nsessions
+RegisteredMasteryChecks *-down-> "*" MasteryCheck
 
 Name -[hidden]right-> Phone
 Phone -[hidden]right-> Email

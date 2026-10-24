@@ -1,11 +1,11 @@
 @startuml
 !include style.puml
-skinparam linetype polyline
 skinparam arrowThickness 1.1
 skinparam arrowColor MODEL_COLOR
 skinparam classBackgroundColor MODEL_COLOR
 
 Package Model as ModelPackage <<Rectangle>> {
+Class I #FFFFFF
 Class "<<interface>>\nReadOnlyAddressBook" as ReadOnlyAddressBook
 Class "<<interface>>\nReadOnlyUserPrefs" as ReadOnlyUserPrefs
 Class "<<interface>>\nModel" as Model
@@ -41,10 +41,12 @@ ModelManager -left-> "1" AddressBook
 ModelManager -right-> "1" UserPrefs
 UserPrefs .up.|> ReadOnlyUserPrefs
 
+Student -[hidden]up--> I
+UniqueStudentList -[hidden]right-> I
 AddressBook *--> "1" UniqueStudentList
 AddressBook *--> "1" MissionCatalogue
-UniqueStudentList --> "*" Student : all
-ModelManager --> "*" Student : filtered
+UniqueStudentList --> "~* all" Student
+ModelManager --> "~* filtered" Student
 MissionCatalogue --> "*" Mission
 Mission *--> "1" MissionId
 Student *--> "1" Name
@@ -55,8 +57,8 @@ Student *--> "1" StudioGroup
 Student *--> "1" RegisteredStudioRecords
 Student *--> "1" MissionSubmissions
 Student *--> "1" RegisteredMasteryChecks
-RegisteredMasteryChecks *-down-> "*" MasteryCheck : assessment\nsessions
-MissionSubmissions -down-> "*" MissionId : submitted IDs
+RegisteredMasteryChecks *-down-> "*" MasteryCheck
+MissionSubmissions -down-> "*" MissionId
 
 Name -[hidden]right-> Phone
 Phone -[hidden]right-> Email
@@ -71,9 +73,7 @@ ReadOnlyAddressBook -[hidden]right-> Model
 Model -[hidden]right-> ReadOnlyUserPrefs
 AddressBook -[hidden]right-> ModelManager
 ModelManager -[hidden]right-> UserPrefs
-MissionCatalogue -[hidden]right-> UniqueStudentList
-RegisteredStudioRecords *--> "*" StudioRecord : records by week
-Mission -[hidden]right-> MissionSubmissions
+RegisteredStudioRecords *--> "*" StudioRecord
 'Keep each record type below its owning container without crossing relationships.
 MissionId -[hidden]right-> StudioRecord
 StudioRecord -[hidden]right-> MasteryCheck
