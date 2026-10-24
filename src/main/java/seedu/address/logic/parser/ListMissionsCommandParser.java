@@ -1,12 +1,19 @@
 package seedu.address.logic.parser;
 
+import static java.util.Objects.requireNonNull;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_MISSION;
+
 import seedu.address.logic.commands.ListMissionsCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.model.mission.MissionId;
 
 /**
  * Parses a mission ID for listing submitted students.
  */
 public class ListMissionsCommandParser implements Parser<ListMissionsCommand> {
+
+    public static final String MESSAGE_MISSING_MISSION =
+            "Specify a mission ID using " + PREFIX_MISSION + "MISSION_ID.";
 
     /**
      * Parses exactly one mission ID without accessing application state.
@@ -18,6 +25,11 @@ public class ListMissionsCommandParser implements Parser<ListMissionsCommand> {
      */
     @Override
     public ListMissionsCommand parse(String args) throws ParseException {
-        return new ListMissionsCommand(MissionParser.parseMissionIdArgument(args, ListMissionsCommand.MESSAGE_USAGE));
+        requireNonNull(args);
+        ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
+                args, ListMissionsCommand.MESSAGE_USAGE, PREFIX_MISSION);
+
+        MissionId missionId = ParserUtil.parseMissionId(argMultimap.getValue(PREFIX_MISSION).get());
+        return new ListMissionsCommand(missionId);
     }
 }

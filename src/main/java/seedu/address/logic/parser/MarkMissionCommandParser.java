@@ -1,7 +1,13 @@
 package seedu.address.logic.parser;
 
+import static java.util.Objects.requireNonNull;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_INDEX;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_MISSION;
+
+import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.MarkMissionCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.model.mission.MissionId;
 
 /**
  * Parses input arguments and creates a new {@code MarkMissionCommand}.
@@ -18,7 +24,12 @@ public class MarkMissionCommandParser implements Parser<MarkMissionCommand> {
      */
     @Override
     public MarkMissionCommand parse(String args) throws ParseException {
-        MissionParser arguments = new MissionParser(args, MarkMissionCommand.MESSAGE_USAGE);
-        return new MarkMissionCommand(arguments.getIndex(), arguments.getMissionId());
+        requireNonNull(args);
+        ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
+                args, MarkMissionCommand.MESSAGE_USAGE, PREFIX_INDEX, PREFIX_MISSION);
+
+        Index index = ParserUtil.parseIndex(argMultimap.getValue(PREFIX_INDEX).get());
+        MissionId missionId = ParserUtil.parseMissionId(argMultimap.getValue(PREFIX_MISSION).get());
+        return new MarkMissionCommand(index, missionId);
     }
 }

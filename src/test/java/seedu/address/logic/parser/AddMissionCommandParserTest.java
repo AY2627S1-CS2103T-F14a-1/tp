@@ -74,12 +74,13 @@ public class AddMissionCommandParserTest {
     public void parse_invalidFields_reportsSpecificMessage() {
         String usage = String.format(Messages.MESSAGE_INVALID_COMMAND_FORMAT, AddMissionCommand.MESSAGE_USAGE);
         String[][] cases = {
-            {"", ParserUtil.MESSAGE_INVALID_MISSION_NAME},
-            {"d/2026-10-20", ParserUtil.MESSAGE_INVALID_MISSION_NAME},
-            {"n/Runes", AddMissionCommandParser.MESSAGE_MISSING_DEADLINE},
+            {"", String.join("\n", CliSyntax.PREFIX_NAME.getMissingMessage(),
+                    CliSyntax.PREFIX_DATE.getMissingMessage())},
+            {"d/2026-10-20", CliSyntax.PREFIX_NAME.getMissingMessage()},
+            {"n/Runes", CliSyntax.PREFIX_DATE.getMissingMessage()},
             {"n/ \t d/2026-10-20", ParserUtil.MESSAGE_INVALID_MISSION_NAME},
-            {"n/A n/A d/2026-10-20", Messages.getErrorMessageForDuplicatePrefixes(CliSyntax.PREFIX_NAME)},
-            {"n/A d/2026-10-20 d/2026-10-21", Messages.getErrorMessageForDuplicatePrefixes(CliSyntax.PREFIX_DATE)},
+            {"n/A n/A d/2026-10-20", CliSyntax.PREFIX_NAME.getDuplicateMessage()},
+            {"n/A d/2026-10-20 d/2026-10-21", CliSyntax.PREFIX_DATE.getDuplicateMessage()},
             {"extra n/A d/2026-10-20", usage}
         };
         for (String[] testCase : cases) {
@@ -89,15 +90,15 @@ public class AddMissionCommandParserTest {
     }
 
     @Test
-    public void parseCommand_missingMissionFields_reportsFirstMissingField() {
+    public void parseCommand_missingMissionFields_reportsMissingPrefixesBeforeValues() {
         String[][] cases = {
-            {"addmission n/", ParserUtil.MESSAGE_INVALID_MISSION_NAME},
-            {"addmission n/ \t", ParserUtil.MESSAGE_INVALID_MISSION_NAME},
-            {"addmission n/\u2003", ParserUtil.MESSAGE_INVALID_MISSION_NAME},
+            {"addmission n/", CliSyntax.PREFIX_DATE.getMissingMessage()},
+            {"addmission n/ \t", CliSyntax.PREFIX_DATE.getMissingMessage()},
+            {"addmission n/\u2003", CliSyntax.PREFIX_DATE.getMissingMessage()},
             {"addmission n/ d/invalid", ParserUtil.MESSAGE_INVALID_MISSION_NAME},
-            {"addmission n/Track my time", AddMissionCommandParser.MESSAGE_MISSING_DEADLINE},
-            {"addmission n/ Track my time  ", AddMissionCommandParser.MESSAGE_MISSING_DEADLINE},
-            {"addmission n/A n/B", Messages.getErrorMessageForDuplicatePrefixes(CliSyntax.PREFIX_NAME)}
+            {"addmission n/Track my time", CliSyntax.PREFIX_DATE.getMissingMessage()},
+            {"addmission n/ Track my time  ", CliSyntax.PREFIX_DATE.getMissingMessage()},
+            {"addmission n/A n/B", CliSyntax.PREFIX_DATE.getMissingMessage()}
         };
         for (String[] testCase : cases) {
             ParseException error = assertThrows(ParseException.class, () ->

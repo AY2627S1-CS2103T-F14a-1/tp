@@ -18,6 +18,7 @@ import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.StringUtil;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.mission.Mission;
+import seedu.address.model.mission.MissionId;
 import seedu.address.model.student.Email;
 import seedu.address.model.student.Name;
 import seedu.address.model.student.Phone;
@@ -29,8 +30,11 @@ import seedu.address.model.tag.Tag;
  * Contains utility methods used for parsing strings in the various *Parser classes.
  */
 public class ParserUtil {
+    public static final String MESSAGE_INVALID_INDEX =
+            "Index must be a positive integer without a sign, decimal point, or leading zero.";
 
     public static final String MESSAGE_INVALID_MISSION_NAME = "Provide a mission name using n/NAME.";
+    public static final String MESSAGE_INVALID_MISSION_ID = MissionId.MESSAGE_CONSTRAINTS;
     public static final String MESSAGE_INVALID_MISSION_DEADLINE =
             "Deadline must use YYYY-MM-DD format, for example 2026-10-20.";
     public static final String MESSAGE_INVALID_MISSION_CALENDAR_DATE =
@@ -38,10 +42,9 @@ public class ParserUtil {
                     + "and day must be valid for the selected month and year.";
 
     public static final String MESSAGE_INVALID_MASTERY_CHECK_DATETIME =
-            "Mastery check appointment must be a valid date and 24-hour time in DD-MM|HH:MM format.";
+            "Mastery check appointment must be a valid date and 24-hour time in dd-MM|HH:mm format.";
 
     public static final String MESSAGE_INVALID_EFFORT = "Effort score must be a positive integer.";
-    public static final String MESSAGE_INVALID_INDEX = "Index must be a positive integer.";
     public static final String MESSAGE_INVALID_WEEK = "Week must be a positive integer.";
 
     /** Strict input formatter whose default year is captured when this class is initialized. */
@@ -169,6 +172,24 @@ public class ParserUtil {
     }
 
     /**
+     * Parses a case-insensitive mission ID into its canonical uppercase form.
+     *
+     * @param missionIdText Mission ID text.
+     * @return The validated mission ID.
+     * @throws NullPointerException If the text is null.
+     * @throws ParseException If the mission ID is invalid.
+     */
+    public static MissionId parseMissionId(String missionIdText) throws ParseException {
+        requireNonNull(missionIdText);
+
+        try {
+            return new MissionId(missionIdText.trim().toUpperCase(Locale.ROOT));
+        } catch (IllegalArgumentException e) {
+            throw new ParseException(MESSAGE_INVALID_MISSION_ID);
+        }
+    }
+
+    /**
      * Parses a strict calendar deadline, including past dates.
      *
      * @param deadline Raw date text in YYYY-MM-DD format.
@@ -200,7 +221,7 @@ public class ParserUtil {
             throw new ParseException(MESSAGE_INVALID_WEEK);
         }
         int weekNumber = Integer.parseInt(trimmedWeek);
-        if (weekNumber < 0 || weekNumber > 13) {
+        if (weekNumber > 13) {
             throw new ParseException(MESSAGE_INVALID_WEEK);
         }
         return weekNumber;

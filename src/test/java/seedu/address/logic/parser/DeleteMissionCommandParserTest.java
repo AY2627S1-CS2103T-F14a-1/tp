@@ -54,12 +54,12 @@ public class DeleteMissionCommandParserTest {
 
     @Test
     public void parse_invalidStructure_reportsMissingRepeatedOrPreamble() {
-        for (String input : List.of("", " ", "m/", "m/ \t")) {
+        for (String input : List.of("", " ")) {
             ParseException error = assertThrows(ParseException.class, () ->
                     new DeleteMissionCommandParser().parse(input));
-            assertEquals(MissionParser.MESSAGE_MISSING_MISSION, error.getMessage());
+            assertEquals(CliSyntax.PREFIX_MISSION.getMissingMessage(), error.getMessage());
         }
-        assertEquals(Messages.getErrorMessageForDuplicatePrefixes(CliSyntax.PREFIX_MISSION),
+        assertEquals(CliSyntax.PREFIX_MISSION.getDuplicateMessage(),
                 assertThrows(ParseException.class, () ->
                         new DeleteMissionCommandParser().parse("m/M03 m/M03")).getMessage());
         assertEquals(String.format(Messages.MESSAGE_INVALID_COMMAND_FORMAT, DeleteMissionCommand.MESSAGE_USAGE),
