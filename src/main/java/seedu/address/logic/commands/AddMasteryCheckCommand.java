@@ -7,12 +7,10 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_INDEX;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NUMBER;
 
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 import java.util.Locale;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.ToStringBuilder;
-import seedu.address.logic.Messages;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 import seedu.address.model.masterycheck.MasteryCheck;
@@ -80,40 +78,19 @@ public class AddMasteryCheckCommand extends Command {
     public CommandResult execute(Model model) throws CommandException {
         requireNonNull(model);
 
-        List<Student> lastShownList = model.getFilteredStudentList();
-        if (targetIndex.getZeroBased() >= lastShownList.size()) {
-            throw new CommandException(Messages.MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX);
-        }
-
-        Student studentToUpdate = lastShownList.get(targetIndex.getZeroBased());
+        Student studentToUpdate = getStudentAtDisplayedIndex(model, targetIndex);
         RegisteredMasteryChecks registeredMasteryChecks = studentToUpdate.getRegisteredMasteryChecks();
 
         if (registeredMasteryChecks.hasMasteryCheck(number)) {
             return new CommandResult(String.format(MESSAGE_ALREADY_RECORDED, studentToUpdate.getName(), number));
         }
 
-        Student updatedStudent = createUpdatedStudent(
-                studentToUpdate, registeredMasteryChecks.withMasteryCheck(number, masteryCheck));
+        Student updatedStudent = studentToUpdate.withRegisteredMasteryChecks(
+                registeredMasteryChecks.withMasteryCheck(number, masteryCheck));
         model.setStudent(studentToUpdate, updatedStudent);
         return new CommandResult(String.format(
                 MESSAGE_SUCCESS, studentToUpdate.getName(), number,
                 masteryCheck.getAppointmentTime().format(APPOINTMENT_TIME_FORMATTER)));
-    }
-
-    /**
-     * Copies a student with replacement mastery check registrations, retaining all other details.
-     *
-     * @param student Non-null student whose other details are preserved.
-     * @param registeredMasteryChecks Non-null mastery check registrations to use in the copy.
-     * @return A student containing the supplied registrations and the original remaining details.
-     */
-    private Student createUpdatedStudent(Student student, RegisteredMasteryChecks registeredMasteryChecks) {
-        assert student != null;
-        assert registeredMasteryChecks != null;
-
-        return new Student(student.getName(), student.getPhone(), student.getEmail(),
-                student.getTags(), student.getStudioGroup(), student.getMissionSubmissions(),
-                student.getRegisteredStudioRecords(), registeredMasteryChecks);
     }
 
     /**
