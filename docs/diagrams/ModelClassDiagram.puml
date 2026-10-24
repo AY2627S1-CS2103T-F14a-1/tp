@@ -48,7 +48,7 @@ AddressBook *--> "1" MissionCatalogue
 UniqueStudentList --> "~* all" Student
 ModelManager --> "~* filtered" Student
 MissionCatalogue --> "*" Mission
-Mission *--> "1" MissionId
+Mission *-down-> "1" MissionId
 Student *--> "1" Name
 Student *--> "1" Phone
 Student *--> "1" Email
@@ -76,5 +76,6 @@ ModelManager -[hidden]right-> UserPrefs
 RegisteredStudioRecords *--> "*" StudioRecord
 'Keep each record type below its owning container without crossing relationships.
 MissionId -[hidden]right-> StudioRecord
+Mission -[hidden]down-> MissionId
 StudioRecord -[hidden]right-> MasteryCheck
 @enduml

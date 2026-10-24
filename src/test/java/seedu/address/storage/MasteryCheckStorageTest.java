@@ -49,7 +49,7 @@ public class MasteryCheckStorageTest {
                 "[1, \"2026-02-30T14:30\", false]", "[1, \"2026-08-18T14:30\", \"true\"]", "null")) {
             String studentJson = JsonUtil.toJsonString(new JsonAdaptedStudent(AMY)).replaceFirst(
                     "\"registeredMasteryChecks\"\\s*:\\s*\\[\\s*]", "\"registeredMasteryChecks\": [" + record + "]");
-            String json = "{\"students\":[" + studentJson + "],\"missions\":[],\"nextMissionNumber\":1}";
+            String json = "{\"students\":[" + studentJson + "],\"missions\":[]}";
             Path file = temporaryDirectory.resolve("invalid.json");
             Files.writeString(file, json);
             JsonAddressBookStorage storage = new JsonAddressBookStorage(file);

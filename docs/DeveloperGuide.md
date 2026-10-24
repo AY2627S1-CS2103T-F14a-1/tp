@@ -133,7 +133,7 @@ The `Model` component,
 
 * stores the address book data, including all `Student` objects (contained in a `UniqueStudentList`) and shared `Mission` objects (contained in a `MissionCatalogue`).
 * stores each student's contact details, studio group, tags, studio records, and mission submissions. Studio records track attendance and effort scores by week, while `MissionSubmissions` records the IDs of submitted missions. A mission without a recorded submission is treated as not submitted.
-* stores each mission's ID, name, and deadline. The mission catalogue allocates IDs and keeps track of the next mission number.
+* stores each mission's user-supplied ID, name, and deadline. The mission catalogue validates IDs and does not allocate them.
 * maintains a _filtered_ view of the students, such as search results. It exposes this view as an unmodifiable `ObservableList<Student>` that the UI can observe and bind to, so the UI updates when the list changes.
 * stores a `UserPrefs` object that represents the user's preferences (currently, just the GUI settings). This is exposed to the outside as a `ReadOnlyUserPrefs` object.
 * does not depend on any of the other three components (as the `Model` represents data entities of the domain, they should make sense on their own without depending on other components).
@@ -179,21 +179,22 @@ This section describes some noteworthy details on how certain features are imple
 
 ### Adding a mission
 
-For `addmission n/NAME d/DEADLINE`, `AddressBookParser` delegates to `AddMissionCommandParser`, which validates exactly one name and deadline and creates an `AddMissionCommand`. `ParserUtil` removes surrounding whitespace and collapses repeated whitespace in the name, while preserving case and punctuation. The deadline must be a real date in `YYYY-MM-DD` format; past dates are accepted. Missing, repeated, blank, or invalid fields and unexpected preamble text cause a `ParseException`.
+For `addmission m/MISSION_ID n/NAME d/DEADLINE`, `AddressBookParser` delegates to `AddMissionCommandParser`, which validates exactly one mission ID, name, and deadline and creates an `AddMissionCommand`. `ParserUtil#parseMissionId(...)` validates the ID with `MissionId`, preserving the required `M` plus positive integer format. `ParserUtil#parseMissionName(...)` removes surrounding whitespace and collapses repeated whitespace in the name, while preserving case and punctuation. The deadline must be a real date in `YYYY-MM-DD` format; past dates are accepted. Missing, repeated, blank, or invalid fields and unexpected preamble text cause a `ParseException`.
 
-When executed, `AddMissionCommand` calls `Model#hasMissionName(...)` to reject duplicates, ignoring case and whitespace differences. It then calls `Model#addMission(...)`, which delegates to the shared `MissionCatalogue` through `ModelManager` and `AddressBook`. The catalogue allocates the next mission ID only when adding the validated mission. The command returns a `CommandResult` containing the added mission.
+When executed, `AddMissionCommand` checks for an existing ID and calls `Model#hasMissionName(...)` to reject duplicate names, ignoring case and whitespace differences. It then calls `Model#addMission(...)`, which delegates through `ModelManager` and `AddressBook` to `MissionCatalogue`. The catalogue validates uniqueness and stores the supplied ID; it never renumbers missions. The command returns a `CommandResult` containing the added mission.
 
-`MissionCatalogue` also enforces unique names when adding, editing, and restoring saved data,
+`MissionCatalogue` also enforces unique IDs and names when adding, editing, and restoring saved data,
 so callers cannot bypass this rule by accessing the model directly. Restoration validates the
-complete replacement before changing catalogue state. Exhausted IDs produce a `CommandException`
-without modifying or saving data.
+complete replacement before changing catalogue state. Mission IDs are supplied by the user and
+stored with each mission; there is no allocation counter. Deletion leaves all remaining IDs unchanged
+and removes the deleted ID from every student's submissions.
 
 Mission names share `Mission.normalizeName(...)` for whitespace normalization. Delete and submission-list
 parsers share `MissionParser.parseMissionIdArgument(...)`, while mark, unmark, and mission deletion use
 `Student.withMissionSubmissions(...)` to preserve all other student fields. Common command feedback is
 defined in `Messages`.
 
-The sequence diagram below illustrates the successful interaction flow using `execute("addmission n/Rune Reading d/2026-10-20")`. Here, `deadline` is the parsed `LocalDate` value for `2026-10-20`, and `feedback` is the formatted success message.
+The sequence diagram below illustrates the successful interaction flow using `execute("addmission m/M01 n/Rune Reading d/2026-10-20")`. Here, `missionId` is the parsed `MissionId`, `deadline` is the parsed `LocalDate` value for `2026-10-20`, and `feedback` is the formatted success message.
 
 <puml src="diagrams/AddMissionSequenceDiagram.puml" width="1000" />
 
@@ -201,7 +202,7 @@ The sequence diagram below illustrates the successful interaction flow using `ex
 
 For `delmission m/M03`, `AddressBookParser` delegates to `DeleteMissionCommandParser`. The parser requires exactly one nonblank `m/` value and rejects unexpected preamble text. It uses `MissionParser#parseMissionId(...)` to trim and validate the ID and convert it to uppercase, then creates a `DeleteMissionCommand`. Thus, `m/m03` and `m/M03` identify the same mission; the ID is not a displayed list position.
 
-When executed, `DeleteMissionCommand` calls `Model#findMission(...)` and rejects a nonexistent mission before making changes. It then calls `Model#deleteMission(...)`. Within the model, `AddressBook` prepares replacement student records without the deleted mission's submission ID and removes the mission from the catalogue. This includes students hidden by the current filter and preserves their other details and submissions. The allocation counter is retained, so remaining IDs do not change and deleted IDs are not reused. The command returns a `CommandResult` identifying the deleted mission.
+When executed, `DeleteMissionCommand` calls `Model#findMission(...)` and rejects a nonexistent mission before making changes. It then calls `Model#deleteMission(...)`. Within the model, `AddressBook` prepares replacement student records without the deleted mission's submission ID and removes the mission from the catalogue. This includes students hidden by the current filter and preserves their other details and submissions. Remaining IDs do not change; a deleted ID may later be explicitly reused. The command returns a `CommandResult` identifying the deleted mission.
 
 Deleting a mission removes its submission records from every student. Recreating it—even with the same name and deadline—assigns a new ID and starts with no submissions recorded. Previous submission records are not restored.
 
@@ -227,7 +228,7 @@ The corresponding unmarking sequence uses `execute("unmarkmission id/1 m/M03")` 
 
 ### Saving mission changes
 
-After any of these commands returns successfully, `LogicManager` calls `Storage.saveAddressBook` with the current address book before returning the result to the UI. The saved data contains the mission catalogue, the next mission number, and each student's submitted mission IDs. This preserves additions, deletions, and submission changes across restarts. Successful no-change mark/unmark requests also trigger saving.
+After any of these commands returns successfully, `LogicManager` calls `Storage.saveAddressBook` with the current address book before returning the result to the UI. The saved data contains the mission catalogue and each student's submitted mission IDs. This preserves additions, deletions, and submission changes across restarts. Successful no-change mark/unmark requests also trigger saving.
 
 Parsing and command-validation failures exit before the saving step. If saving itself fails, `LogicManager` reports a `CommandException`; the in-memory change has already occurred and is not rolled back. On loading, storage validates the catalogue and requires saved submission IDs to refer to existing missions.
 

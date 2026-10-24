@@ -40,7 +40,7 @@ public class UnmarkMissionCommandTest {
         AddressBook book = new AddressBook(model.getAddressBook());
         book.restoreMissions(List.of(3, 4, 5, 13).stream()
                 .map(number -> new Mission(new MissionId(String.format("M%02d", number)),
-                        "Mission " + number, LocalDate.of(2026, 10, 15))).toList(), 14);
+                        "Mission " + number, LocalDate.of(2026, 10, 15))).toList());
         model.setAddressBook(book);
     }
 

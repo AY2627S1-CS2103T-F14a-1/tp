@@ -190,7 +190,7 @@ public class LogicManagerTest {
 
     @Test
     public void execute_studioSequenceAndReload_preservesStateAfterAcceptedAndRejectedCommands() throws Exception {
-        model.addMission("Mission 1", java.time.LocalDate.of(2026, 10, 15));
+        model.addMission(new MissionId("M01"), "Mission 1", java.time.LocalDate.of(2026, 10, 15));
         Student original = new StudentBuilder(AMY).withMissionSubmissions("M01").withStudioRecords().build();
         model.addStudent(original);
         model.addStudent(BOB);
@@ -272,7 +272,8 @@ public class LogicManagerTest {
     @Test
     public void execute_markMissionAndReload_preservesSubmissionsAfterRejectedCommands() throws Exception {
         for (int number = 1; number <= 13; number++) {
-            model.addMission("Mission " + number, java.time.LocalDate.of(2026, 10, 15));
+            model.addMission(new MissionId("M%02d".formatted(number)),
+                    "Mission " + number, java.time.LocalDate.of(2026, 10, 15));
         }
         model.addStudent(new StudentBuilder(AMY).withMissionSubmissions("M05").build());
         assertEquals("Added Amy Bee's mission submission for mission M03.",
@@ -309,7 +310,8 @@ public class LogicManagerTest {
     @Test
     public void execute_unmarkMissionAndReload_preservesDeletionAndRejectsInvalidInput() throws Exception {
         for (int number = 1; number <= 13; number++) {
-            model.addMission("Mission " + number, java.time.LocalDate.of(2026, 10, 15));
+            model.addMission(new MissionId("M%02d".formatted(number)),
+                    "Mission " + number, java.time.LocalDate.of(2026, 10, 15));
         }
         model.addStudent(new StudentBuilder(AMY).withMissionSubmissions("M03", "M13").build());
         assertEquals("Removed Amy Bee's mission submission for mission M03.",
@@ -345,7 +347,7 @@ public class LogicManagerTest {
 
     @Test
     public void getMissions_returnsModelMissionList() {
-        model.addMission("Runes", java.time.LocalDate.of(2026, 10, 20));
+        model.addMission(new MissionId("M01"), "Runes", java.time.LocalDate.of(2026, 10, 20));
 
         assertEquals(model.getMissionList(), logic.getMissions());
     }
@@ -391,7 +393,7 @@ public class LogicManagerTest {
 
     @Test
     public void execute_otherStudentCommands_preservesMasteryChecksThroughReloads() throws Exception {
-        model.addMission("Mission 1", LocalDate.of(2026, 10, 15));
+        model.addMission(new MissionId("M01"), "Mission 1", LocalDate.of(2026, 10, 15));
         MasteryCheck check = new MasteryCheck(LocalDateTime.of(2026, 8, 18, 14, 30));
         check.markComplete();
         Student original = new StudentBuilder(AMY).withMasteryChecks(Map.of(1, check)).build();
@@ -414,7 +416,7 @@ public class LogicManagerTest {
 
     @Test
     public void execute_deleteMasteryCheckAndReload_preservesDeletionAndRejectsInvalidInput() throws Exception {
-        model.addMission("Mission 1", LocalDate.of(2026, 10, 15));
+        model.addMission(new MissionId("M01"), "Mission 1", LocalDate.of(2026, 10, 15));
         MasteryCheck first = new MasteryCheck(LocalDateTime.of(2026, 8, 18, 14, 30));
         first.markComplete();
         MasteryCheck second = new MasteryCheck(first.getAppointmentTime().plusDays(1));
@@ -457,7 +459,7 @@ public class LogicManagerTest {
 
     @Test
     public void execute_markAndUnmarkMasteryChecksAndReload_preservesStatusesAndRejectedState() throws Exception {
-        model.addMission("Mission 1", LocalDate.of(2026, 10, 15));
+        model.addMission(new MissionId("M01"), "Mission 1", LocalDate.of(2026, 10, 15));
         LocalDateTime time = LocalDateTime.of(2026, 8, 18, 14, 30, 45, 123456789);
         MasteryCheck first = new MasteryCheck(time);
         MasteryCheck other = new MasteryCheck(time.plusDays(1));
