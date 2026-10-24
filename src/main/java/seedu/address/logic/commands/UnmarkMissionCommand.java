@@ -1,6 +1,8 @@
 package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_INDEX;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_MISSION;
 
 import java.util.Objects;
 import java.util.logging.Logger;
@@ -24,10 +26,10 @@ public class UnmarkMissionCommand extends Command {
 
     public static final String MESSAGE_USAGE = COMMAND_WORD
             + ": Removes record of a mission submission for the selected student.\n"
-            + "Parameters: INDEX m/MISSION_ID\n"
+            + "Parameters: " + PREFIX_INDEX + "INDEX m/MISSION_ID\n"
             + "INDEX must be a positive integer identifying a displayed student.\n"
             + MissionId.MESSAGE_CONSTRAINTS + "\n"
-            + "Example: " + COMMAND_WORD + " 1 m/M05";
+            + "Example: " + COMMAND_WORD + " " + PREFIX_INDEX + "1 " + PREFIX_MISSION + "M05";
 
     public static final String MESSAGE_SUCCESS =
             "Removed %1$s's mission submission for mission %2$s.";
