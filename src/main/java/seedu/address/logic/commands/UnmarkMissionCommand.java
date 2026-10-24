@@ -30,10 +30,10 @@ public class UnmarkMissionCommand extends Command {
             + "Example: " + COMMAND_WORD + " 1 m/M05";
 
     public static final String MESSAGE_SUCCESS =
-            "Removed %1$s’s mission submission for mission %2$s.";
+            "Removed %1$s's mission submission for mission %2$s.";
 
     public static final String MESSAGE_NOT_RECORDED =
-            "%1$s’s mission submission was already not recorded for mission %2$s. No changes made.";
+            "%1$s's mission submission was already not recorded for mission %2$s. No changes made.";
 
     private static final Logger logger = LogsCenter.getLogger(UnmarkMissionCommand.class);
 

@@ -26,6 +26,7 @@ import seedu.address.model.mission.Mission;
 import seedu.address.model.mission.MissionCatalogue;
 import seedu.address.model.mission.MissionId;
 import seedu.address.model.student.MissionSubmissions;
+import seedu.address.model.student.Student;
 import seedu.address.storage.JsonAddressBookStorage;
 import seedu.address.storage.JsonUserPrefsStorage;
 import seedu.address.storage.StorageManager;
@@ -110,23 +111,15 @@ public class MissionReviewRegressionTest {
 
     @Test
     public void withMissionSubmissions_replacement_preservesOtherFieldsAndOriginal() {
-        var original = TypicalStudents.ALICE;
+        Student original = TypicalStudents.ALICE;
         MissionSubmissions originalSubmissions = original.getMissionSubmissions();
         MissionSubmissions replacement = new MissionSubmissions(Set.of(new MissionId("M01")));
-    
-        var updated = original.withMissionSubmissions(replacement);
-    
+
+        Student updated = original.withMissionSubmissions(replacement);
+
         assertEquals(replacement, updated.getMissionSubmissions());
         assertEquals(originalSubmissions, original.getMissionSubmissions());
         assertEquals(original, updated.withMissionSubmissions(originalSubmissions));
-        assertThrows(NullPointerException.class, () -> original.withMissionSubmissions(null));
-}
-    
-        var original = TypicalStudents.ALICE;
-        MissionSubmissions replacement = new MissionSubmissions(Set.of(new MissionId("M01")));
-        var updated = original.withMissionSubmissions(replacement);
-        assertEquals(replacement, updated.getMissionSubmissions());
-        assertEquals(original, updated.withMissionSubmissions(original.getMissionSubmissions()));
         assertThrows(NullPointerException.class, () -> original.withMissionSubmissions(null));
     }
 }

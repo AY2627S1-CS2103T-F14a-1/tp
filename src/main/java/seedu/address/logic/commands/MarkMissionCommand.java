@@ -30,10 +30,10 @@ public class MarkMissionCommand extends Command {
             + "Example: " + COMMAND_WORD + " 1 m/M05";
 
     public static final String MESSAGE_SUCCESS =
-            "Added %1$s’s mission submission for mission %2$s.";
+            "Added %1$s's mission submission for mission %2$s.";
 
     public static final String MESSAGE_ALREADY_RECORDED =
-            "%1$s’s mission submission has already been recorded for mission %2$s. No changes made.";
+            "%1$s's mission submission has already been recorded for mission %2$s. No changes made.";
 
     private static final Logger logger = LogsCenter.getLogger(MarkMissionCommand.class);
 
