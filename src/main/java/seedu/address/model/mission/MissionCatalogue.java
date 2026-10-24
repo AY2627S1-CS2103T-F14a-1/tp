@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -19,6 +20,9 @@ import javafx.collections.ObservableList;
  */
 public final class MissionCatalogue {
 
+    public static final String MESSAGE_DUPLICATE_NAME = "Another mission already uses this name.";
+    public static final String MESSAGE_IDS_EXHAUSTED = "No further mission IDs can be allocated.";
+
     private final ObservableList<Mission> missions = FXCollections.observableArrayList();
     private final ObservableList<Mission> unmodifiableMissions = FXCollections.unmodifiableObservableList(missions);
     private long nextMissionNumber = 1;
@@ -26,19 +30,21 @@ public final class MissionCatalogue {
     /**
      * Allocates a mission ID only after its contents have been validated.
      *
-     * @param description Nonblank mission description.
+     * @param name Nonblank mission name.
      * @param deadline Submission deadline.
      * @return Newly stored mission.
      * @throws NullPointerException If either argument is null.
-     * @throws IllegalArgumentException If the description is blank.
+     * @throws IllegalArgumentException If the name is blank or duplicates another mission.
      * @throws IllegalStateException If the allocation counter is exhausted.
      */
-    public Mission add(String description, LocalDate deadline) {
+    public Mission add(String name, LocalDate deadline) {
         if (nextMissionNumber == Long.MAX_VALUE) {
-            throw new IllegalStateException("No further mission IDs can be allocated.");
+            throw new IllegalStateException(MESSAGE_IDS_EXHAUSTED);
         }
         MissionId id = new MissionId(String.format(Locale.ROOT, "M%02d", nextMissionNumber));
-        Mission mission = new Mission(id, description, deadline);
+        Mission mission = new Mission(id, name, deadline);
+        checkArgument(missions.stream().noneMatch(existing -> existing.hasSameName(mission.getName())),
+                MESSAGE_DUPLICATE_NAME);
         nextMissionNumber++;
         missions.add(mission);
         return mission;
@@ -47,17 +53,19 @@ public final class MissionCatalogue {
     /**
      * Replaces saved catalogue state after validating the entire replacement.
      *
-     * @param records Missions to restore, with unique IDs.
+     * @param records Missions to restore, with unique IDs and case-insensitively unique names.
      * @param nextNumber Allocation counter greater than every existing ID number.
      * @throws NullPointerException If the list or a mission is null.
-     * @throws IllegalArgumentException If an ID is duplicated or the counter is invalid.
+     * @throws IllegalArgumentException If an ID or name is duplicated, or the counter is invalid.
      */
     public void restore(List<Mission> records, long nextNumber) {
         List<Mission> copiedRecords = List.copyOf(records);
         checkArgument(nextNumber > 0, "Next mission number must be positive.");
         Set<MissionId> ids = new HashSet<>();
+        Set<String> names = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
         for (Mission mission : copiedRecords) {
             checkArgument(ids.add(mission.getId()), "Duplicate mission ID: " + mission.getId());
+            checkArgument(names.add(mission.getName()), MESSAGE_DUPLICATE_NAME);
             checkArgument(mission.getId().getNumber() < nextNumber,
                     "Next mission number must be greater than every saved mission ID.");
         }
@@ -114,7 +122,7 @@ public final class MissionCatalogue {
         boolean hasDuplicateName = missions.stream()
                 .anyMatch(mission -> !mission.getId().equals(target.getId())
                         && mission.hasSameName(editedMission.getName()));
-        checkArgument(!hasDuplicateName, "Another mission already uses this name.");
+        checkArgument(!hasDuplicateName, MESSAGE_DUPLICATE_NAME);
 
         missions.set(index, editedMission);
     }

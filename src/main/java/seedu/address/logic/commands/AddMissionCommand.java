@@ -5,6 +5,7 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_DATE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
 
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.logging.Logger;
 
 import seedu.address.commons.core.LogsCenter;
@@ -21,9 +22,8 @@ public class AddMissionCommand extends Command {
     public static final String MESSAGE_USAGE = COMMAND_WORD + ": Adds a mission shared across students.\n"
             + "Parameters: " + PREFIX_NAME + "NAME " + PREFIX_DATE + "DEADLINE\n"
             + "DEADLINE must be a real date in YYYY-MM-DD format.\n"
-            + "Example: " + COMMAND_WORD + " " + PREFIX_NAME + "Rune Reading " + PREFIX_DATE + "2026-10-20.";
+            + "Example: " + COMMAND_WORD + " " + PREFIX_NAME + "Rune Reading " + PREFIX_DATE + "2026-10-20";
     public static final String MESSAGE_SUCCESS = "New mission added: %1$s.";
-    public static final String MESSAGE_DUPLICATE_MISSION = "This mission already exists in the mission list.";
 
     private static final Logger logger = LogsCenter.getLogger(AddMissionCommand.class);
 
@@ -35,20 +35,35 @@ public class AddMissionCommand extends Command {
      *
      * @param name Validated non-blank mission name.
      * @param deadline Validated deadline, which may be in the past.
+     * @throws NullPointerException If the name or deadline is null.
      */
     public AddMissionCommand(String name, LocalDate deadline) {
         this.name = requireNonNull(name);
         this.deadline = requireNonNull(deadline);
     }
 
+    /**
+     * Adds the mission after checking its name, translating exhausted IDs into command feedback.
+     *
+     * @param model Model containing the catalogue.
+     * @return Feedback identifying the new mission.
+     * @throws NullPointerException If the model is null.
+     * @throws CommandException If the name is duplicated or no IDs remain.
+     * @throws IllegalArgumentException If the supplied name is blank.
+     */
     @Override
     public CommandResult execute(Model model) throws CommandException {
         requireNonNull(model);
         if (model.hasMissionName(name)) {
             logger.fine("Mission addition rejected: duplicate name.");
-            throw new CommandException(MESSAGE_DUPLICATE_MISSION);
+            throw new CommandException(Messages.MESSAGE_DUPLICATE_MISSION);
         }
-        Mission added = model.addMission(name, deadline);
+        Mission added;
+        try {
+            added = model.addMission(name, deadline);
+        } catch (IllegalStateException e) {
+            throw new CommandException(e.getMessage(), e);
+        }
         logger.info("Added mission " + added.getId() + " to the in-memory catalogue.");
         return new CommandResult(String.format(MESSAGE_SUCCESS, Messages.format(added)));
     }
@@ -62,6 +77,11 @@ public class AddMissionCommand extends Command {
             return false;
         }
         return name.equals(otherAddMissionCommand.name) && deadline.equals(otherAddMissionCommand.deadline);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, deadline);
     }
 
     @Override
