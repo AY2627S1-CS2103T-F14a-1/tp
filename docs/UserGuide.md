@@ -571,6 +571,10 @@ Action     | Format, Examples
 **Add studio record** | `addstudiorecord INDEX w/WEEK ef/EFFORT`<br> e.g., `addstudiorecord 1 w/3 ef/30`
 **Delete studio record** | `delstudiorecord INDEX w/WEEK`<br> e.g., `delstudiorecord 1 w/3`
 **Edit studio record** | `editstudiorecord INDEX w/WEEK ef/EFFORT`<br> e.g., `editstudiorecord 1 w/3 ef/30`
+**Add mastery check** | `addmc INDEX num/NUMBER dt/DATE-TIME`<br> e.g., `addmc 1 num/2 dt/29-09\|23:59`                                                                                    
+**Delete mastery check** | `delmc INDEX num/NUMBER`<br> e.g. `delmc 1 num/2`
+**Mark mastery check** | `markmc INDEX num/NUMBER`<br> e.g. `markmc 1 num/2`
+**Unmark mastery check** | `unmarkmc INDEX num/NUMBER`<br> e.g. `unmarkmc 1 num/2`
 **Add mission** | `addmission n/NAME d/DEADLINE`<br> e.g., `addmission n/Rune Reading d/2026-10-20`
 **Delete mission** | `delmission m/MISSIONID`<br> e.g., `delmission m/M03`
 **Record mission submission** | `markmission INDEX m/MISSION_ID`<br> e.g., `markmission 1 m/M01`
