@@ -1,7 +1,6 @@
 package seedu.address.logic.parser;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_STUDENT;
@@ -12,7 +11,6 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import seedu.address.logic.Messages;
 import seedu.address.logic.commands.AddMasteryCheckCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.masterycheck.MasteryCheck;
@@ -31,33 +29,34 @@ public class AddMasteryCheckCommandParserTest {
     public void parse_validArguments_returnsExpectedCommand() {
         LocalDateTime time = LocalDateTime.of(LocalDate.now().getYear(), 8, 18, 14, 30);
         AddMasteryCheckCommand expected = new AddMasteryCheckCommand(INDEX_FIRST_STUDENT, 1, new MasteryCheck(time));
-        assertParseSuccess(parser, "1 num/1 dt/18-08|14:30", expected);
-        assertParseSuccess(parser, " 1 dt/18-08|14:30 num/1 ", expected);
-        assertParseSuccess(parser, "1 num/2147483647 dt/31-12|23:59",
+        assertParseSuccess(parser, "id/1 num/1 dt/18-08|14:30", expected);
+        assertParseSuccess(parser, " id/1 dt/18-08|14:30 num/1 ", expected);
+        assertParseSuccess(parser, "id/1 num/2147483647 dt/31-12|23:59",
                 new AddMasteryCheckCommand(INDEX_FIRST_STUDENT, Integer.MAX_VALUE,
                         new MasteryCheck(LocalDateTime.of(LocalDate.now().getYear(), 12, 31, 23, 59))));
     }
 
     @Test
-    public void parse_invalidIndex_reportsCommandUsage() {
+    public void parse_invalidIndex_reportsIndexConstraint() {
         for (String index : List.of("", "0", "-1", "abc", "1 extra", "2147483648")) {
-            assertParseFailure(parser, index + " num/1 dt/18-08|14:30",
-                    String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddMasteryCheckCommand.MESSAGE_USAGE));
+            assertParseFailure(parser, "id/" + index + " num/1 dt/18-08|14:30",
+                    ParserUtil.MESSAGE_INVALID_INDEX);
         }
     }
 
     @Test
-    public void parse_missingPrefixes_reportsCommandUsage() {
-        for (String args : List.of("1", "1 num/1", "1 dt/18-08|14:30")) {
-            assertParseFailure(parser, args,
-                    String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddMasteryCheckCommand.MESSAGE_USAGE));
-        }
+    public void parse_missingPrefixes_reportsEveryMissingPrefix() {
+        assertParseFailure(parser, "id/1",
+                String.join("\n", CliSyntax.PREFIX_NUMBER.getMissingMessage(),
+                        CliSyntax.PREFIX_DATETIME.getMissingMessage()));
+        assertParseFailure(parser, "id/1 num/1", CliSyntax.PREFIX_DATETIME.getMissingMessage());
+        assertParseFailure(parser, "id/1 dt/18-08|14:30", CliSyntax.PREFIX_NUMBER.getMissingMessage());
     }
 
     @Test
     public void parse_invalidNumber_reportsNumberConstraint() {
         for (String number : List.of("", "0", "-1", "1.5", "abc", "2147483648")) {
-            assertParseFailure(parser, "1 num/" + number + " dt/18-08|14:30",
+            assertParseFailure(parser, "id/1 num/" + number + " dt/18-08|14:30",
                     RegisteredMasteryChecks.MESSAGE_CONSTRAINTS);
         }
     }
@@ -65,20 +64,20 @@ public class AddMasteryCheckCommandParserTest {
     @Test
     public void parse_invalidDateTime_reportsDateTimeConstraint() {
         for (String time : List.of("", "31-04|14:30", "18-08|24:00", "18-08|14:60", "18-08||14:30")) {
-            assertParseFailure(parser, "1 num/1 dt/" + time, ParserUtil.MESSAGE_INVALID_MASTERY_CHECK_DATETIME);
+            assertParseFailure(parser, "id/1 num/1 dt/" + time, ParserUtil.MESSAGE_INVALID_MASTERY_CHECK_DATETIME);
         }
     }
 
     @Test
     public void parse_duplicatePrefixes_reportsRepeatedPrefix() {
-        assertParseFailure(parser, "1 num/1 num/2 dt/18-08|14:30",
-                Messages.getErrorMessageForDuplicatePrefixes(CliSyntax.PREFIX_NUMBER));
-        assertParseFailure(parser, "1 num/1 dt/18-08|14:30 dt/19-08|14:30",
-                Messages.getErrorMessageForDuplicatePrefixes(CliSyntax.PREFIX_DATETIME));
+        assertParseFailure(parser, "id/1 num/1 num/2 dt/18-08|14:30",
+                CliSyntax.PREFIX_NUMBER.getDuplicateMessage());
+        assertParseFailure(parser, "id/1 num/1 dt/18-08|14:30 dt/19-08|14:30",
+                CliSyntax.PREFIX_DATETIME.getDuplicateMessage());
     }
 
     @Test
     public void parse_extraTrailingText_throwsParseException() {
-        assertThrows(ParseException.class, () -> parser.parse("1 num/1 dt/18-08|14:30 extra"));
+        assertThrows(ParseException.class, () -> parser.parse("id/1 num/1 dt/18-08|14:30 extra"));
     }
 }

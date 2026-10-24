@@ -76,7 +76,7 @@ public class LogicManagerTest {
 
     @Test
     public void execute_commandExecutionError_throwsCommandException() {
-        String deleteStudentCommand = "delstudent 9";
+        String deleteStudentCommand = "delstudent id/9";
         assertCommandException(deleteStudentCommand, MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX);
     }
 
@@ -197,37 +197,37 @@ public class LogicManagerTest {
         JsonAddressBookStorage storage = new JsonAddressBookStorage(temporaryFolder.resolve("addressBook.json"));
 
         assertEquals("Added Amy Bee's studio record for studio week 3.",
-                logic.execute("addstudiorecord 1 w/3 ef/50").getFeedbackToUser());
+                logic.execute("addstudiorecord id/1 w/3 ef/50").getFeedbackToUser());
         Student withWeekThree = new StudentBuilder(original)
                 .withStudioRecords(new StudioRecordSet(3, new StudioRecord(50))).build();
         assertStudioState(model, storage, withWeekThree);
 
         String savedJson = Files.readString(storage.getAddressBookFilePath());
         assertThrows(ParseException.class, MESSAGE_INVALID_EFFORT, () ->
-                logic.execute("addstudiorecord 1 w/4 ef/-1"));
+                logic.execute("addstudiorecord id/1 w/4 ef/-1"));
         assertEquals(savedJson, Files.readString(storage.getAddressBookFilePath()));
         assertStudioState(model, storage, withWeekThree);
 
         assertEquals("Added Amy Bee's studio record for studio week 13.",
-                logic.execute("addstudiorecord 1 w/13 ef/0").getFeedbackToUser());
+                logic.execute("addstudiorecord id/1 w/13 ef/0").getFeedbackToUser());
         Student withBothWeeks = new StudentBuilder(original).withStudioRecords(
                 new StudioRecordSet(3, new StudioRecord(50)), new StudioRecordSet(13, new StudioRecord(0))).build();
         assertStudioState(model, storage, withBothWeeks);
 
         assertEquals(String.format(EditStudioRecordCommand.MESSAGE_SUCCESS, original.getName(), 3),
-                logic.execute("editstudiorecord 1 w/3 ef/75").getFeedbackToUser());
+                logic.execute("editstudiorecord id/1 w/3 ef/75").getFeedbackToUser());
         Student withEditedWeekThree = new StudentBuilder(original).withStudioRecords(
                 new StudioRecordSet(3, new StudioRecord(75)), new StudioRecordSet(13, new StudioRecord(0))).build();
         assertStudioState(model, storage, withEditedWeekThree);
 
         savedJson = Files.readString(storage.getAddressBookFilePath());
         assertEquals(String.format(EditStudioRecordCommand.MESSAGE_ALREADY_RECORDED, original.getName(), 3),
-                logic.execute("editstudiorecord 1 w/3 ef/75").getFeedbackToUser());
+                logic.execute("editstudiorecord id/1 w/3 ef/75").getFeedbackToUser());
         assertEquals(savedJson, Files.readString(storage.getAddressBookFilePath()));
         assertStudioState(model, storage, withEditedWeekThree);
 
         assertEquals(String.format(EditStudioRecordCommand.MESSAGE_WEEK_NOT_RECORDED, original.getName(), 4),
-                logic.execute("editstudiorecord 1 w/4 ef/50").getFeedbackToUser());
+                logic.execute("editstudiorecord id/1 w/4 ef/50").getFeedbackToUser());
         assertEquals(savedJson, Files.readString(storage.getAddressBookFilePath()));
         assertStudioState(model, storage, withEditedWeekThree);
 
@@ -236,19 +236,19 @@ public class LogicManagerTest {
                 new JsonUserPrefsStorage(temporaryFolder.resolve("reloadedPrefs.json"))));
         savedJson = Files.readString(storage.getAddressBookFilePath());
         assertEquals("Amy Bee’s studio has already been recorded for studio week 3. No changes made.",
-                reloadedLogic.execute("addstudiorecord 1 w/3 ef/100").getFeedbackToUser());
+                reloadedLogic.execute("addstudiorecord id/1 w/3 ef/100").getFeedbackToUser());
         assertEquals(savedJson, Files.readString(storage.getAddressBookFilePath()));
         assertStudioState(reloadedModel, storage, withEditedWeekThree);
 
         assertEquals("Removed Amy Bee's record for studio week 3.",
-                reloadedLogic.execute("delstudiorecord 1 w/3").getFeedbackToUser());
+                reloadedLogic.execute("delstudiorecord id/1 w/3").getFeedbackToUser());
         Student withWeekThirteen = new StudentBuilder(original)
                 .withStudioRecords(new StudioRecordSet(13, new StudioRecord(0))).build();
         assertStudioState(reloadedModel, storage, withWeekThirteen);
 
         String savedAfterDeletion = Files.readString(storage.getAddressBookFilePath());
         assertThrows(ParseException.class, MESSAGE_INVALID_WEEK, () ->
-                reloadedLogic.execute("delstudiorecord 1 w/14"));
+                reloadedLogic.execute("delstudiorecord id/1 w/14"));
         assertEquals(savedAfterDeletion, Files.readString(storage.getAddressBookFilePath()));
         assertStudioState(reloadedModel, storage, withWeekThirteen);
     }
@@ -275,8 +275,8 @@ public class LogicManagerTest {
             model.addMission("Mission " + number, java.time.LocalDate.of(2026, 10, 15));
         }
         model.addStudent(new StudentBuilder(AMY).withMissionSubmissions("M05").build());
-        assertEquals("Added Amy Bee’s mission submission for mission M03.",
-                logic.execute("MARKMISSION 1 m/M03").getFeedbackToUser());
+        assertEquals("Added Amy Bee's mission submission for mission M03.",
+                logic.execute("MARKMISSION id/1 m/M03").getFeedbackToUser());
         Path filePath = temporaryFolder.resolve("addressBook.json");
         JsonAddressBookStorage storage = new JsonAddressBookStorage(filePath);
         Model reloadedModel = new ModelManager(storage.readAddressBook().orElseThrow(), new UserPrefs());
@@ -285,21 +285,21 @@ public class LogicManagerTest {
 
         assertEquals(Set.of(new MissionId("M05"), new MissionId("M03")), reloadedModel.getFilteredStudentList().get(0)
                 .getMissionSubmissions().getSubmittedMissionIds());
-        assertEquals("Amy Bee’s mission submission has already been recorded for mission M03. No changes made.",
-                reloadedLogic.execute("markmission 1 m/M03").getFeedbackToUser());
+        assertEquals("Amy Bee's mission submission has already been recorded for mission M03. No changes made.",
+                reloadedLogic.execute("markmission id/1 m/M03").getFeedbackToUser());
 
         String savedJson = Files.readString(filePath);
         assertThrows(ParseException.class, MissionId.MESSAGE_CONSTRAINTS, () ->
-                reloadedLogic.execute("markmission 1 m/invalid"));
+                reloadedLogic.execute("markmission id/1 m/invalid"));
         assertEquals(savedJson, Files.readString(filePath));
         assertEquals(Set.of(new MissionId("M05"), new MissionId("M03")), reloadedModel.getFilteredStudentList().get(0)
                 .getMissionSubmissions().getSubmittedMissionIds());
 
-        assertEquals("Added Amy Bee’s mission submission for mission M04.",
-                reloadedLogic.execute("markmission 1 m/M04").getFeedbackToUser());
+        assertEquals("Added Amy Bee's mission submission for mission M04.",
+                reloadedLogic.execute("markmission id/1 m/M04").getFeedbackToUser());
         savedJson = Files.readString(filePath);
         assertThrows(CommandException.class, MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX, () ->
-                reloadedLogic.execute("markmission 2 m/M05"));
+                reloadedLogic.execute("markmission id/2 m/M05"));
         assertEquals(savedJson, Files.readString(filePath));
         assertEquals(Set.of(new MissionId("M05"), new MissionId("M03"), new MissionId("M04")),
                 storage.readAddressBook().orElseThrow()
@@ -312,8 +312,8 @@ public class LogicManagerTest {
             model.addMission("Mission " + number, java.time.LocalDate.of(2026, 10, 15));
         }
         model.addStudent(new StudentBuilder(AMY).withMissionSubmissions("M03", "M13").build());
-        assertEquals("Removed Amy Bee’s mission submission for mission M03.",
-                logic.execute("UNMARKMISSION 1 m/M03").getFeedbackToUser());
+        assertEquals("Removed Amy Bee's mission submission for mission M03.",
+                logic.execute("UNMARKMISSION id/1 m/M03").getFeedbackToUser());
         Path filePath = temporaryFolder.resolve("addressBook.json");
         JsonAddressBookStorage storage = new JsonAddressBookStorage(filePath);
         Model reloadedModel = new ModelManager(storage.readAddressBook().orElseThrow(), new UserPrefs());
@@ -324,21 +324,21 @@ public class LogicManagerTest {
 
         String savedJson = Files.readString(filePath);
         assertThrows(ParseException.class, MissionId.MESSAGE_CONSTRAINTS, () ->
-                reloadedLogic.execute("unmarkmission 1 m/invalid"));
+                reloadedLogic.execute("unmarkmission id/1 m/invalid"));
         assertEquals(savedJson, Files.readString(filePath));
         assertEquals(Set.of(new MissionId("M13")), reloadedModel.getFilteredStudentList().get(0)
                 .getMissionSubmissions().getSubmittedMissionIds());
-        assertEquals("Amy Bee’s mission submission was already not recorded for mission M03. No changes made.",
-                reloadedLogic.execute("unmarkmission 1 m/M03").getFeedbackToUser());
+        assertEquals("Amy Bee's mission submission was already not recorded for mission M03. No changes made.",
+                reloadedLogic.execute("unmarkmission id/1 m/M03").getFeedbackToUser());
         assertEquals(savedJson, Files.readString(filePath));
 
-        assertEquals("Removed Amy Bee’s mission submission for mission M13.",
-                reloadedLogic.execute("unmarkmission 1 m/M13").getFeedbackToUser());
+        assertEquals("Removed Amy Bee's mission submission for mission M13.",
+                reloadedLogic.execute("unmarkmission id/1 m/M13").getFeedbackToUser());
         Student expected = new StudentBuilder(AMY).withMissionSubmissions().build();
         assertEquals(expected, storage.readAddressBook().orElseThrow().getStudentList().get(0));
         savedJson = Files.readString(filePath);
         assertThrows(CommandException.class, MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX, () ->
-                reloadedLogic.execute("unmarkmission 2 m/M13"));
+                reloadedLogic.execute("unmarkmission id/2 m/M13"));
         assertEquals(savedJson, Files.readString(filePath));
         assertEquals(expected, reloadedModel.getFilteredStudentList().get(0));
     }
@@ -358,20 +358,20 @@ public class LogicManagerTest {
         LocalDateTime firstTime = LocalDateTime.of(LocalDate.now().getYear(), 8, 18, 14, 30);
         JsonAddressBookStorage storage = new JsonAddressBookStorage(temporaryFolder.resolve("addressBook.json"));
         assertEquals("Added Amy Bee's mastery check 1 at Aug 18, 14:30.",
-                logic.execute("addmc 1 num/1 dt/18-08|14:30").getFeedbackToUser());
+                logic.execute("addmc id/1 num/1 dt/18-08|14:30").getFeedbackToUser());
         Student expected = new StudentBuilder(original)
                 .withMasteryChecks(Map.of(1, new MasteryCheck(firstTime))).build();
         assertStudioState(model, storage, expected);
 
         String saved = Files.readString(storage.getAddressBookFilePath());
-        for (String invalid : List.of("addmc 1 num/2 dt/31-04|14:30", "addmc 1 num/2 dt/18-08|24:00")) {
+        for (String invalid : List.of("addmc id/1 num/2 dt/31-04|14:30", "addmc id/1 num/2 dt/18-08|24:00")) {
             assertThrows(ParseException.class, ParserUtil.MESSAGE_INVALID_MASTERY_CHECK_DATETIME, () ->
                     logic.execute(invalid));
             assertEquals(saved, Files.readString(storage.getAddressBookFilePath()));
             assertStudioState(model, storage, expected);
         }
         assertThrows(CommandException.class, MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX, () ->
-                logic.execute("addmc 3 num/2 dt/19-08|14:30"));
+                logic.execute("addmc id/3 num/2 dt/19-08|14:30"));
         assertEquals(saved, Files.readString(storage.getAddressBookFilePath()));
         assertStudioState(model, storage, expected);
 
@@ -379,11 +379,11 @@ public class LogicManagerTest {
         Logic restoredLogic = new LogicManager(restored, new StorageManager(storage,
                 new JsonUserPrefsStorage(temporaryFolder.resolve("restoredPrefs.json"))));
         assertEquals("Amy Bee’s mastery check has already been recorded for number 1. No changes made.",
-                restoredLogic.execute("addmc 1 num/1 dt/19-08|14:30").getFeedbackToUser());
+                restoredLogic.execute("addmc id/1 num/1 dt/19-08|14:30").getFeedbackToUser());
         assertEquals(saved, Files.readString(storage.getAddressBookFilePath()));
         assertStudioState(restored, storage, expected);
         assertEquals("Added Amy Bee's mastery check 2 at Aug 19, 14:30.",
-                restoredLogic.execute("addmc 1 num/2 dt/19-08|14:30").getFeedbackToUser());
+                restoredLogic.execute("addmc id/1 num/2 dt/19-08|14:30").getFeedbackToUser());
         Student withBoth = new StudentBuilder(original).withMasteryChecks(Map.of(1, new MasteryCheck(firstTime),
                 2, new MasteryCheck(firstTime.plusDays(1)))).build();
         assertStudioState(restored, storage, withBoth);
@@ -398,8 +398,8 @@ public class LogicManagerTest {
         model.addStudent(original);
         model.addStudent(BOB);
         JsonAddressBookStorage storage = new JsonAddressBookStorage(temporaryFolder.resolve("addressBook.json"));
-        List<String> commands = List.of("addstudiorecord 1 w/3 ef/50", "delstudiorecord 1 w/3",
-                "markmission 1 m/M01", "unmarkmission 1 m/M01", "edit 1 p/91234567", "delmission m/M01");
+        List<String> commands = List.of("addstudiorecord id/1 w/3 ef/50", "delstudiorecord id/1 w/3",
+                "markmission id/1 m/M01", "unmarkmission id/1 m/M01", "edit id/1 p/91234567", "delmission m/M01");
         List<Student> expectedStudents = List.of(
                 new StudentBuilder(original).withStudioRecords(new StudioRecordSet(3, new StudioRecord(50))).build(),
                 original, new StudentBuilder(original).withMissionSubmissions("M01").build(), original,
@@ -425,13 +425,13 @@ public class LogicManagerTest {
         model.addStudent(BOB);
         JsonAddressBookStorage storage = new JsonAddressBookStorage(temporaryFolder.resolve("addressBook.json"));
         assertEquals("Removed Amy Bee's mastery check numbered 1.",
-                logic.execute("delmc 1 num/1").getFeedbackToUser());
+                logic.execute("delmc id/1 num/1").getFeedbackToUser());
         Student withSecond = new StudentBuilder(original).withMasteryChecks(Map.of(2, second)).build();
         assertStudioState(model, storage, withSecond);
 
         String saved = Files.readString(storage.getAddressBookFilePath());
         assertThrows(ParseException.class, RegisteredMasteryChecks.MESSAGE_CONSTRAINTS, () ->
-                logic.execute("delmc 1 num/0"));
+                logic.execute("delmc id/1 num/0"));
         assertEquals(saved, Files.readString(storage.getAddressBookFilePath()));
         assertStudioState(model, storage, withSecond);
 
@@ -439,17 +439,17 @@ public class LogicManagerTest {
         Logic restoredLogic = new LogicManager(restored, new StorageManager(storage,
                 new JsonUserPrefsStorage(temporaryFolder.resolve("deleteMasteryPrefs.json"))));
         assertEquals("Amy Bee has no mastery check numbered 1. No changes made.",
-                restoredLogic.execute("DELMC 1 num/1").getFeedbackToUser());
+                restoredLogic.execute("DELMC id/1 num/1").getFeedbackToUser());
         assertEquals(saved, Files.readString(storage.getAddressBookFilePath()));
         assertStudioState(restored, storage, withSecond);
 
         assertEquals("Removed Amy Bee's mastery check numbered 2.",
-                restoredLogic.execute("delmc 1 num/2").getFeedbackToUser());
+                restoredLogic.execute("delmc id/1 num/2").getFeedbackToUser());
         Student empty = new StudentBuilder(original).withMasteryChecks(Map.of()).build();
         assertStudioState(restored, storage, empty);
         String savedAfterDeletion = Files.readString(storage.getAddressBookFilePath());
         assertThrows(CommandException.class, MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX, () ->
-                restoredLogic.execute("delmc 3 num/1"));
+                restoredLogic.execute("delmc id/3 num/1"));
         assertEquals(savedAfterDeletion, Files.readString(storage.getAddressBookFilePath()));
         assertStudioState(restored, storage, empty);
         assertEquals(Map.of(1, first, 2, second), original.getRegisteredMasteryChecks().getMasteryCheckAppointments());
@@ -469,7 +469,7 @@ public class LogicManagerTest {
         model.addStudent(BOB);
         JsonAddressBookStorage storage = new JsonAddressBookStorage(temporaryFolder.resolve("addressBook.json"));
         assertEquals("Marked Amy Bee’s mastery check 1 as completed.",
-                logic.execute("markmc 1 num/1").getFeedbackToUser());
+                logic.execute("markmc id/1 num/1").getFeedbackToUser());
         MasteryCheck complete = new MasteryCheck(time);
         complete.markComplete();
         Student marked = new StudentBuilder(original).withMasteryChecks(Map.of(1, complete, 2, other)).build();
@@ -477,11 +477,11 @@ public class LogicManagerTest {
 
         String saved = Files.readString(storage.getAddressBookFilePath());
         assertThrows(ParseException.class, RegisteredMasteryChecks.MESSAGE_CONSTRAINTS, () ->
-                logic.execute("markmc 1 num/0"));
+                logic.execute("markmc id/1 num/0"));
         assertEquals(saved, Files.readString(storage.getAddressBookFilePath()));
         assertStudioState(model, storage, marked);
         assertThrows(CommandException.class, "Mastery check 3 does not exist for Amy Bee.", () ->
-                logic.execute("unmarkmc 1 num/3"));
+                logic.execute("unmarkmc id/1 num/3"));
         assertEquals(saved, Files.readString(storage.getAddressBookFilePath()));
         assertStudioState(model, storage, marked);
 
@@ -489,18 +489,18 @@ public class LogicManagerTest {
         Logic restoredLogic = new LogicManager(restored, new StorageManager(storage,
                 new JsonUserPrefsStorage(temporaryFolder.resolve("masteryStatusPrefs.json"))));
         assertEquals("Amy Bee’s mastery check 1 has already been marked complete. No changes made.",
-                restoredLogic.execute("MARKMC 1 num/1").getFeedbackToUser());
+                restoredLogic.execute("MARKMC id/1 num/1").getFeedbackToUser());
         assertEquals(saved, Files.readString(storage.getAddressBookFilePath()));
         assertStudioState(restored, storage, marked);
         assertEquals("Marked Amy Bee’s mastery check 1 as incomplete.",
-                restoredLogic.execute("UNMARKMC 1 num/1").getFeedbackToUser());
+                restoredLogic.execute("UNMARKMC id/1 num/1").getFeedbackToUser());
         assertStudioState(restored, storage, original);
         String unmarkedJson = Files.readString(storage.getAddressBookFilePath());
         assertEquals("Amy Bee’s mastery check 1 is already incomplete. No changes made.",
-                restoredLogic.execute("unmarkmc 1 num/1").getFeedbackToUser());
+                restoredLogic.execute("unmarkmc id/1 num/1").getFeedbackToUser());
         assertEquals(unmarkedJson, Files.readString(storage.getAddressBookFilePath()));
         assertStudioState(restored, storage, original);
-        for (String command : List.of("markmc 3 num/1", "unmarkmc 3 num/1")) {
+        for (String command : List.of("markmc id/3 num/1", "unmarkmc id/3 num/1")) {
             assertThrows(CommandException.class, MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX, () ->
                     restoredLogic.execute(command));
             assertEquals(unmarkedJson, Files.readString(storage.getAddressBookFilePath()));

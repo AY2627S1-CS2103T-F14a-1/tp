@@ -24,10 +24,6 @@ import static seedu.address.logic.commands.CommandTestUtil.VALID_PHONE_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_STUDIO_GROUP_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_FRIEND;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_HUSBAND;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_EMAIL;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_PHONE;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_STUDIO_GROUP;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
 import static seedu.address.testutil.TypicalStudents.AMY;
@@ -35,7 +31,6 @@ import static seedu.address.testutil.TypicalStudents.BOB;
 
 import org.junit.jupiter.api.Test;
 
-import seedu.address.logic.Messages;
 import seedu.address.logic.commands.AddStudentCommand;
 import seedu.address.model.student.Email;
 import seedu.address.model.student.Name;
@@ -73,62 +68,61 @@ public class AddStudentCommandParserTest {
 
         // multiple names
         assertParseFailure(parser, NAME_DESC_AMY + validExpectedStudentString,
-                Messages.getErrorMessageForDuplicatePrefixes(PREFIX_NAME));
+                CliSyntax.PREFIX_NAME.getDuplicateMessage());
 
         // multiple phones
         assertParseFailure(parser, PHONE_DESC_AMY + validExpectedStudentString,
-                Messages.getErrorMessageForDuplicatePrefixes(PREFIX_PHONE));
+                CliSyntax.PREFIX_PHONE.getDuplicateMessage());
 
         // multiple emails
         assertParseFailure(parser, EMAIL_DESC_AMY + validExpectedStudentString,
-                Messages.getErrorMessageForDuplicatePrefixes(PREFIX_EMAIL));
+                CliSyntax.PREFIX_EMAIL.getDuplicateMessage());
 
         // multiple studio groups
         assertParseFailure(parser, STUDIO_GROUP_DESC_AMY + validExpectedStudentString,
-                Messages.getErrorMessageForDuplicatePrefixes(PREFIX_STUDIO_GROUP));
+                CliSyntax.PREFIX_STUDIO_GROUP.getDuplicateMessage());
 
         // multiple fields repeated
         assertParseFailure(parser,
                 validExpectedStudentString + PHONE_DESC_AMY + EMAIL_DESC_AMY + NAME_DESC_AMY
                         + STUDIO_GROUP_DESC_AMY + validExpectedStudentString,
-                Messages.getErrorMessageForDuplicatePrefixes(PREFIX_NAME, PREFIX_EMAIL,
-                        PREFIX_PHONE, PREFIX_STUDIO_GROUP));
+                CliSyntax.PREFIX_NAME.getDuplicateMessage());
 
         // invalid value followed by valid value
 
         // invalid name
         assertParseFailure(parser, INVALID_NAME_DESC + validExpectedStudentString,
-                Messages.getErrorMessageForDuplicatePrefixes(PREFIX_NAME));
+                CliSyntax.PREFIX_NAME.getDuplicateMessage());
 
         // invalid email
         assertParseFailure(parser, INVALID_EMAIL_DESC + validExpectedStudentString,
-                Messages.getErrorMessageForDuplicatePrefixes(PREFIX_EMAIL));
+                CliSyntax.PREFIX_EMAIL.getDuplicateMessage());
 
         // invalid phone
         assertParseFailure(parser, INVALID_PHONE_DESC + validExpectedStudentString,
-                Messages.getErrorMessageForDuplicatePrefixes(PREFIX_PHONE));
+                CliSyntax.PREFIX_PHONE.getDuplicateMessage());
 
         // invalid studio group
         assertParseFailure(parser, INVALID_STUDIO_GROUP_DESC + validExpectedStudentString,
-                Messages.getErrorMessageForDuplicatePrefixes(PREFIX_STUDIO_GROUP));
+                CliSyntax.PREFIX_STUDIO_GROUP.getDuplicateMessage());
 
         // valid value followed by invalid value
 
         // invalid name
         assertParseFailure(parser, validExpectedStudentString + INVALID_NAME_DESC,
-                Messages.getErrorMessageForDuplicatePrefixes(PREFIX_NAME));
+                CliSyntax.PREFIX_NAME.getDuplicateMessage());
 
         // invalid email
         assertParseFailure(parser, validExpectedStudentString + INVALID_EMAIL_DESC,
-                Messages.getErrorMessageForDuplicatePrefixes(PREFIX_EMAIL));
+                CliSyntax.PREFIX_EMAIL.getDuplicateMessage());
 
         // invalid phone
         assertParseFailure(parser, validExpectedStudentString + INVALID_PHONE_DESC,
-                Messages.getErrorMessageForDuplicatePrefixes(PREFIX_PHONE));
+                CliSyntax.PREFIX_PHONE.getDuplicateMessage());
 
         // invalid studio group
         assertParseFailure(parser, validExpectedStudentString + INVALID_STUDIO_GROUP_DESC,
-                Messages.getErrorMessageForDuplicatePrefixes(PREFIX_STUDIO_GROUP));
+                CliSyntax.PREFIX_STUDIO_GROUP.getDuplicateMessage());
     }
 
     @Test

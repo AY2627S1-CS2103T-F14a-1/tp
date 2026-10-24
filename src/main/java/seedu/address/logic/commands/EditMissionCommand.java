@@ -37,9 +37,6 @@ public class EditMissionCommand extends Command {
 
     public static final String MESSAGE_EDIT_MISSION_SUCCESS = "Edited mission: %1$s.";
     public static final String MESSAGE_NOT_EDITED = "At least one field to edit must be provided.";
-    public static final String MESSAGE_DUPLICATE_MISSION =
-            "This mission already exists in the mission list.";
-    public static final String MESSAGE_MISSION_NOT_FOUND = "Mission %1$s does not exist.";
     public static final String MESSAGE_NO_CHANGES = "Mission %1$s is unchanged. No changes made.";
 
     private static final Logger logger = LogsCenter.getLogger(EditMissionCommand.class);
@@ -77,11 +74,11 @@ public class EditMissionCommand extends Command {
         requireNonNull(model);
 
         Mission missionToEdit = model.findMission(missionId).orElseThrow(() ->
-                new CommandException(String.format(MESSAGE_MISSION_NOT_FOUND, missionId)));
+                new CommandException(String.format(Messages.MESSAGE_MISSION_NOT_FOUND, missionId)));
         Mission editedMission = createEditedMission(missionToEdit, editMissionDescriptor);
         if (!missionToEdit.hasSameName(editedMission.getName())
                 && model.hasMissionName(editedMission.getName())) {
-            throw new CommandException(MESSAGE_DUPLICATE_MISSION);
+            throw new CommandException(Messages.MESSAGE_DUPLICATE_MISSION);
         }
         if (editedMission.equals(missionToEdit)) {
             return new CommandResult(String.format(MESSAGE_NO_CHANGES, missionId));

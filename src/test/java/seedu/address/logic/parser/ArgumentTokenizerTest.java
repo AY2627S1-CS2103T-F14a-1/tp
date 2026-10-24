@@ -147,4 +147,21 @@ public class ArgumentTokenizerTest {
         assertNotEquals(aaa, new Prefix("aab"));
     }
 
+
+    @Test
+    public void tokenize_prefixAtStart_recognizesArgument() {
+        ArgumentMultimap arguments = ArgumentTokenizer.tokenize("p/value", pSlash);
+
+        assertPreambleEmpty(arguments);
+        assertArgumentPresent(arguments, pSlash, "value");
+    }
+
+    @Test
+    public void tokenize_whitespaceAndEmbeddedPrefixes_recognizesOnlyArgumentBoundaries() {
+        ArgumentMultimap arguments = ArgumentTokenizer.tokenize("p/firstp/embedded\t-t last\np/second", pSlash, dashT);
+
+        assertPreambleEmpty(arguments);
+        assertArgumentPresent(arguments, pSlash, "firstp/embedded", "second");
+        assertArgumentPresent(arguments, dashT, "last");
+    }
 }

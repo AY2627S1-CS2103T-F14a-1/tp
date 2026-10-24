@@ -37,7 +37,7 @@ public class EditMissionCommandParser implements Parser<EditMissionCommand> {
         }
 
         argMultimap.verifyNoDuplicatePrefixesFor(PREFIX_MISSION, PREFIX_NAME, PREFIX_DATE);
-        MissionId missionId = MissionParser.parseMissionId(
+        MissionId missionId = ParserUtil.parseMissionId(
                 argMultimap.getValue(PREFIX_MISSION).orElseThrow());
         EditMissionDescriptor editMissionDescriptor = new EditMissionDescriptor();
         if (argMultimap.getValue(PREFIX_NAME).isPresent()) {

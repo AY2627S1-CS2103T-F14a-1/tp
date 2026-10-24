@@ -1,11 +1,31 @@
 # UI Test Plan
 
+## Mission regression sequence
+
+Use a temporary data directory with two students and an empty catalogue. After each rejected
+command, run `view 1` and compare the catalogue and submission statuses with the previous state.
+Inspect the saved file before running that verification command to ensure rejection did not save.
+
+| ID | Steps | Expected result |
+| --- | --- | --- |
+| MISSION-001 | Run `addmission n/`, then `addmission n/Runes`. | Request a name using `n/NAME`, then a deadline in `YYYY-MM-DD` using `d/DEADLINE`; no mission is added. |
+| MISSION-002 | Copy the example from addmission usage, then view student 1. | Creates M01, Rune Reading, due 2026-10-20, not submitted. |
+| MISSION-003 | Run `addmission n/ RUNE   READING d/2026-10-21`. | Duplicate feedback; M01 and the next ID remain unchanged. |
+| MISSION-004 | Run `addmission n/Curves d/2026-10-21`, then `editmission m/M02 n/Rune Reading`. | M02 is added; the duplicate edit is rejected. |
+| MISSION-005 | Run `markmission 1 m/m01`, repeat it, then `unmarkmission 1 m/M99`. | First marks M01, repeat reports no change, unknown ID reports `Mission M99 does not exist.`; student 2 remains unchanged. |
+| MISSION-006 | Filter to student 1; run `listmissions m/M01` and `listoverdue`. | Submitted list uses displayed index 1. Overdue excludes M01 and includes only missing missions due before the local date. Hidden students are excluded. |
+| MISSION-007 | Run `editmission m/M01 n/New Runes d/2026-10-22`, then restart and view student 1. | ID and submission survive; name and deadline are updated and persisted. |
+| MISSION-008 | Run `unmarkmission 1 m/M01`, then an invalid date edit `editmission m/M01 d/2026-02-30`; restart. | M01 stays not submitted; invalid edit leaves its name/deadline unchanged. |
+| MISSION-009 | Mark M01 for both students; filter to one student; delete M01. Restart, run `list`, and inspect both profiles. Add New Runes again. | Mission and submissions are removed from both students. Recreated mission uses M03 and has no submissions. |
+| MISSION-010 | Back up data. In an isolated fixture, give two missions different IDs but equal names ignoring case/spaces. Start the app, inspect file, then run `list`. | Empty-address-book fallback; startup preserves invalid file, successful list saves the empty book. |
+| MISSION-011 | In an isolated valid fixture set `nextMissionNumber` to 9223372036854775807. Run `addmission n/Limit d/2026-10-20`. | `No further mission IDs can be allocated.`; memory and file remain unchanged. |
+
 ## Studio parsing regression
 
 Studio argument parsing is most precisely checked at the parser level. Run the
-complete `WeeklyTaskParserTest`, `ParserUtilTest`,
+complete `ParserUtilTest`,
 `AddStudioRecordCommandParserTest`, and `DeleteStudioRecordCommandParserTest`
-JUnit classes. Verify that missing required prefixes show command usage,
+JUnit classes. Verify that missing required prefixes show their prefix-specific messages,
 duplicate prefixes are rejected, weeks outside 0 to 13 are rejected, and
 effort scores accept only unsigned integers from 0 to 2147483647. Then run the
 positive and negative studio command cases below to verify the same behavior
@@ -57,6 +77,12 @@ Run the complete UI plan below to check existing studio behavior.
 | STUDIO-EDIT-003 | Run `editstudiorecord 1 w/4 ef/20`, then view student 1. | Not-recorded feedback appears; week 4 remains absent. |
 | STUDIO-DELETE-001 | Run `delstudiorecord 1 w/3`, then view student 1. | Week 3 is absent with effort score 0; week 13 remains recorded. |
 | STUDIO-DELETE-002 | Run `delstudiorecord 1 w/14`, then view student 1. | Invalid-number feedback appears; records remain unchanged. |
+| STUDIO-ADD-001 | Run `addstudiorecord id/1 w/3 ef/50`, then view student 1. | Week 3 is attended with effort score 50. Other weeks and students remain unchanged. |
+| STUDIO-ADD-002 | Run `addstudiorecord id/1 w/4 ef/-1`, then view student 1. | Invalid-effort feedback appears; week 4 remains absent. |
+| STUDIO-ADD-003 | Run `addstudiorecord id/1 w/13 ef/0`, then view student 1. | Week 13 is attended with effort score 0. |
+| STUDIO-ADD-004 | Run `addstudiorecord id/1 w/3 ef/100`, then view student 1. | Already-recorded feedback appears; number 3 retains effort score 50. |
+| STUDIO-DELETE-001 | Run `delstudiorecord id/1 w/3`, then view student 1. | Week 3 is absent with effort score 0; number 13 remains recorded. |
+| STUDIO-DELETE-002 | Run `delstudiorecord id/1 w/14`, then view student 1. | Invalid-number feedback appears; records remain unchanged. |
 | STUDIO-SEQUENCE-001 | Start with two students, student 1 having no studio records. Run STUDIO-ADD-001, STUDIO-ADD-002, and STUDIO-ADD-003 in order, viewing student 1 after each command. Restart, then run STUDIO-ADD-004, STUDIO-DELETE-001, and STUDIO-DELETE-002, viewing student 1 after each command. Restart and view both students. | Each command produces the feedback and state above. The duplicate retains number 3 effort 50 despite requesting 100. After the final restart, only number 13 is recorded with effort 0; number 3 remains absent. Other student fields and student 2 remain unchanged throughout. The matching LogicManagerTest sequence checks exact feedback, in-memory state, reloaded state after every command, and unchanged saved JSON after rejected and duplicate commands. |
 
 ## Mastery-check datetime parsing regression
@@ -81,10 +107,10 @@ round trips, and preservation by other commands. JavaFX cases run on the JavaFX 
 
 | ID | Steps | Expected result |
 | --- | --- | --- |
-| MC-ADD-001 | Start with two students. Run `addmc 1 num/1 dt/18-08\|14:30`, then view student 1. | Feedback identifies appointment 1 at `Aug 18, 14:30`. The grid has Number, Appointment time, and Status columns and shows Not completed. Student 2 is unchanged. |
-| MC-ADD-002 | Run `addmc 1 num/2 dt/31-04\|14:30`, then view student 1. | Invalid-datetime feedback; appointment 1 and saved data are unchanged. |
-| MC-ADD-003 | Run `addmc 1 num/2 dt/19-08\|00:05`, exit, restart, and view student 1. | Numbers 1 and 2 appear in ascending order with the saved times. |
-| MC-ADD-004 | Run `addmc 1 num/1 dt/20-08\|15:00`, then view student 1. | Duplicate-number feedback; number 1 retains its original time and status. |
+| MC-ADD-001 | Start with two students. Run `addmc id/1 num/1 dt/18-08\|14:30`, then view student 1. | Feedback identifies appointment 1 at `Aug 18, 14:30`. The grid has Number, Appointment time, and Status columns and shows Not completed. Student 2 is unchanged. |
+| MC-ADD-002 | Run `addmc id/1 num/2 dt/31-04\|14:30`, then view student 1. | Invalid-datetime feedback; appointment 1 and saved data are unchanged. |
+| MC-ADD-003 | Run `addmc id/1 num/2 dt/19-08\|00:05`, exit, restart, and view student 1. | Numbers 1 and 2 appear in ascending order with the saved times. |
+| MC-ADD-004 | Run `addmc id/1 num/1 dt/20-08\|15:00`, then view student 1. | Duplicate-number feedback; number 1 retains its original time and status. |
 | MC-STATE-001 | Edit a student, add/delete a studio record, mark/unmark a mission, and delete the mission. Restart and view the student. | Mastery-check numbers, appointment times, and completion statuses remain unchanged. |
 | MC-VIEW-001 | View a student with appointments, then a student without appointments, then the first student again. | The empty student shows the headers and No mastery checks registered. Returning restores only the correct rows, without duplicates. |
 | MC-STORAGE-001 | Load a fixture containing completed and incomplete mastery checks, save, and reload. Separately attempt to load malformed number, datetime, and status records. | Valid times, including seconds and fractional seconds, and completion flags survive reloading. Malformed files produce a loading error and remain unchanged. |
@@ -97,14 +123,46 @@ The number-validation and usage-message cases also expose current copy-paste def
 
 | ID | Steps | Expected result |
 | --- | --- | --- |
-| MC-DELETE-001 | Start with two students and student 1 having appointments 1 and 2. Run `delmc 1 num/1`, then view both students. | Appointment 1 is removed; appointment 2 retains its time and status. Other student fields and student 2 are unchanged. |
-| MC-DELETE-002 | Run `delmc 1 num/0`, then view student 1 and inspect saved data. | Invalid-number feedback; appointments and saved data remain unchanged. |
-| MC-DELETE-003 | Restart and run `delmc 1 num/1`. | Not-found feedback; saved data and remaining appointments are unchanged. |
-| MC-DELETE-004 | Run `delmc 3 num/2` when only two students exist, then view both students. | Invalid-index feedback; both students and saved data are unchanged. |
-| MC-DELETE-005 | Run `delmc 1 num/2`, restart, and view student 1. | No appointments remain; the empty-table message appears. Other records remain intact. |
+| MC-DELETE-001 | Start with two students and student 1 having appointments 1 and 2. Run `delmc id/1 num/1`, then view both students. | Appointment 1 is removed; appointment 2 retains its time and status. Other student fields and student 2 are unchanged. |
+| MC-DELETE-002 | Run `delmc id/1 num/0`, then view student 1 and inspect saved data. | Invalid-number feedback; appointments and saved data remain unchanged. |
+| MC-DELETE-003 | Restart and run `delmc id/1 num/1`. | Not-found feedback; saved data and remaining appointments are unchanged. |
+| MC-DELETE-004 | Run `delmc id/3 num/2` when only two students exist, then view both students. | Invalid-index feedback; both students and saved data are unchanged. |
+| MC-DELETE-005 | Run `delmc id/1 num/2`, restart, and view student 1. | No appointments remain; the empty-table message appears. Other records remain intact. |
 | MC-DELETE-006 | Register numbers 14 and 2147483647, then delete each by number. | Every positive mastery check number can be deleted; studio-week limits do not apply. |
-| MC-DELETE-007 | Run `delmc` and `delmc 1`. | Invalid-format feedback shows the deletion command usage, including `delmc` and `num/`. |
-| STUDIO-ADD-004 | Run `addstudiorecord 1 w/3 ef/100`, then view student 1. | Already-recorded feedback appears; number 3 retains effort score 50. |
-| STUDIO-DELETE-001 | Run `delstudiorecord 1 w/3`, then view student 1. | Week 3 is absent with effort score 0; number 13 remains recorded. |
-| STUDIO-DELETE-002 | Run `delstudiorecord 1 w/14`, then view student 1. | Invalid-number feedback appears; records remain unchanged. |
+| MC-DELETE-007 | Run `delmc`, then `delmc id/1`, viewing the student after each attempt. | The first command lists missing `id/` and `num/` messages in that order; the second lists only missing `num/`. Student state and saved data remain unchanged. |
+| STUDIO-ADD-004 | Run `addstudiorecord id/1 w/3 ef/100`, then view student 1. | Already-recorded feedback appears; number 3 retains effort score 50. |
+| STUDIO-DELETE-001 | Run `delstudiorecord id/1 w/3`, then view student 1. | Week 3 is absent with effort score 0; number 13 remains recorded. |
+| STUDIO-DELETE-002 | Run `delstudiorecord id/1 w/14`, then view student 1. | Invalid-number feedback appears; records remain unchanged. |
 | STUDIO-SEQUENCE-001 | Start with two students, student 1 having no studio records. Run STUDIO-ADD-001, STUDIO-ADD-002, and STUDIO-ADD-003 in order, viewing student 1 after each command. Restart, then run STUDIO-ADD-004, STUDIO-DELETE-001, and STUDIO-DELETE-002, viewing student 1 after each command. Restart and view both students. | Each command produces the feedback and state above. The duplicate retains number 3 effort 50 despite requesting 100. After the final restart, only number 13 is recorded with effort 0; number 3 remains absent. Other student fields and student 2 remain unchanged throughout. The matching LogicManagerTest sequence checks exact feedback, in-memory state, reloaded state after every command, and unchanged saved JSON after rejected and duplicate commands. |
+
+## Prefix structure regression
+
+Run `PrefixTest`, `ArgumentMultimapTest`, `ArgumentStructureValidatorTest`,
+`RequiredPrefixCommandParserTest`, and `ParserUtilTest` with the full Gradle suite.
+
+| ID | Steps | Expected result |
+| --- | --- | --- |
+| PREFIX-001 | With two students, run `addstudiorecord id/1 w/3 ef/50`, then `view id/1`. | Week 3 records effort 50. |
+| PREFIX-002 | Run `editstudiorecord id/1 w/3`, then `view id/1`. | Missing `ef/` message; effort remains 50. |
+| PREFIX-003 | Run `editstudiorecord ef/75 w/3 id/1`, then `view id/1`. | Week 3 now records effort 75. |
+| PREFIX-004 | Run `editstudiorecord id/1`, then `view id/1`. | Missing `w/` and `ef/` messages appear on separate lines in that order; effort remains 75. |
+| PREFIX-005 | Run `editstudiorecord id/1 w/3 ef/75 ef/100`, then `view id/1`. | Duplicate `ef/` message; effort remains 75. |
+| PREFIX-006 | Run `editstudiorecord id/1 w/3 ef/`, then `view id/1`. | Invalid-effort message; effort remains 75. |
+| PREFIX-007 | Run `editstudiorecord 1 w/3 ef/100`, then `view id/1`. | Invalid-command-format message rejects the preamble; effort remains 75. |
+| PREFIX-008 | Restart and run `view id/1`, then view student 2. | Student 1 retains week 3 effort 75; student 2 is unchanged. |
+
+## Mission parser removal and edit/prefix branch regression
+
+Run the full Gradle suite and `coverage` with Java 25 and assertions enabled.
+Verify 100% JaCoCo branch coverage for `EditCommandParser` and `Prefix`.
+`PrefixTest` exercises null-backed hashing and every equality path. The private
+edit-tag assertion is tested through reflection because tokenizer-produced tag
+collections are never null; this internal invariant has no UI input equivalent.
+
+| ID | Steps | Expected result |
+| --- | --- | --- |
+| EDIT-PREFIX-001 | Run `edit id/1 n/Updated Name`, then `view id/1`. | The first student has the new name. |
+| EDIT-PREFIX-002 | Run `edit unexpected id/1 n/Rejected Name`, then `view id/1`. | Invalid-format feedback; the first student retains Updated Name. |
+| EDIT-PREFIX-003 | Run `edit id/1 t/`, then `view id/1`. | Tags are cleared; other fields are unchanged. |
+| EDIT-PREFIX-004 | Run `edit id/1 id/2 n/Rejected Name`, then view both students. | Duplicate-index feedback; both students remain unchanged. |
+| MISSION-EDIT-001 | Create a mission with `addmission n/Runes d/2026-10-20`, then edit its returned ID using `editmission m/ID n/New Runes`. | Editing succeeds through ParserUtil without MissionParser; the mission keeps its ID and deadline. |
