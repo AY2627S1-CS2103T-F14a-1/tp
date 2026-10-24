@@ -34,7 +34,7 @@ public class ListMissionsCommandParserTest {
     public void parse_missingMissionId_reportsMissingMission() {
         for (String input : List.of("", " ", "m/", "m/ \t")) {
             assertParseFailure(parser, input,
-                    ListMissionsCommandParser.MESSAGE_MISSING_MISSION);
+                    MissionParser.MESSAGE_MISSING_MISSION);
         }
     }
 

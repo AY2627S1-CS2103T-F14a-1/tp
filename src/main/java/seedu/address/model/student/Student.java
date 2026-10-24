@@ -107,6 +107,19 @@ public class Student {
         return missionSubmissions;
     }
 
+    /**
+     * Copies this student with replacement submissions, preserving every other field.
+     *
+     * @param submissions Replacement immutable submission records.
+     * @return Student containing the new submissions and existing profile and activities.
+     * @throws NullPointerException If the submissions are null.
+     */
+    public Student withMissionSubmissions(MissionSubmissions submissions) {
+        requireNonNull(submissions);
+        return new Student(name, phone, email, tags, studioGroup, submissions,
+                registeredStudioRecords, registeredMasteryChecks);
+    }
+
     public RegisteredStudioRecords getRegisteredStudioRecords() {
         return registeredStudioRecords;
     }

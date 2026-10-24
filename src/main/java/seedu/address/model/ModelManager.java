@@ -131,8 +131,8 @@ public class ModelManager implements Model {
     }
 
     @Override
-    public Mission addMission(String description, LocalDate deadline) {
-        return addressBook.addMission(description, deadline);
+    public Mission addMission(String name, LocalDate deadline) {
+        return addressBook.addMission(name, deadline);
     }
 
     @Override

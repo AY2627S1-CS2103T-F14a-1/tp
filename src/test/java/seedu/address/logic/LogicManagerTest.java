@@ -275,7 +275,7 @@ public class LogicManagerTest {
             model.addMission("Mission " + number, java.time.LocalDate.of(2026, 10, 15));
         }
         model.addStudent(new StudentBuilder(AMY).withMissionSubmissions("M05").build());
-        assertEquals("Added Amy Bee’s mission submission for mission M03.",
+        assertEquals("Added Amy Bee's mission submission for mission M03.",
                 logic.execute("MARKMISSION 1 m/M03").getFeedbackToUser());
         Path filePath = temporaryFolder.resolve("addressBook.json");
         JsonAddressBookStorage storage = new JsonAddressBookStorage(filePath);
@@ -285,7 +285,7 @@ public class LogicManagerTest {
 
         assertEquals(Set.of(new MissionId("M05"), new MissionId("M03")), reloadedModel.getFilteredStudentList().get(0)
                 .getMissionSubmissions().getSubmittedMissionIds());
-        assertEquals("Amy Bee’s mission submission has already been recorded for mission M03. No changes made.",
+        assertEquals("Amy Bee's mission submission has already been recorded for mission M03. No changes made.",
                 reloadedLogic.execute("markmission 1 m/M03").getFeedbackToUser());
 
         String savedJson = Files.readString(filePath);
@@ -295,7 +295,7 @@ public class LogicManagerTest {
         assertEquals(Set.of(new MissionId("M05"), new MissionId("M03")), reloadedModel.getFilteredStudentList().get(0)
                 .getMissionSubmissions().getSubmittedMissionIds());
 
-        assertEquals("Added Amy Bee’s mission submission for mission M04.",
+        assertEquals("Added Amy Bee's mission submission for mission M04.",
                 reloadedLogic.execute("markmission 1 m/M04").getFeedbackToUser());
         savedJson = Files.readString(filePath);
         assertThrows(CommandException.class, MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX, () ->
@@ -312,7 +312,7 @@ public class LogicManagerTest {
             model.addMission("Mission " + number, java.time.LocalDate.of(2026, 10, 15));
         }
         model.addStudent(new StudentBuilder(AMY).withMissionSubmissions("M03", "M13").build());
-        assertEquals("Removed Amy Bee’s mission submission for mission M03.",
+        assertEquals("Removed Amy Bee's mission submission for mission M03.",
                 logic.execute("UNMARKMISSION 1 m/M03").getFeedbackToUser());
         Path filePath = temporaryFolder.resolve("addressBook.json");
         JsonAddressBookStorage storage = new JsonAddressBookStorage(filePath);
@@ -328,11 +328,11 @@ public class LogicManagerTest {
         assertEquals(savedJson, Files.readString(filePath));
         assertEquals(Set.of(new MissionId("M13")), reloadedModel.getFilteredStudentList().get(0)
                 .getMissionSubmissions().getSubmittedMissionIds());
-        assertEquals("Amy Bee’s mission submission was already not recorded for mission M03. No changes made.",
+        assertEquals("Amy Bee's mission submission was already not recorded for mission M03. No changes made.",
                 reloadedLogic.execute("unmarkmission 1 m/M03").getFeedbackToUser());
         assertEquals(savedJson, Files.readString(filePath));
 
-        assertEquals("Removed Amy Bee’s mission submission for mission M13.",
+        assertEquals("Removed Amy Bee's mission submission for mission M13.",
                 reloadedLogic.execute("unmarkmission 1 m/M13").getFeedbackToUser());
         Student expected = new StudentBuilder(AMY).withMissionSubmissions().build();
         assertEquals(expected, storage.readAddressBook().orElseThrow().getStudentList().get(0));

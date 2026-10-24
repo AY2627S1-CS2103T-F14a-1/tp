@@ -1,5 +1,25 @@
 # UI Test Plan
 
+## Mission regression sequence
+
+Use a temporary data directory with two students and an empty catalogue. After each rejected
+command, run `view 1` and compare the catalogue and submission statuses with the previous state.
+Inspect the saved file before running that verification command to ensure rejection did not save.
+
+| ID | Steps | Expected result |
+| --- | --- | --- |
+| MISSION-001 | Run `addmission n/`, then `addmission n/Runes`. | Request a name using `n/NAME`, then a deadline in `YYYY-MM-DD` using `d/DEADLINE`; no mission is added. |
+| MISSION-002 | Copy the example from addmission usage, then view student 1. | Creates M01, Rune Reading, due 2026-10-20, not submitted. |
+| MISSION-003 | Run `addmission n/ RUNE   READING d/2026-10-21`. | Duplicate feedback; M01 and the next ID remain unchanged. |
+| MISSION-004 | Run `addmission n/Curves d/2026-10-21`, then `editmission m/M02 n/Rune Reading`. | M02 is added; the duplicate edit is rejected. |
+| MISSION-005 | Run `markmission 1 m/m01`, repeat it, then `unmarkmission 1 m/M99`. | First marks M01, repeat reports no change, unknown ID reports `Mission M99 does not exist.`; student 2 remains unchanged. |
+| MISSION-006 | Filter to student 1; run `listmissions m/M01` and `listoverdue`. | Submitted list uses displayed index 1. Overdue excludes M01 and includes only missing missions due before the local date. Hidden students are excluded. |
+| MISSION-007 | Run `editmission m/M01 n/New Runes d/2026-10-22`, then restart and view student 1. | ID and submission survive; name and deadline are updated and persisted. |
+| MISSION-008 | Run `unmarkmission 1 m/M01`, then an invalid date edit `editmission m/M01 d/2026-02-30`; restart. | M01 stays not submitted; invalid edit leaves its name/deadline unchanged. |
+| MISSION-009 | Mark M01 for both students; filter to one student; delete M01. Restart, run `list`, and inspect both profiles. Add New Runes again. | Mission and submissions are removed from both students. Recreated mission uses M03 and has no submissions. |
+| MISSION-010 | Back up data. In an isolated fixture, give two missions different IDs but equal names ignoring case/spaces. Start the app, inspect file, then run `list`. | Empty-address-book fallback; startup preserves invalid file, successful list saves the empty book. |
+| MISSION-011 | In an isolated valid fixture set `nextMissionNumber` to 9223372036854775807. Run `addmission n/Limit d/2026-10-20`. | `No further mission IDs can be allocated.`; memory and file remain unchanged. |
+
 ## Studio parsing regression
 
 Studio argument parsing is most precisely checked at the parser level. Run the

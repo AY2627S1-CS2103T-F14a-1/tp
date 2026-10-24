@@ -31,8 +31,6 @@ public class ListMissionsCommand extends Command {
             "Submissions for %1$s (current student list):\n%2$s";
     public static final String MESSAGE_NO_SUBMISSIONS =
             "No submissions recorded for %1$s in the current student list.";
-    public static final String MESSAGE_MISSION_NOT_FOUND =
-            "Mission %1$s does not exist.";
 
     private final MissionId missionId;
 
@@ -59,7 +57,7 @@ public class ListMissionsCommand extends Command {
         requireNonNull(model);
 
         Mission mission = model.findMission(missionId).orElseThrow(() ->
-                new CommandException(String.format(MESSAGE_MISSION_NOT_FOUND, missionId)));
+                new CommandException(String.format(Messages.MESSAGE_MISSION_NOT_FOUND, missionId)));
         List<Student> lastShownList = model.getFilteredStudentList();
         List<String> submissionRows = new ArrayList<>();
 
