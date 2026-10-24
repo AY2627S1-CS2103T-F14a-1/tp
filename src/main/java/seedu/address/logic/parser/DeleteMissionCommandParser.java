@@ -20,10 +20,14 @@ public class DeleteMissionCommandParser implements Parser<DeleteMissionCommand> 
     @Override
     public DeleteMissionCommand parse(String args) throws ParseException {
         requireNonNull(args);
-        ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
-                args, DeleteMissionCommand.MESSAGE_USAGE, PREFIX_MISSION);
+        try {
+            ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
+                    args, PREFIX_MISSION);
 
-        MissionId missionId = ParserUtil.parseMissionId(argMultimap.getValue(PREFIX_MISSION).get());
-        return new DeleteMissionCommand(missionId);
+            MissionId missionId = ParserUtil.parseMissionId(argMultimap.getValue(PREFIX_MISSION).get());
+            return new DeleteMissionCommand(missionId);
+        } catch (ParseException e) {
+            throw new ParseException(e.getMessage() + "\n" + DeleteMissionCommand.MESSAGE_USAGE);
+        }
     }
 }

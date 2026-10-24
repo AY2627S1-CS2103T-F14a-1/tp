@@ -166,3 +166,15 @@ collections are never null; this internal invariant has no UI input equivalent.
 | EDIT-PREFIX-003 | Run `edit id/1 t/`, then `view id/1`. | Tags are cleared; other fields are unchanged. |
 | EDIT-PREFIX-004 | Run `edit id/1 id/2 n/Rejected Name`, then view both students. | Duplicate-index feedback; both students remain unchanged. |
 | MISSION-EDIT-001 | Create a mission with `addmission n/Runes d/2026-10-20`, then edit its returned ID using `editmission m/ID n/New Runes`. | Editing succeeds through ParserUtil without MissionParser; the mission keeps its ID and deadline. |
+
+## Missing-prefix usage suffix regression
+
+Missing-prefix feedback now ends with one newline followed by the calling command's
+complete usage text. Existing missing-prefix cases must also verify this suffix;
+duplicate-prefix and value-validation messages do not gain a usage suffix.
+
+| ID | Steps | Expected result |
+| --- | --- | --- |
+| MISSING-USAGE-001 | Run `addmc id/1`, then `view id/1`. | Missing number and timing messages appear in prefix order, followed by the complete addmc usage exactly once. Student records remain unchanged. |
+| MISSING-USAGE-002 | Run `addmc id/1 num/1 dt/27-09\|23:59`, then `view id/1`. | Valid syntax is accepted; the record is added or existing-record feedback appears. |
+| MISSING-USAGE-003 | Run `addmc id/1 num/1`, then `view id/1`. | The missing timing message is followed by addmc usage exactly once; existing records remain unchanged. |

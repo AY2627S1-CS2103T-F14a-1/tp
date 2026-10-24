@@ -14,19 +14,30 @@ public final class ArgumentStructureValidator {
      * Empty prefix values are left for the calling parser to validate.
      *
      * @param args Arguments following the command word.
-     * @param usage Usage instructions for the calling command.
      * @param prefixes Prefixes to recognize and require exactly once.
      * @return The validated argument multimap.
      * @throws ParseException If a required prefix is missing, a preamble exists, or a prefix is repeated.
      */
-    public static ArgumentMultimap validateStructure(String args, String usage, Prefix... prefixes)
+    public static ArgumentMultimap validateStructure(String args, Prefix... prefixes)
             throws ParseException {
         ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args, prefixes);
         if (!argMultimap.getPreamble().isEmpty()) {
-            throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, usage));
+            throw new ParseException(MESSAGE_INVALID_COMMAND_FORMAT);
         }
         argMultimap.verifyPrefixesPresentFor(prefixes);
         argMultimap.verifyNoDuplicatePrefixesFor(prefixes);
+        return argMultimap;
+    }
+
+    public static ArgumentMultimap validateStructureWithOptionals(
+            String args, Prefix[] requiredPrefixes, Prefix[] nonRepeatablePrefixes, Prefix... allPrefixes)
+            throws ParseException {
+        ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args, allPrefixes);
+        if (!argMultimap.getPreamble().isEmpty()) {
+            throw new ParseException(MESSAGE_INVALID_COMMAND_FORMAT);
+        }
+        argMultimap.verifyPrefixesPresentFor(requiredPrefixes);
+        argMultimap.verifyNoDuplicatePrefixesFor(nonRepeatablePrefixes);
         return argMultimap;
     }
 }

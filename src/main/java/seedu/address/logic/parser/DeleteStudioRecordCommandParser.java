@@ -23,11 +23,15 @@ public class DeleteStudioRecordCommandParser implements Parser<DeleteStudioRecor
     @Override
     public DeleteStudioRecordCommand parse(String args) throws ParseException {
         requireNonNull(args);
-        ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
-                args, DeleteStudioRecordCommand.MESSAGE_USAGE, PREFIX_INDEX, PREFIX_WEEK);
+        try {
+            ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
+                    args, PREFIX_INDEX, PREFIX_WEEK);
 
-        Index index = ParserUtil.parseIndex(argMultimap.getValue(PREFIX_INDEX).get());
-        int week = ParserUtil.parseWeek(argMultimap.getValue(PREFIX_WEEK).get());
-        return new DeleteStudioRecordCommand(index, week);
+            Index index = ParserUtil.parseIndex(argMultimap.getValue(PREFIX_INDEX).get());
+            int week = ParserUtil.parseWeek(argMultimap.getValue(PREFIX_WEEK).get());
+            return new DeleteStudioRecordCommand(index, week);
+        } catch (ParseException e) {
+                throw new ParseException(e.getMessage() + "\n" + DeleteStudioRecordCommand.MESSAGE_USAGE);
+        }
     }
 }

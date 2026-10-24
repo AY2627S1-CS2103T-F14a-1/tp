@@ -43,7 +43,11 @@ public class FindCommandParser implements Parser<FindCommand> {
         List<StudioGroup> studioGroups = new ArrayList<>();
 
         for (String groupKeyword : groupKeywords) {
-            studioGroups.add(ParserUtil.parseStudioGroup(groupKeyword));
+            try {
+                studioGroups.add(ParserUtil.parseStudioGroup(groupKeyword));
+            } catch (ParseException e) {
+                throw new ParseException(e.getMessage() + "\n" + FindCommand.MESSAGE_USAGE);
+            }
         }
 
         if (nameKeywords.isEmpty() && studioGroups.isEmpty()) {
