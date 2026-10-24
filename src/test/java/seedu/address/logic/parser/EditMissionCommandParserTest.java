@@ -10,7 +10,6 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import seedu.address.logic.Messages;
 import seedu.address.logic.commands.EditMissionCommand;
 import seedu.address.logic.commands.EditMissionCommand.EditMissionDescriptor;
 import seedu.address.model.mission.MissionId;
@@ -78,10 +77,10 @@ public class EditMissionCommandParserTest {
     @Test
     public void parse_duplicateFields_reportsDuplicatePrefix() {
         assertParseFailure(parser, "m/M01 m/M02 n/New",
-                Messages.getErrorMessageForDuplicatePrefixes(CliSyntax.PREFIX_MISSION));
+                CliSyntax.PREFIX_MISSION.getDuplicateMessage());
         assertParseFailure(parser, "m/M01 n/First n/Second",
-                Messages.getErrorMessageForDuplicatePrefixes(CliSyntax.PREFIX_NAME));
+                CliSyntax.PREFIX_NAME.getDuplicateMessage());
         assertParseFailure(parser, "m/M01 d/2026-10-20 d/2026-10-21",
-                Messages.getErrorMessageForDuplicatePrefixes(CliSyntax.PREFIX_DATE));
+                CliSyntax.PREFIX_DATE.getDuplicateMessage());
     }
 }
