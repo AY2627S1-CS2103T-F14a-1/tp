@@ -168,3 +168,15 @@ collections are never null; this internal invariant has no UI input equivalent.
 | EDIT-PREFIX-003 | Run `edit id/1 t/`, then `view id/1`. | Tags are cleared; other fields are unchanged. |
 | EDIT-PREFIX-004 | Run `edit id/1 id/2 n/Rejected Name`, then view both students. | Duplicate-index feedback; both students remain unchanged. |
 | MISSION-EDIT-001 | Create a mission with `addmission m/M01 n/Runes d/2026-10-20`, then edit it using `editmission m/M01 n/New Runes`. | Editing succeeds; the mission keeps its ID and deadline. |
+
+## Mission parser value regression
+
+Run the corresponding `ParserUtilTest` cases. These parser-level checks have no
+direct UI equivalent.
+
+| ID | Steps | Expected result |
+| --- | --- | --- |
+| MISSION-PARSE-001 | Parse a mission name containing leading/trailing and repeated whitespace, punctuation, and mixed case. | Surrounding whitespace is removed, internal whitespace collapses to single spaces, and punctuation/case are preserved. |
+| MISSION-PARSE-002 | Parse an empty or whitespace-only mission name, then a valid name. | Blank names produce the mission-name `ParseException`; valid parsing still succeeds. |
+| MISSION-PARSE-003 | Parse a leap-day deadline `2024-02-29`, a valid regular date, and a date with surrounding whitespace. | Valid dates parse to the expected `LocalDate`; surrounding whitespace is trimmed. |
+| MISSION-PARSE-004 | Parse malformed deadline formats and impossible calendar dates, then parse a valid date. | Invalid formats and impossible dates produce their respective `ParseException` messages; valid parsing still succeeds. |
