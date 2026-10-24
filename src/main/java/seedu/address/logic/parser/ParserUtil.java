@@ -17,6 +17,7 @@ import java.util.Set;
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.StringUtil;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.model.mission.Mission;
 import seedu.address.model.mission.MissionId;
 import seedu.address.model.student.Email;
 import seedu.address.model.student.Name;
@@ -163,7 +164,7 @@ public class ParserUtil {
      */
     public static String parseMissionName(String name) throws ParseException {
         requireNonNull(name);
-        String trimmedName = name.replaceAll("(?U)\\s+", " ").strip();
+        String trimmedName = Mission.normalizeName(name);
         if (trimmedName.isBlank()) {
             throw new ParseException(MESSAGE_INVALID_MISSION_NAME);
         }
