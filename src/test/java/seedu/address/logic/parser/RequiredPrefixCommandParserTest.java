@@ -44,7 +44,8 @@ public class RequiredPrefixCommandParserTest {
         verifyRequiredPrefixes(new DeleteMissionCommandParser(), List.of(PREFIX_MISSION), List.of("M01"));
         verifyRequiredPrefixes(new ListMissionsCommandParser(), List.of(PREFIX_MISSION), List.of("M01"));
         verifyRequiredPrefixes(new AddMissionCommandParser(),
-                List.of(CliSyntax.PREFIX_NAME, CliSyntax.PREFIX_DATE), List.of("Runes", "2026-10-20"));
+                List.of(PREFIX_MISSION, CliSyntax.PREFIX_NAME, CliSyntax.PREFIX_DATE),
+                List.of("M01", "Runes", "2026-10-20"));
     }
 
     /**

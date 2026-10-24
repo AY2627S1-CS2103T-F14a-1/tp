@@ -17,17 +17,15 @@ import seedu.address.model.mission.MissionId;
 public class MissionAddressBookTest {
 
     @Test
-    public void copyAndReset_catalogueWithCounter_preservesStateIndependently() {
+    public void copyAndReset_catalogue_preservesStateIndependently() {
         AddressBook original = new AddressBook();
         original.addStudent(ALICE);
-        original.restoreMissions(List.of(), 5);
-        Mission mission = original.addMission("Runes", LocalDate.of(2026, 10, 15));
+        Mission mission = original.addMission(new MissionId("M05"), "Runes", LocalDate.of(2026, 10, 15));
         AddressBook copy = new AddressBook(original);
         assertEquals(original, copy);
         assertEquals(original.hashCode(), copy.hashCode());
-        original.addMission("Curves", LocalDate.of(2026, 10, 16));
+        original.addMission(new MissionId("M10"), "Curves", LocalDate.of(2026, 10, 16));
         assertEquals(List.of(mission), copy.getMissionList());
-        assertEquals(6, copy.getNextMissionNumber());
         assertNotEquals(original, copy);
         copy.resetData(original);
         assertEquals(original, copy);
@@ -36,23 +34,9 @@ public class MissionAddressBookTest {
     }
 
     @Test
-    public void resetData_invalidCatalogue_doesNotReplaceStudents() {
-        AddressBook original = new AddressBook();
-        original.addStudent(ALICE);
-        AddressBook invalid = new AddressBook() {
-            @Override
-            public long getNextMissionNumber() {
-                return 0;
-            }
-        };
-        assertThrows(IllegalArgumentException.class, () -> original.resetData(invalid));
-        assertEquals(List.of(ALICE), original.getStudentList());
-    }
-
-    @Test
     public void modelMissionOperations_validMission_preservesCatalogueOnReplacement() {
         Model model = new ModelManager();
-        Mission mission = model.addMission("Runes", LocalDate.of(2026, 10, 15));
+        Mission mission = model.addMission(new MissionId("M01"), "Runes", LocalDate.of(2026, 10, 15));
         assertEquals(mission, model.findMission(new MissionId("M01")).orElseThrow());
         model.setAddressBook(new AddressBook(model.getAddressBook()));
         assertEquals(List.of(mission), model.getMissionList());

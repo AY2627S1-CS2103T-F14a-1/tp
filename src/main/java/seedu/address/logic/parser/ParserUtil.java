@@ -221,7 +221,7 @@ public class ParserUtil {
             throw new ParseException(MESSAGE_INVALID_WEEK);
         }
         int weekNumber = Integer.parseInt(trimmedWeek);
-        if (weekNumber > 13) {
+        if (weekNumber < 0 || weekNumber > 13) {
             throw new ParseException(MESSAGE_INVALID_WEEK);
         }
         return weekNumber;

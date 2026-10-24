@@ -53,28 +53,28 @@ public class AddressBook implements ReadOnlyAddressBook {
         UniqueStudentList replacementStudents = new UniqueStudentList();
         replacementStudents.setStudents(newData.getStudentList());
         MissionCatalogue replacementMissions = new MissionCatalogue();
-        replacementMissions.restore(newData.getMissionList(), newData.getNextMissionNumber());
+        replacementMissions.restore(newData.getMissionList());
 
         students.setStudents(replacementStudents);
-        missions.restore(replacementMissions.getMissions(), replacementMissions.getNextMissionNumber());
+        missions.restore(replacementMissions.getMissions());
     }
 
     /**
-     * Creates a mission without changing existing student records.
+     * Creates a mission with a user-selected ID without changing existing student records.
      *
+     * @param id Unique mission ID.
      * @param name Nonblank assignment name.
      * @param deadline Assignment deadline.
-     * @return Newly allocated mission.
-     * @throws IllegalArgumentException If the name is blank or duplicates another mission.
-     * @throws NullPointerException If either argument is null.
-     * @throws IllegalStateException If mission IDs are exhausted.
+     * @return Newly stored mission.
+     * @throws IllegalArgumentException If the ID or name duplicates another mission, or the name is blank.
+     * @throws NullPointerException If any argument is null.
      */
-    public Mission addMission(String name, LocalDate deadline) {
-        return missions.add(name, deadline);
+    public Mission addMission(MissionId id, String name, LocalDate deadline) {
+        return missions.add(id, name, deadline);
     }
 
     /**
-     * Deletes a mission and its submissions from every student, preserving the allocation counter.
+     * Deletes a mission and its submissions from every student without changing other mission IDs.
      * Replacement records are prepared before any state is changed.
      *
      * @param id Mission to delete.
@@ -91,7 +91,7 @@ public class AddressBook implements ReadOnlyAddressBook {
         List<Mission> remaining = missions.getMissions().stream()
                 .filter(mission -> !mission.getId().equals(id)).toList();
         students.setStudents(updatedStudents);
-        missions.restore(remaining, missions.getNextMissionNumber());
+        missions.restore(remaining);
         return deleted;
     }
 
@@ -107,7 +107,7 @@ public class AddressBook implements ReadOnlyAddressBook {
     }
 
     /**
-     * Replaces a mission without modifying student submissions or ID allocation.
+     * Replaces a mission without modifying student submissions.
      *
      * @param target Mission to replace.
      * @param editedMission Replacement retaining the target's ID.
@@ -120,25 +120,19 @@ public class AddressBook implements ReadOnlyAddressBook {
     }
 
     /**
-     * Restores the catalogue after validating all records and allocation state.
+     * Restores the catalogue after validating all records.
      *
      * @param records Saved missions.
-     * @param nextNumber Next unused mission number.
-     * @throws IllegalArgumentException If IDs or names are duplicated, or the counter is invalid.
+     * @throws IllegalArgumentException If IDs or names are duplicated.
      * @throws NullPointerException If the list or a mission is null.
      */
-    public void restoreMissions(List<Mission> records, long nextNumber) {
-        missions.restore(records, nextNumber);
+    public void restoreMissions(List<Mission> records) {
+        missions.restore(records);
     }
 
     @Override
     public ObservableList<Mission> getMissionList() {
         return missions.getMissions();
-    }
-
-    @Override
-    public long getNextMissionNumber() {
-        return missions.getNextMissionNumber();
     }
 
     //// student-level operations
@@ -205,12 +199,11 @@ public class AddressBook implements ReadOnlyAddressBook {
         }
 
         return students.equals(otherAddressBook.students)
-                && getMissionList().equals(otherAddressBook.getMissionList())
-                && getNextMissionNumber() == otherAddressBook.getNextMissionNumber();
+                && getMissionList().equals(otherAddressBook.getMissionList());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(students, getMissionList(), getNextMissionNumber());
+        return Objects.hash(students, getMissionList());
     }
 }

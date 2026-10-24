@@ -336,10 +336,13 @@ Example:
 Creates one mission shared by all students. Adding a mission does not mark anyone as having
 submitted it; students without a submission record show **Not submitted**.
 
-Format: `addmission n/NAME d/DEADLINE`
+Format: `addmission m/MISSION_ID n/NAME d/DEADLINE`
 
-* Supply exactly one lowercase `n/` and one lowercase `d/`, in either order. Do not put text
+* Supply exactly one lowercase `m/`, `n/`, and `d/` prefix, in any order. Do not put text
   before the first prefix. The command word is case-insensitive.
+* `MISSION_ID` must start with `M` followed by a positive integer of at least two digits,
+  without unnecessary leading zeros. For example, `M01`, `M02`, and `M105` are valid;
+  `M1` and `M00` are not. IDs must be unique among configured missions.
 * `NAME` must not be blank. Multiple words and ordinary punctuation are allowed.
   Leading and trailing whitespace is removed, and internal whitespace becomes a single space.
   Letter case and punctuation are preserved for display and saving.
@@ -350,30 +353,30 @@ Format: `addmission n/NAME d/DEADLINE`
 * `DEADLINE` must be a real calendar date in `YYYY-MM-DD` format. For example, `2024-02-29`
   is valid but `2026-15-32` is not. Times and single-digit months or days are rejected.
   Past deadlines are accepted for recording existing assignments.
-* The app assigns an ID such as `M01`. Use the ID shown in the success message for submission commands.
+* Choose the ID yourself; the application does not assign IDs automatically. Existing mission
+  IDs do not change when another mission is deleted. A deleted ID can be chosen again afterward.
 * Successful additions are saved automatically. Invalid or duplicate additions do not change
-  the catalogue, consume an ID, or save the data file. Existing students and their list filter are preserved.
+  the catalogue or save the data file. Existing students and their list filter are preserved.
 
 Examples:
 
-* `addmission n/Rune Reading d/2026-10-20`
-* `addmission d/2024-02-29 n/Mission 1:  Rune Reading!` stores the name `Mission 1: Rune Reading!`.
+* `addmission m/M01 n/Rune Reading d/2026-10-20`
+* `addmission d/2024-02-29 m/M105 n/Mission 1:  Rune Reading!` stores the name `Mission 1: Rune Reading!`.
 
-For an empty catalogue with its allocation counter at 1, the first example displays:
+The first example displays:
 
 ```text
 New mission added: M01 · Rune Reading (Due: 2026-10-20)
 ```
 
-Missing or blank names produce `Provide a mission name using n/NAME.` A valid name without
+Missing IDs produce `Specify a mission ID using m/MISSION_ID.` Invalid IDs show the ID format
+constraint. Missing or blank names produce `Provide a mission name using n/NAME.` A valid name without
 a deadline produces `Specify a deadline in YYYY-MM-DD format using d/DEADLINE.` Unexpected text
 before the prefixes produces a format error with usage instructions. Repeated prefixes identify the repeated fields;
 invalid dates
 produce their respective constraint messages. An existing name produces
-`This mission already exists in the mission list.`
-
-If all mission IDs have been allocated, the command reports
-`No further mission IDs can be allocated.` and leaves the catalogue and saved file unchanged.
+`This mission already exists in the mission list.` An ID already used by a configured mission produces
+`A mission with this ID already exists.`
 
 ![result for adding a mission](images/addMissionResult.png)
 
@@ -571,7 +574,7 @@ Action     | Format, Examples
 **Add studio record** | `addstudiorecord INDEX w/WEEK ef/EFFORT`<br> e.g., `addstudiorecord 1 w/3 ef/30`
 **Delete studio record** | `delstudiorecord INDEX w/WEEK`<br> e.g., `delstudiorecord 1 w/3`
 **Edit studio record** | `editstudiorecord INDEX w/WEEK ef/EFFORT`<br> e.g., `editstudiorecord 1 w/3 ef/30`
-**Add mission** | `addmission n/NAME d/DEADLINE`<br> e.g., `addmission n/Rune Reading d/2026-10-20`
+**Add mission** | `addmission m/MISSION_ID n/NAME d/DEADLINE`<br> e.g., `addmission m/M01 n/Rune Reading d/2026-10-20`
 **Delete mission** | `delmission m/MISSIONID`<br> e.g., `delmission m/M03`
 **Record mission submission** | `markmission INDEX m/MISSION_ID`<br> e.g., `markmission 1 m/M01`
 **Remove mission submission** | `unmarkmission INDEX m/MISSION_ID`<br> e.g., `unmarkmission 1 m/M01`
