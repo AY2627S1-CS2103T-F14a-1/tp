@@ -15,6 +15,8 @@ import seedu.address.logic.parser.exceptions.ParseException;
 /** Tests field validation, strict dates, and command routing. */
 public class AddMissionCommandParserTest {
 
+    private static final String USAGE_SUFFIX = "\n" + AddMissionCommand.MESSAGE_USAGE;
+
     private final AddMissionCommandParser parser = new AddMissionCommandParser();
 
     @Test
@@ -22,7 +24,8 @@ public class AddMissionCommandParserTest {
         for (String name : List.of("\u00a0", "\u2003", " \t\u00a0 ")) {
             ParseException error = assertThrows(ParseException.class, () ->
                     parser.parse("n/" + name + " d/2026-10-20"));
-            assertEquals(ParserUtil.MESSAGE_INVALID_MISSION_NAME, error.getMessage());
+            assertEquals(ParserUtil.MESSAGE_INVALID_MISSION_NAME + USAGE_SUFFIX,
+                    error.getMessage());
         }
     }
 
@@ -48,7 +51,8 @@ public class AddMissionCommandParserTest {
         for (String date : List.of("", " ", "20/10/2026", "2026-1-01", "26-10-20",
                 "2026-10-20T12:00", "2026-10-20 extra")) {
             ParseException error = assertThrows(ParseException.class, () -> parser.parse("n/Runes d/" + date));
-            assertEquals(ParserUtil.MESSAGE_INVALID_MISSION_DEADLINE, error.getMessage());
+            assertEquals(ParserUtil.MESSAGE_INVALID_MISSION_DEADLINE + USAGE_SUFFIX,
+                    error.getMessage());
         }
     }
 
@@ -57,7 +61,8 @@ public class AddMissionCommandParserTest {
         for (String date : List.of("2023-02-29", "1900-02-29", "2026-04-31", "2026-13-12",
                 "2026-00-01", "2026-10-00", "2026-10-32")) {
             ParseException error = assertThrows(ParseException.class, () -> parser.parse("n/Runes d/" + date));
-            assertEquals(ParserUtil.MESSAGE_INVALID_MISSION_CALENDAR_DATE, error.getMessage());
+            assertEquals(ParserUtil.MESSAGE_INVALID_MISSION_CALENDAR_DATE + USAGE_SUFFIX,
+                    error.getMessage());
         }
     }
 
@@ -72,7 +77,7 @@ public class AddMissionCommandParserTest {
 
     @Test
     public void parse_invalidFields_reportsSpecificMessage() {
-        String usage = String.format(Messages.MESSAGE_INVALID_COMMAND_FORMAT, AddMissionCommand.MESSAGE_USAGE);
+        String usage = Messages.MESSAGE_INVALID_COMMAND;
         String[][] cases = {
             {"", String.join("\n", CliSyntax.PREFIX_NAME.getMissingMessage(),
                     CliSyntax.PREFIX_DATE.getMissingMessage())},
@@ -85,7 +90,8 @@ public class AddMissionCommandParserTest {
         };
         for (String[] testCase : cases) {
             ParseException error = assertThrows(ParseException.class, () -> parser.parse(testCase[0]));
-            assertEquals(testCase[1], error.getMessage());
+            assertEquals(testCase[1] + USAGE_SUFFIX,
+                    error.getMessage());
         }
     }
 
@@ -103,7 +109,8 @@ public class AddMissionCommandParserTest {
         for (String[] testCase : cases) {
             ParseException error = assertThrows(ParseException.class, () ->
                     new AddressBookParser().parseCommand(testCase[0]));
-            assertEquals(testCase[1], error.getMessage());
+            assertEquals(testCase[1] + USAGE_SUFFIX,
+                    error.getMessage());
         }
     }
 }

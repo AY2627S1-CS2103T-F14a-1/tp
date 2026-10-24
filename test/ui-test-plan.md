@@ -171,10 +171,40 @@ collections are never null; this internal invariant has no UI input equivalent.
 
 Missing-prefix feedback now ends with one newline followed by the calling command's
 complete usage text. Existing missing-prefix cases must also verify this suffix;
-duplicate-prefix and value-validation messages do not gain a usage suffix.
+duplicate-prefix and value-validation messages also end with the relevant command usage exactly once.
 
 | ID | Steps | Expected result |
 | --- | --- | --- |
 | MISSING-USAGE-001 | Run `addmc id/1`, then `view id/1`. | Missing number and timing messages appear in prefix order, followed by the complete addmc usage exactly once. Student records remain unchanged. |
 | MISSING-USAGE-002 | Run `addmc id/1 num/1 dt/27-09\|23:59`, then `view id/1`. | Valid syntax is accepted; the record is added or existing-record feedback appears. |
 | MISSING-USAGE-003 | Run `addmc id/1 num/1`, then `view id/1`. | The missing timing message is followed by addmc usage exactly once; existing records remain unchanged. |
+
+## Optional-prefix structure regression
+
+Run `ArgumentStructureValidatorTest` for required-prefix checks, optional absence,
+nonrepeatable duplicates, repeatable tags, empty values, and validation priority.
+The shared validator returns problem-only messages; command parsers append usage.
+
+| ID | Steps | Expected result |
+| --- | --- | --- |
+| OPTIONAL-001 | Run `edit id/1 n/Updated Name`, then `view id/1`. | Name changes; omitted phone, email, studio group, and tags remain unchanged. |
+| OPTIONAL-002 | Run `edit n/Rejected Name`, then `view id/1`. | Missing-index feedback with edit usage; student state is unchanged. |
+| OPTIONAL-003 | Run `edit id/1 t/first t/second`, then `view id/1`. | Both tags are retained. |
+| OPTIONAL-004 | Run `edit id/1 p/91234567 p/98765432`, then `view id/1`. | Duplicate-phone feedback with edit usage; phone and other fields remain unchanged. |
+| OPTIONAL-005 | Run `edit id/1 t/`, then `view id/1`. | Tags are cleared; other fields remain unchanged. |
+
+## Command parser error usage regression
+
+Run all parser tests and the full Gradle suite. Exact error assertions must include
+one newline and the complete command usage after the problem message, while direct
+ParserUtil and ArgumentMultimap tests continue to expect problem-only messages.
+
+| ID | Steps | Expected result |
+| --- | --- | --- |
+| ERROR-USAGE-001 | Run `edit id/1 p/invalid`, then `view id/1`. | Phone validation feedback ends with edit usage exactly once; student fields are unchanged. |
+| ERROR-USAGE-002 | Run `edit id/1 p/91234567`, then `view id/1`. | Phone updates successfully; other fields remain unchanged. |
+| ERROR-USAGE-003 | Run `edit id/1 p/91234567 p/98765432`, then `view id/1`. | Duplicate-phone feedback ends with edit usage exactly once; the phone remains 91234567. |
+
+Preamble-error regression: commands using the shared structure validator must
+show `Invalid command format!` followed by their usage exactly once, without a
+literal `%1$s` placeholder. Keep the intentional invalid-preamble cases above.

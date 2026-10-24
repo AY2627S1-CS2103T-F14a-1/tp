@@ -3,8 +3,6 @@ package seedu.address.logic.parser;
 import static java.util.Objects.requireNonNull;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_MISSION;
 
-import java.util.List;
-
 import seedu.address.logic.commands.ListMissionsCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.mission.MissionId;
@@ -29,8 +27,7 @@ public class ListMissionsCommandParser implements Parser<ListMissionsCommand> {
     public ListMissionsCommand parse(String args) throws ParseException {
         requireNonNull(args);
         try {
-            ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
-                    args, PREFIX_MISSION);
+            ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(args, PREFIX_MISSION);
 
             MissionId missionId = ParserUtil.parseMissionId(argMultimap.getValue(PREFIX_MISSION).get());
             return new ListMissionsCommand(missionId);

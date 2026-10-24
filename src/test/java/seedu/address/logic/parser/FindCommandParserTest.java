@@ -27,6 +27,8 @@ import seedu.address.testutil.StudentBuilder;
 
 public class FindCommandParserTest {
 
+    private static final String USAGE_SUFFIX = "\n" + FindCommand.MESSAGE_USAGE;
+
     private final FindCommandParser parser = new FindCommandParser();
 
     @Test
@@ -104,7 +106,7 @@ public class FindCommandParserTest {
         assertParseFailure(
                 parser,
                 "g/1a",
-                StudioGroup.MESSAGE_CONSTRAINTS);
+                StudioGroup.MESSAGE_CONSTRAINTS + USAGE_SUFFIX);
     }
 
     @Test
@@ -112,12 +114,12 @@ public class FindCommandParserTest {
         assertParseFailure(
                 parser,
                 "g/abc",
-                StudioGroup.MESSAGE_CONSTRAINTS);
+                StudioGroup.MESSAGE_CONSTRAINTS + USAGE_SUFFIX);
 
         assertParseFailure(
                 parser,
                 "g/1",
-                StudioGroup.MESSAGE_CONSTRAINTS);
+                StudioGroup.MESSAGE_CONSTRAINTS + USAGE_SUFFIX);
     }
 
     @Test
@@ -125,7 +127,7 @@ public class FindCommandParserTest {
         assertParseFailure(
                 parser,
                 "g/",
-                StudioGroup.MESSAGE_CONSTRAINTS);
+                StudioGroup.MESSAGE_CONSTRAINTS + USAGE_SUFFIX);
     }
 
     @Test
@@ -133,12 +135,12 @@ public class FindCommandParserTest {
         assertParseFailure(
                 parser,
                 "g/1A Alice",
-                StudioGroup.MESSAGE_CONSTRAINTS);
+                StudioGroup.MESSAGE_CONSTRAINTS + USAGE_SUFFIX);
 
         assertParseFailure(
                 parser,
                 "g/1A 1B",
-                StudioGroup.MESSAGE_CONSTRAINTS);
+                StudioGroup.MESSAGE_CONSTRAINTS + USAGE_SUFFIX);
     }
 
     @Test
