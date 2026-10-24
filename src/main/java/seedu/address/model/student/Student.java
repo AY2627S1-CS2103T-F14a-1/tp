@@ -28,6 +28,7 @@ public class Student {
     private final MissionSubmissions missionSubmissions;
     private final RegisteredStudioRecords registeredStudioRecords;
     private final RegisteredMasteryChecks registeredMasteryChecks;
+    private final RegisteredNotes registeredNotes;
 
     /**
      * Creates a student with no mission submissions, studio records, or mastery check registrations.
@@ -43,7 +44,7 @@ public class Student {
             Name name, Phone phone, Email email, Set<Tag> tags,
             StudioGroup studioGroup) {
         this(name, phone, email, tags, studioGroup, new MissionSubmissions(), new RegisteredStudioRecords(),
-                new RegisteredMasteryChecks());
+                new RegisteredMasteryChecks(), new RegisteredNotes());
     }
 
     /**
@@ -61,9 +62,10 @@ public class Student {
      */
     public Student(Name name, Phone phone, Email email, Set<Tag> tags, StudioGroup studioGroup,
                    MissionSubmissions missionSubmissions, RegisteredStudioRecords registeredStudioRecords,
-                   RegisteredMasteryChecks registeredMasteryChecks) {
+                   RegisteredMasteryChecks registeredMasteryChecks, RegisteredNotes registeredNotes) {
         requireAllNonNull(
-                name, phone, email, tags, missionSubmissions, registeredStudioRecords, registeredMasteryChecks);
+                name, phone, email, tags, missionSubmissions, registeredStudioRecords,
+                registeredMasteryChecks, registeredNotes);
         this.name = name;
         this.phone = phone;
         this.email = email;
@@ -72,6 +74,7 @@ public class Student {
         this.missionSubmissions = missionSubmissions;
         this.registeredStudioRecords = registeredStudioRecords;
         this.registeredMasteryChecks = registeredMasteryChecks;
+        this.registeredNotes = registeredNotes;
     }
 
     public Name getName() {
@@ -117,7 +120,7 @@ public class Student {
     public Student withMissionSubmissions(MissionSubmissions submissions) {
         requireNonNull(submissions);
         return new Student(name, phone, email, tags, studioGroup, submissions,
-                registeredStudioRecords, registeredMasteryChecks);
+                registeredStudioRecords, registeredMasteryChecks, registeredNotes);
     }
 
     public RegisteredStudioRecords getRegisteredStudioRecords() {
@@ -133,7 +136,19 @@ public class Student {
     public Student withRegisteredStudioRecords(RegisteredStudioRecords registeredStudioRecords) {
         requireNonNull(registeredStudioRecords);
         return new Student(name, phone, email, tags, studioGroup, missionSubmissions,
-                registeredStudioRecords, registeredMasteryChecks);
+                registeredStudioRecords, registeredMasteryChecks, registeredNotes);
+    }
+
+    /**
+     * Returns student including the new registered notes.
+     *
+     * @param registeredNotes {@code RegisteredNotes} to update.
+     * @return {@code Student} containing the updated registered notes.
+     */
+    public Student withRegisteredNotes(RegisteredNotes registeredNotes) {
+        requireNonNull(registeredNotes);
+        return new Student(name, phone, email, tags, studioGroup, missionSubmissions, registeredStudioRecords,
+                registeredMasteryChecks, registeredNotes);
     }
 
     /**
@@ -145,7 +160,7 @@ public class Student {
     public Student withRegisteredMasteryChecks(RegisteredMasteryChecks registeredMasteryChecks) {
         requireNonNull(registeredMasteryChecks);
         return new Student(name, phone, email, tags, studioGroup, missionSubmissions,
-                registeredStudioRecords, registeredMasteryChecks);
+                registeredStudioRecords, registeredMasteryChecks, registeredNotes);
     }
 
     /**
@@ -156,6 +171,15 @@ public class Student {
      */
     public RegisteredMasteryChecks getRegisteredMasteryChecks() {
         return registeredMasteryChecks;
+    }
+
+    /**
+     * Returns this student's immutable registered notes.
+     *
+     * @return Registered notes.
+     */
+    public RegisteredNotes getRegisteredNotes() {
+        return registeredNotes;
     }
 
     /**
@@ -193,14 +217,15 @@ public class Student {
                 && studioGroup.equals(otherStudent.studioGroup)
                 && missionSubmissions.equals(otherStudent.missionSubmissions)
                 && registeredStudioRecords.equals(otherStudent.registeredStudioRecords)
-                && registeredMasteryChecks.equals(otherStudent.registeredMasteryChecks);
+                && registeredMasteryChecks.equals(otherStudent.registeredMasteryChecks)
+                && registeredNotes.equals(otherStudent.registeredNotes);
     }
 
     @Override
     public int hashCode() {
         // use this method for custom fields hashing instead of implementing your own
         return Objects.hash(name, phone, email, tags, studioGroup, missionSubmissions, registeredStudioRecords,
-                registeredMasteryChecks);
+                registeredMasteryChecks, registeredNotes);
     }
 
     @Override
@@ -214,6 +239,7 @@ public class Student {
                 .add("missionSubmissions", missionSubmissions)
                 .add("registeredStudioRecords", registeredStudioRecords)
                 .add("registeredMasteryChecks", registeredMasteryChecks)
+                .add("registeredNotes", registeredNotes)
                 .toString();
     }
 
