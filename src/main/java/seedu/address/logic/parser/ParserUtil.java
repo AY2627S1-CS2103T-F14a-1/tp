@@ -17,6 +17,7 @@ import java.util.Set;
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.StringUtil;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.model.mission.Mission;
 import seedu.address.model.student.Email;
 import seedu.address.model.student.Name;
 import seedu.address.model.student.Phone;
@@ -29,17 +30,17 @@ import seedu.address.model.tag.Tag;
  */
 public class ParserUtil {
 
-    public static final String MESSAGE_INVALID_MISSION_NAME = "Mission name cannot be blank.";
+    public static final String MESSAGE_INVALID_MISSION_NAME = "Provide a mission name using n/NAME.";
     public static final String MESSAGE_INVALID_MISSION_DEADLINE =
             "Deadline must use YYYY-MM-DD format, for example 2026-10-20.";
     public static final String MESSAGE_INVALID_MISSION_CALENDAR_DATE =
             "Deadline is not a valid calendar date. Month must be 01–12, "
                     + "and day must be valid for the selected month and year.";
-    public static final String MESSAGE_INVALID_EFFORT = "Effort score must be a positive integer.";
 
     public static final String MESSAGE_INVALID_MASTERY_CHECK_DATETIME =
             "Mastery check appointment must be a valid date and 24-hour time in DD-MM|HH:MM format.";
 
+    public static final String MESSAGE_INVALID_EFFORT = "Effort score must be a positive integer.";
     public static final String MESSAGE_INVALID_INDEX = "Index must be a positive integer.";
     public static final String MESSAGE_INVALID_WEEK = "Week must be a positive integer.";
 
@@ -160,7 +161,7 @@ public class ParserUtil {
      */
     public static String parseMissionName(String name) throws ParseException {
         requireNonNull(name);
-        String trimmedName = name.replaceAll("(?U)\\s+", " ").strip();
+        String trimmedName = Mission.normalizeName(name);
         if (trimmedName.isBlank()) {
             throw new ParseException(MESSAGE_INVALID_MISSION_NAME);
         }
@@ -203,6 +204,7 @@ public class ParserUtil {
             throw new ParseException(MESSAGE_INVALID_WEEK);
         }
         return weekNumber;
+
     }
 
     /**

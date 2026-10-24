@@ -100,15 +100,21 @@ public class MissionStorageTest {
 
     @Test
     public void toModelType_invalidCatalogue_rejectsReplacement() throws Exception {
-        String mission = "{\"id\":\"M01\",\"description\":\"Runes\",\"deadline\":\"2026-10-15\"}";
-        for (String json : List.of(
-                "{\"students\":[],\"missions\":[" + mission + "," + mission + "],\"nextMissionNumber\":2}",
-                "{\"students\":[],\"missions\":[" + mission + "],\"nextMissionNumber\":1}",
-                "{\"students\":[],\"missions\":[null],\"nextMissionNumber\":2}",
-                "{\"students\":[],\"missions\":[]}",
-                "{\"students\":[],\"nextMissionNumber\":2}")) {
-            JsonSerializableAddressBook saved = JsonUtil.fromJsonString(json, JsonSerializableAddressBook.class);
-            assertThrows(IllegalValueException.class, saved::toModelType);
+        String mission = "{\"id\":\"M01\",\"name\":\"Runes\",\"deadline\":\"2026-10-15\"}";
+        String catalogueMessage = "Mission catalogue requires missions and an integer nextMissionNumber.";
+        String[][] cases = {
+            {"{\"students\":[],\"missions\":[" + mission + "," + mission + "],\"nextMissionNumber\":2}",
+                "Duplicate mission ID: M01"},
+            {"{\"students\":[],\"missions\":[" + mission + "],\"nextMissionNumber\":1}",
+                "Next mission number must be greater than every saved mission ID."},
+            {"{\"students\":[],\"missions\":[null],\"nextMissionNumber\":2}", "Mission records must not be null."},
+            {"{\"students\":[],\"missions\":[]}", catalogueMessage},
+            {"{\"students\":[],\"nextMissionNumber\":2}", catalogueMessage}
+        };
+        for (String[] testCase : cases) {
+            JsonSerializableAddressBook saved = JsonUtil.fromJsonString(testCase[0], JsonSerializableAddressBook.class);
+            IllegalValueException error = assertThrows(IllegalValueException.class, saved::toModelType);
+            assertEquals(testCase[1], error.getMessage());
         }
     }
 

@@ -53,7 +53,7 @@ class JsonAdaptedMission {
      */
     public Mission toModelType() throws IllegalValueException {
         if (id == null || name == null || deadline == null) {
-            throw new IllegalValueException("Mission ID, description and deadline are required.");
+            throw new IllegalValueException("Mission ID, name and deadline are required.");
         }
         try {
             return new Mission(new MissionId(id), name, LocalDate.parse(deadline));

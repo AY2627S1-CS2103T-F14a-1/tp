@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import seedu.address.logic.LogicManager;
+import seedu.address.logic.Messages;
 import seedu.address.logic.commands.EditMissionCommand.EditMissionDescriptor;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.logic.parser.AddressBookParser;
@@ -97,7 +98,7 @@ public class EditMissionCommandTest {
         descriptor.setName("  CURVES  ");
 
         assertCommandFailure(new EditMissionCommand(new MissionId("M01"), descriptor),
-                model, EditMissionCommand.MESSAGE_DUPLICATE_MISSION);
+                model, Messages.MESSAGE_DUPLICATE_MISSION);
         assertCommandFailure(new EditMissionCommand(new MissionId("M99"), descriptor),
                 model, "Mission M99 does not exist.");
     }

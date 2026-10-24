@@ -125,6 +125,7 @@ For example, viewing Amy Lee displays the feedback:
 
 ```text
 Showing profile of Amy Lee
+```
 
 ### Editing a student: `edit`
 
@@ -259,6 +260,77 @@ For example, if the first student is Amy Bee and her week 3 studio record is rec
 Edited Amy Bee's studio record for studio week 3.
 ```
 
+### Adding a mastery check: `addmc`
+
+Adds a numbered mastery check appointment for a student.
+
+Format: `addmc INDEX num/NUMBER dt/DATE-TIME`
+
+* `INDEX` must be a positive integer identifying a student in the **currently displayed list**, including `find` results.
+* `NUMBER` must be an integer from **1 to 2147483647**, inclusive. Numbers are unique within each student's appointments.
+* `DATE-TIME` must be a real date and 24-hour time in `dd-MM|HH:mm` format, such as `29-10|13:30`.
+  The current year is filled in automatically. Impossible dates, `24:00`, and times with seconds are rejected.
+* Supply lowercase `num/` and `dt/` exactly once each, in either order, after `INDEX`.
+* New appointments show **Not completed**. Adding an existing number leaves its time and status unchanged.
+* Any invalid input produces an error without changing records.
+
+All four mastery check commands use the same `INDEX` and `NUMBER` rules. They preserve other student records
+and the current list filter. Changes are saved automatically and retained after restart.
+Run `view INDEX` to inspect the Number, Appointment time, and Status columns.
+
+Example: 
+
+`addmc 1 num/2 dt/29-10|13:30`, followed by `view 1`, shows appointment 2 at `Oct 29, 13:30` as Not completed.
+
+### Deleting a mastery check: `delmc`
+
+Removes a numbered mastery check appointment for a student, including its completion status.
+
+Format: `delmc INDEX num/NUMBER`
+
+* `INDEX` must be a positive integer identifying a student in the **currently displayed list**, including `find` results.
+* `NUMBER` must be an integer from **1 to 2147483647**, inclusive. Numbers are unique within each student's appointments.
+* Supply the lowercase `num/` prefix exactly once.
+* If the number is not registered for that student, the command reports that no changes were made.
+* Other appointments and the student remain in the address book.
+* Any invalid input produces an error without changing records.
+
+Example: 
+
+`delmc 1 num/2` removes appointment 2 from the first displayed student, if registered.
+
+### Marking a mastery check as completed: `markmc`
+
+Marks an existing appointment as **Completed** without changing its appointment time.
+
+Format: `markmc INDEX num/NUMBER`
+
+* `INDEX` must be a positive integer identifying a student in the **currently displayed list**, including `find` results.
+* `NUMBER` must be an integer from **1 to 2147483647**, inclusive. Numbers are unique within each student's appointments.
+* Supply the lowercase `num/` prefix exactly once. The number must be registered for that student.
+* Marking an already completed appointment reports that no changes were made.
+* Any invalid input produces an error without changing records.
+
+Example: 
+
+`markmc 1 num/2`, followed by `view 1`, shows appointment 2 as Completed.
+
+### Unmarking a mastery check as completed: `unmarkmc`
+
+Changes an existing appointment's status to **Not completed** without deleting it or changing its time.
+
+Format: `unmarkmc INDEX num/NUMBER`
+
+* `INDEX` must be a positive integer identifying a student in the **currently displayed list**, including `find` results.
+* `NUMBER` must be an integer from **1 to 2147483647**, inclusive. Numbers are unique within each student's appointments.
+* Uses the same index, number, and registration rules as `markmc`. 
+* Unmarking an appointment that is already incomplete reports that no changes were made. 
+* Any invalid input produces an error without changing records.
+
+Example: 
+
+`unmarkmc 1 num/2`, followed by `view 1`, shows appointment 2 as Not completed.
+
 ### Adding a mission: `addmission`
 
 Creates one mission shared by all students. Adding a mission does not mark anyone as having
@@ -293,10 +365,17 @@ For an empty catalogue with its allocation counter at 1, the first example displ
 New mission added: M01 · Rune Reading (Due: 2026-10-20)
 ```
 
-Missing required prefixes or unexpected text before them produces a format error with usage
-instructions. Repeated prefixes identify the repeated fields; blank names and invalid dates
+Missing or blank names produce `Provide a mission name using n/NAME.` A valid name without
+a deadline produces `Specify a deadline in YYYY-MM-DD format using d/DEADLINE.` Unexpected text
+before the prefixes produces a format error with usage instructions. Repeated prefixes identify the repeated fields;
+invalid dates
 produce their respective constraint messages. An existing name produces
 `This mission already exists in the mission list.`
+
+If all mission IDs have been allocated, the command reports
+`No further mission IDs can be allocated.` and leaves the catalogue and saved file unchanged.
+
+![result for adding a mission](images/addMissionResult.png)
 
 ### Deleting a mission: `delmission`
 
@@ -314,6 +393,8 @@ preserved. The current student filter stays active. The result area shows deleti
 run `view INDEX` to see the updated profile. Deletion is automatically saved and survives restart.
 Deleted IDs are not reused. Unknown or invalid IDs leave data unchanged.
 
+![result for deleting a mission](images/delMissionResult.png)
+
 ### Recording a mission submission: `markmission`
 
 Format: `markmission INDEX m/MISSION_ID`
@@ -330,6 +411,8 @@ Format: `markmission INDEX m/MISSION_ID`
 Example: `markmission 1 m/M01`, followed by `view 1`, displays M01 as Submitted.
 An unknown mission ID or invalid command leaves existing records unchanged.
 
+![result for marking a mission](images/markMissionResult.png)
+
 ### Removing a submission record: `unmarkmission`
 
 Format: `unmarkmission INDEX m/MISSION_ID`
@@ -342,6 +425,8 @@ Example: `unmarkmission 1 m/M01`, followed by `view 1`, displays M01 as Not subm
 
 The profile displays configured mission descriptions and deadlines. An empty catalogue shows
 “No missions configured.”
+
+![result for unmarking a mission](images/unmarkMissionResult.png)
 
 ### Editing a mission: `editmission`
 

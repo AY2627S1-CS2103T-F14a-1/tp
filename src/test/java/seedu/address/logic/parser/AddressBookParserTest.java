@@ -18,6 +18,7 @@ import seedu.address.logic.commands.AddMasteryCheckCommand;
 import seedu.address.logic.commands.AddStudentCommand;
 import seedu.address.logic.commands.AddStudioRecordCommand;
 import seedu.address.logic.commands.ClearCommand;
+import seedu.address.logic.commands.DeleteMasteryCheckCommand;
 import seedu.address.logic.commands.DeleteStudentCommand;
 import seedu.address.logic.commands.DeleteStudioRecordCommand;
 import seedu.address.logic.commands.EditCommand;
@@ -27,13 +28,16 @@ import seedu.address.logic.commands.ExitCommand;
 import seedu.address.logic.commands.FindCommand;
 import seedu.address.logic.commands.HelpCommand;
 import seedu.address.logic.commands.ListCommand;
+import seedu.address.logic.commands.MarkMasteryCheckCommand;
 import seedu.address.logic.commands.MarkMissionCommand;
+import seedu.address.logic.commands.UnmarkMasteryCheckCommand;
 import seedu.address.logic.commands.UnmarkMissionCommand;
 import seedu.address.logic.commands.ViewCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.masterycheck.MasteryCheck;
 import seedu.address.model.mission.MissionId;
 import seedu.address.model.student.NameContainsKeywordsPredicate;
+import seedu.address.model.student.RegisteredMasteryChecks;
 import seedu.address.model.student.Student;
 import seedu.address.model.student.StudioRecord;
 import seedu.address.testutil.EditStudentDescriptorBuilder;
@@ -239,4 +243,46 @@ public class AddressBookParserTest {
                 parser.parseCommand("addmc 1 num/1 dt/31-04|14:30"));
     }
 
+
+    @Test
+    public void parseCommand_deleteMasteryCheckIgnoringCase_returnsDeletionCommand() throws Exception {
+        DeleteMasteryCheckCommand expected = new DeleteMasteryCheckCommand(INDEX_FIRST_STUDENT, 1);
+        assertEquals(expected, parser.parseCommand("delmc 1 num/1"));
+        assertEquals(expected, parser.parseCommand("DELMC 1 num/1"));
+        assertEquals(expected, parser.parseCommand("  DelMc 1 num/1  "));
+    }
+
+    @Test
+    public void parseCommand_deleteMasteryCheckInvalidNumber_reportsMasteryCheckConstraint() {
+        assertThrows(ParseException.class,
+                RegisteredMasteryChecks.MESSAGE_CONSTRAINTS, () ->
+                parser.parseCommand("delmc 1 num/0"));
+    }
+
+    @Test
+    public void parseCommand_markMasteryCheckIgnoringCase_returnsCommand() throws Exception {
+        MarkMasteryCheckCommand expected = new MarkMasteryCheckCommand(INDEX_FIRST_STUDENT, 1);
+        assertEquals(expected, parser.parseCommand("markmc 1 num/1"));
+        assertEquals(expected, parser.parseCommand("MARKMC 1 num/1"));
+    }
+
+    @Test
+    public void parseCommand_markMasteryCheckMissingIndex_reportsMissingIndex() {
+        assertThrows(ParseException.class, MasteryCheckParser.MESSAGE_MISSING_INDEX, () ->
+                parser.parseCommand("markmc"));
+    }
+
+
+    @Test
+    public void parseCommand_unmarkMasteryCheckIgnoringCase_returnsCommand() throws Exception {
+        UnmarkMasteryCheckCommand expected = new UnmarkMasteryCheckCommand(INDEX_FIRST_STUDENT, 1);
+        assertEquals(expected, parser.parseCommand("unmarkmc 1 num/1"));
+        assertEquals(expected, parser.parseCommand("UNMARKMC 1 num/1"));
+    }
+
+    @Test
+    public void parseCommand_unmarkMasteryCheckMissingIndex_reportsMissingIndex() {
+        assertThrows(ParseException.class, MasteryCheckParser.MESSAGE_MISSING_INDEX, () ->
+                parser.parseCommand("unmarkmc"));
+    }
 }

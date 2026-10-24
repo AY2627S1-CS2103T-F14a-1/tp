@@ -1,5 +1,6 @@
 package seedu.address.model.student;
 
+import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 
 import java.util.Collections;
@@ -106,10 +107,34 @@ public class Student {
         return missionSubmissions;
     }
 
+    /**
+     * Copies this student with replacement submissions, preserving every other field.
+     *
+     * @param submissions Replacement immutable submission records.
+     * @return Student containing the new submissions and existing profile and activities.
+     * @throws NullPointerException If the submissions are null.
+     */
+    public Student withMissionSubmissions(MissionSubmissions submissions) {
+        requireNonNull(submissions);
+        return new Student(name, phone, email, tags, studioGroup, submissions,
+                registeredStudioRecords, registeredMasteryChecks);
+    }
+
     public RegisteredStudioRecords getRegisteredStudioRecords() {
         return registeredStudioRecords;
     }
 
+    /**
+     * Returns student including the new studio records.
+     *
+     * @param registeredStudioRecords {@code RegisteredStudioRecords} to update.
+     * @return {@code Student} containing the updated studio records.
+     */
+    public Student withRegisteredStudioRecords(RegisteredStudioRecords registeredStudioRecords) {
+        requireNonNull(registeredStudioRecords);
+        return new Student(name, phone, email, tags, studioGroup, missionSubmissions,
+                registeredStudioRecords, registeredMasteryChecks);
+    }
     /**
      * Returns the student's mastery check registrations.
      * The registration mapping is unmodifiable, but appointment completion statuses remain mutable.

@@ -1,5 +1,6 @@
 @startuml
 !include style.puml
+skinparam linetype polyline
 skinparam arrowThickness 1.1
 skinparam arrowColor MODEL_COLOR
 skinparam classBackgroundColor MODEL_COLOR
@@ -18,12 +19,16 @@ Student *--> "1" Phone
 Student *--> "1" Email
 Student *--> "1" StudioGroup
 Student *--> "1" RegisteredStudioRecords
-RegisteredStudioRecords *--> "0..*" StudioRecord : records by week
+RegisteredStudioRecords *--> "*" StudioRecord
 Student *--> "1" MissionSubmissions
+Student *--> "1" RegisteredMasteryChecks
+RegisteredMasteryChecks *-down-> "*" MasteryCheck
 
 Name -[hidden]right-> Phone
 Phone -[hidden]right-> Email
 Email -[hidden]right-> StudioGroup
 StudioGroup -[hidden]right-> RegisteredStudioRecords
-RegisteredStudioRecords -[hidden]right-> MissionSubmissions
+RegisteredStudioRecords -[hidden]right-> RegisteredMasteryChecks
+MissionSubmissions -[hidden]right-> Name
+StudioRecord -[hidden]right-> MasteryCheck
 @enduml

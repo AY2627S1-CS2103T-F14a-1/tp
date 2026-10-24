@@ -50,7 +50,7 @@ The bulk of the app's work is done by the following four components:
 
 **How the architecture components interact with each other**
 
-The *Sequence Diagram* below shows how the components interact with each other for the scenario where the user issues the command `delstudent 1`.
+The *Sequence Diagram* below shows how the components interact with each other for the scenario where the user issues the command `view 1`.
 
 <puml src="diagrams/ArchitectureSequenceDiagram.puml" width="574" />
 
@@ -120,6 +120,10 @@ How the parsing works:
 * When called upon to parse a user command, the `AddressBookParser` class creates an `XYZCommandParser` (`XYZ` is a placeholder for the specific command name, e.g., `AddStudentCommandParser`). The parser uses the other classes shown above to parse the user command and create an `XYZCommand` object (e.g., `AddStudentCommand`). The `AddressBookParser` returns that object as a `Command` object.
 * All `XYZCommandParser` classes, such as `AddStudentCommandParser` and `DeleteStudentCommandParser`, implement the `Parser` interface so they can be treated similarly where appropriate, for example during testing.
 
+Some parser classes also use a helper class to share common parsing behavior. For example, `AddStudioRecordCommandParser`, `DeleteStudioRecordCommandParser`, and `EditStudioRecordCommandParser` each use a `WeeklyTaskParser`, as they share a common need to parse `week` values, and some share the need to parse `effort` values. The following simplified class diagram shows the classes used by `AddStudioRecordCommandParser`:
+
+<puml src="diagrams/AddStudioRecordParserClasses.puml" width="600"/>
+
 ### Model component
 **API** : [`Model.java`](https://github.com/AY2627S1-CS2103T-F14a-1/tp/blob/master/src/main/java/seedu/address/model/Model.java)
 
@@ -129,7 +133,7 @@ The `Model` component,
 
 * stores the address book data, including all `Student` objects (contained in a `UniqueStudentList`) and shared `Mission` objects (contained in a `MissionCatalogue`).
 * stores each student's contact details, studio group, tags, studio records, and mission submissions. Studio records track attendance and effort scores by week, while `MissionSubmissions` records the IDs of submitted missions. A mission without a recorded submission is treated as not submitted.
-* stores each mission's ID, description, and deadline. The mission catalogue allocates IDs and keeps track of the next mission number.
+* stores each mission's ID, name, and deadline. The mission catalogue allocates IDs and keeps track of the next mission number.
 * maintains a _filtered_ view of the students, such as search results. It exposes this view as an unmodifiable `ObservableList<Student>` that the UI can observe and bind to, so the UI updates when the list changes.
 * stores a `UserPrefs` object that represents the user's preferences (currently, just the GUI settings). This is exposed to the outside as a `ReadOnlyUserPrefs` object.
 * does not depend on any of the other three components (as the `Model` represents data entities of the domain, they should make sense on their own without depending on other components).
@@ -156,6 +160,13 @@ The `Storage` component,
 * is implemented by `StorageManager`, which delegates the actual JSON file access to `JsonAddressBookStorage` and `JsonUserPrefsStorage` (one class per data file).
 * depends on some classes in the `Model` component (because the `Storage` component's job is to save/retrieve objects that belong to the `Model`)
 
+The component a developer is most likely to interact with is `JsonAdaptedStudent`, which governs the actual conversion of student data between JSON and `Model`. Hence, when adding a new data field to `Student`, its JSON storage format and the validation when loading must be specified.
+
+We illustrate the involvement of `JsonAdaptedStudent` in both load and save scenarios as such:
+
+<puml src="diagrams/LoadAdaptedStudentActivityDiagram.puml" width="800" />
+<puml src="diagrams/SaveAdaptedStudentActivityDiagram.puml" width="600" />
+
 ### Common classes
 
 Classes used by multiple components are in the `seedu.address.commons` package.
@@ -171,6 +182,16 @@ This section describes some noteworthy details on how certain features are imple
 For `addmission n/NAME d/DEADLINE`, `AddressBookParser` delegates to `AddMissionCommandParser`, which validates exactly one name and deadline and creates an `AddMissionCommand`. `ParserUtil` removes surrounding whitespace and collapses repeated whitespace in the name, while preserving case and punctuation. The deadline must be a real date in `YYYY-MM-DD` format; past dates are accepted. Missing, repeated, blank, or invalid fields and unexpected preamble text cause a `ParseException`.
 
 When executed, `AddMissionCommand` calls `Model#hasMissionName(...)` to reject duplicates, ignoring case and whitespace differences. It then calls `Model#addMission(...)`, which delegates to the shared `MissionCatalogue` through `ModelManager` and `AddressBook`. The catalogue allocates the next mission ID only when adding the validated mission. The command returns a `CommandResult` containing the added mission.
+
+`MissionCatalogue` also enforces unique names when adding, editing, and restoring saved data,
+so callers cannot bypass this rule by accessing the model directly. Restoration validates the
+complete replacement before changing catalogue state. Exhausted IDs produce a `CommandException`
+without modifying or saving data.
+
+Mission names share `Mission.normalizeName(...)` for whitespace normalization. Delete and submission-list
+parsers share `MissionParser.parseMissionIdArgument(...)`, while mark, unmark, and mission deletion use
+`Student.withMissionSubmissions(...)` to preserve all other student fields. Common command feedback is
+defined in `Messages`.
 
 The sequence diagram below illustrates the successful interaction flow using `execute("addmission n/Rune Reading d/2026-10-20")`. Here, `deadline` is the parsed `LocalDate` value for `2026-10-20`, and `feedback` is the formatted success message.
 
