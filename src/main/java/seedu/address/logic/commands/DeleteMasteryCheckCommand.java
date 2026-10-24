@@ -43,9 +43,11 @@ public class DeleteMasteryCheckCommand extends Command {
      * @throws IllegalArgumentException If the number fails the currently enforced studio-week range check.
      */
     public DeleteMasteryCheckCommand(Index targetIndex, int number) {
-        this.targetIndex = requireNonNull(targetIndex);
+        requireNonNull(targetIndex);
         checkArgument(RegisteredMasteryChecks.isValidMasteryCheckNumber(number),
                 RegisteredMasteryChecks.MESSAGE_CONSTRAINTS);
+
+        this.targetIndex = targetIndex;
         this.number = number;
     }
 
@@ -68,26 +70,10 @@ public class DeleteMasteryCheckCommand extends Command {
             return new CommandResult(String.format(MESSAGE_NOT_FOUND, studentToUpdate.getName(), number));
         }
 
-        Student updatedStudent = createUpdatedStudent(
-                studentToUpdate, registeredMasteryChecks.withoutMasteryCheck(number));
+        Student updatedStudent = studentToUpdate.withRegisteredMasteryChecks(
+                registeredMasteryChecks.withoutMasteryCheck(number));
         model.setStudent(studentToUpdate, updatedStudent);
         return new CommandResult(String.format(MESSAGE_SUCCESS, studentToUpdate.getName(), number));
-    }
-
-    /**
-     * Copies a student with replacement mastery check registrations, retaining all other details.
-     *
-     * @param student Non-null student whose other details are preserved.
-     * @param registeredMasteryChecks Non-null registrations to use in the copy.
-     * @return A student containing the supplied registrations and original remaining details.
-     */
-    private Student createUpdatedStudent(Student student, RegisteredMasteryChecks registeredMasteryChecks) {
-        assert student != null;
-        assert registeredMasteryChecks != null;
-
-        return new Student(student.getName(), student.getPhone(), student.getEmail(),
-                student.getTags(), student.getStudioGroup(), student.getMissionSubmissions(),
-                student.getRegisteredStudioRecords(), registeredMasteryChecks);
     }
 
     /**

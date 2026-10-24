@@ -1,20 +1,16 @@
 package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
+import static seedu.address.commons.util.AppUtil.checkArgument;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NUMBER;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.logging.Logger;
 
 import seedu.address.commons.core.LogsCenter;
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.ToStringBuilder;
-import seedu.address.logic.Messages;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
-import seedu.address.model.masterycheck.MasteryCheck;
 import seedu.address.model.student.RegisteredMasteryChecks;
 import seedu.address.model.student.Student;
 
@@ -55,7 +51,11 @@ public class UnmarkMasteryCheckCommand extends Command {
      * @throws NullPointerException If the student index is null.
      */
     public UnmarkMasteryCheckCommand(Index targetIndex, int number) {
-        this.targetIndex = requireNonNull(targetIndex);
+        requireNonNull(targetIndex);
+        checkArgument(RegisteredMasteryChecks.isValidMasteryCheckNumber(number),
+                RegisteredMasteryChecks.MESSAGE_CONSTRAINTS);
+
+        this.targetIndex = targetIndex;
         this.number = number;
     }
 
@@ -73,62 +73,29 @@ public class UnmarkMasteryCheckCommand extends Command {
     public CommandResult execute(Model model) throws CommandException {
         requireNonNull(model);
 
-        List<Student> lastShownList = model.getFilteredStudentList();
-        if (targetIndex.getZeroBased() >= lastShownList.size()) {
-            throw new CommandException(Messages.MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX);
-        }
-
-        if (!RegisteredMasteryChecks.isValidMasteryCheckNumber(number)) {
-            logger.fine("UnmarkMasteryCheckCommand rejected: " + number + " is not valid.");
-            throw new CommandException(RegisteredMasteryChecks.MESSAGE_CONSTRAINTS);
-        }
-
-        Student studentToUpdate = lastShownList.get(targetIndex.getZeroBased());
+        Student studentToUpdate = getStudentAtDisplayedIndex(model, targetIndex);
         RegisteredMasteryChecks registeredMasteryChecks = studentToUpdate.getRegisteredMasteryChecks();
-        MasteryCheck masteryCheck = registeredMasteryChecks.getMasteryCheckAppointments().get(number);
 
-        if (masteryCheck == null) {
+        if (!registeredMasteryChecks.hasMasteryCheck(number)) {
             logger.fine("UnmarkMasteryCheckCommand rejected: mastery check " + number + " does not exist.");
             throw new CommandException(
                     String.format(MESSAGE_MASTERY_CHECK_NOT_FOUND, number, studentToUpdate.getName()));
         }
 
-        if (!masteryCheck.isComplete()) {
+        if (!registeredMasteryChecks.isCompleteMasteryCheck(number)) {
             logger.fine("UnmarkMasteryCheckCommand made no changes for mastery check " + number
                     + " for student " + studentToUpdate.getName()
                     + " at displayed student index " + targetIndex.getOneBased() + ".");
             return new CommandResult(String.format(MESSAGE_ALREADY_MARKED, studentToUpdate.getName(), number));
         }
 
-        MasteryCheck completedCheck = new MasteryCheck(masteryCheck.getAppointmentTime());
-
-        Map<Integer, MasteryCheck> updatedAppointments =
-                new HashMap<>(registeredMasteryChecks.getMasteryCheckAppointments());
-        updatedAppointments.put(number, completedCheck);
-
-        Student updatedStudent = createUpdatedStudent(studentToUpdate,
-                new RegisteredMasteryChecks(updatedAppointments));
+        Student updatedStudent = studentToUpdate.withRegisteredMasteryChecks(
+                registeredMasteryChecks.withCompletionStatus(number, false));
         model.setStudent(studentToUpdate, updatedStudent);
         logger.info("Revoked completion for mastery check " + number
                 + " for student " + studentToUpdate.getName()
                 + " at displayed student index " + targetIndex.getOneBased() + " in memory.");
         return new CommandResult(String.format(MESSAGE_SUCCESS, studentToUpdate.getName(), number));
-    }
-
-    /**
-     * Copies a student with replacement mastery check registrations, retaining all other details.
-     *
-     * @param student Non-null student whose profile and other activity records are preserved.
-     * @param registeredMasteryChecks Non-null registrations containing the updated completion state.
-     * @return A student containing the supplied registrations and original remaining details.
-     */
-    private Student createUpdatedStudent(Student student, RegisteredMasteryChecks registeredMasteryChecks) {
-        assert student != null;
-        assert registeredMasteryChecks != null;
-
-        return new Student(student.getName(), student.getPhone(), student.getEmail(),
-                student.getTags(), student.getStudioGroup(),
-                student.getMissionSubmissions(), student.getRegisteredStudioRecords(), registeredMasteryChecks);
     }
 
     /**
