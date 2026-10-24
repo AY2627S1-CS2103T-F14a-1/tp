@@ -9,7 +9,6 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import seedu.address.logic.Messages;
 import seedu.address.logic.commands.ListMissionsCommand;
 import seedu.address.model.mission.MissionId;
 
@@ -32,15 +31,15 @@ public class ListMissionsCommandParserTest {
 
     @Test
     public void parse_missingMissionId_reportsMissingMission() {
-        for (String input : List.of("", " ", "m/", "m/ \t")) {
+        for (String input : List.of("", " ")) {
             assertParseFailure(parser, input,
-                    MissionParser.MESSAGE_MISSING_MISSION);
+                    CliSyntax.PREFIX_MISSION.getMissingMessage());
         }
     }
 
     @Test
     public void parse_invalidMissionId_reportsIdConstraint() {
-        for (String input : List.of("m/3", "m/M3", "m/M00", "m/M003",
+        for (String input : List.of("m/", "m/ \t", "m/3", "m/M3", "m/M00", "m/M003",
                 "m/M01 extra", "m/M01 x/test", "m/M9223372036854775808")) {
             assertParseFailure(parser, input, MissionId.MESSAGE_CONSTRAINTS);
         }
@@ -58,6 +57,6 @@ public class ListMissionsCommandParserTest {
     @Test
     public void parse_duplicateMissionPrefix_reportsDuplicateField() {
         assertParseFailure(parser, "m/M01 m/M02",
-                Messages.getErrorMessageForDuplicatePrefixes(CliSyntax.PREFIX_MISSION));
+                CliSyntax.PREFIX_MISSION.getDuplicateMessage());
     }
 }

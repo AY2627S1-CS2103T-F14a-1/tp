@@ -20,15 +20,22 @@ public class UnmarkMissionCommandParserTest {
         for (String id : List.of("M05", "m05", "M105", "m105")) {
             String canonicalId = id.startsWith("m") ? "M" + id.substring(1) : id;
             assertEquals(new UnmarkMissionCommand(INDEX_FIRST_STUDENT, new MissionId(canonicalId)),
-                    new UnmarkMissionCommandParser().parse(" 1 m/" + id + " "));
+                    new UnmarkMissionCommandParser().parse(" id/1 m/" + id + " "));
         }
     }
 
     @Test
+    public void parse_leadingZeroIndex_returnsCommand() throws Exception {
+        assertEquals(new UnmarkMissionCommand(INDEX_FIRST_STUDENT, new MissionId("M05")),
+                new UnmarkMissionCommandParser().parse("id/01 m/M05"));
+    }
+
+    @Test
     public void parse_invalidArguments_rejectsInput() {
-        for (String input : List.of("", "1", "m/M05", "0 m/M05", "-1 m/M05", "01 m/M05", "1.0 m/M05",
-                "2147483648 m/M05", "1 m/", "1 m/M5", "1 m/M00", "1 m/M05 extra", "1 x/M05",
-                "1 m/M05 m/M06", "1 m/M05 x/test", "1 m/m5", "1 m/m00", "1 m/m005", "1 m/m05 m/M05")) {
+        for (String input : List.of("", "1", "m/M05", "id/0 m/M05", "id/-1 m/M05", "id/1.0 m/M05",
+                "id/2147483648 m/M05", "id/1 m/", "id/1 m/M5", "id/1 m/M00", "id/1 m/M05 extra", "1 x/M05",
+                "id/1 m/M05 m/M06", "id/1 m/M05 x/test", "id/1 m/m5", "id/1 m/m00",
+                "id/1 m/m005", "id/1 m/m05 m/M05")) {
             assertThrows(ParseException.class, () -> new UnmarkMissionCommandParser().parse(input));
         }
     }

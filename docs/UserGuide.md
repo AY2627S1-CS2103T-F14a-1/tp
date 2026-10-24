@@ -33,7 +33,7 @@ AvengerHub is a **desktop address book application for managing students, optimi
 
    * `addstudent n/John Doe p/98765432 e/johnd@example.com g/1A` : Adds a student named `John Doe` to the Address Book.
 
-   * `delstudent 3` : Deletes the 3rd student shown in the current list.
+   * `delstudent id/3` : Deletes the 3rd student shown in the current list.
 
    * `clear` : Deletes all students.
 
@@ -58,7 +58,7 @@ AvengerHub is a **desktop address book application for managing students, optimi
 * Items followed by `...` can appear zero or more times.<br>
   For example, `[t/TAG]... ` may be omitted, or written as `t/friend` or `t/friend t/family`.
 
-* Prefixed parameters can be in any order unless a command states otherwise. An `INDEX`, when required, comes first.<br>
+* Prefixed parameters can be in any order unless a command states otherwise.<br>
   For example, if the command specifies `n/NAME p/PHONE_NUMBER`, `p/PHONE_NUMBER n/NAME` is also acceptable.
 
 * Extraneous parameters for commands that take no parameters, such as `help`, `list`, `exit`, and `clear`, are ignored.<br>
@@ -101,7 +101,7 @@ Format: `list`
 
 Displays the profile of a student in the currently displayed student list.
 
-Format: `view INDEX`
+Format: `view id/INDEX`
 
 * `INDEX` refers to the student's index in the currently displayed list,
   including results from `find`.
@@ -117,8 +117,8 @@ Format: `view INDEX`
 
 Examples:
 
-* `list`, followed by `view 2`, displays the second student's profile.
-* `find Betsy Crowe`, followed by `view 1`, displays the first student
+* `list`, followed by `view id/2`, displays the second student's profile.
+* `find Betsy Crowe`, followed by `view id/1`, displays the first student
   in those search results.
 
 For example, viewing Amy Lee displays the feedback:
@@ -131,7 +131,7 @@ Showing profile of Amy Lee
 
 Edits an existing student in the address book.
 
-Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [t/TAG]... [g/STUDIO_GROUP]`
+Format: `edit id/INDEX [n/NAME] [p/PHONE] [e/EMAIL] [t/TAG]... [g/STUDIO_GROUP]`
 
 * Edits the student at the specified `INDEX`. The index refers to the index number shown in the displayed student list. The index **must be a positive integer** 1, 2, 3, ...
 * At least one of the optional fields must be provided.
@@ -140,8 +140,8 @@ Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [t/TAG]... [g/STUDIO_GROUP]`
 * To remove all of a student's tags, enter `t/` without a tag after it.
 
 Examples:
-*  `edit 1 p/91234567 e/johndoe@example.com` Edits the phone number and email address of the 1st student to be `91234567` and `johndoe@example.com` respectively.
-*  `edit 2 n/Betsy Crower t/` Edits the name of the 2nd student to be `Betsy Crower` and clears all existing tags.
+*  `edit id/1 p/91234567 e/johndoe@example.com` Edits the phone number and email address of the 1st student to be `91234567` and `johndoe@example.com` respectively.
+*  `edit id/2 n/Betsy Crower t/` Edits the name of the 2nd student to be `Betsy Crower` and clears all existing tags.
 
 ### Locating students by name: `find`
 
@@ -173,21 +173,21 @@ Examples:
 
 Deletes the specified student from the address book.
 
-Format: `delstudent INDEX`
+Format: `delstudent id/INDEX`
 
 * Deletes the student at the specified `INDEX`.
 * The index refers to the index number shown in the displayed student list.
 * The index **must be a positive integer** 1, 2, 3, ...
 
 Examples:
-* `list` followed by `delstudent 2` deletes the 2nd student in the address book.
-* `find Betsy` followed by `delstudent 1` deletes the 1st student in the results of the `find` command.
+* `list` followed by `delstudent id/2` deletes the 2nd student in the address book.
+* `find Betsy` followed by `delstudent id/1` deletes the 1st student in the results of the `find` command.
 
 ### Adding studio records: `addstudiorecord`
 
 Records a student's studio attendance and effort for a studio week.
 
-Format: `addstudiorecord INDEX w/WEEK ef/EFFORT`
+Format: `addstudiorecord id/INDEX w/WEEK ef/EFFORT`
 
 * Adds a studio record for the student at the specified `INDEX` for the specified `WEEK`, with the specified `EFFORT` score.
 * The index refers to the index number shown in the displayed student list. 
@@ -200,10 +200,10 @@ Format: `addstudiorecord INDEX w/WEEK ef/EFFORT`
 
 Examples:
 
-* `list` followed by `addstudiorecord 1 w/3 ef/30` records attendance and an effort score of 30 for week 3 for the first student displayed, if any.
-* `find Betsy` followed by `addstudiorecord 1 w/13 ef/0` records attendance and an effort score of 0 for week 13 for the first student in the search results, if any.
+* `list` followed by `addstudiorecord id/1 w/3 ef/30` records attendance and an effort score of 30 for week 3 for the first student displayed, if any.
+* `find Betsy` followed by `addstudiorecord id/1 w/13 ef/0` records attendance and an effort score of 0 for week 13 for the first student in the search results, if any.
 
-For example, if the first student is Amy Bee and her week 3 studio record is not yet recorded, `addstudiorecord 1 w/3 ef/30` displays:
+For example, if the first student is Amy Bee and her week 3 studio record is not yet recorded, `addstudiorecord id/1 w/3 ef/30` displays:
 
 ```text
 Added Amy Bee's studio record for studio week 3.
@@ -213,7 +213,7 @@ Added Amy Bee's studio record for studio week 3.
 
 Removes a student's attendance record and effort score for a studio week. The student remains in the address book.
 
-Format: `delstudiorecord INDEX w/WEEK`
+Format: `delstudiorecord id/INDEX w/WEEK`
 
 * Deletes a studio record for the student at the specified `INDEX` for the specified `WEEK`.
 * The index refers to the index number shown in the displayed student list.
@@ -224,10 +224,10 @@ Format: `delstudiorecord INDEX w/WEEK`
 
 Examples:
 
-* `list` followed by `delstudiorecord 1 w/3` removes the first student's week 3 studio record, if recorded, if any.
-* `find Betsy` followed by `delstudiorecord 1 w/13` removes the week 13 studio record for the first student in the search results, if any.
+* `list` followed by `delstudiorecord id/1 w/3` removes the first student's week 3 studio record, if recorded, if any.
+* `find Betsy` followed by `delstudiorecord id/1 w/13` removes the week 13 studio record for the first student in the search results, if any.
 
-For example, if the first student is Amy Bee and her week 3 studio record is recorded, `delstudiorecord 1 w/3` displays:
+For example, if the first student is Amy Bee and her week 3 studio record is recorded, `delstudiorecord id/1 w/3` displays:
 
 ```text
 Removed Amy Bee's record for studio week 3.
@@ -237,24 +237,24 @@ Removed Amy Bee's record for studio week 3.
 
 Edit a student's studio effort for a studio week.
 
-Format: `editstudiorecord INDEX w/WEEK ef/EFFORT`
+Format: `editstudiorecord id/INDEX w/WEEK ef/EFFORT`
 
 * `INDEX` identifies a student in the **currently displayed list**, including results from `find`. It must be a positive integer that corresponds to a displayed student.
 * `WEEK` must be an integer from **0 to 13**, inclusive. AvengerHub uses these week numbers to allow tutors to flexibly mark studio records across the semester's 13 weeks. Use the actual week number as defined in the NUS student calendar.
 * Weeks outside this range, such as `-1` or `14`, are rejected with an error message. The existing studio records remain unchanged.
 * `EFFORT` is the student's effort score for that studio week. It must be a whole number from **0 to 2147483647**, inclusive. Negative numbers, decimals, non-numeric values, and values above this range are rejected without changing existing records.
-* All three arguments are required. Put `INDEX` before the prefixed arguments, and specify `w/` and `ef/` exactly once each. Extra arguments are rejected. Omitting `ef/EFFORT` displays `Specify an effort score using ef/EFFORT.`
+* All three arguments are required. Specify prefixes `id/`, `w/`, and `ef/` exactly once each. Extra arguments are rejected.
 * Enter `INDEX` and `WEEK` as integers without signs, decimal points, or leading zeros. For example, use `3`, not `+3`, `3.0`, or `03`.
-* The command word and the `w/` and `ef/` prefixes are case-insensitive: `EDITSTUDIORECORD 1 W/3 EF/30` is also accepted.
+* The command word and the `w/` and `ef/` prefixes are case-insensitive: `EDITSTUDIORECORD id/1 W/3 EF/30` is also accepted.
 * If the studio record was initially not recorded, the records remain unchanged and a message explains that no changes were made.
 * The current list filter stays active.
 
 Examples:
 
-* `list` followed by `editstudiorecord 1 w/3 ef/30` edits studio record's effort score to 30 for week 3 for the first student displayed, if any.
-* `find Betsy` followed by `editstudiorecord 1 w/13 ef/0` edits studio's effort score to 0 for week 13 for the first student in the search results, if any.
+* `list` followed by `editstudiorecord id/1 w/3 ef/30` edits studio record's effort score to 30 for week 3 for the first student displayed, if any.
+* `find Betsy` followed by `editstudiorecord id/1 w/13 ef/0` edits studio's effort score to 0 for week 13 for the first student in the search results, if any.
 
-For example, if the first student is Amy Bee and her week 3 studio record is recorded, `editstudiorecord 1 w/3 ef/30` displays:
+For example, if the first student is Amy Bee and her week 3 studio record is recorded, `editstudiorecord id/1 w/3 ef/30` displays:
 
 ```text
 Edited Amy Bee's studio record for studio week 3.
@@ -264,72 +264,72 @@ Edited Amy Bee's studio record for studio week 3.
 
 Adds a numbered mastery check appointment for a student.
 
-Format: `addmc INDEX num/NUMBER dt/DATE-TIME`
+Format: `addmc id/INDEX num/NUMBER dt/DATE-TIME`
 
 * `INDEX` must be a positive integer identifying a student in the **currently displayed list**, including `find` results.
 * `NUMBER` must be an integer from **1 to 2147483647**, inclusive. Numbers are unique within each student's appointments.
 * `DATE-TIME` must be a real date and 24-hour time in `dd-MM|HH:mm` format, such as `29-10|13:30`.
   The current year is filled in automatically. Impossible dates, `24:00`, and times with seconds are rejected.
-* Supply lowercase `num/` and `dt/` exactly once each, in either order, after `INDEX`.
-* New appointments show **Not completed**. Adding an existing number leaves its time and status unchanged.
+* Supply lowercase `id/`, `num/`, and `dt/` exactly once each, in any order. Do not put text before the first prefix.
+* New mastery checks show **Not completed**. Adding an existing number leaves its time and status unchanged.
 * Any invalid input produces an error without changing records.
 
 All four mastery check commands use the same `INDEX` and `NUMBER` rules. They preserve other student records
 and the current list filter. Changes are saved automatically and retained after restart.
-Run `view INDEX` to inspect the Number, Appointment time, and Status columns.
+Run `view id/INDEX` to inspect the Number, Appointment time, and Status columns.
 
 Example: 
 
-`addmc 1 num/2 dt/29-10|13:30`, followed by `view 1`, shows appointment 2 at `Oct 29, 13:30` as Not completed.
+`addmc id/1 num/2 dt/29-10|13:30`, followed by `view id/1`, shows mastery check 2 at `Oct 29, 13:30` as Not completed.
 
 ### Deleting a mastery check: `delmc`
 
 Removes a numbered mastery check appointment for a student, including its completion status.
 
-Format: `delmc INDEX num/NUMBER`
+Format: `delmc id/INDEX num/NUMBER`
 
 * `INDEX` must be a positive integer identifying a student in the **currently displayed list**, including `find` results.
 * `NUMBER` must be an integer from **1 to 2147483647**, inclusive. Numbers are unique within each student's appointments.
-* Supply the lowercase `num/` prefix exactly once.
+* Supply the lowercase `id/` and `num/` prefixes exactly once. Do not put text before the first prefix.
 * If the number is not registered for that student, the command reports that no changes were made.
-* Other appointments and the student remain in the address book.
+* Other mastery check appointments and the student remain in the address book.
 * Any invalid input produces an error without changing records.
 
 Example: 
 
-`delmc 1 num/2` removes appointment 2 from the first displayed student, if registered.
+`delmc id/1 num/2` removes mastery check 2 from the first displayed student, if registered.
 
 ### Marking a mastery check as completed: `markmc`
 
-Marks an existing appointment as **Completed** without changing its appointment time.
+Marks an existing mastery check appointment as **Completed** without changing its appointment time.
 
-Format: `markmc INDEX num/NUMBER`
+Format: `markmc id/INDEX num/NUMBER`
 
 * `INDEX` must be a positive integer identifying a student in the **currently displayed list**, including `find` results.
 * `NUMBER` must be an integer from **1 to 2147483647**, inclusive. Numbers are unique within each student's appointments.
-* Supply the lowercase `num/` prefix exactly once. The number must be registered for that student.
-* Marking an already completed appointment reports that no changes were made.
+* Supply the lowercase `id/` and `num/` prefixes exactly once. Do not put text before the first prefix.
+* Marking an already completed mastery check reports that no changes were made.
 * Any invalid input produces an error without changing records.
 
 Example: 
 
-`markmc 1 num/2`, followed by `view 1`, shows appointment 2 as Completed.
+`markmc id/1 num/2`, followed by `view id/1`, shows mastery check 2 as Completed.
 
 ### Unmarking a mastery check as completed: `unmarkmc`
 
-Changes an existing appointment's status to **Not completed** without deleting it or changing its time.
+Changes an existing mastery check appointment's status to **Not completed** without deleting it or changing its time.
 
-Format: `unmarkmc INDEX num/NUMBER`
+Format: `unmarkmc id/INDEX num/NUMBER`
 
 * `INDEX` must be a positive integer identifying a student in the **currently displayed list**, including `find` results.
 * `NUMBER` must be an integer from **1 to 2147483647**, inclusive. Numbers are unique within each student's appointments.
 * Uses the same index, number, and registration rules as `markmc`. 
-* Unmarking an appointment that is already incomplete reports that no changes were made. 
+* Unmarking a mastery check that is already incomplete reports that no changes were made. 
 * Any invalid input produces an error without changing records.
 
 Example: 
 
-`unmarkmc 1 num/2`, followed by `view 1`, shows appointment 2 as Not completed.
+`unmarkmc id/1 num/2`, followed by `view id/1`, shows appointment 2 as Not completed.
 
 ### Adding a mission: `addmission`
 
@@ -390,14 +390,14 @@ not a student index or a position in the displayed list.
 Deletion removes the mission and its submission records from **every student**, including
 students hidden by the current filter. Student details, studio records, and other missions are
 preserved. The current student filter stays active. The result area shows deletion feedback;
-run `view INDEX` to see the updated profile. Deletion is automatically saved and survives restart.
+run `view id/INDEX` to see the updated profile. Deletion is automatically saved and survives restart.
 Deleted IDs are not reused. Unknown or invalid IDs leave data unchanged.
 
 ![result for deleting a mission](images/delMissionResult.png)
 
 ### Recording a mission submission: `markmission`
 
-Format: `markmission INDEX m/MISSION_ID`
+Format: `markmission id/INDEX m/MISSION_ID`
 
 * `INDEX` identifies a student in the **currently displayed list**, including `find` results.
 * The index must be a positive integer without a sign or leading zeros.
@@ -408,20 +408,20 @@ Format: `markmission INDEX m/MISSION_ID`
 * Other students, other submissions, studio records, and the current student filter are preserved.
 * Records are maintained manually. Not submitted means no submission is recorded in AvengerHub.
 
-Example: `markmission 1 m/M01`, followed by `view 1`, displays M01 as Submitted.
+Example: `markmission id/1 m/M01`, followed by `view id/1`, displays M01 as Submitted.
 An unknown mission ID or invalid command leaves existing records unchanged.
 
 ![result for marking a mission](images/markMissionResult.png)
 
 ### Removing a submission record: `unmarkmission`
 
-Format: `unmarkmission INDEX m/MISSION_ID`
+Format: `unmarkmission id/INDEX m/MISSION_ID`
 
 Uses the same index and mission ID rules as `markmission`. This removes only the selected student's
 submission record; it does not delete the student or the mission. Unmarking an unrecorded submission
 reports that no changes were made.
 
-Example: `unmarkmission 1 m/M01`, followed by `view 1`, displays M01 as Not submitted.
+Example: `unmarkmission id/1 m/M01`, followed by `view id/1`, displays M01 as Not submitted.
 
 The profile displays configured mission descriptions and deadlines. An empty catalogue shows
 “No missions configured.”
@@ -448,7 +448,7 @@ Format: `editmission m/MISSION_ID [n/NAME] [d/DEADLINE]`
   student, including students hidden by the current filter.
 * An unchanged name and deadline produce no-change feedback.
 * Successful edits are saved automatically. Invalid edits leave records unchanged.
-* Run `view INDEX` again to inspect updated mission details.
+* Run `view id/INDEX` again to inspect updated mission details.
 
 Examples:
 
@@ -473,7 +473,7 @@ Format: `listoverdue`
   the mission's name and deadline.
 * A student can appear more than once if they have multiple overdue submissions.
 * Student numbers match the indexes in the displayed student list.
-  Use `view INDEX` to inspect a student's profile.
+  Use `view id/INDEX` to inspect a student's profile.
 * Results are ordered by displayed student index, then numeric mission ID.
 * Recording a submission removes it from subsequent overdue results.
   Submission timestamps are not recorded, so this report does not identify
@@ -502,7 +502,7 @@ Format: `listmissions m/MISSION_ID`
 * The command word and mission ID are case-insensitive.
 * Students hidden by `find` are excluded.
 * Result numbers retain the indexes in the displayed student list.
-  A result numbered `3` can therefore be inspected using `view 3`.
+  A result numbered `3` can therefore be inspected using `view id/3`.
 * The student filter, submission records, and mission catalogue are unchanged.
 * If no displayed students submitted the mission, the command reports that no
   submissions are recorded within the current student list.
@@ -562,23 +562,27 @@ Failed commands do not save. A missing file instead loads the sample data.
 
 ## Command summary
 
-Action     | Format, Examples
------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-**Add student**    | `addstudent n/NAME p/PHONE_NUMBER e/EMAIL [t/TAG]... g/STUDIO_GROUP` <br> e.g., `addstudent n/James Ho p/22224444 e/jamesho@example.com  t/smart t/talkative g/1A`
-**Delete student** | `delstudent INDEX`<br> e.g., `delstudent 3`
-**View student** | `view INDEX`<br> e.g., `view 1`
-**Edit student**   | `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [t/TAG]... [g/STUDIO_GROUP]`<br> e.g.,`edit 2 n/James Lee e/jameslee@example.com g/1A`
-**Add studio record** | `addstudiorecord INDEX w/WEEK ef/EFFORT`<br> e.g., `addstudiorecord 1 w/3 ef/30`
-**Delete studio record** | `delstudiorecord INDEX w/WEEK`<br> e.g., `delstudiorecord 1 w/3`
-**Edit studio record** | `editstudiorecord INDEX w/WEEK ef/EFFORT`<br> e.g., `editstudiorecord 1 w/3 ef/30`
-**Add mission** | `addmission n/NAME d/DEADLINE`<br> e.g., `addmission n/Rune Reading d/2026-10-20`
-**Delete mission** | `delmission m/MISSIONID`<br> e.g., `delmission m/M03`
-**Record mission submission** | `markmission INDEX m/MISSION_ID`<br> e.g., `markmission 1 m/M01`
-**Remove mission submission** | `unmarkmission INDEX m/MISSION_ID`<br> e.g., `unmarkmission 1 m/M01`
-**Edit mission** | `editmission m/MISSION_ID [n/NAME] [d/DEADLINE]`<br> e.g., `editmission m/M01 n/Rune Reading d/2026-10-22`
-**List overdue submissions** | `listoverdue`
-**List mission submissions** | `listmissions m/MISSION_ID`<br> e.g., `listmissions m/M01`
-**Clear**  | `clear`
-**Find**   | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find James Jake`
-**List**   | `list`
-**Help**   | `help`
+Action     | Format, Examples                                                                                                                                                   
+-----------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+**Add student**    | `addstudent n/NAME p/PHONE_NUMBER e/EMAIL [t/TAG]... g/STUDIO_GROUP` <br> e.g., `addstudent n/James Ho p/22224444 e/jamesho@example.com  t/smart t/talkative g/1A` 
+**Delete student** | `delstudent id/INDEX`<br> e.g., `delstudent id/3`                                                                                                                     
+**View student** | `view id/INDEX`<br> e.g., `view id/1`                                                                                                                                 
+**Edit student**   | `edit id/INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [t/TAG]... [g/STUDIO_GROUP]`<br> e.g.,`edit id/2 n/James Lee e/jameslee@example.com g/1A`                       
+**Add studio record** | `addstudiorecord id/INDEX w/WEEK ef/EFFORT`<br> e.g., `addstudiorecord id/1 w/3 ef/30`                                                                             
+**Delete studio record** | `delstudiorecord id/INDEX w/WEEK`<br> e.g., `delstudiorecord id/1 w/3`                                                                                             
+**Edit studio record** | `editstudiorecord id/INDEX w/WEEK ef/EFFORT`<br> e.g., `editstudiorecord id/1 w/3 ef/30`                                                                           
+**Add mastery check** | `addmc id/INDEX num/NUMBER dt/DATE-TIME`<br> e.g., `addmc id/1 num/2 dt/29-09\|23:59`                                                                              
+**Delete mastery check** | `delmc id/INDEX num/NUMBER`<br> e.g. `delmc id/1 num/2`                                                                                                               
+**Mark mastery check** | `markmc id/INDEX num/NUMBER`<br> e.g. `markmc id/1 num/2`                                                                                                             
+**Unmark mastery check** | `unmarkmc id/INDEX num/NUMBER`<br> e.g. `unmarkmc id/1 num/2`                                                                                                         
+**Add mission** | `addmission n/NAME d/DEADLINE`<br> e.g., `addmission n/Rune Reading d/2026-10-20`                                                                                  
+**Delete mission** | `delmission m/MISSIONID`<br> e.g., `delmission m/M03`                                                                                                              
+**Record mission submission** | `markmission id/INDEX m/MISSION_ID`<br> e.g., `markmission id/1 m/M01`                                                                                                
+**Remove mission submission** | `unmarkmission id/INDEX m/MISSION_ID`<br> e.g., `unmarkmission id/1 m/M01`                                                                                            
+**Edit mission** | `editmission m/MISSION_ID [n/NAME] [d/DEADLINE]`<br> e.g., `editmission m/M01 n/Rune Reading d/2026-10-22`                                                         
+**List overdue submissions** | `listoverdue`                                                                                                                                                      
+**List mission submissions** | `listmissions m/MISSION_ID`<br> e.g., `listmissions m/M01`                                                                                                         
+**Clear**  | `clear`                                                                                                                                                            
+**Find**   | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find James Jake`                                                                                                         
+**List**   | `list`                                                                                                                                                             
+**Help**   | `help`                                                                                                                                                             

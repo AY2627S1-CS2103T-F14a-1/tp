@@ -2,6 +2,7 @@ package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.AppUtil.checkArgument;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_INDEX;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NUMBER;
 
 import java.util.logging.Logger;
@@ -23,10 +24,10 @@ public class MarkMasteryCheckCommand extends Command {
 
     public static final String MESSAGE_USAGE = COMMAND_WORD
             + ": Marks completion for the numbered mastery check of the selected student.\n"
-            + "Parameters: INDEX" + PREFIX_NUMBER + "NUMBER\n"
+            + "Parameters: " + PREFIX_INDEX + "INDEX " + PREFIX_NUMBER + "NUMBER\n"
             + "INDEX must be a positive integer identifying a displayed student.\n"
             + "NUMBER must be a positive integer identifying a mastery check.\n"
-            + "Example: " + COMMAND_WORD + " 1 num/2";
+            + "Example: " + COMMAND_WORD + " " + PREFIX_INDEX + "1 " + PREFIX_NUMBER + "2";
 
     public static final String MESSAGE_SUCCESS =
             "Marked %1$s’s mastery check %2$s as completed.";
