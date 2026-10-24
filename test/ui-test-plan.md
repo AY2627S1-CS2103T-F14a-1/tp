@@ -156,7 +156,8 @@ Run `PrefixTest`, `ArgumentMultimapTest`, `ArgumentStructureValidatorTest`,
 
 Run the full Gradle suite and `coverage` with Java 25 and assertions enabled.
 Verify 100% JaCoCo branch coverage for `EditCommandParser` and `Prefix`.
-`PrefixTest` exercises null-backed hashing and every equality path. The private
+`PrefixTest` exercises null-backed hashing and equality, including comparisons
+between null and non-null prefix values. The private
 edit-tag assertion is tested through reflection because tokenizer-produced tag
 collections are never null; this internal invariant has no UI input equivalent.
 

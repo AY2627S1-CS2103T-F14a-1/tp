@@ -60,6 +60,15 @@ public class PrefixTest {
     }
 
     @Test
+    public void equals_nullPrefix_handlesNullAndNonNullPrefixValues() {
+        Prefix nullPrefix = new Prefix(null);
+
+        assertEquals(nullPrefix, new Prefix(null));
+        assertNotEquals(nullPrefix, new Prefix("id/"));
+        assertNotEquals(new Prefix("id/"), nullPrefix);
+    }
+
+    @Test
     public void hashCode_nullPrefix_returnsZero() {
         assertEquals(0, new Prefix(null).hashCode());
     }
