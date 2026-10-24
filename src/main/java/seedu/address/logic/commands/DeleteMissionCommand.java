@@ -3,6 +3,7 @@ package seedu.address.logic.commands;
 import static java.util.Objects.requireNonNull;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_MISSION;
 
+import java.util.Objects;
 import java.util.logging.Logger;
 
 import seedu.address.commons.core.LogsCenter;
@@ -26,9 +27,6 @@ public class DeleteMissionCommand extends Command {
 
     public static final String MESSAGE_SUCCESS = "Deleted mission: %1$s.";
 
-    public static final String MESSAGE_MISSION_NOT_FOUND =
-            "Mission %1$s does not exist.";
-
     private static final Logger logger = LogsCenter.getLogger(DeleteMissionCommand.class);
 
     private final MissionId missionId;
@@ -49,7 +47,7 @@ public class DeleteMissionCommand extends Command {
 
         if (model.findMission(missionId).isEmpty()) {
             logger.fine("DeleteMissionCommand rejected: mission " + missionId + " does not exist.");
-            throw new CommandException(String.format(MESSAGE_MISSION_NOT_FOUND, missionId));
+            throw new CommandException(String.format(Messages.MESSAGE_MISSION_NOT_FOUND, missionId));
         }
 
         Mission deleted = model.deleteMission(missionId);
@@ -66,6 +64,11 @@ public class DeleteMissionCommand extends Command {
             return false;
         }
         return missionId.equals(otherCommand.missionId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(missionId);
     }
 
     @Override

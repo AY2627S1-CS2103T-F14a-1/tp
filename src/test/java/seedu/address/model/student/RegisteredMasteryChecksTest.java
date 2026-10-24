@@ -3,6 +3,7 @@ package seedu.address.model.student;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -99,6 +100,115 @@ public class RegisteredMasteryChecksTest {
             assertThrows(IllegalArgumentException.class, () ->
                     registrations.withMasteryCheck(number, new MasteryCheck(APPOINTMENT)));
             assertTrue(registrations.getMasteryCheckAppointments().isEmpty());
+        }
+    }
+
+    @Test
+    public void withCompletionStatus_bothTransitions_preservesOriginalAndOtherChecks() {
+        for (boolean isComplete : new boolean[] {true, false}) {
+            MasteryCheck target = new MasteryCheck(APPOINTMENT.withSecond(45).withNano(123456789));
+            if (!isComplete) {
+                target.markComplete();
+            }
+            MasteryCheck other = new MasteryCheck(APPOINTMENT.plusDays(1));
+            RegisteredMasteryChecks original = new RegisteredMasteryChecks(Map.of(1, target,
+                    Integer.MAX_VALUE, other));
+
+            RegisteredMasteryChecks updated = original.withCompletionStatus(1, isComplete);
+            MasteryCheck updatedCheck = updated.getMasteryCheckAppointments().get(1);
+
+            assertEquals(isComplete, updated.isCompleteMasteryCheck(1));
+            assertEquals(!isComplete, original.isCompleteMasteryCheck(1));
+            assertSame(target, original.getMasteryCheckAppointments().get(1));
+            assertNotSame(target, updatedCheck);
+            assertEquals(target.getAppointmentTime(), updatedCheck.getAppointmentTime());
+            assertEquals(2, updated.getMasteryCheckAppointments().size());
+            assertSame(other, updated.getMasteryCheckAppointments().get(Integer.MAX_VALUE));
+            assertFalse(other.isComplete());
+        }
+    }
+
+    @Test
+    public void withCompletionStatus_missingNumber_leavesRegistrationsUnchanged() {
+        MasteryCheck target = new MasteryCheck(APPOINTMENT);
+        RegisteredMasteryChecks registrations = new RegisteredMasteryChecks(Map.of(1, target));
+        for (boolean isComplete : new boolean[] {true, false}) {
+            IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
+                    registrations.withCompletionStatus(2, isComplete));
+            assertEquals(RegisteredMasteryChecks.MESSAGE_MISSING, exception.getMessage());
+            assertEquals(Map.of(1, target), registrations.getMasteryCheckAppointments());
+            assertFalse(target.isComplete());
+        }
+    }
+
+    @Test
+    public void withCompletionStatus_unchangedStatus_returnsSameInstance() {
+        for (boolean isComplete : new boolean[] {true, false}) {
+            MasteryCheck target = new MasteryCheck(APPOINTMENT);
+            if (isComplete) {
+                target.markComplete();
+            }
+            RegisteredMasteryChecks registrations = new RegisteredMasteryChecks(Map.of(1, target));
+
+            assertSame(registrations, registrations.withCompletionStatus(1, isComplete));
+            assertSame(target, registrations.getMasteryCheckAppointments().get(1));
+            assertEquals(isComplete, target.isComplete());
+        }
+    }
+
+    @Test
+    public void withCompletionStatus_invalidNumber_leavesRegistrationsUnchanged() {
+        MasteryCheck target = new MasteryCheck(APPOINTMENT);
+        RegisteredMasteryChecks registrations = new RegisteredMasteryChecks(Map.of(1, target));
+        for (int number : new int[] {0, -1, Integer.MIN_VALUE}) {
+            for (boolean isComplete : new boolean[] {true, false}) {
+                IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
+                        registrations.withCompletionStatus(number, isComplete));
+                assertEquals(RegisteredMasteryChecks.MESSAGE_CONSTRAINTS, exception.getMessage());
+                assertEquals(Map.of(1, target), registrations.getMasteryCheckAppointments());
+                assertFalse(target.isComplete());
+            }
+        }
+    }
+
+    @Test
+    public void isCompleteMasteryCheck_registeredNumbers_returnsStatusWithoutChangingChecks() {
+        MasteryCheck incomplete = new MasteryCheck(APPOINTMENT);
+        MasteryCheck complete = new MasteryCheck(APPOINTMENT.plusDays(1));
+        complete.markComplete();
+        RegisteredMasteryChecks registrations = new RegisteredMasteryChecks(Map.of(1, incomplete,
+                Integer.MAX_VALUE, complete));
+
+        assertFalse(registrations.isCompleteMasteryCheck(1));
+        assertTrue(registrations.isCompleteMasteryCheck(Integer.MAX_VALUE));
+        assertFalse(incomplete.isComplete());
+        assertTrue(complete.isComplete());
+        assertEquals(Map.of(1, incomplete, Integer.MAX_VALUE, complete), registrations.getMasteryCheckAppointments());
+    }
+
+    @Test
+    public void isCompleteMasteryCheck_missingNumber_leavesRegistrationsUnchanged() {
+        MasteryCheck target = new MasteryCheck(APPOINTMENT);
+        RegisteredMasteryChecks registrations = new RegisteredMasteryChecks(Map.of(1, target));
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
+                registrations.isCompleteMasteryCheck(2));
+
+        assertEquals(RegisteredMasteryChecks.MESSAGE_MISSING, exception.getMessage());
+        assertEquals(Map.of(1, target), registrations.getMasteryCheckAppointments());
+        assertFalse(target.isComplete());
+    }
+
+    @Test
+    public void isCompleteMasteryCheck_invalidNumber_leavesRegistrationsUnchanged() {
+        MasteryCheck target = new MasteryCheck(APPOINTMENT);
+        RegisteredMasteryChecks registrations = new RegisteredMasteryChecks(Map.of(1, target));
+        for (int number : new int[] {0, -1, Integer.MIN_VALUE}) {
+            IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
+                    registrations.isCompleteMasteryCheck(number));
+            assertEquals(RegisteredMasteryChecks.MESSAGE_CONSTRAINTS, exception.getMessage());
+            assertEquals(Map.of(1, target), registrations.getMasteryCheckAppointments());
+            assertFalse(target.isComplete());
         }
     }
 

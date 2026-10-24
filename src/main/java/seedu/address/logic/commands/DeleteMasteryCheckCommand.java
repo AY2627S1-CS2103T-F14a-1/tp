@@ -2,6 +2,7 @@ package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.AppUtil.checkArgument;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_INDEX;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NUMBER;
 
 import seedu.address.commons.core.index.Index;
@@ -20,10 +21,10 @@ public class DeleteMasteryCheckCommand extends Command {
 
     public static final String MESSAGE_USAGE = COMMAND_WORD
             + ": Removes a numbered mastery check for the selected student.\n"
-            + "Parameters: INDEX " + PREFIX_NUMBER + "NUMBER\n"
+            + "Parameters: " + PREFIX_INDEX + "INDEX " + PREFIX_NUMBER + "NUMBER\n"
             + "INDEX must be a positive integer identifying a displayed student.\n"
             + "NUMBER must be a positive integer identifying a mastery check.\n"
-            + "Example: " + COMMAND_WORD + " 1 num/2";
+            + "Example: " + COMMAND_WORD + " " + PREFIX_INDEX + "1 " + PREFIX_NUMBER + "2";
 
     public static final String MESSAGE_SUCCESS =
             "Removed %1$s's mastery check numbered %2$d.";
@@ -43,9 +44,11 @@ public class DeleteMasteryCheckCommand extends Command {
      * @throws IllegalArgumentException If the number fails the currently enforced studio-week range check.
      */
     public DeleteMasteryCheckCommand(Index targetIndex, int number) {
-        this.targetIndex = requireNonNull(targetIndex);
+        requireNonNull(targetIndex);
         checkArgument(RegisteredMasteryChecks.isValidMasteryCheckNumber(number),
                 RegisteredMasteryChecks.MESSAGE_CONSTRAINTS);
+
+        this.targetIndex = targetIndex;
         this.number = number;
     }
 
@@ -68,26 +71,10 @@ public class DeleteMasteryCheckCommand extends Command {
             return new CommandResult(String.format(MESSAGE_NOT_FOUND, studentToUpdate.getName(), number));
         }
 
-        Student updatedStudent = createUpdatedStudent(
-                studentToUpdate, registeredMasteryChecks.withoutMasteryCheck(number));
+        Student updatedStudent = studentToUpdate.withRegisteredMasteryChecks(
+                registeredMasteryChecks.withoutMasteryCheck(number));
         model.setStudent(studentToUpdate, updatedStudent);
         return new CommandResult(String.format(MESSAGE_SUCCESS, studentToUpdate.getName(), number));
-    }
-
-    /**
-     * Copies a student with replacement mastery check registrations, retaining all other details.
-     *
-     * @param student Non-null student whose other details are preserved.
-     * @param registeredMasteryChecks Non-null registrations to use in the copy.
-     * @return A student containing the supplied registrations and original remaining details.
-     */
-    private Student createUpdatedStudent(Student student, RegisteredMasteryChecks registeredMasteryChecks) {
-        assert student != null;
-        assert registeredMasteryChecks != null;
-
-        return new Student(student.getName(), student.getPhone(), student.getEmail(),
-                student.getTags(), student.getStudioGroup(), student.getMissionSubmissions(),
-                student.getRegisteredStudioRecords(), registeredMasteryChecks, student.getRegisteredNotes());
     }
 
     /**

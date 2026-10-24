@@ -1,7 +1,6 @@
 package seedu.address.logic.parser;
 
 import static java.util.Objects.requireNonNull;
-import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_MISSION;
 
 import seedu.address.logic.commands.ListMissionsCommand;
@@ -27,23 +26,10 @@ public class ListMissionsCommandParser implements Parser<ListMissionsCommand> {
     @Override
     public ListMissionsCommand parse(String args) throws ParseException {
         requireNonNull(args);
+        ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
+                args, ListMissionsCommand.MESSAGE_USAGE, PREFIX_MISSION);
 
-        ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args, PREFIX_MISSION);
-        if (!argMultimap.getPreamble().isEmpty()) {
-            throw new ParseException(String.format(
-                    MESSAGE_INVALID_COMMAND_FORMAT, ListMissionsCommand.MESSAGE_USAGE));
-        }
-        if (argMultimap.getValue(PREFIX_MISSION).isEmpty()) {
-            throw new ParseException(MESSAGE_MISSING_MISSION);
-        }
-
-        argMultimap.verifyNoDuplicatePrefixesFor(PREFIX_MISSION);
-        String missionIdText = argMultimap.getValue(PREFIX_MISSION).orElseThrow().strip();
-        if (missionIdText.isEmpty()) {
-            throw new ParseException(MESSAGE_MISSING_MISSION);
-        }
-
-        MissionId missionId = MissionParser.parseMissionId(missionIdText);
+        MissionId missionId = ParserUtil.parseMissionId(argMultimap.getValue(PREFIX_MISSION).get());
         return new ListMissionsCommand(missionId);
     }
 }

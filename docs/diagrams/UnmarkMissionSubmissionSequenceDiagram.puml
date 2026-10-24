@@ -11,16 +11,16 @@ end box
 box Model MODEL_COLOR_T1
 participant "m:Model" as M MODEL_COLOR
 end box
-[-> L : execute("unmarkmission 1 m/M03")
+[-> L : execute("unmarkmission id/1 m/M03")
 activate L
-L -> A : parseCommand("unmarkmission 1 m/M03")
+L -> A : parseCommand("unmarkmission id/1 m/M03")
 activate A
 create P
 A -> P
 activate P
 P --> A
 deactivate P
-A -> P : parse("1 m/M03")
+A -> P : parse("id/1 m/M03")
 activate P
 create C
 P -> C : UnmarkMissionCommand(targetIndex, missionId)

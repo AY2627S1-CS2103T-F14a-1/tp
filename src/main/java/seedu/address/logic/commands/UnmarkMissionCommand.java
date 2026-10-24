@@ -1,12 +1,16 @@
 package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_INDEX;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_MISSION;
 
+import java.util.Objects;
 import java.util.logging.Logger;
 
 import seedu.address.commons.core.LogsCenter;
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.ToStringBuilder;
+import seedu.address.logic.Messages;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 import seedu.address.model.mission.MissionId;
@@ -22,16 +26,16 @@ public class UnmarkMissionCommand extends Command {
 
     public static final String MESSAGE_USAGE = COMMAND_WORD
             + ": Removes record of a mission submission for the selected student.\n"
-            + "Parameters: INDEX m/MISSION_ID\n"
+            + "Parameters: " + PREFIX_INDEX + "INDEX m/MISSION_ID\n"
             + "INDEX must be a positive integer identifying a displayed student.\n"
             + MissionId.MESSAGE_CONSTRAINTS + "\n"
-            + "Example: " + COMMAND_WORD + " 1 m/M05";
+            + "Example: " + COMMAND_WORD + " " + PREFIX_INDEX + "1 " + PREFIX_MISSION + "M05";
 
     public static final String MESSAGE_SUCCESS =
-            "Removed %1$s’s mission submission for mission %2$s.";
+            "Removed %1$s's mission submission for mission %2$s.";
 
     public static final String MESSAGE_NOT_RECORDED =
-            "%1$s’s mission submission was already not recorded for mission %2$s. No changes made.";
+            "%1$s's mission submission was already not recorded for mission %2$s. No changes made.";
 
     private static final Logger logger = LogsCenter.getLogger(UnmarkMissionCommand.class);
 
@@ -63,7 +67,7 @@ public class UnmarkMissionCommand extends Command {
 
         if (model.findMission(missionId).isEmpty()) {
             logger.fine("UnmarkMissionCommand rejected: mission " + missionId + " does not exist.");
-            throw new CommandException("Mission does not exist: " + missionId);
+            throw new CommandException(String.format(Messages.MESSAGE_MISSION_NOT_FOUND, missionId));
         }
 
         Student studentToUpdate = getStudentAtDisplayedIndex(model, targetIndex);
@@ -76,29 +80,12 @@ public class UnmarkMissionCommand extends Command {
             return new CommandResult(String.format(MESSAGE_NOT_RECORDED, studentToUpdate.getName(), missionId));
         }
 
-        Student updatedStudent = createUpdatedStudent(studentToUpdate, submissions.withoutSubmission(missionId));
+        Student updatedStudent = studentToUpdate.withMissionSubmissions(submissions.withoutSubmission(missionId));
         model.setStudent(studentToUpdate, updatedStudent);
         logger.info("Removed submission for mission " + missionId
                 + " for student " + studentToUpdate.getName()
                 + " at displayed student index " + targetIndex.getOneBased() + " in memory.");
         return new CommandResult(String.format(MESSAGE_SUCCESS, studentToUpdate.getName(), missionId));
-    }
-
-    /**
-     * Copies a student with updated mission submissions.
-     *
-     * @param student Student whose other details are preserved.
-     * @param submissions Updated mission submissions.
-     * @return A student containing the updated submissions and original details.
-     */
-    private Student createUpdatedStudent(Student student, MissionSubmissions submissions) {
-        assert student != null;
-        assert submissions != null;
-
-        return new Student(student.getName(), student.getPhone(), student.getEmail(),
-                student.getTags(), student.getStudioGroup(), submissions,
-                student.getRegisteredStudioRecords(), student.getRegisteredMasteryChecks(),
-                student.getRegisteredNotes());
     }
 
     @Override
@@ -114,6 +101,11 @@ public class UnmarkMissionCommand extends Command {
 
         return targetIndex.equals(otherMissionCommand.targetIndex)
                 && missionId.equals(otherMissionCommand.missionId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(targetIndex.getZeroBased(), missionId);
     }
 
     @Override
