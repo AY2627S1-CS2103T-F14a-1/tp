@@ -1,6 +1,7 @@
 package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_STUDIO_GROUP;
 
 import java.util.function.Predicate;
 
@@ -30,7 +31,7 @@ public class FindCommand extends Command {
             + "If no g/ studio group is provided, the search is performed using only "
             + "the name keywords.\n"
             + "Place name alternatives before group filters.\n"
-            + "Example: " + COMMAND_WORD + " david, alex g/1A";
+            + "Example: " + COMMAND_WORD + " david, alex " + PREFIX_STUDIO_GROUP + "1A";
 
     private final Predicate<Student> predicate;
 

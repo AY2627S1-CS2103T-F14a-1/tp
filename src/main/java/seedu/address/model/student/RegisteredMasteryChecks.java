@@ -16,6 +16,7 @@ import seedu.address.model.masterycheck.MasteryCheck;
 public final class RegisteredMasteryChecks {
 
     public static final String MESSAGE_CONSTRAINTS = "Mastery check number should be an integer greater than 0";
+    public static final String MESSAGE_MISSING = "No registered mastery checks with that number";
 
     private final Map<Integer, MasteryCheck> masteryAppointments;
 
@@ -79,6 +80,33 @@ public final class RegisteredMasteryChecks {
     }
 
     /**
+     * Returns registrations with a copy of the numbered check set to the requested completion status.
+     * Preserves the original check, appointment time, and all other registrations.
+     * Returns this object if the check already has the requested status.
+     *
+     * @param masteryCheckNumber Positive number identifying a registered mastery check.
+     * @param isComplete Whether the mastery check should be complete.
+     * @return Updated registrations, or this object if the completion status is unchanged.
+     * @throws IllegalArgumentException If the number is not positive or is not registered.
+     */
+    public RegisteredMasteryChecks withCompletionStatus(int masteryCheckNumber, boolean isComplete) {
+        if (hasMasteryCheck(masteryCheckNumber) && isCompleteMasteryCheck(masteryCheckNumber) == isComplete) {
+            return this;
+        }
+
+        Map<Integer, MasteryCheck> updatedAppointments = new HashMap<>(masteryAppointments);
+        MasteryCheck check = getMasteryCheck(masteryCheckNumber);
+        if (isComplete) {
+            check.markComplete();
+        } else {
+            check.markIncomplete();
+        }
+        updatedAppointments.put(masteryCheckNumber, check);
+
+        return new RegisteredMasteryChecks(updatedAppointments);
+    }
+
+    /**
      * Returns registrations excluding the given number without modifying this mapping.
      * Returns this object if the number is not registered.
      *
@@ -108,6 +136,23 @@ public final class RegisteredMasteryChecks {
     }
 
     /**
+     * Returns an independent copy of the numbered check with its appointment time and completion status.
+     *
+     * @param number Positive number identifying a registered mastery check.
+     * @return A copy whose completion status can change without modifying the registered check.
+     * @throws IllegalArgumentException If the number is not positive or is not registered.
+     */
+    private MasteryCheck getMasteryCheck(int number) {
+        checkArgument(hasMasteryCheck(number), MESSAGE_MISSING);
+        MasteryCheck check = masteryAppointments.get(number);
+        MasteryCheck clone = new MasteryCheck(check.getAppointmentTime());
+        if (check.isComplete()) {
+            clone.markComplete();
+        }
+        return clone;
+    }
+
+    /**
      * Checks whether a number can identify a mastery check registration.
      *
      * @param num Number to validate.
@@ -115,6 +160,18 @@ public final class RegisteredMasteryChecks {
      */
     public static boolean isValidMasteryCheckNumber(int num) {
         return num > 0;
+    }
+
+    /**
+     * Returns whether the numbered registered mastery check is complete without modifying it.
+     *
+     * @param number Positive number identifying a registered mastery check.
+     * @return True if the registered check is complete, or false if it is incomplete.
+     * @throws IllegalArgumentException If the number is not positive or is not registered.
+     */
+    public boolean isCompleteMasteryCheck(int number) {
+        checkArgument(hasMasteryCheck(number), MESSAGE_MISSING);
+        return masteryAppointments.get(number).isComplete();
     }
 
     /**
