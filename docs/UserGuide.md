@@ -61,6 +61,9 @@ AvengerHub is a **desktop address book application for managing students, optimi
 * Prefixed parameters can be in any order unless a command states otherwise.<br>
   For example, if the command specifies `n/NAME p/PHONE_NUMBER`, `p/PHONE_NUMBER n/NAME` is also acceptable.
 
+* Prefixes are case-insensitive.<br>
+  For example, `n/John Doe` and `N/John Doe` both specify the same name parameter.
+
 * Extraneous parameters for commands that take no parameters, such as `help`, `list`, `exit`, and `clear`, are ignored.<br>
   For example, `help 123` is interpreted as `help`.
 
