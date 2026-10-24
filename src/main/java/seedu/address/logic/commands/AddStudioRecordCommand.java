@@ -2,6 +2,9 @@ package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.AppUtil.checkArgument;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_INDEX;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_STUDIO_EFFORT;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_WEEK;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.ToStringBuilder;
@@ -20,11 +23,11 @@ public class AddStudioRecordCommand extends Command {
 
     public static final String MESSAGE_USAGE = COMMAND_WORD
             + ": Records a week's studio record for the selected student.\n"
-            + "Parameters: INDEX w/WEEK ef/EFFORT\n"
+            + "Parameters: " + PREFIX_INDEX + "INDEX w/WEEK ef/EFFORT\n"
             + "INDEX must be a positive integer identifying a displayed student.\n"
             + "WEEK must be between " + RegisteredStudioRecords.MIN_WEEK
             + " and " + RegisteredStudioRecords.MAX_WEEK + " inclusive.\n"
-            + "Example: " + COMMAND_WORD + " 1 w/3 ef/30";
+            + "Example: " + COMMAND_WORD + " " + PREFIX_INDEX + "1 " + PREFIX_WEEK + "3 " + PREFIX_STUDIO_EFFORT + "30";
 
     public static final String MESSAGE_SUCCESS =
             "Added %1$s's studio record for studio week %2$d.";
