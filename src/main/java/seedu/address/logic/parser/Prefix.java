@@ -1,5 +1,8 @@
 package seedu.address.logic.parser;
 
+import java.util.Locale;
+import java.util.Objects;
+
 /**
  * A prefix that marks the beginning of an argument in an arguments string.
  * E.g. 't/' in 'addstudent James t/ friend'.
@@ -62,7 +65,7 @@ public class Prefix {
 
     @Override
     public int hashCode() {
-        return prefix == null ? 0 : prefix.hashCode();
+        return prefix == null ? 0 : prefix.toLowerCase(Locale.ROOT).hashCode();
     }
 
     @Override
@@ -76,6 +79,7 @@ public class Prefix {
             return false;
         }
 
-        return prefix.equals(otherPrefix.prefix);
+        return Objects.equals(prefix == null ? null : prefix.toLowerCase(Locale.ROOT),
+                otherPrefix.prefix == null ? null : otherPrefix.prefix.toLowerCase(Locale.ROOT));
     }
 }

@@ -39,6 +39,8 @@ public class EditMissionCommandParserTest {
         nameDescriptor.setName("New Runes");
         assertParseSuccess(parser, "m/M01 n/New Runes",
                 new EditMissionCommand(new MissionId("M01"), nameDescriptor));
+        assertParseSuccess(parser, "M/M01 N/New Runes",
+                new EditMissionCommand(new MissionId("M01"), nameDescriptor));
 
         EditMissionDescriptor deadlineDescriptor = new EditMissionDescriptor();
         deadlineDescriptor.setDeadline(LocalDate.of(2000, 2, 29));
@@ -51,7 +53,7 @@ public class EditMissionCommandParserTest {
         String expectedMessage = String.format(
                 MESSAGE_INVALID_COMMAND_FORMAT, EditMissionCommand.MESSAGE_USAGE);
 
-        for (String input : List.of("", "n/New", "extra m/M01 n/New", "M/M01 n/New")) {
+        for (String input : List.of("", "n/New", "extra m/M01 n/New")) {
             assertParseFailure(parser, input, expectedMessage);
         }
     }

@@ -69,12 +69,13 @@ public class DeleteStudioRecordCommandParserTest {
     @Test
     public void parse_leadingZeros_returnsCommand() {
         assertParseSuccess(parser, "id/01 w/03", new DeleteStudioRecordCommand(INDEX_FIRST_STUDENT, 3));
+        assertParseSuccess(parser, "ID/01 W/03", new DeleteStudioRecordCommand(INDEX_FIRST_STUDENT, 3));
     }
 
     @Test
     public void parse_extraArgumentsOrUnexpectedPrefixes_reportsInvalidFormat() {
         String expected = String.format(MESSAGE_INVALID_COMMAND_FORMAT, DeleteStudioRecordCommand.MESSAGE_USAGE);
-        String[] inputs = {"W/3 1", "1 3 4", "1 x/3", "1 extra w/3"};
+        String[] inputs = {"1 3 4", "1 x/3", "1 extra w/3"};
 
         for (String input : inputs) {
             assertParseFailure(parser, input, expected);
@@ -87,7 +88,8 @@ public class DeleteStudioRecordCommandParserTest {
 
     @Test
     public void parse_extraWeekText_reportsInvalidWeek() {
-        String[] inputs = {"id/1 w/3 W/4", "id/1 w/3 extra", "id/1 w/3 x/4", "id/1 w/3w/4"};
+        assertParseFailure(parser, "id/1 w/3 W/4", PREFIX_WEEK.getDuplicateMessage());
+        String[] inputs = {"id/1 w/3 extra", "id/1 w/3 x/4", "id/1 w/3w/4"};
 
         for (String input : inputs) {
             assertParseFailure(parser, input, MESSAGE_INVALID_WEEK);
