@@ -19,11 +19,15 @@ public class DeleteStudentCommandParser implements Parser<DeleteStudentCommand> 
      */
     public DeleteStudentCommand parse(String args) throws ParseException {
         requireNonNull(args);
-        ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
-                args, DeleteStudentCommand.MESSAGE_USAGE, PREFIX_INDEX);
+        try {
+            ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
+                    args, PREFIX_INDEX);
 
-        Index index = ParserUtil.parseIndex(argMultimap.getValue(PREFIX_INDEX).get());
-        return new DeleteStudentCommand(index);
+            Index index = ParserUtil.parseIndex(argMultimap.getValue(PREFIX_INDEX).get());
+            return new DeleteStudentCommand(index);
+        } catch (ParseException e) {
+            throw new ParseException(e.getMessage() + "\n" + DeleteStudentCommand.MESSAGE_USAGE);
+        }
     }
 
 }

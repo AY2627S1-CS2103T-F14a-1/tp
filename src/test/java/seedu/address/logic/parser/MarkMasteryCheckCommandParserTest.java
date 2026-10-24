@@ -15,6 +15,8 @@ import seedu.address.model.student.RegisteredMasteryChecks;
 
 /** Tests completion-command syntax, caller-specific feedback, and shared parser validation. */
 public class MarkMasteryCheckCommandParserTest {
+
+    private static final String USAGE_SUFFIX = "\n" + MarkMasteryCheckCommand.MESSAGE_USAGE;
     private final MarkMasteryCheckCommandParser parser = new MarkMasteryCheckCommandParser();
 
     @Test
@@ -33,27 +35,30 @@ public class MarkMasteryCheckCommandParserTest {
     @Test
     public void parse_invalidIndex_reportsIndexConstraint() {
         for (String index : List.of("0", "-1", "abc", "1.5", "1 extra", "2147483648")) {
-            assertParseFailure(parser, "id/" + index + " num/1", ParserUtil.MESSAGE_INVALID_INDEX);
+            assertParseFailure(parser, "id/" + index + " num/1",
+                ParserUtil.MESSAGE_INVALID_INDEX + USAGE_SUFFIX);
         }
     }
 
     @Test
     public void parse_missingNumberPrefix_reportsMissingPrefix() {
         assertParseFailure(parser, "id/1",
-                CliSyntax.PREFIX_NUMBER.getMissingMessage());
+                CliSyntax.PREFIX_NUMBER.getMissingMessage() + USAGE_SUFFIX);
     }
 
     @Test
     public void parse_invalidNumber_reportsMasteryCheckConstraint() {
         for (String number : List.of("", "0", "-1", "abc", "1.5", "2147483648")) {
-            assertParseFailure(parser, "id/1 num/" + number, RegisteredMasteryChecks.MESSAGE_CONSTRAINTS);
+            assertParseFailure(parser, "id/1 num/" + number,
+                RegisteredMasteryChecks.MESSAGE_CONSTRAINTS + USAGE_SUFFIX);
         }
     }
 
     @Test
     public void parse_duplicatePrefix_reportsRepeatedNumberPrefix() {
         for (String input : List.of("id/1 num/1 num/2", "id/1 num/1 num/1", "id/1 num/ num/1")) {
-            assertParseFailure(parser, input, CliSyntax.PREFIX_NUMBER.getDuplicateMessage());
+            assertParseFailure(parser, input,
+                CliSyntax.PREFIX_NUMBER.getDuplicateMessage() + USAGE_SUFFIX);
         }
     }
 

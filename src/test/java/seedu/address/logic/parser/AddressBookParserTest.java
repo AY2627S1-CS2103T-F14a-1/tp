@@ -178,7 +178,8 @@ public class AddressBookParserTest {
     @Test
     public void parseCommand_addStudioRecordMissingArguments_reportsAllMissingPrefixes() {
         String expected = String.join("\n", CliSyntax.PREFIX_INDEX.getMissingMessage(),
-                CliSyntax.PREFIX_WEEK.getMissingMessage(), CliSyntax.PREFIX_STUDIO_EFFORT.getMissingMessage());
+                CliSyntax.PREFIX_WEEK.getMissingMessage(), CliSyntax.PREFIX_STUDIO_EFFORT.getMissingMessage(),
+                AddStudioRecordCommand.MESSAGE_USAGE);
 
         assertThrows(ParseException.class, expected, () ->
                 parser.parseCommand("addstudiorecord"));
@@ -203,7 +204,7 @@ public class AddressBookParserTest {
     @Test
     public void parseCommand_deleteStudioRecordMissingArguments_reportsAllMissingPrefixes() {
         String expected = String.join("\n", CliSyntax.PREFIX_INDEX.getMissingMessage(),
-                CliSyntax.PREFIX_WEEK.getMissingMessage());
+                CliSyntax.PREFIX_WEEK.getMissingMessage(), DeleteStudioRecordCommand.MESSAGE_USAGE);
 
         assertThrows(ParseException.class, expected, () ->
                 parser.parseCommand("delstudiorecord"));
@@ -241,7 +242,8 @@ public class AddressBookParserTest {
 
     @Test
     public void parseCommand_masteryCheckInvalidDate_throwsParseException() {
-        assertThrows(ParseException.class, ParserUtil.MESSAGE_INVALID_MASTERY_CHECK_DATETIME, () ->
+        assertThrows(ParseException.class,
+                ParserUtil.MESSAGE_INVALID_MASTERY_CHECK_DATETIME + "\n" + AddMasteryCheckCommand.MESSAGE_USAGE, () ->
                 parser.parseCommand("addmc id/1 num/1 dt/31-04|14:30"));
     }
 
@@ -257,7 +259,7 @@ public class AddressBookParserTest {
     @Test
     public void parseCommand_deleteMasteryCheckInvalidNumber_reportsMasteryCheckConstraint() {
         assertThrows(ParseException.class,
-                RegisteredMasteryChecks.MESSAGE_CONSTRAINTS, () ->
+                RegisteredMasteryChecks.MESSAGE_CONSTRAINTS + "\n" + DeleteMasteryCheckCommand.MESSAGE_USAGE, () ->
                 parser.parseCommand("delmc id/1 num/0"));
     }
 

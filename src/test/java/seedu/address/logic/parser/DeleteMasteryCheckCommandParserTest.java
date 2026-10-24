@@ -16,6 +16,8 @@ import seedu.address.model.student.RegisteredMasteryChecks;
 
 /** Tests deletion argument structure, number validation, and delete-specific usage feedback. */
 public class DeleteMasteryCheckCommandParserTest {
+
+    private static final String USAGE_SUFFIX = "\n" + DeleteMasteryCheckCommand.MESSAGE_USAGE;
     private final DeleteMasteryCheckCommandParser parser = new DeleteMasteryCheckCommandParser();
 
     @Test
@@ -42,7 +44,7 @@ public class DeleteMasteryCheckCommandParserTest {
     public void parse_invalidIndex_reportsIndexConstraint() {
         for (String index : List.of("", "0", "-1", "abc", "1 extra", "2147483648")) {
             assertParseFailure(parser, "id/" + index + " num/1",
-                    ParserUtil.MESSAGE_INVALID_INDEX);
+                ParserUtil.MESSAGE_INVALID_INDEX + USAGE_SUFFIX);
         }
     }
 
@@ -50,21 +52,23 @@ public class DeleteMasteryCheckCommandParserTest {
     public void parse_missingNumberPrefix_reportsMissingPrefix() {
         for (String input : List.of("id/1", "id/1 x/1")) {
             assertParseFailure(parser, input,
-                    CliSyntax.PREFIX_NUMBER.getMissingMessage());
+                CliSyntax.PREFIX_NUMBER.getMissingMessage() + USAGE_SUFFIX);
         }
     }
 
     @Test
     public void parse_invalidNumber_reportsMasteryCheckConstraint() {
         for (String number : List.of("", "0", "-1", "1.5", "abc", "2147483648")) {
-            assertParseFailure(parser, "id/1 num/" + number, RegisteredMasteryChecks.MESSAGE_CONSTRAINTS);
+            assertParseFailure(parser, "id/1 num/" + number,
+                RegisteredMasteryChecks.MESSAGE_CONSTRAINTS + USAGE_SUFFIX);
         }
     }
 
     @Test
     public void parse_repeatedNumberPrefix_reportsDuplicatePrefix() {
         for (String input : List.of("id/1 num/1 num/2", "id/1 num/1 num/1", "id/1 num/ num/2")) {
-            assertParseFailure(parser, input, CliSyntax.PREFIX_NUMBER.getDuplicateMessage());
+            assertParseFailure(parser, input,
+                CliSyntax.PREFIX_NUMBER.getDuplicateMessage() + USAGE_SUFFIX);
         }
     }
 
