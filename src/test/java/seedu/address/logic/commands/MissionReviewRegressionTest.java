@@ -111,6 +111,18 @@ public class MissionReviewRegressionTest {
     @Test
     public void withMissionSubmissions_replacement_preservesOtherFieldsAndOriginal() {
         var original = TypicalStudents.ALICE;
+        MissionSubmissions originalSubmissions = original.getMissionSubmissions();
+        MissionSubmissions replacement = new MissionSubmissions(Set.of(new MissionId("M01")));
+    
+        var updated = original.withMissionSubmissions(replacement);
+    
+        assertEquals(replacement, updated.getMissionSubmissions());
+        assertEquals(originalSubmissions, original.getMissionSubmissions());
+        assertEquals(original, updated.withMissionSubmissions(originalSubmissions));
+        assertThrows(NullPointerException.class, () -> original.withMissionSubmissions(null));
+}
+    
+        var original = TypicalStudents.ALICE;
         MissionSubmissions replacement = new MissionSubmissions(Set.of(new MissionId("M01")));
         var updated = original.withMissionSubmissions(replacement);
         assertEquals(replacement, updated.getMissionSubmissions());
