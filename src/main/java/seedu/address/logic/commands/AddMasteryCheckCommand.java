@@ -3,15 +3,14 @@ package seedu.address.logic.commands;
 import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.AppUtil.checkArgument;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_DATETIME;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_INDEX;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NUMBER;
 
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 import java.util.Locale;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.ToStringBuilder;
-import seedu.address.logic.Messages;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 import seedu.address.model.masterycheck.MasteryCheck;
@@ -27,10 +26,11 @@ public class AddMasteryCheckCommand extends Command {
 
     public static final String MESSAGE_USAGE = COMMAND_WORD
             + ": Records a mastery check appointment for the selected student.\n"
-            + "Parameters: INDEX " + PREFIX_NUMBER + "NUMBER" + PREFIX_DATETIME + "DATE-TIME\n"
+            + "Parameters: " + PREFIX_INDEX + "INDEX " + PREFIX_NUMBER + "NUMBER " + PREFIX_DATETIME + "DATE-TIME\n"
             + "NUMBER must be a positive integer identifying a mastery check.\n"
             + "DATE-TIME must be a real date in dd-MM|HH:mm format.\n"
-            + "Example: " + COMMAND_WORD + " 1 num/1 dt/27-09|23:59";
+            + "Example: " + COMMAND_WORD + " " + PREFIX_INDEX + "1 " + PREFIX_NUMBER + "1 " + PREFIX_DATETIME
+            + "27-09|23:59";
 
     public static final String MESSAGE_SUCCESS =
             "Added %1$s's mastery check %2$s at %3$s.";
@@ -78,40 +78,19 @@ public class AddMasteryCheckCommand extends Command {
     public CommandResult execute(Model model) throws CommandException {
         requireNonNull(model);
 
-        List<Student> lastShownList = model.getFilteredStudentList();
-        if (targetIndex.getZeroBased() >= lastShownList.size()) {
-            throw new CommandException(Messages.MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX);
-        }
-
-        Student studentToUpdate = lastShownList.get(targetIndex.getZeroBased());
+        Student studentToUpdate = getStudentAtDisplayedIndex(model, targetIndex);
         RegisteredMasteryChecks registeredMasteryChecks = studentToUpdate.getRegisteredMasteryChecks();
 
         if (registeredMasteryChecks.hasMasteryCheck(number)) {
             return new CommandResult(String.format(MESSAGE_ALREADY_RECORDED, studentToUpdate.getName(), number));
         }
 
-        Student updatedStudent = createUpdatedStudent(
-                studentToUpdate, registeredMasteryChecks.withMasteryCheck(number, masteryCheck));
+        Student updatedStudent = studentToUpdate.withRegisteredMasteryChecks(
+                registeredMasteryChecks.withMasteryCheck(number, masteryCheck));
         model.setStudent(studentToUpdate, updatedStudent);
         return new CommandResult(String.format(
                 MESSAGE_SUCCESS, studentToUpdate.getName(), number,
                 masteryCheck.getAppointmentTime().format(APPOINTMENT_TIME_FORMATTER)));
-    }
-
-    /**
-     * Copies a student with replacement mastery check registrations, retaining all other details.
-     *
-     * @param student Non-null student whose other details are preserved.
-     * @param registeredMasteryChecks Non-null mastery check registrations to use in the copy.
-     * @return A student containing the supplied registrations and the original remaining details.
-     */
-    private Student createUpdatedStudent(Student student, RegisteredMasteryChecks registeredMasteryChecks) {
-        assert student != null;
-        assert registeredMasteryChecks != null;
-
-        return new Student(student.getName(), student.getPhone(), student.getEmail(),
-                student.getTags(), student.getStudioGroup(), student.getMissionSubmissions(),
-                student.getRegisteredStudioRecords(), registeredMasteryChecks);
     }
 
     /**

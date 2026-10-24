@@ -135,6 +135,19 @@ public class Student {
         return new Student(name, phone, email, tags, studioGroup, missionSubmissions,
                 registeredStudioRecords, registeredMasteryChecks);
     }
+
+    /**
+     * Returns student including the new mastery checks.
+     *
+     * @param registeredMasteryChecks {@code RegisteredMasteryChecks} to update.
+     * @return {@code Student} containing the updated studio records.
+     */
+    public Student withRegisteredMasteryChecks(RegisteredMasteryChecks registeredMasteryChecks) {
+        requireNonNull(registeredMasteryChecks);
+        return new Student(name, phone, email, tags, studioGroup, missionSubmissions,
+                registeredStudioRecords, registeredMasteryChecks);
+    }
+
     /**
      * Returns the student's mastery check registrations.
      * The registration mapping is unmodifiable, but appointment completion statuses remain mutable.

@@ -2,6 +2,7 @@ package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.AppUtil.checkArgument;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_INDEX;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_STUDIO_EFFORT;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_WEEK;
 
@@ -25,11 +26,11 @@ public class EditStudioRecordCommand extends Command {
             "Edited %1$s's studio record for studio week %2$d.";
     public static final String MESSAGE_USAGE = COMMAND_WORD
             + ": Edits a week's studio record for the selected student.\n"
-            + "Parameters: INDEX " + PREFIX_WEEK + "WEEK " + PREFIX_STUDIO_EFFORT + "EFFORT\n"
+            + "Parameters: " + PREFIX_INDEX + "INDEX " + PREFIX_WEEK + "WEEK " + PREFIX_STUDIO_EFFORT + "EFFORT\n"
             + "INDEX must be a positive integer identifying a displayed student.\n"
             + "WEEK must be between " + RegisteredStudioRecords.MIN_WEEK
             + " and " + RegisteredStudioRecords.MAX_WEEK + " inclusive.\n"
-            + "Example: " + COMMAND_WORD + " 1 " + PREFIX_WEEK + "3 " + PREFIX_STUDIO_EFFORT + "30";
+            + "Example: " + COMMAND_WORD + " " + PREFIX_INDEX + "1 " + PREFIX_WEEK + "3 " + PREFIX_STUDIO_EFFORT + "30";
     public static final String MESSAGE_WEEK_NOT_RECORDED =
             "%1$s’s studio for studio week %2$d was not already recorded. No changes made.";
 
