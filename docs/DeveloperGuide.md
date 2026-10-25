@@ -200,11 +200,11 @@ The sequence diagram below illustrates the successful interaction flow using `ex
 
 ### Deleting a mission
 
-For `delmission m/M03`, `AddressBookParser` delegates to `DeleteMissionCommandParser`. The parser requires exactly one nonblank `m/` value and rejects unexpected preamble text. It uses `MissionParser#parseMissionId(...)` to trim and validate the ID and convert it to uppercase, then creates a `DeleteMissionCommand`. Thus, `m/m03` and `m/M03` identify the same mission; the ID is not a displayed list position.
+For `delmission m/M03`, `AddressBookParser` delegates to `DeleteMissionCommandParser`. The parser requires exactly one nonblank `m/` value and rejects unexpected preamble text. `ParserUtil#parseMissionId(...)` trims and validates the ID, and `MissionId` normalizes it to uppercase. Thus, `m/m03` and `m/M03` identify the same mission; the ID is not a displayed list position.
 
 When executed, `DeleteMissionCommand` calls `Model#findMission(...)` and rejects a nonexistent mission before making changes. It then calls `Model#deleteMission(...)`. Within the model, `AddressBook` prepares replacement student records without the deleted mission's submission ID and removes the mission from the catalogue. This includes students hidden by the current filter and preserves their other details and submissions. Remaining IDs do not change; a deleted ID may later be explicitly reused. The command returns a `CommandResult` identifying the deleted mission.
 
-Deleting a mission removes its submission records from every student. Recreating it—even with the same name and deadline—assigns a new ID and starts with no submissions recorded. Previous submission records are not restored.
+Deleting a mission removes its submission records from every student. Recreating it uses the ID supplied by the user, which may be the deleted ID, and starts with no submissions recorded. Previous submission records are not restored.
 
 The sequence diagram below illustrates the successful interaction flow using `execute("delmission m/M03")`. Here, `missionId` is the parsed `MissionId` value `M03`, and `feedback` is the formatted success message. The model is shown as a single participant to keep the focus on the Logic component.
 

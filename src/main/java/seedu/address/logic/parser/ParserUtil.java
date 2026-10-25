@@ -174,7 +174,7 @@ public class ParserUtil {
     }
 
     /**
-     * Parses a case-insensitive mission ID into its canonical uppercase form.
+     * Trims and validates a mission ID; {@link MissionId} normalizes its case.
      *
      * @param missionIdText Mission ID text.
      * @return The validated mission ID.
@@ -185,7 +185,7 @@ public class ParserUtil {
         requireNonNull(missionIdText);
 
         try {
-            return new MissionId(missionIdText.trim().toUpperCase(Locale.ROOT));
+            return new MissionId(missionIdText.trim());
         } catch (IllegalArgumentException e) {
             throw new ParseException(MESSAGE_INVALID_MISSION_ID);
         }
@@ -317,4 +317,3 @@ public class ParserUtil {
         return new Note(trimmedNoteText);
     }
 }
-

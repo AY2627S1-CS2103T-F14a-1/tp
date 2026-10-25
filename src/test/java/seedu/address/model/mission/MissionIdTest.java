@@ -34,7 +34,10 @@ public class MissionIdTest {
 
     @Test
     public void constructor_lowercaseId_normalizesToUppercase() {
-        assertEquals(new MissionId("M03"), new MissionId("m03"));
+        MissionId missionId = new MissionId("m03");
+
+        assertEquals("M03", missionId.toString());
+        assertEquals(new MissionId("M03"), missionId);
     }
 
     @Test
