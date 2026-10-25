@@ -1,5 +1,62 @@
 # UI Test Plan
 
+## Notes details panel
+
+Use two students: student 1 has note IDs 5 and 2, added in that order, while
+student 2 has no notes.
+
+| ID | Steps | Expected result |
+| --- | --- | --- |
+| NOTE-VIEW-001 | Run `view id/1`. | A Notes table appears with `ID` and `Note` headers. Notes 2 and 5 appear in ascending ID order with their full text. |
+| NOTE-VIEW-002 | Run `view id/2`. | The Notes table retains its headers and shows `No notes recorded.` across both columns. No notes from student 1 remain visible. |
+| NOTE-VIEW-003 | Run `view id/1` again. | Notes 2 and 5 reappear once each, without duplicated or stale rows. |
+| NOTE-VIEW-004 | Resize the window from narrow to wide and back while viewing student 1. | Note text wraps within the Notes table and no horizontal scrollbar appears. |
+
+## Edit-note command regression
+
+Start with two students. Give student 1 note IDs 3 and 4, and leave student 2
+unchanged. After every rejected command, run `view id/1` and confirm that both
+notes and the saved data are unchanged.
+
+| ID | Steps | Expected result |
+| --- | --- | --- |
+| NOTE-EDIT-001 | Run `editnote id/1 ni/3 nt/Updated lecture notes`, then view both students. | Success feedback identifies student 1 and note ID 3. Student 1's ID 3 has the new text, ID 4 is unchanged, and student 2 is unchanged. |
+| NOTE-EDIT-002 | Run `editnote id/1 ni/3 nt/Updated lecture notes` again, then view student 1. | Same-note feedback appears. Both note texts remain unchanged. |
+| NOTE-EDIT-003 | Run `editnote id/1 ni/2 nt/Unexpected`, then view student 1. | Missing-note feedback appears. IDs 3 and 4 remain unchanged. |
+| NOTE-EDIT-004 | Run `editnote id/1 ni/0 nt/Invalid`, `editnote id/1 ni/3 nt/Invalid!`, and `editnote id/1 ni/3`, viewing student 1 after each command. | The invalid-ID, invalid-text, and missing-`nt/` messages appear respectively. No note changes. |
+| NOTE-EDIT-005 | Run `editnote id/3 ni/3 nt/Unexpected`, then view both students. | Invalid-index feedback appears; neither student changes. |
+| NOTE-EDIT-006 | Run `editnote id/1 ni/3 ni/4 nt/Unexpected`, then view student 1. | Duplicate-`ni/` feedback appears. Both note texts and saved data remain unchanged. |
+| NOTE-EDIT-007 | Run `editnote id/1 ni/3 nt/Persisted update`, restart, and view student 1. | ID 3 retains `Persisted update`; ID 4 and student 2 remain unchanged. |
+
+## Add-note command regression
+
+Start with two students and no notes for student 1. After every rejected
+command, run `view id/1` and confirm that the note list and saved data are
+unchanged.
+
+| ID | Steps | Expected result |
+| --- | --- | --- |
+| NOTE-ADD-001 | Run `addnote id/1 ni/3 nt/Review lecture notes`, then view student 1. | Success feedback names student 1 and note ID 3. The note list contains `3: Review lecture notes`; student 2 is unchanged. |
+| NOTE-ADD-002 | Run `addnote id/1 ni/3 nt/Different text`, then view student 1. | Duplicate-ID feedback appears. ID 3 still contains `Review lecture notes`. |
+| NOTE-ADD-003 | Run `addnote id/1 ni/0 nt/Invalid`, then `addnote id/1 ni/4 nt/Invalid!`, viewing student 1 after each command. | The invalid ID and invalid-text messages appear respectively. ID 4 is not added and ID 3 remains unchanged. |
+| NOTE-ADD-004 | Run `addnote id/1 ni/4`, then `addnote id/1 ni/4 nt/Valid ni/5`, viewing student 1 after each command. | The first command reports missing `nt/`; the second reports duplicate `ni/`. No note is added. |
+| NOTE-ADD-005 | Run `addnote id/3 ni/4 nt/Invalid index`, then view both students. | Invalid-index feedback appears; neither student changes. |
+| NOTE-ADD-006 | Restart after NOTE-ADD-001 and view student 1. | Note ID 3 and its text are restored unchanged. |
+
+## Delete-note command regression
+
+Start with two students. Give student 1 note IDs 3 and 4, and leave student 2 unchanged.
+After every rejected command, run `view id/1` and confirm that both notes and saved data are unchanged.
+
+| ID | Steps | Expected result |
+| --- | --- | --- |
+| NOTE-DELETE-001 | Run `delnote id/1 ni/3`, then view both students. | Success feedback identifies student 1 and note ID 3. Student 1 retains only note ID 4; student 2 is unchanged. |
+| NOTE-DELETE-002 | Run `delnote id/1 ni/3` again, then view student 1. | Missing-note feedback appears. Note ID 4 remains unchanged. |
+| NOTE-DELETE-003 | Run `delnote id/1 ni/0`, `delnote id/1`, and `delnote 1 ni/4`, viewing student 1 after each command. | The invalid-ID, missing-`ni/`, and invalid-format messages appear respectively. Neither note changes. |
+| NOTE-DELETE-004 | Run `delnote id/3 ni/4`, then view both students. | Invalid-index feedback appears; no student changes. |
+| NOTE-DELETE-005 | Run `delnote id/1 ni/4`, restart, and view student 1. | The Notes table shows the empty-state message. The deletion persists across restart. |
+| NOTE-DELETE-006 | Run `delnote id/1 ni/3 ni/4`, then view student 1. | Duplicate-`ni/` feedback appears. Both notes and the saved data remain unchanged. |
+
 ## Mission regression sequence
 
 Use a temporary data directory with two students and an empty catalogue. After each rejected
