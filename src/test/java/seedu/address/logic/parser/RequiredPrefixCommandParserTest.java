@@ -67,20 +67,14 @@ public class RequiredPrefixCommandParserTest {
         verifyRequiredPrefixes(new ListMissionsCommandParser(), ListMissionsCommand.MESSAGE_USAGE,
                 List.of(PREFIX_MISSION), List.of("M01"));
         verifyRequiredPrefixes(new AddMissionCommandParser(), AddMissionCommand.MESSAGE_USAGE,
-                List.of(CliSyntax.PREFIX_NAME, CliSyntax.PREFIX_DATE), List.of("Runes", "2026-10-20"));
+                List.of(PREFIX_MISSION, CliSyntax.PREFIX_NAME, CliSyntax.PREFIX_DATE),
+                List.of("M01", "Runes", "2026-10-20"));
         verifyRequiredPrefixes(new AddNoteCommandParser(), AddNoteCommand.MESSAGE_USAGE,
                 List.of(PREFIX_INDEX, PREFIX_NOTE_ID, PREFIX_NOTE_TEXT), List.of("1", "3", "Review notes"));
         verifyRequiredPrefixes(new DeleteNoteCommandParser(), DeleteNoteCommand.MESSAGE_USAGE,
                 List.of(PREFIX_INDEX, PREFIX_NOTE_ID), List.of("1", "3"));
         verifyRequiredPrefixes(new EditNoteCommandParser(), EditNoteCommand.MESSAGE_USAGE,
                 List.of(PREFIX_INDEX, PREFIX_NOTE_ID, PREFIX_NOTE_TEXT), List.of("1", "3", "Review notes"));
-        verifyRequiredPrefixes(new DeleteStudentCommandParser(), List.of(PREFIX_INDEX), List.of("1"));
-        verifyRequiredPrefixes(new ViewCommandParser(), List.of(PREFIX_INDEX), List.of("1"));
-        verifyRequiredPrefixes(new DeleteMissionCommandParser(), List.of(PREFIX_MISSION), List.of("M01"));
-        verifyRequiredPrefixes(new ListMissionsCommandParser(), List.of(PREFIX_MISSION), List.of("M01"));
-        verifyRequiredPrefixes(new AddMissionCommandParser(),
-                List.of(PREFIX_MISSION, CliSyntax.PREFIX_NAME, CliSyntax.PREFIX_DATE),
-                List.of("M01", "Runes", "2026-10-20"));
     }
 
     /**
