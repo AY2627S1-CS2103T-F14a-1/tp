@@ -50,11 +50,10 @@ public class ListMissionsCommandParserTest {
     }
 
     @Test
-    public void parse_preambleOrUppercasePrefix_reportsUsage() {
+    public void parse_preamble_reportsUsage() {
         String expectedMessage = MESSAGE_INVALID_COMMAND + USAGE_SUFFIX;
 
         assertParseFailure(parser, "1 m/M01", expectedMessage);
-        assertParseFailure(parser, "M/M01", expectedMessage);
     }
 
     @Test

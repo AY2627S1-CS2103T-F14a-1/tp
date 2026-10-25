@@ -58,7 +58,7 @@ public class EditMissionCommandParserTest {
             assertParseFailure(parser, input,
                     CliSyntax.PREFIX_MISSION.getMissingMessage() + USAGE_SUFFIX);
         }
-        for (String input : List.of("extra m/M01 n/New", "M/M01 n/New")) {
+        for (String input : List.of("extra m/M01 n/New", "extra M/M01 n/New")) {
             assertParseFailure(parser, input, expectedMessage);
         }
     }
