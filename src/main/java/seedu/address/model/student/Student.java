@@ -12,7 +12,8 @@ import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.model.tag.Tag;
 
 /**
- * Represents a student with profile details, mission submissions, studio records, mastery check registrations, and notes.
+ * Represents a student with profile details, mission submissions,
+ * studio records, mastery check registrations, and notes.
  * Mastery check completion status remains mutable through the registered appointment objects.
  */
 public class Student {
