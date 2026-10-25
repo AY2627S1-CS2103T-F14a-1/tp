@@ -27,7 +27,7 @@ import seedu.address.testutil.StudentBuilder;
 
 public class FindCommandParserTest {
 
-    private static final String USAGE_SUFFIX = "\n" + FindCommand.MESSAGE_USAGE;
+    private static final String USAGE_SUFFIX = "\n\n" + FindCommand.MESSAGE_USAGE;
 
     private final FindCommandParser parser = new FindCommandParser();
 

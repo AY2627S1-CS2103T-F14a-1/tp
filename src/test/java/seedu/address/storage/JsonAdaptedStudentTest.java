@@ -158,7 +158,7 @@ public class JsonAdaptedStudentTest {
 
     @Test
     public void toModelType_invalidMissionSubmissions_throwsIllegalValueException() {
-        for (String invalidId : List.of("", "M00", "M1", "m01", "M001")) {
+        for (String invalidId : List.of("", "M00", "M1", "M001")) {
             JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_PHONE, VALID_EMAIL,
                     VALID_TAGS, VALID_STUDIO_GROUP, List.of("M05", invalidId), VALID_REGISTERED_STUDIO_RECORDS,
                     VALID_MASTERY_CHECKS, VALID_REGISTERED_NOTES);

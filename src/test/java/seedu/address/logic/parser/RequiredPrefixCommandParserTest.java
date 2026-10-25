@@ -67,7 +67,8 @@ public class RequiredPrefixCommandParserTest {
         verifyRequiredPrefixes(new ListMissionsCommandParser(), ListMissionsCommand.MESSAGE_USAGE,
                 List.of(PREFIX_MISSION), List.of("M01"));
         verifyRequiredPrefixes(new AddMissionCommandParser(), AddMissionCommand.MESSAGE_USAGE,
-                List.of(CliSyntax.PREFIX_NAME, CliSyntax.PREFIX_DATE), List.of("Runes", "2026-10-20"));
+                List.of(PREFIX_MISSION, CliSyntax.PREFIX_NAME, CliSyntax.PREFIX_DATE),
+                List.of("M01", "Runes", "2026-10-20"));
         verifyRequiredPrefixes(new AddNoteCommandParser(), AddNoteCommand.MESSAGE_USAGE,
                 List.of(PREFIX_INDEX, PREFIX_NOTE_ID, PREFIX_NOTE_TEXT), List.of("1", "3", "Review notes"));
         verifyRequiredPrefixes(new DeleteNoteCommandParser(), DeleteNoteCommand.MESSAGE_USAGE,
@@ -92,7 +93,7 @@ public class RequiredPrefixCommandParserTest {
         assertThrows(NullPointerException.class, () -> parser.parse(null));
         ParseException preambleError = assertThrows(ParseException.class, () ->
                 parser.parse("unexpected " + validInput));
-        assertEquals(Messages.MESSAGE_INVALID_COMMAND + "\n" + usage,
+        assertEquals(Messages.MESSAGE_INVALID_COMMAND + "\n\n" + usage,
                 preambleError.getMessage());
         for (int omitted = 0; omitted < prefixes.size(); omitted++) {
             StringBuilder incompleteInput = new StringBuilder();
@@ -104,11 +105,11 @@ public class RequiredPrefixCommandParserTest {
             Prefix prefix = prefixes.get(omitted);
             ParseException missingError = assertThrows(ParseException.class, () ->
                     parser.parse(incompleteInput.toString()));
-            assertEquals(prefix.getMissingMessage() + "\n" + usage, missingError.getMessage());
+            assertEquals(prefix.getMissingMessage() + "\n\n" + usage, missingError.getMessage());
             assertDoesNotThrow(() -> parser.parse(validInput.toString()));
             ParseException duplicateError = assertThrows(ParseException.class, () ->
                     parser.parse(validInput.toString() + prefix + values.get(prefixes.indexOf(prefix))));
-            assertEquals(prefix.getDuplicateMessage() + "\n" + usage, duplicateError.getMessage());
+            assertEquals(prefix.getDuplicateMessage() + "\n\n" + usage, duplicateError.getMessage());
         }
     }
 }

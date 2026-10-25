@@ -27,7 +27,7 @@ public class DeleteMissionCommandParser implements Parser<DeleteMissionCommand> 
             MissionId missionId = ParserUtil.parseMissionId(argMultimap.getValue(PREFIX_MISSION).get());
             return new DeleteMissionCommand(missionId);
         } catch (ParseException e) {
-            throw new ParseException(e.getMessage() + "\n" + DeleteMissionCommand.MESSAGE_USAGE);
+            throw new ParseException(e.getMessage() + "\n\n" + DeleteMissionCommand.MESSAGE_USAGE);
         }
     }
 }

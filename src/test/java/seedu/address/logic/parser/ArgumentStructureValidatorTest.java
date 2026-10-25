@@ -178,4 +178,5 @@ public class ArgumentStructureValidatorTest {
 
         assertEquals("1 x/extra", arguments.getValue(INDEX_PREFIX).orElseThrow());
     }
+
 }

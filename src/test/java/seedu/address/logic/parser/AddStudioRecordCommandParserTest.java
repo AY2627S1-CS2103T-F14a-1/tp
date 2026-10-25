@@ -16,7 +16,7 @@ import seedu.address.model.student.StudioRecord;
  */
 public class AddStudioRecordCommandParserTest {
 
-    private static final String USAGE_SUFFIX = "\n" + AddStudioRecordCommand.MESSAGE_USAGE;
+    private static final String USAGE_SUFFIX = "\n\n" + AddStudioRecordCommand.MESSAGE_USAGE;
 
     private final AddStudioRecordCommandParser parser = new AddStudioRecordCommandParser();
 
@@ -57,5 +57,4 @@ public class AddStudioRecordCommandParserTest {
                 MESSAGE_INVALID_WEEK + USAGE_SUFFIX);
     }
 }
-
 

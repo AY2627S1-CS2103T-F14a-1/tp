@@ -24,23 +24,17 @@ class JsonSerializableAddressBook {
 
     private final List<JsonAdaptedStudent> students;
     private final List<JsonAdaptedMission> missions;
-    private final Object nextMissionNumber;
-
     /**
-     * Reads catalogue fields without coercing malformed counters into integers.
-     * Catalogue fields are required to validate mission references.
+     * Reads the student and mission catalogue fields.
      *
      * @param students Saved students.
      * @param missions Saved catalogue.
-     * @param nextMissionNumber Saved integer allocation counter.
      */
     @JsonCreator
     public JsonSerializableAddressBook(@JsonProperty("students") List<JsonAdaptedStudent> students,
-            @JsonProperty("missions") List<JsonAdaptedMission> missions,
-            @JsonProperty("nextMissionNumber") Object nextMissionNumber) {
+            @JsonProperty("missions") List<JsonAdaptedMission> missions) {
         this.students = students == null ? null : new ArrayList<>(students);
         this.missions = missions;
-        this.nextMissionNumber = nextMissionNumber;
     }
 
     /**
@@ -51,7 +45,6 @@ class JsonSerializableAddressBook {
     public JsonSerializableAddressBook(ReadOnlyAddressBook source) {
         students = source.getStudentList().stream().map(JsonAdaptedStudent::new).collect(Collectors.toList());
         missions = source.getMissionList().stream().map(JsonAdaptedMission::new).collect(Collectors.toList());
-        nextMissionNumber = source.getNextMissionNumber();
     }
 
     /**
@@ -84,14 +77,14 @@ class JsonSerializableAddressBook {
     }
 
     /**
-     * Loads required catalogue state and rejects incompatible or incomplete files.
+     * Loads the saved mission catalogue and validates its records.
      *
      * @param addressBook Fresh address book receiving the validated catalogue.
-     * @throws IllegalValueException If the catalogue or allocation counter is invalid.
+     * @throws IllegalValueException If the catalogue is missing or invalid.
      */
     private void restoreMissions(AddressBook addressBook) throws IllegalValueException {
-        if (missions == null || !(nextMissionNumber instanceof Integer || nextMissionNumber instanceof Long)) {
-            throw new IllegalValueException("Mission catalogue requires missions and an integer nextMissionNumber.");
+        if (missions == null) {
+            throw new IllegalValueException("Mission catalogue is required.");
         }
         List<Mission> restoredMissions = new ArrayList<>();
         for (JsonAdaptedMission mission : missions) {
@@ -101,7 +94,7 @@ class JsonSerializableAddressBook {
             restoredMissions.add(mission.toModelType());
         }
         try {
-            addressBook.restoreMissions(restoredMissions, ((Number) nextMissionNumber).longValue());
+            addressBook.restoreMissions(restoredMissions);
         } catch (IllegalArgumentException e) {
             throw new IllegalValueException(e.getMessage());
         }

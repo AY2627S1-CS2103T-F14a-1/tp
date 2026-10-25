@@ -16,7 +16,7 @@ import seedu.address.model.student.RegisteredMasteryChecks;
 /** Tests completion-command syntax, caller-specific feedback, and shared parser validation. */
 public class UnmarkMasteryCheckCommandParserTest {
 
-    private static final String USAGE_SUFFIX = "\n" + UnmarkMasteryCheckCommand.MESSAGE_USAGE;
+    private static final String USAGE_SUFFIX = "\n\n" + UnmarkMasteryCheckCommand.MESSAGE_USAGE;
     private final UnmarkMasteryCheckCommandParser parser = new UnmarkMasteryCheckCommandParser();
 
     @Test

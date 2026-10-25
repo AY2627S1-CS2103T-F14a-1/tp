@@ -22,10 +22,4 @@ public interface ReadOnlyAddressBook {
      */
     ObservableList<Mission> getMissionList();
 
-    /**
-     * Returns the persisted allocation counter, including IDs no longer in use.
-     *
-     * @return Next unused mission number.
-     */
-    long getNextMissionNumber();
 }

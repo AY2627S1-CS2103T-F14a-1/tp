@@ -65,17 +65,19 @@ Inspect the saved file before running that verification command to ensure reject
 
 | ID | Steps | Expected result |
 | --- | --- | --- |
-| MISSION-001 | Run `addmission n/`, then `addmission n/Runes`. | Request a name using `n/NAME`, then a deadline in `YYYY-MM-DD` using `d/DEADLINE`; no mission is added. |
-| MISSION-002 | Copy the example from addmission usage, then view student 1. | Creates M01, Rune Reading, due 2026-10-20, not submitted. |
-| MISSION-003 | Run `addmission n/ RUNE   READING d/2026-10-21`. | Duplicate feedback; M01 and the next ID remain unchanged. |
-| MISSION-004 | Run `addmission n/Curves d/2026-10-21`, then `editmission m/M02 n/Rune Reading`. | M02 is added; the duplicate edit is rejected. |
+| MISSION-001 | Run `addmission`, `addmission m/M01`, and `addmission m/M01 n/Runes`. | Reports the missing prefixes using their `CliSyntax` messages; no mission is added. |
+| MISSION-002 | Run `addmission m/M01 n/Rune Reading d/2026-10-20`, then view student 1. | Creates M01, Rune Reading, due 2026-10-20, not submitted. |
+| MISSION-003 | Run `addmission m/M02 n/ RUNE   READING d/2026-10-21`. | Duplicate-name feedback; M01 and saved state remain unchanged. |
+| MISSION-004 | Run `addmission m/M02 n/Curves d/2026-10-21`, then `editmission m/M02 n/Rune Reading`. | M02 is added; the duplicate edit is rejected. |
+| MISSION-012 | Attempt `addmission m/M01 n/Curves d/2026-10-21`, then `addmission m/M1 n/Curves d/2026-10-21` and `addmission m/M00 n/Curves d/2026-10-21`. | Duplicate ID feedback for M01; malformed IDs are rejected with the ID format constraint. Catalogue and saved data remain unchanged. |
+| MISSION-013 | Add `addmission m/M10 n/Curves d/2026-10-21`, restart, and inspect the catalogue. | M10 is stored and restored unchanged. |
 | MISSION-005 | Run `markmission 1 m/m01`, repeat it, then `unmarkmission 1 m/M99`. | First marks M01, repeat reports no change, unknown ID reports `Mission M99 does not exist.`; student 2 remains unchanged. |
 | MISSION-006 | Filter to student 1; run `listmissions m/M01` and `listoverdue`. | Submitted list uses displayed index 1. Overdue excludes M01 and includes only missing missions due before the local date. Hidden students are excluded. |
 | MISSION-007 | Run `editmission m/M01 n/New Runes d/2026-10-22`, then restart and view student 1. | ID and submission survive; name and deadline are updated and persisted. |
 | MISSION-008 | Run `unmarkmission 1 m/M01`, then an invalid date edit `editmission m/M01 d/2026-02-30`; restart. | M01 stays not submitted; invalid edit leaves its name/deadline unchanged. |
-| MISSION-009 | Mark M01 for both students; filter to one student; delete M01. Restart, run `list`, and inspect both profiles. Add New Runes again. | Mission and submissions are removed from both students. Recreated mission uses M03 and has no submissions. |
+| MISSION-009 | Mark M01 for both students; add M10; filter to one student; delete M01. Restart, run `list`, and inspect both profiles. | M10 retains its ID, and M01 plus its submissions are removed from both students. |
 | MISSION-010 | Back up data. In an isolated fixture, give two missions different IDs but equal names ignoring case/spaces. Start the app, inspect file, then run `list`. | Empty-address-book fallback; startup preserves invalid file, successful list saves the empty book. |
-| MISSION-011 | In an isolated valid fixture set `nextMissionNumber` to 9223372036854775807. Run `addmission n/Limit d/2026-10-20`. | `No further mission IDs can be allocated.`; memory and file remain unchanged. |
+| MISSION-011 | Add M10, delete it, then add `addmission m/M10 n/Limit d/2026-10-20`. | The deleted ID can be explicitly reused; the supplied ID is persisted unchanged. |
 
 ## Studio parsing regression
 
@@ -224,7 +226,21 @@ collections are never null; this internal invariant has no UI input equivalent.
 | EDIT-PREFIX-002 | Run `edit unexpected id/1 n/Rejected Name`, then `view id/1`. | Invalid-format feedback; the first student retains Updated Name. |
 | EDIT-PREFIX-003 | Run `edit id/1 t/`, then `view id/1`. | Tags are cleared; other fields are unchanged. |
 | EDIT-PREFIX-004 | Run `edit id/1 id/2 n/Rejected Name`, then view both students. | Duplicate-index feedback; both students remain unchanged. |
-| MISSION-EDIT-001 | Create a mission with `addmission n/Runes d/2026-10-20`, then edit its returned ID using `editmission m/ID n/New Runes`. | Editing succeeds through ParserUtil without MissionParser; the mission keeps its ID and deadline. |
+| MISSION-EDIT-001 | Create a mission with `addmission m/M01 n/Runes d/2026-10-20`, then edit it using `editmission m/M01 n/New Runes`. | Editing succeeds; the mission keeps its ID and deadline. |
+
+## Mission parser value regression
+
+Run the corresponding `ParserUtilTest` cases. These parser-level checks have no
+direct UI equivalent.
+
+| ID | Steps | Expected result |
+| --- | --- | --- |
+| MISSION-PARSE-001 | Parse a mission name containing leading/trailing and repeated whitespace, punctuation, and mixed case. | Surrounding whitespace is removed, internal whitespace collapses to single spaces, and punctuation/case are preserved. |
+| MISSION-PARSE-002 | Parse an empty or whitespace-only mission name, then a valid name. | Blank names produce the mission-name `ParseException`; valid parsing still succeeds. |
+| MISSION-PARSE-003 | Parse a leap-day deadline `2024-02-29`, a valid regular date, and a date with surrounding whitespace. | Valid dates parse to the expected `LocalDate`; surrounding whitespace is trimmed. |
+| MISSION-PARSE-004 | Parse malformed deadline formats and impossible calendar dates, then parse a valid date. | Invalid formats and impossible dates produce their respective `ParseException` messages; valid parsing still succeeds. |
+| MISSION-PARSE-005 | Parse lowercase `m/m03` with surrounding whitespace. | The parser trims the input and returns canonical ID `M03`; `MissionId` owns case normalization. |
+| MISSION-DELETE-RECREATE-001 | With mission `M03` submitted by a student, delete `M03`, then recreate it using `m/M03` with a new name and deadline. | The recreated mission uses ID `M03` and has no previous submissions. |
 
 ## Missing-prefix usage suffix regression
 
@@ -254,15 +270,17 @@ The shared validator returns problem-only messages; command parsers append usage
 
 ## Command parser error usage regression
 
-Run all parser tests and the full Gradle suite. Exact error assertions must include
-one newline and the complete command usage after the problem message, while direct
-ParserUtil and ArgumentMultimap tests continue to expect problem-only messages.
+Run all parser tests and the full Gradle suite. Every command error that includes
+usage must place a blank line between the problem message and the complete usage
+text. Direct ParserUtil and ArgumentMultimap tests continue to expect only the
+problem message.
 
 | ID | Steps | Expected result |
 | --- | --- | --- |
-| ERROR-USAGE-001 | Run `edit id/1 p/invalid`, then `view id/1`. | Phone validation feedback ends with edit usage exactly once; student fields are unchanged. |
+| ERROR-USAGE-001 | Run `edit id/1 p/invalid`, then `view id/1`. | Phone validation feedback is followed by a blank line and edit usage exactly once; student fields are unchanged. |
 | ERROR-USAGE-002 | Run `edit id/1 p/91234567`, then `view id/1`. | Phone updates successfully; other fields remain unchanged. |
-| ERROR-USAGE-003 | Run `edit id/1 p/91234567 p/98765432`, then `view id/1`. | Duplicate-phone feedback ends with edit usage exactly once; the phone remains 91234567. |
+| ERROR-USAGE-003 | Run `edit id/1 p/91234567 p/98765432`, then `view id/1`. | Duplicate-phone feedback is followed by a blank line and edit usage exactly once; the phone remains 91234567. |
+| ERROR-USAGE-004 | Run `addmission m/M01 n/Runes d/2026-02-30`. | Date validation feedback is followed by a blank line and AddMission usage; no mission is added. |
 
 Preamble-error regression: commands using the shared structure validator must
 show `Invalid command format!` followed by their usage exactly once, without a

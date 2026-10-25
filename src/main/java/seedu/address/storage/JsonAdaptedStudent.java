@@ -194,7 +194,7 @@ class JsonAdaptedStudent {
      * Validates saved mission IDs and creates immutable submission records.
      *
      * @return Unique submitted mission IDs.
-     * @throws IllegalValueException If a saved value is not a canonical mission ID string.
+     * @throws IllegalValueException If a saved value is not a valid mission ID string.
      */
     public MissionSubmissions toModelMissionSubmissions() throws IllegalValueException {
         Set<MissionId> submittedIds = new HashSet<>();

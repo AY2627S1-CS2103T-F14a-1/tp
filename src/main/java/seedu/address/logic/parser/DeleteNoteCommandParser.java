@@ -29,7 +29,7 @@ public class DeleteNoteCommandParser implements Parser<DeleteNoteCommand> {
             int noteId = ParserUtil.parseNoteId(argMultimap.getValue(PREFIX_NOTE_ID).get());
             return new DeleteNoteCommand(index, noteId);
         } catch (ParseException pe) {
-            throw new ParseException(pe.getMessage() + "\n" + DeleteNoteCommand.MESSAGE_USAGE);
+            throw new ParseException(pe.getMessage() + "\n\n" + DeleteNoteCommand.MESSAGE_USAGE);
         }
     }
 }

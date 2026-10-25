@@ -32,7 +32,7 @@ public class EditNoteCommandParser implements Parser<EditNoteCommand> {
             Note note = ParserUtil.parseNoteText(argMultimap.getValue(PREFIX_NOTE_TEXT).get());
             return new EditNoteCommand(index, noteId, note);
         } catch (ParseException pe) {
-            throw new ParseException(pe.getMessage() + "\n" + EditNoteCommand.MESSAGE_USAGE);
+            throw new ParseException(pe.getMessage() + "\n\n" + EditNoteCommand.MESSAGE_USAGE);
         }
     }
 }

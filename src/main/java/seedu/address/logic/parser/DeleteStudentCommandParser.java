@@ -26,7 +26,7 @@ public class DeleteStudentCommandParser implements Parser<DeleteStudentCommand> 
             Index index = ParserUtil.parseIndex(argMultimap.getValue(PREFIX_INDEX).get());
             return new DeleteStudentCommand(index);
         } catch (ParseException e) {
-            throw new ParseException(e.getMessage() + "\n" + DeleteStudentCommand.MESSAGE_USAGE);
+            throw new ParseException(e.getMessage() + "\n\n" + DeleteStudentCommand.MESSAGE_USAGE);
         }
     }
 

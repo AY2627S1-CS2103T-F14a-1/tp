@@ -31,7 +31,7 @@ public class MarkMasteryCheckCommandParser implements Parser<MarkMasteryCheckCom
             int number = ParserUtil.parseMasteryCheckNumber(argMultimap.getValue(PREFIX_NUMBER).get());
             return new MarkMasteryCheckCommand(index, number);
         } catch (ParseException e) {
-            throw new ParseException(e.getMessage() + "\n" + MarkMasteryCheckCommand.MESSAGE_USAGE);
+            throw new ParseException(e.getMessage() + "\n\n" + MarkMasteryCheckCommand.MESSAGE_USAGE);
         }
     }
 }

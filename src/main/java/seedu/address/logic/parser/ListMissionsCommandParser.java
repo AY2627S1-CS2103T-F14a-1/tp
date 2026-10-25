@@ -32,7 +32,7 @@ public class ListMissionsCommandParser implements Parser<ListMissionsCommand> {
             MissionId missionId = ParserUtil.parseMissionId(argMultimap.getValue(PREFIX_MISSION).get());
             return new ListMissionsCommand(missionId);
         } catch (ParseException e) {
-            throw new ParseException(e.getMessage() + "\n" + ListMissionsCommand.MESSAGE_USAGE);
+            throw new ParseException(e.getMessage() + "\n\n" + ListMissionsCommand.MESSAGE_USAGE);
         }
     }
 }

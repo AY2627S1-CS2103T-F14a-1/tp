@@ -87,16 +87,16 @@ public interface Model {
     }
 
     /**
-     * Creates a configured mission with an automatically allocated ID.
+     * Creates a configured mission with the supplied stable ID.
      *
+     * @param id Unique mission ID.
      * @param name Nonblank mission name.
      * @param deadline Submission deadline.
      * @return Newly created mission.
-     * @throws NullPointerException If either argument is null.
-     * @throws IllegalArgumentException If the name is blank or duplicates another mission.
-     * @throws IllegalStateException If mission IDs are exhausted.
+     * @throws NullPointerException If any argument is null.
+     * @throws IllegalArgumentException If the ID or name duplicates another mission, or the name is blank.
      */
-    Mission addMission(String name, LocalDate deadline);
+    Mission addMission(MissionId id, String name, LocalDate deadline);
 
     /**
      * Removes a shared mission and all associated submission records.

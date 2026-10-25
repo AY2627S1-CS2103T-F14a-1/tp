@@ -31,7 +31,8 @@ public class MissionSubmissionLoggingTest {
         Student selected = new StudentBuilder().withName("Bob Example").withMissionSubmissions().build();
         model.addStudent(first);
         model.addStudent(selected);
-        MissionId missionId = model.addMission("Runes", LocalDate.of(2026, 10, 20)).getId();
+        MissionId missionId = new MissionId("M01");
+        model.addMission(missionId, "Runes", LocalDate.of(2026, 10, 20));
         model.updateFilteredStudentList(student -> student.getName().equals(selected.getName()));
         Command mark = new MarkMissionCommand(Index.fromOneBased(1), missionId);
         Command unmark = new UnmarkMissionCommand(Index.fromOneBased(1), missionId);

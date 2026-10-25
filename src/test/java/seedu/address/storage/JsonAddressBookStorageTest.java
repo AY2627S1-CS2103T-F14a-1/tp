@@ -19,6 +19,7 @@ import org.junit.jupiter.api.io.TempDir;
 import seedu.address.commons.exceptions.DataLoadingException;
 import seedu.address.model.AddressBook;
 import seedu.address.model.ReadOnlyAddressBook;
+import seedu.address.model.mission.MissionId;
 import seedu.address.model.student.Student;
 import seedu.address.testutil.StudentBuilder;
 
@@ -119,7 +120,8 @@ public class JsonAddressBookStorageTest {
         AddressBook original = new AddressBook();
         original.addStudent(student);
         for (int number = 1; number <= 13; number++) {
-            original.addMission("Mission " + number, java.time.LocalDate.of(2026, 10, 15));
+            original.addMission(new MissionId(String.format("M%02d", number)),
+                    "Mission " + number, java.time.LocalDate.of(2026, 10, 15));
         }
 
         storage.saveAddressBook(original);

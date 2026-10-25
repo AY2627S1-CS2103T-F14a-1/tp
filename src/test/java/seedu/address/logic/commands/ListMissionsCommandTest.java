@@ -32,7 +32,7 @@ public class ListMissionsCommandTest {
     @BeforeEach
     public void setUp() {
         model = new ModelManager();
-        model.addMission("Rune Reading", LocalDate.of(2026, 10, 20));
+        model.addMission(MISSION_ID, "Rune Reading", LocalDate.of(2026, 10, 20));
         john = new StudentBuilder().withName("John Doe").build();
         betsy = new StudentBuilder().withName("Betsy Crowe")
                 .withMissionSubmissions("M01").build();
