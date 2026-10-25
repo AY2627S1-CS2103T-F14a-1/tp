@@ -17,7 +17,7 @@ import seedu.address.model.student.RegisteredMasteryChecks;
 /** Tests deletion argument structure, number validation, and delete-specific usage feedback. */
 public class DeleteMasteryCheckCommandParserTest {
 
-    private static final String USAGE_SUFFIX = "\n" + DeleteMasteryCheckCommand.MESSAGE_USAGE;
+    private static final String USAGE_SUFFIX = "\n\n" + DeleteMasteryCheckCommand.MESSAGE_USAGE;
     private final DeleteMasteryCheckCommandParser parser = new DeleteMasteryCheckCommandParser();
 
     @Test

@@ -31,7 +31,7 @@ public class DeleteStudioRecordCommandParser implements Parser<DeleteStudioRecor
             int week = ParserUtil.parseWeek(argMultimap.getValue(PREFIX_WEEK).get());
             return new DeleteStudioRecordCommand(index, week);
         } catch (ParseException e) {
-            throw new ParseException(e.getMessage() + "\n" + DeleteStudioRecordCommand.MESSAGE_USAGE);
+            throw new ParseException(e.getMessage() + "\n\n" + DeleteStudioRecordCommand.MESSAGE_USAGE);
         }
     }
 }

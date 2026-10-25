@@ -19,7 +19,7 @@ import seedu.address.model.mission.MissionId;
  */
 public class EditMissionCommandParserTest {
 
-    private static final String USAGE_SUFFIX = "\n" + EditMissionCommand.MESSAGE_USAGE;
+    private static final String USAGE_SUFFIX = "\n\n" + EditMissionCommand.MESSAGE_USAGE;
 
     private final EditMissionCommandParser parser = new EditMissionCommandParser();
 

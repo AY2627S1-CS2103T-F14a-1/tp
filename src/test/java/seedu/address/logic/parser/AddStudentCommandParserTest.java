@@ -42,7 +42,7 @@ import seedu.address.testutil.StudentBuilder;
 
 public class AddStudentCommandParserTest {
 
-    private static final String USAGE_SUFFIX = "\n" + AddStudentCommand.MESSAGE_USAGE;
+    private static final String USAGE_SUFFIX = "\n\n" + AddStudentCommand.MESSAGE_USAGE;
     private AddStudentCommandParser parser = new AddStudentCommandParser();
 
     @Test

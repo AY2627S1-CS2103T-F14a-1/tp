@@ -46,7 +46,7 @@ public class AddStudentCommandParser implements Parser<AddStudentCommand> {
             Student student = new Student(name, phone, email, tagList, studioGroup);
             return new AddStudentCommand(student);
         } catch (ParseException e) {
-            throw new ParseException(e.getMessage() + "\n" + AddStudentCommand.MESSAGE_USAGE);
+            throw new ParseException(e.getMessage() + "\n\n" + AddStudentCommand.MESSAGE_USAGE);
         }
     }
 }

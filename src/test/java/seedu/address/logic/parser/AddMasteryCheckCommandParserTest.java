@@ -19,7 +19,7 @@ import seedu.address.model.student.RegisteredMasteryChecks;
 /** Tests mastery check argument validation and construction of executable commands. */
 public class AddMasteryCheckCommandParserTest {
 
-    private static final String USAGE_SUFFIX = "\n" + AddMasteryCheckCommand.MESSAGE_USAGE;
+    private static final String USAGE_SUFFIX = "\n\n" + AddMasteryCheckCommand.MESSAGE_USAGE;
     private final AddMasteryCheckCommandParser parser = new AddMasteryCheckCommandParser();
 
     @Test

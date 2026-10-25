@@ -268,15 +268,17 @@ The shared validator returns problem-only messages; command parsers append usage
 
 ## Command parser error usage regression
 
-Run all parser tests and the full Gradle suite. Exact error assertions must include
-one newline and the complete command usage after the problem message, while direct
-ParserUtil and ArgumentMultimap tests continue to expect problem-only messages.
+Run all parser tests and the full Gradle suite. Every command error that includes
+usage must place a blank line between the problem message and the complete usage
+text. Direct ParserUtil and ArgumentMultimap tests continue to expect only the
+problem message.
 
 | ID | Steps | Expected result |
 | --- | --- | --- |
-| ERROR-USAGE-001 | Run `edit id/1 p/invalid`, then `view id/1`. | Phone validation feedback ends with edit usage exactly once; student fields are unchanged. |
+| ERROR-USAGE-001 | Run `edit id/1 p/invalid`, then `view id/1`. | Phone validation feedback is followed by a blank line and edit usage exactly once; student fields are unchanged. |
 | ERROR-USAGE-002 | Run `edit id/1 p/91234567`, then `view id/1`. | Phone updates successfully; other fields remain unchanged. |
-| ERROR-USAGE-003 | Run `edit id/1 p/91234567 p/98765432`, then `view id/1`. | Duplicate-phone feedback ends with edit usage exactly once; the phone remains 91234567. |
+| ERROR-USAGE-003 | Run `edit id/1 p/91234567 p/98765432`, then `view id/1`. | Duplicate-phone feedback is followed by a blank line and edit usage exactly once; the phone remains 91234567. |
+| ERROR-USAGE-004 | Run `addmission m/M01 n/Runes d/2026-02-30`. | Date validation feedback is followed by a blank line and AddMission usage; no mission is added. |
 
 Preamble-error regression: commands using the shared structure validator must
 show `Invalid command format!` followed by their usage exactly once, without a

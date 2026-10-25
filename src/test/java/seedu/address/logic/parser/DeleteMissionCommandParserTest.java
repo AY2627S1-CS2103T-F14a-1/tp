@@ -26,7 +26,7 @@ import seedu.address.storage.StorageManager;
 /** Tests numeric mission parsing and ensures pending execution cannot alter saved data. */
 public class DeleteMissionCommandParserTest {
 
-    private static final String USAGE_SUFFIX = "\n" + DeleteMissionCommand.MESSAGE_USAGE;
+    private static final String USAGE_SUFFIX = "\n\n" + DeleteMissionCommand.MESSAGE_USAGE;
 
     @TempDir
     public Path directory;

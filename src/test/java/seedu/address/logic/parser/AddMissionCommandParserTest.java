@@ -16,7 +16,7 @@ import seedu.address.model.mission.MissionId;
 /** Tests mission-field validation and command routing. */
 public class AddMissionCommandParserTest {
 
-    private static final String USAGE_SUFFIX = "\n" + AddMissionCommand.MESSAGE_USAGE;
+    private static final String USAGE_SUFFIX = "\n\n" + AddMissionCommand.MESSAGE_USAGE;
 
     private final AddMissionCommandParser parser = new AddMissionCommandParser();
 

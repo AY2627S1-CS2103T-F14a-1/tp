@@ -34,7 +34,7 @@ public class DeleteMasteryCheckCommandParser implements Parser<DeleteMasteryChec
             int number = ParserUtil.parseMasteryCheckNumber(argMultimap.getValue(PREFIX_NUMBER).get());
             return new DeleteMasteryCheckCommand(index, number);
         } catch (ParseException e) {
-            throw new ParseException(e.getMessage() + "\n" + DeleteMasteryCheckCommand.MESSAGE_USAGE);
+            throw new ParseException(e.getMessage() + "\n\n" + DeleteMasteryCheckCommand.MESSAGE_USAGE);
         }
     }
 }

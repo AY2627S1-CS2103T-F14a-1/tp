@@ -18,7 +18,7 @@ import seedu.address.logic.commands.DeleteStudentCommand;
  */
 public class DeleteStudentCommandParserTest {
 
-    private static final String USAGE_SUFFIX = "\n" + DeleteStudentCommand.MESSAGE_USAGE;
+    private static final String USAGE_SUFFIX = "\n\n" + DeleteStudentCommand.MESSAGE_USAGE;
 
     private DeleteStudentCommandParser parser = new DeleteStudentCommandParser();
 

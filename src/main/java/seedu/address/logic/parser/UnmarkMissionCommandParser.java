@@ -33,7 +33,7 @@ public class UnmarkMissionCommandParser implements Parser<UnmarkMissionCommand> 
             MissionId missionId = ParserUtil.parseMissionId(argMultimap.getValue(PREFIX_MISSION).get());
             return new UnmarkMissionCommand(index, missionId);
         } catch (ParseException e) {
-            throw new ParseException(e.getMessage() + "\n" + UnmarkMissionCommand.MESSAGE_USAGE);
+            throw new ParseException(e.getMessage() + "\n\n" + UnmarkMissionCommand.MESSAGE_USAGE);
         }
     }
 }

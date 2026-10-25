@@ -33,7 +33,7 @@ public class AddMissionCommandParser implements Parser<AddMissionCommand> {
             LocalDate deadline = ParserUtil.parseMissionDeadline(argMultimap.getValue(PREFIX_DATE).orElseThrow());
             return new AddMissionCommand(missionId, name, deadline);
         } catch (ParseException e) {
-            throw new ParseException(e.getMessage() + "\n" + AddMissionCommand.MESSAGE_USAGE);
+            throw new ParseException(e.getMessage() + "\n\n" + AddMissionCommand.MESSAGE_USAGE);
         }
     }
 }

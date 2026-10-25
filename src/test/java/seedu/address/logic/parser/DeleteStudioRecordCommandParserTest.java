@@ -16,7 +16,7 @@ import seedu.address.logic.commands.DeleteStudioRecordCommand;
  */
 public class DeleteStudioRecordCommandParserTest {
 
-    private static final String USAGE_SUFFIX = "\n" + DeleteStudioRecordCommand.MESSAGE_USAGE;
+    private static final String USAGE_SUFFIX = "\n\n" + DeleteStudioRecordCommand.MESSAGE_USAGE;
 
     private final DeleteStudioRecordCommandParser parser = new DeleteStudioRecordCommandParser();
 
