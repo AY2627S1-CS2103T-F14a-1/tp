@@ -20,6 +20,7 @@ import seedu.address.logic.commands.AddStudentCommand;
 import seedu.address.logic.commands.AddStudioRecordCommand;
 import seedu.address.logic.commands.ClearCommand;
 import seedu.address.logic.commands.DeleteMasteryCheckCommand;
+import seedu.address.logic.commands.DeleteNoteCommand;
 import seedu.address.logic.commands.DeleteStudentCommand;
 import seedu.address.logic.commands.DeleteStudioRecordCommand;
 import seedu.address.logic.commands.EditCommand;
@@ -64,6 +65,15 @@ public class AddressBookParserTest {
         assertEquals(expected, parser.parseCommand("addnote id/1 ni/3 nt/Review lecture notes"));
         assertEquals(expected, parser.parseCommand("ADDNOTE id/1 ni/3 nt/Review lecture notes"));
         assertEquals(expected, parser.parseCommand("  AddNote\tid/1\tni/3 nt/Review lecture notes  "));
+    }
+
+    @Test
+    public void parseCommand_deleteNoteIgnoringCase_returnsCommand() throws Exception {
+        DeleteNoteCommand expected = new DeleteNoteCommand(INDEX_FIRST_STUDENT, 3);
+
+        assertEquals(expected, parser.parseCommand("delnote id/1 ni/3"));
+        assertEquals(expected, parser.parseCommand("DELNOTE id/1 ni/3"));
+        assertEquals(expected, parser.parseCommand("  DelNote\tid/1\tni/3  "));
     }
 
     @Test
