@@ -23,12 +23,16 @@ public class EditNoteCommandParser implements Parser<EditNoteCommand> {
     @Override
     public EditNoteCommand parse(String args) throws ParseException {
         requireNonNull(args);
-        ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
-                args, PREFIX_INDEX, PREFIX_NOTE_ID, PREFIX_NOTE_TEXT);
+        try {
+            ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
+                    args, PREFIX_INDEX, PREFIX_NOTE_ID, PREFIX_NOTE_TEXT);
 
-        Index index = ParserUtil.parseIndex(argMultimap.getValue(PREFIX_INDEX).get());
-        int noteId = ParserUtil.parseNoteId(argMultimap.getValue(PREFIX_NOTE_ID).get());
-        Note note = ParserUtil.parseNoteText(argMultimap.getValue(PREFIX_NOTE_TEXT).get());
-        return new EditNoteCommand(index, noteId, note);
+            Index index = ParserUtil.parseIndex(argMultimap.getValue(PREFIX_INDEX).get());
+            int noteId = ParserUtil.parseNoteId(argMultimap.getValue(PREFIX_NOTE_ID).get());
+            Note note = ParserUtil.parseNoteText(argMultimap.getValue(PREFIX_NOTE_TEXT).get());
+            return new EditNoteCommand(index, noteId, note);
+        } catch (ParseException pe) {
+            throw new ParseException(pe.getMessage() + "\n" + EditNoteCommand.MESSAGE_USAGE);
+        }
     }
 }

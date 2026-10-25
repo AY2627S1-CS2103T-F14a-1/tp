@@ -21,11 +21,15 @@ public class DeleteNoteCommandParser implements Parser<DeleteNoteCommand> {
     @Override
     public DeleteNoteCommand parse(String args) throws ParseException {
         requireNonNull(args);
-        ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
-                args, PREFIX_INDEX, PREFIX_NOTE_ID);
+        try {
+            ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
+                    args, PREFIX_INDEX, PREFIX_NOTE_ID);
 
-        Index index = ParserUtil.parseIndex(argMultimap.getValue(PREFIX_INDEX).get());
-        int noteId = ParserUtil.parseNoteId(argMultimap.getValue(PREFIX_NOTE_ID).get());
-        return new DeleteNoteCommand(index, noteId);
+            Index index = ParserUtil.parseIndex(argMultimap.getValue(PREFIX_INDEX).get());
+            int noteId = ParserUtil.parseNoteId(argMultimap.getValue(PREFIX_NOTE_ID).get());
+            return new DeleteNoteCommand(index, noteId);
+        } catch (ParseException pe) {
+            throw new ParseException(pe.getMessage() + "\n" + DeleteNoteCommand.MESSAGE_USAGE);
+        }
     }
 }

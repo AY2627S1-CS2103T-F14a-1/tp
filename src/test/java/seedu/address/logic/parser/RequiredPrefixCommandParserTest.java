@@ -19,11 +19,14 @@ import org.junit.jupiter.api.Test;
 import seedu.address.logic.Messages;
 import seedu.address.logic.commands.AddMasteryCheckCommand;
 import seedu.address.logic.commands.AddMissionCommand;
+import seedu.address.logic.commands.AddNoteCommand;
 import seedu.address.logic.commands.AddStudioRecordCommand;
 import seedu.address.logic.commands.DeleteMasteryCheckCommand;
 import seedu.address.logic.commands.DeleteMissionCommand;
+import seedu.address.logic.commands.DeleteNoteCommand;
 import seedu.address.logic.commands.DeleteStudentCommand;
 import seedu.address.logic.commands.DeleteStudioRecordCommand;
+import seedu.address.logic.commands.EditNoteCommand;
 import seedu.address.logic.commands.EditStudioRecordCommand;
 import seedu.address.logic.commands.ListMissionsCommand;
 import seedu.address.logic.commands.MarkMasteryCheckCommand;
@@ -65,7 +68,11 @@ public class RequiredPrefixCommandParserTest {
                 List.of(PREFIX_MISSION), List.of("M01"));
         verifyRequiredPrefixes(new AddMissionCommandParser(), AddMissionCommand.MESSAGE_USAGE,
                 List.of(CliSyntax.PREFIX_NAME, CliSyntax.PREFIX_DATE), List.of("Runes", "2026-10-20"));
-        verifyRequiredPrefixes(new AddNoteCommandParser(),
+        verifyRequiredPrefixes(new AddNoteCommandParser(), AddNoteCommand.MESSAGE_USAGE,
+                List.of(PREFIX_INDEX, PREFIX_NOTE_ID, PREFIX_NOTE_TEXT), List.of("1", "3", "Review notes"));
+        verifyRequiredPrefixes(new DeleteNoteCommandParser(), DeleteNoteCommand.MESSAGE_USAGE,
+                List.of(PREFIX_INDEX, PREFIX_NOTE_ID), List.of("1", "3"));
+        verifyRequiredPrefixes(new EditNoteCommandParser(), EditNoteCommand.MESSAGE_USAGE,
                 List.of(PREFIX_INDEX, PREFIX_NOTE_ID, PREFIX_NOTE_TEXT), List.of("1", "3", "Review notes"));
     }
 

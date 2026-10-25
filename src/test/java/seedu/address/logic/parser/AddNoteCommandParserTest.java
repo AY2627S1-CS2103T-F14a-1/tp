@@ -36,7 +36,7 @@ public class AddNoteCommandParserTest {
     public void parse_invalidIndex_reportsIndexConstraint() {
         for (String index : List.of("", "0", "-1", "abc", "1 extra", "2147483648")) {
             assertParseFailure(parser, "id/" + index + " ni/3 nt/Review lecture notes",
-                    ParserUtil.MESSAGE_INVALID_INDEX);
+                    ParserUtil.MESSAGE_INVALID_INDEX + "\n" + AddNoteCommand.MESSAGE_USAGE);
         }
     }
 
@@ -44,24 +44,28 @@ public class AddNoteCommandParserTest {
     public void parse_invalidNoteId_reportsNoteIdConstraint() {
         for (String noteId : List.of("", "0", "11", "-1", "1.5", "abc", "2147483648")) {
             assertParseFailure(parser, "id/1 ni/" + noteId + " nt/Review lecture notes",
-                    RegisteredNotes.MESSAGE_CONSTRAINTS);
+                    RegisteredNotes.MESSAGE_CONSTRAINTS + "\n" + AddNoteCommand.MESSAGE_USAGE);
         }
     }
 
     @Test
     public void parse_invalidNoteText_reportsNoteTextConstraint() {
         for (String noteText : List.of("", " ", "Review!", "a".repeat(Note.MAX_NOTE_LENGTH + 1))) {
-            assertParseFailure(parser, "id/1 ni/3 nt/" + noteText, Note.MESSAGE_CONSTRAINTS);
+            assertParseFailure(parser, "id/1 ni/3 nt/" + noteText,
+                    Note.MESSAGE_CONSTRAINTS + "\n" + AddNoteCommand.MESSAGE_USAGE);
         }
     }
 
     @Test
     public void parse_missingAndDuplicatePrefixes_reportsPrefixSpecificMessages() {
-        assertParseFailure(parser, "id/1 ni/3", CliSyntax.PREFIX_NOTE_TEXT.getMissingMessage());
-        assertParseFailure(parser, "id/1 nt/Review lecture notes", CliSyntax.PREFIX_NOTE_ID.getMissingMessage());
-        assertParseFailure(parser, "ni/3 nt/Review lecture notes", CliSyntax.PREFIX_INDEX.getMissingMessage());
+        assertParseFailure(parser, "id/1 ni/3",
+                CliSyntax.PREFIX_NOTE_TEXT.getMissingMessage() + "\n" + AddNoteCommand.MESSAGE_USAGE);
+        assertParseFailure(parser, "id/1 nt/Review lecture notes",
+                CliSyntax.PREFIX_NOTE_ID.getMissingMessage() + "\n" + AddNoteCommand.MESSAGE_USAGE);
+        assertParseFailure(parser, "ni/3 nt/Review lecture notes",
+                CliSyntax.PREFIX_INDEX.getMissingMessage() + "\n" + AddNoteCommand.MESSAGE_USAGE);
         assertParseFailure(parser, "id/1 ni/3 ni/4 nt/Review lecture notes",
-                CliSyntax.PREFIX_NOTE_ID.getDuplicateMessage());
+                CliSyntax.PREFIX_NOTE_ID.getDuplicateMessage() + "\n" + AddNoteCommand.MESSAGE_USAGE);
     }
 
     @Test

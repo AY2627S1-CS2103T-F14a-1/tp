@@ -31,8 +31,8 @@ import seedu.address.logic.commands.AddMasteryCheckCommand;
 import seedu.address.logic.commands.AddStudentCommand;
 import seedu.address.logic.commands.AddStudioRecordCommand;
 import seedu.address.logic.commands.CommandResult;
-import seedu.address.logic.commands.DeleteNoteCommand;
 import seedu.address.logic.commands.DeleteMasteryCheckCommand;
+import seedu.address.logic.commands.DeleteNoteCommand;
 import seedu.address.logic.commands.DeleteStudioRecordCommand;
 import seedu.address.logic.commands.EditStudioRecordCommand;
 import seedu.address.logic.commands.ListCommand;
@@ -488,7 +488,8 @@ public class LogicManagerTest {
         assertStudioState(model, storage, withRemainingNote);
 
         String saved = Files.readString(storage.getAddressBookFilePath());
-        assertThrows(ParseException.class, RegisteredNotes.MESSAGE_CONSTRAINTS, () ->
+        assertThrows(ParseException.class, RegisteredNotes.MESSAGE_CONSTRAINTS
+                + "\n" + DeleteNoteCommand.MESSAGE_USAGE, () ->
                 logic.execute("delnote id/1 ni/0"));
         assertEquals(saved, Files.readString(storage.getAddressBookFilePath()));
         assertStudioState(model, storage, withRemainingNote);
