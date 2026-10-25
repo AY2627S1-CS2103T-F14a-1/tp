@@ -14,13 +14,19 @@ student 2 has no notes.
 
 ## Edit-note command regression
 
-`EditNoteCommand` is currently not registered with a parser or command
-dispatcher, so it cannot be invoked through the UI. Run the complete
-`EditNoteCommandTest` JUnit class to verify replacement of an existing note,
-preservation of other notes, and no state change for missing note IDs,
-unchanged text, invalid student indexes, and invalid constructor arguments.
-Add interactive cases only after the command is wired into the parser and
-dispatcher.
+Start with two students. Give student 1 note IDs 3 and 4, and leave student 2
+unchanged. After every rejected command, run `view id/1` and confirm that both
+notes and the saved data are unchanged.
+
+| ID | Steps | Expected result |
+| --- | --- | --- |
+| NOTE-EDIT-001 | Run `editnote id/1 ni/3 nt/Updated lecture notes`, then view both students. | Success feedback identifies student 1 and note ID 3. Student 1's ID 3 has the new text, ID 4 is unchanged, and student 2 is unchanged. |
+| NOTE-EDIT-002 | Run `editnote id/1 ni/3 nt/Updated lecture notes` again, then view student 1. | Same-note feedback appears. Both note texts remain unchanged. |
+| NOTE-EDIT-003 | Run `editnote id/1 ni/2 nt/Unexpected`, then view student 1. | Missing-note feedback appears. IDs 3 and 4 remain unchanged. |
+| NOTE-EDIT-004 | Run `editnote id/1 ni/0 nt/Invalid`, `editnote id/1 ni/3 nt/Invalid!`, and `editnote id/1 ni/3`, viewing student 1 after each command. | The invalid-ID, invalid-text, and missing-`nt/` messages appear respectively. No note changes. |
+| NOTE-EDIT-005 | Run `editnote id/3 ni/3 nt/Unexpected`, then view both students. | Invalid-index feedback appears; neither student changes. |
+| NOTE-EDIT-006 | Run `editnote id/1 ni/3 ni/4 nt/Unexpected`, then view student 1. | Duplicate-`ni/` feedback appears. Both note texts and saved data remain unchanged. |
+| NOTE-EDIT-007 | Run `editnote id/1 ni/3 nt/Persisted update`, restart, and view student 1. | ID 3 retains `Persisted update`; ID 4 and student 2 remain unchanged. |
 
 ## Add-note command regression
 
