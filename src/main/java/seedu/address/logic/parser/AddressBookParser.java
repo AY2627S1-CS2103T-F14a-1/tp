@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 import seedu.address.commons.core.LogsCenter;
 import seedu.address.logic.commands.AddMasteryCheckCommand;
 import seedu.address.logic.commands.AddMissionCommand;
+import seedu.address.logic.commands.AddNoteCommand;
 import seedu.address.logic.commands.AddStudentCommand;
 import seedu.address.logic.commands.AddStudioRecordCommand;
 import seedu.address.logic.commands.ClearCommand;
@@ -88,6 +89,7 @@ public class AddressBookParser {
             case ListOverdueCommand.COMMAND_WORD -> new ListOverdueCommand();
             case MarkMasteryCheckCommand.COMMAND_WORD -> new MarkMasteryCheckCommandParser().parse(arguments);
             case UnmarkMasteryCheckCommand.COMMAND_WORD -> new UnmarkMasteryCheckCommandParser().parse(arguments);
+            case AddNoteCommand.COMMAND_WORD -> new AddNoteCommandParser().parse(arguments);
             case ExitCommand.COMMAND_WORD -> new ExitCommand();
             case HelpCommand.COMMAND_WORD -> new HelpCommand();
             case ViewCommand.COMMAND_WORD -> new ViewCommandParser().parse(arguments);
