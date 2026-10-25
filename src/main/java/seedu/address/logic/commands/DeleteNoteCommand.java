@@ -38,7 +38,7 @@ public class DeleteNoteCommand extends Command {
     private final int noteId;
 
     /**
-     * @param targetIndex Index of the student in the filtered student list to edit.
+     * @param targetIndex Index of the student in the filtered student list to delete a note from.
      * @param noteId ID of note to delete.
      */
     public DeleteNoteCommand(Index targetIndex, int noteId) {
