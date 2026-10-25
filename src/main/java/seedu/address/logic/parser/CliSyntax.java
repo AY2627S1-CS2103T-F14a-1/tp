@@ -42,4 +42,10 @@ public class CliSyntax {
     public static final Prefix PREFIX_MISSION = new Prefix("m/",
             "Mark a mission ID using %1$s.",
             "Mission ID must be specified only once.");
+    public static final Prefix PREFIX_NOTE_ID = new Prefix("ni/",
+            "Mark a note ID using %1$s.",
+            "Note ID must be specified only once.");
+    public static final Prefix PREFIX_NOTE_TEXT = new Prefix("nt/",
+            "Mark a note text using %1$s.",
+            "Note text must be specified only once.");
 }
