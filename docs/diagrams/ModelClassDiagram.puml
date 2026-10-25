@@ -23,6 +23,8 @@ Class RegisteredStudioRecords
 Class StudioRecord
 Class RegisteredMasteryChecks
 Class MasteryCheck
+Class RegisteredNotes
+Class Note
 Class MissionSubmissions
 Class MissionCatalogue
 Class Mission
@@ -58,8 +60,10 @@ Student *--> "1" StudioGroup
 Student *--> "1" RegisteredStudioRecords
 Student *--> "1" MissionSubmissions
 Student *--> "1" RegisteredMasteryChecks
+Student *--> "1" RegisteredNotes
 
 RegisteredMasteryChecks *-down-> "*" MasteryCheck
+RegisteredNotes *-down-> "*" Note
 MissionSubmissions -down-> "*" MissionId
 RegisteredStudioRecords *--> "*" StudioRecord
 
@@ -77,9 +81,11 @@ Email -[hidden]right-> Tag
 Tag -[hidden]right-> StudioGroup
 StudioGroup -[hidden]right-> RegisteredStudioRecords
 RegisteredStudioRecords -[hidden]right-> RegisteredMasteryChecks
+RegisteredMasteryChecks -[hidden]right-> RegisteredNotes
 
 ' Bottom row ordering
 MissionId -[hidden]right-> StudioRecord
 StudioRecord -[hidden]right-> MasteryCheck
+MasteryCheck -[hidden]right-> Note
 
 @enduml

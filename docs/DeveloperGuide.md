@@ -120,7 +120,7 @@ How the parsing works:
 * When called upon to parse a user command, the `AddressBookParser` class creates an `XYZCommandParser` (`XYZ` is a placeholder for the specific command name, e.g., `AddStudentCommandParser`). The parser uses the other classes shown above to parse the user command and create an `XYZCommand` object (e.g., `AddStudentCommand`). The `AddressBookParser` returns that object as a `Command` object.
 * All `XYZCommandParser` classes, such as `AddStudentCommandParser` and `DeleteStudentCommandParser`, implement the `Parser` interface so they can be treated similarly where appropriate, for example during testing.
 
-Some parser classes also use a helper class to share common parsing behavior. For example, `AddStudioRecordCommandParser`, `DeleteStudioRecordCommandParser`, and `EditStudioRecordCommandParser` each use a `WeeklyTaskParser`, as they share a common need to parse `week` values, and some share the need to parse `effort` values. The following simplified class diagram shows the classes used by `AddStudioRecordCommandParser`:
+The studio-record parsers share argument-structure validation through `ArgumentStructureValidator` and value parsing through `ParserUtil`. They use the same `parseWeek(...)` helper, while the add and edit parsers also use `parseEffortScore(...)`. The following simplified class diagram shows the classes used by `AddStudioRecordCommandParser`:
 
 <puml src="diagrams/AddStudioRecordParserClasses.puml" width="600"/>
 
@@ -132,19 +132,32 @@ Some parser classes also use a helper class to share common parsing behavior. Fo
 The `Model` component,
 
 * stores the address book data, including all `Student` objects (contained in a `UniqueStudentList`) and shared `Mission` objects (contained in a `MissionCatalogue`).
-* stores each student's contact details, studio group, tags, studio records, and mission submissions. Studio records track attendance and effort scores by week, while `MissionSubmissions` records the IDs of submitted missions. A mission without a recorded submission is treated as not submitted.
+* stores each student's contact details, studio group, tags, studio records,
+  notes, mastery check appointments, and mission submissions. Studio records
+  track attendance and effort scores by week, while `MissionSubmissions`
+  records the IDs of submitted missions. A mission without a recorded
+  submission is treated as not submitted.
 * stores each mission's user-supplied ID, name, and deadline. The mission catalogue validates IDs and does not allocate them.
 * maintains a _filtered_ view of the students, such as search results. It exposes this view as an unmodifiable `ObservableList<Student>` that the UI can observe and bind to, so the UI updates when the list changes.
 * stores a `UserPrefs` object that represents the user's preferences (currently, just the GUI settings). This is exposed to the outside as a `ReadOnlyUserPrefs` object.
 * does not depend on any of the other three components (as the `Model` represents data entities of the domain, they should make sense on their own without depending on other components).
 
-Each student has one `RegisteredStudioRecords` object containing an immutable map from studio weeks to `StudioRecord` objects. Each recorded week is between 3 and 13 and has one record containing a non-negative effort score. The week is the map key; the presence of a record indicates attendance, even when its effort score is zero. Weeks without a record are displayed as absent with an effort score of zero. Each student also has one `MissionSubmissions` object containing zero or more submitted mission IDs. The `1` multiplicities count these containers, not the records inside them.
+Each student has one `RegisteredStudioRecords` object containing an immutable
+map from studio weeks 0 through 13 to `StudioRecord` objects. Each recorded
+week has one record containing a non-negative effort score. The week is the map
+key; the presence of a record indicates attendance, even when its effort score
+is zero. Weeks without a record are displayed as absent with an effort score
+of zero. Each student also has one `RegisteredNotes` object containing notes
+keyed by IDs from 1 through 10, one `RegisteredMasteryChecks` object
+containing numbered mastery check appointments, and one `MissionSubmissions`
+object containing zero or more submitted mission IDs. The `1` multiplicities
+count these containers, not the records inside them.
 
 Composition diamonds show conceptual ownership of the values that form a student record; immutable values may be reused internally when records are replaced. Submission IDs reference shared missions rather than owning them.
 
 <box type="info" seamless>
 
-**Note:** The diagram below illustrates a possible alternative for managing tags. Currently, each `Student` stores its own set of tags, and `AddressBook` has no `UniqueTagList`. In the alternative, `AddressBook` would store one `Tag` object per unique tag in a central `UniqueTagList`, and students would reference those shared tags. The student detail classes are retained to show that only tag ownership changes. The mission catalogue is omitted for clarity.
+**Note:** The diagram below illustrates a possible alternative for managing tags. Currently, each `Student` stores its own set of tags, and `AddressBook` has no `UniqueTagList`. In the alternative, `AddressBook` would store one `Tag` object per unique tag in a central `UniqueTagList`, and students would reference those shared tags. Student details, including registered notes, are shown to illustrate the surrounding model; only tag ownership differs from the current design. The mission catalogue is omitted for clarity.
 
 <puml src="diagrams/BetterModelClassDiagram.puml" width="800" />
 </box>
@@ -458,7 +471,7 @@ submission records, or the current student filter.
 **MSS**
 
 1. Tutor requests to add a shared mission and provides the required details.
-2. AvengerHub creates the mission with a unique ID, saves it, and confirms success with the assigned ID.
+2. AvengerHub creates the mission with the supplied unique ID, saves it, and confirms success with that ID.
 
    Use case ends.
 
@@ -682,8 +695,6 @@ Deadlines are inclusive: missions due today are not overdue. The current
 date follows the computer's local date and time zone. Recorded submissions
 are excluded, regardless of when they were recorded.
 
-*{More to be added}*
-
 ### Non-Functional Requirements
 
 1. Should work on any _mainstream OS_ as long as it has Java `25` or above installed.
@@ -728,7 +739,11 @@ are excluded, regardless of when they were recorded.
 
 ## **Appendix: Instructions for manual testing**
 
-Given below are instructions to test the app manually.
+Use the following workflows to check the main user-facing behavior. Start a
+complete run in a fresh working directory and follow each workflow's steps in
+order, since later checks may rely on earlier commands. Use disposable
+directories for the clearing and corrupted-file checks. Enter commands in the
+GUI command box and press Enter.
 
 <box type="info" seamless>
 
@@ -738,43 +753,149 @@ testers are expected to do more *exploratory* testing.
 
 ### Launch and shutdown
 
-1. Initial launch
+1. Copy the JAR file into a new, empty folder and launch it from that folder.
+   Expected: The GUI opens with the sample students and missions. No
+   `data/addressbook.json` file is written during startup.
 
-   1. Download the JAR file and copy it into an empty folder.
+1. Enter `help`, then try the Help menu and `F1`.
+   Expected: Each action opens the help window. Enter `exit`.
+   Expected: The application closes.
 
-   1. Double-click the JAR file.<br>
-      Expected: The GUI opens with a set of sample students. The window size may not be optimal.
+1. Resize and move the window, close the app with `exit`, then relaunch it
+   from the same folder.
+   Expected: The window size and position are restored.
 
-1. Saving window preferences
+### Student records and filtering
 
-   1. Resize the window to an optimal size. Move the window to a different location. Close the window.
+1. Enter `list`, then `view id/1`.
+   Expected: All sample students are listed and the first student's profile
+   appears, including contact details and the student activity sections.
 
-   1. Relaunch the app by double-clicking the JAR file.<br>
-       Expected: The most recent window size and location are retained.
+1. Enter `find alex, david`, then `view id/2`.
+   Expected: Alex and David match the alternatives; the profile for the
+   second search result is shown. Enter `find g/1A g/1B`.
+   Expected: Students from either group are shown.
 
-1. _{ more test cases … }_
+1. Enter `find alex lee, david g/1A`.
+   Expected: The name alternatives and group filter are combined. Enter
+   `find alex,` and then `find ,alex`.
+   Expected: Each invalid search displays an error and does not replace the
+   previous student list.
 
-### Deleting a student
+1. Add a student with
+   `addstudent n/Casey Test p/98765432 e/casey@example.com g/2B t/new`.
+   Expected: The student is added. Enter
+   `addstudent n/Casey Test p/98765432 e/casey@example.com g/2B`.
+   Expected: The duplicate student is rejected. Enter
+   `edit id/1 p/91234567 g/2B t/updated`, then `view id/1`.
+   Expected: The selected student's phone, group, and tags are updated.
+   Enter `edit id/0 p/91234567`.
+   Expected: An error is shown and no student is changed.
 
-1. Deleting a student while all students are being shown
+1. With multiple students shown, enter `delstudent id/1`, then `delstudent id/0`.
+   Expected: The first command removes the first displayed student; the second
+   displays an error and removes nobody. Enter `delstudent id/x` and
+   `delstudent id/999`.
+   Expected: Both invalid selections are rejected without changing the list.
 
-   1. Prerequisites: List all students using the `list` command, with multiple students in the list.
+### Student activity and profile
 
-   1. Test case: `delstudent id/1`<br>
-      Expected: The first student is deleted from the list. The status message shows the deleted student's details.
+1. Enter `list`, then add a studio record with
+   `addstudiorecord id/1 w/0 ef/0`. Enter
+   `addstudiorecord id/1 w/13 ef/30`.
+   Expected: Weeks 0 and 13 are recorded, including the zero-effort record.
+   Enter `addstudiorecord id/1 w/13 ef/99`.
+   Expected: The existing week 13 record is unchanged.
 
-   1. Test case: `delstudent id/0`<br>
-      Expected: No student is deleted. The status message shows error details.
+1. Enter `editstudiorecord id/1 w/13 ef/40`, then
+   `delstudiorecord id/1 w/0`.
+   Expected: Week 13 shows effort 40 and week 0 is absent.
+   Enter `editstudiorecord id/1 w/0 ef/10` and
+   `addstudiorecord id/1 w/14 ef/10`.
+   Expected: The commands are rejected; no studio record is changed.
 
-   1. Other incorrect delete commands to try: `delstudent`, `delstudent id/x`, `...` (where x is larger than the list size)<br>
-      Expected: Similar to previous.
+1. Enter `addnote id/1 ni/1 nt/Follow up`, then
+   `addnote id/1 ni/1 nt/Replacement`.
+   Expected: The first note is recorded and the duplicate ID leaves it
+   unchanged. Enter `editnote id/1 ni/1 nt/Call soon`, then
+   `delnote id/1 ni/1`, then `view id/1`.
+   Expected: The note is edited and then removed; the profile reports that
+   there are no notes.
 
-1. _{ more test cases … }_
+1. Enter `addnote id/1 ni/11 nt/Invalid` and
+   `addnote id/1 ni/2 nt/Bad-text!`.
+   Expected: Both invalid notes are rejected. Enter `view id/1`.
+   Expected: No invalid note appears.
 
-### Saving data
+1. Register a mastery check using
+   `addmc id/1 num/1 dt/29-10|13:30`, then enter
+   `markmc id/1 num/1`, `unmarkmc id/1 num/1`, and `view id/1`.
+   Expected: The appointment is shown with the expected time; its status
+   changes to Completed and then Not completed.
 
-1. Dealing with missing/corrupted data files
+1. Enter `addmc id/1 num/1 dt/30-10|10:00` and
+   `markmc id/1 num/999`.
+   Expected: The duplicate appointment retains its original time, and the
+   unknown number is rejected. Enter `delmc id/1 num/1`, then `view id/1`.
+   Expected: The appointment is removed.
 
-   1. _{Explain how to simulate missing or corrupted data files and state the expected behavior.}_
+### Mission catalogue and submission reports
 
-1. _{ more test cases … }_
+1. Enter `addmission m/M10 n/Manual Test d/2026-11-30`, followed by
+   `addmission m/M11 n/manual   test d/2026-11-30`.
+   Expected: The first mission is added with ID M10; the second is rejected
+   because mission names are unique ignoring case and whitespace.
+   Enter `editmission m/M10 n/Manual Test Updated d/2026-12-01`.
+   Expected: The mission details change without changing its ID.
+
+1. Enter `markmission id/1 m/M10`, then `listmissions m/M10`.
+   Expected: The selected student is listed as submitted with the displayed
+   student-list index. Enter `unmarkmission id/1 m/M10`, followed by
+   `listmissions m/M10`.
+   Expected: The student no longer appears in the submission report.
+
+1. Enter `markmission id/1 m/UNKNOWN` and `listmissions m/UNKNOWN`.
+   Expected: Both commands report that the mission does not exist and do not
+   change records. Enter `find g/1A`, then `listmissions m/M01`.
+   Expected: Only students in the current filtered list are considered, and
+   result indexes still correspond to that displayed list.
+
+1. Enter `addmission m/M20 n/Overdue Manual Test d/2000-01-01`, then
+   `listoverdue`.
+   Expected: M20 is listed as overdue for each student in the current list
+   without a recorded submission. Record one listed pair with
+   `markmission id/1 m/M20`, then run `listoverdue` again.
+   Expected: That student-M20 pair is no longer reported.
+
+1. Enter `delmission m/M10`, then `view id/1`.
+   Expected: M10 is removed from the shared catalogue and its submission
+   records are removed from every student. Enter
+   `addmission m/M10 n/Manual Test Restored d/2026-12-01`.
+   Expected: The ID can be reused, but prior submissions are not restored.
+
+### Saving data and clearing records
+
+1. After successful commands in the preceding scenarios, close and relaunch
+   the app from the same working directory. Enter `view id/1`.
+   Expected: The saved students, missions, studio records, notes, mastery
+   checks, and submissions are restored.
+
+1. In a disposable folder, launch the app without `data/addressbook.json`.
+   Expected: Sample students and missions are loaded, and startup leaves the
+   data file absent. Run `list`, then check for the file.
+   Expected: The successful command saves the current address book.
+
+1. Back up `data/addressbook.json`, replace its contents with invalid JSON,
+   and relaunch the app.
+   Expected: A loading error is logged, the app starts with an empty address
+   book, and the invalid file remains unchanged at startup. Run `list`.
+   Expected: The command succeeds and saves the current (empty) address book
+   over the invalid file. Restore the backup if the previous data is needed.
+
+1. In a disposable working directory, enter `clear`, then `list` and
+   `listmissions m/M01`.
+   Expected: The student list is empty and the mission lookup reports that
+   M01 does not exist. Relaunch the app and enter
+   `addmission m/M01 n/Cleared Catalogue Test d/2026-12-31`.
+   Expected: The mission can be added, confirming that the cleared catalogue
+   remains empty after restart.
