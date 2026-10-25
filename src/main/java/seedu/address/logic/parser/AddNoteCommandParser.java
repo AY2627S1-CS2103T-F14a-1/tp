@@ -24,7 +24,7 @@ public class AddNoteCommandParser implements Parser<AddNoteCommand> {
     public AddNoteCommand parse(String args) throws ParseException {
         requireNonNull(args);
         ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
-                args, AddNoteCommand.MESSAGE_USAGE, PREFIX_INDEX, PREFIX_NOTE_ID, PREFIX_NOTE_TEXT);
+                args, PREFIX_INDEX, PREFIX_NOTE_ID, PREFIX_NOTE_TEXT);
 
         Index index = ParserUtil.parseIndex(argMultimap.getValue(PREFIX_INDEX).get());
         int noteId = ParserUtil.parseNoteId(argMultimap.getValue(PREFIX_NOTE_ID).get());

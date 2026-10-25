@@ -22,7 +22,7 @@ public class DeleteNoteCommandParser implements Parser<DeleteNoteCommand> {
     public DeleteNoteCommand parse(String args) throws ParseException {
         requireNonNull(args);
         ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
-                args, DeleteNoteCommand.MESSAGE_USAGE, PREFIX_INDEX, PREFIX_NOTE_ID);
+                args, PREFIX_INDEX, PREFIX_NOTE_ID);
 
         Index index = ParserUtil.parseIndex(argMultimap.getValue(PREFIX_INDEX).get());
         int noteId = ParserUtil.parseNoteId(argMultimap.getValue(PREFIX_NOTE_ID).get());
