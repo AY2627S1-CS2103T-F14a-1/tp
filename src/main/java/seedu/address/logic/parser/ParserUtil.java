@@ -21,8 +21,10 @@ import seedu.address.model.mission.Mission;
 import seedu.address.model.mission.MissionId;
 import seedu.address.model.student.Email;
 import seedu.address.model.student.Name;
+import seedu.address.model.student.Note;
 import seedu.address.model.student.Phone;
 import seedu.address.model.student.RegisteredMasteryChecks;
+import seedu.address.model.student.RegisteredNotes;
 import seedu.address.model.student.StudioGroup;
 import seedu.address.model.tag.Tag;
 
@@ -281,4 +283,38 @@ public class ParserUtil {
             throw new ParseException(MESSAGE_INVALID_MASTERY_CHECK_DATETIME);
         }
     }
+
+    /**
+     * Parses a {@code String note ID} into a {@code int} note ID.
+     *
+     * @throws ParseException if the given {@code noteId} is invalid.
+     */
+    public static int parseNoteId(String noteId) throws ParseException {
+        requireNonNull(noteId);
+        String trimmedNoteId = noteId.trim();
+        try {
+            int noteIdNumber = Integer.parseInt(trimmedNoteId);
+            if (!RegisteredNotes.isValidNoteId(noteIdNumber)) {
+                throw new ParseException(RegisteredNotes.MESSAGE_CONSTRAINTS);
+            }
+            return noteIdNumber;
+        } catch (NumberFormatException e) {
+            throw new ParseException(RegisteredNotes.MESSAGE_CONSTRAINTS);
+        }
+    }
+
+    /**
+     * Parses a {@code noteText} into a {@code Note}.
+     *
+     * @throws ParseException if the given {@code noteText} is invalid.
+     */
+    public static Note parseNoteText(String noteText) throws ParseException {
+        requireNonNull(noteText);
+        String trimmedNoteText = noteText.trim();
+        if (!Note.isValidNoteText(trimmedNoteText)) {
+            throw new ParseException(Note.MESSAGE_CONSTRAINTS);
+        }
+        return new Note(trimmedNoteText);
+    }
 }
+

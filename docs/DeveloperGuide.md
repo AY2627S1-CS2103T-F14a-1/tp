@@ -50,7 +50,7 @@ The bulk of the app's work is done by the following four components:
 
 **How the architecture components interact with each other**
 
-The *Sequence Diagram* below shows how the components interact with each other for the scenario where the user issues the command `view 1`.
+The *Sequence Diagram* below shows how the components interact with each other for the scenario where the user issues the command `view id/1`.
 
 <puml src="diagrams/ArchitectureSequenceDiagram.puml" width="574" />
 
@@ -73,7 +73,7 @@ The **API** of this component is specified in [`Ui.java`](https://github.com/AY2
 
 The UI consists of a `MainWindow` and its parts: `CommandBox`, `ResultDisplay`, `StudentListPanel`, `StudentDetailsPanel`, `StatusBarFooter`, and `HelpWindow`. These classes inherit from `UiPart`, which loads their JavaFX layouts.
 
-`MainWindow` connects the student list, command feedback, and student details. Executing `view INDEX` displays the requested student's profile and mission statuses in `StudentDetailsPanel`, using the index in the currently displayed student list.
+`MainWindow` connects the student list, command feedback, and student details. Executing `view id/INDEX` displays the requested student's profile and mission statuses in `StudentDetailsPanel`, using the index in the currently displayed student list.
 
 `ResultDisplay` presents command feedback, including submission and overdue reports, in a scrollable area. Listing commands produce textual feedback without replacing the current student filter. Student details use model objects and the mission catalogue supplied through the logic component.
 
@@ -94,9 +94,9 @@ Here's a (partial) class diagram of the `Logic` component:
 
 <puml src="diagrams/LogicClassDiagram.puml" width="550"/>
 
-The sequence diagram below illustrates the interactions within the `Logic` component, taking `execute("delstudent 1")` API call as an example.
+The sequence diagram below illustrates the interactions within the `Logic` component, taking `execute("delstudent id/1")` API call as an example.
 
-<puml src="diagrams/DeleteSequenceDiagram.puml" alt="Interactions Inside the Logic Component for the `delstudent 1` Command" />
+<puml src="diagrams/DeleteSequenceDiagram.puml" alt="Interactions Inside the Logic Component for the `delstudent id/1` Command" />
 
 <box type="info" seamless>
 
@@ -212,17 +212,17 @@ The sequence diagram below illustrates the successful interaction flow using `ex
 
 ### Marking and unmarking mission submissions
 
-For `markmission INDEX m/MISSION_ID` or `unmarkmission INDEX m/MISSION_ID`, `AddressBookParser` delegates to `MarkMissionCommandParser` or `UnmarkMissionCommandParser`. Both reuse `MissionParser` to validate a positive student index and exactly one case-insensitive mission ID, then create the corresponding command. Invalid or extra arguments cause a `ParseException`; whether the mission and displayed student exist is checked during execution.
+For `markmission id/INDEX m/MISSION_ID` or `unmarkmission id/INDEX m/MISSION_ID`, `AddressBookParser` delegates to `MarkMissionCommandParser` or `UnmarkMissionCommandParser`. Both reuse `MissionParser` to validate a positive student index and exactly one case-insensitive mission ID, then create the corresponding command. Invalid or extra arguments cause a `ParseException`; whether the mission and displayed student exist is checked during execution.
 
 When executed, the command calls `Model#findMission(...)` and retrieves the selected student from `Model#getFilteredStudentList()`. Marking uses `MissionSubmissions#withSubmission(...)`; unmarking uses `MissionSubmissions#withoutSubmission(...)`. Each produces updated immutable submission data, which the command places in a replacement `Student` before calling `Model#setStudent(...)`. Other student details and the current filter are preserved, and the observable student list notifies the UI of the replacement.
 
 Marking an already recorded submission or unmarking an absent submission returns a no-change `CommandResult` without replacing the student. A missing mission or out-of-range displayed index causes a `CommandException` before any update. The shared mission itself is unchanged by either command.
 
-The sequence diagram below illustrates `execute("markmission 1 m/M03")` when the mission and student exist and the submission is not yet recorded. Here, `targetIndex` is the parsed one-based index 1, `missionId` is the parsed `MissionId` value `M03`, and `feedback` is the formatted success message. `studentToUpdate` is the selected student and `updatedStudent` is its replacement.
+The sequence diagram below illustrates `execute("markmission id/1 m/M03")` when the mission and student exist and the submission is not yet recorded. Here, `targetIndex` is the parsed one-based index 1, `missionId` is the parsed `MissionId` value `M03`, and `feedback` is the formatted success message. `studentToUpdate` is the selected student and `updatedStudent` is its replacement.
 
 <puml src="diagrams/MissionSubmissionSequenceDiagram.puml" width="1000" />
 
-The corresponding unmarking sequence uses `execute("unmarkmission 1 m/M03")` when the submission is recorded. The parameter names have the same meanings as above; the replacement student has `M03` removed from its submissions.
+The corresponding unmarking sequence uses `execute("unmarkmission id/1 m/M03")` when the submission is recorded. The parameter names have the same meanings as above; the replacement student has `M03` removed from its submissions.
 
 <puml src="diagrams/UnmarkMissionSubmissionSequenceDiagram.puml" width="1000" />
 
@@ -343,7 +343,7 @@ The user stories above represent the main intended functionality and selected fu
 
 1. Tutor requests to display all students or a filtered set of students.
 2. AvengerHub displays the requested student list.
-3. Tutor enters `view INDEX`, using the student's index in the displayed list.
+3. Tutor enters `view id/INDEX`, using the student's index in the displayed list.
 4. AvengerHub displays the selected student's profile, including contact
    details, studio group, tags, and mission submission statuses.
 
@@ -760,13 +760,13 @@ testers are expected to do more *exploratory* testing.
 
    1. Prerequisites: List all students using the `list` command, with multiple students in the list.
 
-   1. Test case: `delstudent 1`<br>
+   1. Test case: `delstudent id/1`<br>
       Expected: The first student is deleted from the list. The status message shows the deleted student's details.
 
-   1. Test case: `delstudent 0`<br>
+   1. Test case: `delstudent id/0`<br>
       Expected: No student is deleted. The status message shows error details.
 
-   1. Other incorrect delete commands to try: `delstudent`, `delstudent x`, `...` (where x is larger than the list size)<br>
+   1. Other incorrect delete commands to try: `delstudent`, `delstudent id/x`, `...` (where x is larger than the list size)<br>
       Expected: Similar to previous.
 
 1. _{ more test cases … }_

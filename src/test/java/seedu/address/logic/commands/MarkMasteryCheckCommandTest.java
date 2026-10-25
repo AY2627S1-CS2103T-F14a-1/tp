@@ -49,10 +49,11 @@ public class MarkMasteryCheckCommandTest {
     }
 
     @Test
-    public void execute_invalidNumber_leavesModelUnchanged() {
+    public void constructor_invalidNumber_throwsIllegalArgumentException() {
         for (int number : new int[] {0, -1, Integer.MIN_VALUE}) {
-            assertCommandFailure(new MarkMasteryCheckCommand(INDEX_FIRST_STUDENT, number), model,
-                    RegisteredMasteryChecks.MESSAGE_CONSTRAINTS);
+            IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
+                    new MarkMasteryCheckCommand(INDEX_FIRST_STUDENT, number));
+            assertEquals(RegisteredMasteryChecks.MESSAGE_CONSTRAINTS, exception.getMessage());
         }
     }
 

@@ -20,8 +20,10 @@ import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.mission.MissionId;
 import seedu.address.model.student.Email;
 import seedu.address.model.student.Name;
+import seedu.address.model.student.Note;
 import seedu.address.model.student.Phone;
 import seedu.address.model.student.RegisteredMasteryChecks;
+import seedu.address.model.student.RegisteredNotes;
 import seedu.address.model.student.StudioGroup;
 import seedu.address.model.tag.Tag;
 
@@ -261,6 +263,43 @@ public class ParserUtilTest {
         for (String number : List.of("", WHITESPACE, "0", "-1", "1.5", "1e2", "abc", "1 2", "2147483648")) {
             assertThrows(ParseException.class, RegisteredMasteryChecks.MESSAGE_CONSTRAINTS, () ->
                     ParserUtil.parseMasteryCheckNumber(number));
+        }
+    }
+
+    @Test
+    public void parseNoteId_null_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> ParserUtil.parseNoteId(null));
+    }
+
+    @Test
+    public void parseNoteId_validBoundaries_returnsTrimmedNumber() throws Exception {
+        assertEquals(RegisteredNotes.MIN_NOTE_ID, ParserUtil.parseNoteId("1"));
+        assertEquals(RegisteredNotes.MAX_NOTE_ID, ParserUtil.parseNoteId(" " + RegisteredNotes.MAX_NOTE_ID + " "));
+    }
+
+    @Test
+    public void parseNoteId_invalidValues_throwsParseException() {
+        for (String noteId : List.of("", WHITESPACE, "0", "11", "-1", "1.5", "abc", "1 2", "2147483648")) {
+            assertThrows(ParseException.class,
+                    RegisteredNotes.MESSAGE_CONSTRAINTS, () -> ParserUtil.parseNoteId(noteId));
+        }
+    }
+
+    @Test
+    public void parseNoteText_null_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> ParserUtil.parseNoteText(null));
+    }
+
+    @Test
+    public void parseNoteText_validValueWithWhitespace_returnsTrimmedNote() throws Exception {
+        assertEquals(new Note("Review lecture notes"),
+                ParserUtil.parseNoteText(WHITESPACE + "Review lecture notes" + WHITESPACE));
+    }
+
+    @Test
+    public void parseNoteText_invalidValues_throwsParseException() {
+        for (String noteText : List.of("", WHITESPACE, "Review!", "a".repeat(Note.MAX_NOTE_LENGTH + 1))) {
+            assertThrows(ParseException.class, Note.MESSAGE_CONSTRAINTS, () -> ParserUtil.parseNoteText(noteText));
         }
     }
 

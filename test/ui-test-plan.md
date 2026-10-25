@@ -1,5 +1,62 @@
 # UI Test Plan
 
+## Notes details panel
+
+Use two students: student 1 has note IDs 5 and 2, added in that order, while
+student 2 has no notes.
+
+| ID | Steps | Expected result |
+| --- | --- | --- |
+| NOTE-VIEW-001 | Run `view id/1`. | A Notes table appears with `ID` and `Note` headers. Notes 2 and 5 appear in ascending ID order with their full text. |
+| NOTE-VIEW-002 | Run `view id/2`. | The Notes table retains its headers and shows `No notes recorded.` across both columns. No notes from student 1 remain visible. |
+| NOTE-VIEW-003 | Run `view id/1` again. | Notes 2 and 5 reappear once each, without duplicated or stale rows. |
+| NOTE-VIEW-004 | Resize the window from narrow to wide and back while viewing student 1. | Note text wraps within the Notes table and no horizontal scrollbar appears. |
+
+## Edit-note command regression
+
+Start with two students. Give student 1 note IDs 3 and 4, and leave student 2
+unchanged. After every rejected command, run `view id/1` and confirm that both
+notes and the saved data are unchanged.
+
+| ID | Steps | Expected result |
+| --- | --- | --- |
+| NOTE-EDIT-001 | Run `editnote id/1 ni/3 nt/Updated lecture notes`, then view both students. | Success feedback identifies student 1 and note ID 3. Student 1's ID 3 has the new text, ID 4 is unchanged, and student 2 is unchanged. |
+| NOTE-EDIT-002 | Run `editnote id/1 ni/3 nt/Updated lecture notes` again, then view student 1. | Same-note feedback appears. Both note texts remain unchanged. |
+| NOTE-EDIT-003 | Run `editnote id/1 ni/2 nt/Unexpected`, then view student 1. | Missing-note feedback appears. IDs 3 and 4 remain unchanged. |
+| NOTE-EDIT-004 | Run `editnote id/1 ni/0 nt/Invalid`, `editnote id/1 ni/3 nt/Invalid!`, and `editnote id/1 ni/3`, viewing student 1 after each command. | The invalid-ID, invalid-text, and missing-`nt/` messages appear respectively. No note changes. |
+| NOTE-EDIT-005 | Run `editnote id/3 ni/3 nt/Unexpected`, then view both students. | Invalid-index feedback appears; neither student changes. |
+| NOTE-EDIT-006 | Run `editnote id/1 ni/3 ni/4 nt/Unexpected`, then view student 1. | Duplicate-`ni/` feedback appears. Both note texts and saved data remain unchanged. |
+| NOTE-EDIT-007 | Run `editnote id/1 ni/3 nt/Persisted update`, restart, and view student 1. | ID 3 retains `Persisted update`; ID 4 and student 2 remain unchanged. |
+
+## Add-note command regression
+
+Start with two students and no notes for student 1. After every rejected
+command, run `view id/1` and confirm that the note list and saved data are
+unchanged.
+
+| ID | Steps | Expected result |
+| --- | --- | --- |
+| NOTE-ADD-001 | Run `addnote id/1 ni/3 nt/Review lecture notes`, then view student 1. | Success feedback names student 1 and note ID 3. The note list contains `3: Review lecture notes`; student 2 is unchanged. |
+| NOTE-ADD-002 | Run `addnote id/1 ni/3 nt/Different text`, then view student 1. | Duplicate-ID feedback appears. ID 3 still contains `Review lecture notes`. |
+| NOTE-ADD-003 | Run `addnote id/1 ni/0 nt/Invalid`, then `addnote id/1 ni/4 nt/Invalid!`, viewing student 1 after each command. | The invalid ID and invalid-text messages appear respectively. ID 4 is not added and ID 3 remains unchanged. |
+| NOTE-ADD-004 | Run `addnote id/1 ni/4`, then `addnote id/1 ni/4 nt/Valid ni/5`, viewing student 1 after each command. | The first command reports missing `nt/`; the second reports duplicate `ni/`. No note is added. |
+| NOTE-ADD-005 | Run `addnote id/3 ni/4 nt/Invalid index`, then view both students. | Invalid-index feedback appears; neither student changes. |
+| NOTE-ADD-006 | Restart after NOTE-ADD-001 and view student 1. | Note ID 3 and its text are restored unchanged. |
+
+## Delete-note command regression
+
+Start with two students. Give student 1 note IDs 3 and 4, and leave student 2 unchanged.
+After every rejected command, run `view id/1` and confirm that both notes and saved data are unchanged.
+
+| ID | Steps | Expected result |
+| --- | --- | --- |
+| NOTE-DELETE-001 | Run `delnote id/1 ni/3`, then view both students. | Success feedback identifies student 1 and note ID 3. Student 1 retains only note ID 4; student 2 is unchanged. |
+| NOTE-DELETE-002 | Run `delnote id/1 ni/3` again, then view student 1. | Missing-note feedback appears. Note ID 4 remains unchanged. |
+| NOTE-DELETE-003 | Run `delnote id/1 ni/0`, `delnote id/1`, and `delnote 1 ni/4`, viewing student 1 after each command. | The invalid-ID, missing-`ni/`, and invalid-format messages appear respectively. Neither note changes. |
+| NOTE-DELETE-004 | Run `delnote id/3 ni/4`, then view both students. | Invalid-index feedback appears; no student changes. |
+| NOTE-DELETE-005 | Run `delnote id/1 ni/4`, restart, and view student 1. | The Notes table shows the empty-state message. The deletion persists across restart. |
+| NOTE-DELETE-006 | Run `delnote id/1 ni/3 ni/4`, then view student 1. | Duplicate-`ni/` feedback appears. Both notes and the saved data remain unchanged. |
+
 ## Mission regression sequence
 
 Use a temporary data directory with two students and an empty catalogue. After each rejected
@@ -180,3 +237,45 @@ direct UI equivalent.
 | MISSION-PARSE-002 | Parse an empty or whitespace-only mission name, then a valid name. | Blank names produce the mission-name `ParseException`; valid parsing still succeeds. |
 | MISSION-PARSE-003 | Parse a leap-day deadline `2024-02-29`, a valid regular date, and a date with surrounding whitespace. | Valid dates parse to the expected `LocalDate`; surrounding whitespace is trimmed. |
 | MISSION-PARSE-004 | Parse malformed deadline formats and impossible calendar dates, then parse a valid date. | Invalid formats and impossible dates produce their respective `ParseException` messages; valid parsing still succeeds. |
+
+## Missing-prefix usage suffix regression
+
+Missing-prefix feedback now ends with one newline followed by the calling command's
+complete usage text. Existing missing-prefix cases must also verify this suffix;
+duplicate-prefix and value-validation messages also end with the relevant command usage exactly once.
+
+| ID | Steps | Expected result |
+| --- | --- | --- |
+| MISSING-USAGE-001 | Run `addmc id/1`, then `view id/1`. | Missing number and timing messages appear in prefix order, followed by the complete addmc usage exactly once. Student records remain unchanged. |
+| MISSING-USAGE-002 | Run `addmc id/1 num/1 dt/27-09\|23:59`, then `view id/1`. | Valid syntax is accepted; the record is added or existing-record feedback appears. |
+| MISSING-USAGE-003 | Run `addmc id/1 num/1`, then `view id/1`. | The missing timing message is followed by addmc usage exactly once; existing records remain unchanged. |
+
+## Optional-prefix structure regression
+
+Run `ArgumentStructureValidatorTest` for required-prefix checks, optional absence,
+nonrepeatable duplicates, repeatable tags, empty values, and validation priority.
+The shared validator returns problem-only messages; command parsers append usage.
+
+| ID | Steps | Expected result |
+| --- | --- | --- |
+| OPTIONAL-001 | Run `edit id/1 n/Updated Name`, then `view id/1`. | Name changes; omitted phone, email, studio group, and tags remain unchanged. |
+| OPTIONAL-002 | Run `edit n/Rejected Name`, then `view id/1`. | Missing-index feedback with edit usage; student state is unchanged. |
+| OPTIONAL-003 | Run `edit id/1 t/first t/second`, then `view id/1`. | Both tags are retained. |
+| OPTIONAL-004 | Run `edit id/1 p/91234567 p/98765432`, then `view id/1`. | Duplicate-phone feedback with edit usage; phone and other fields remain unchanged. |
+| OPTIONAL-005 | Run `edit id/1 t/`, then `view id/1`. | Tags are cleared; other fields remain unchanged. |
+
+## Command parser error usage regression
+
+Run all parser tests and the full Gradle suite. Exact error assertions must include
+one newline and the complete command usage after the problem message, while direct
+ParserUtil and ArgumentMultimap tests continue to expect problem-only messages.
+
+| ID | Steps | Expected result |
+| --- | --- | --- |
+| ERROR-USAGE-001 | Run `edit id/1 p/invalid`, then `view id/1`. | Phone validation feedback ends with edit usage exactly once; student fields are unchanged. |
+| ERROR-USAGE-002 | Run `edit id/1 p/91234567`, then `view id/1`. | Phone updates successfully; other fields remain unchanged. |
+| ERROR-USAGE-003 | Run `edit id/1 p/91234567 p/98765432`, then `view id/1`. | Duplicate-phone feedback ends with edit usage exactly once; the phone remains 91234567. |
+
+Preamble-error regression: commands using the shared structure validator must
+show `Invalid command format!` followed by their usage exactly once, without a
+literal `%1$s` placeholder. Keep the intentional invalid-preamble cases above.

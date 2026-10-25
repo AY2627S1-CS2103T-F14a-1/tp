@@ -16,7 +16,27 @@ import seedu.address.model.mission.MissionId;
 /** Tests mission-field validation and command routing. */
 public class AddMissionCommandParserTest {
 
+    private static final String USAGE_SUFFIX = "\n" + AddMissionCommand.MESSAGE_USAGE;
+
     private final AddMissionCommandParser parser = new AddMissionCommandParser();
+
+    @Test
+    public void parse_unicodeWhitespaceOnlyName_rejectsBlankName() {
+        for (String name : List.of("\u00a0", "\u2003", " \t\u00a0 ")) {
+            ParseException error = assertThrows(ParseException.class, () ->
+                    parser.parse("n/" + name + " d/2026-10-20"));
+            assertEquals(ParserUtil.MESSAGE_INVALID_MISSION_NAME + USAGE_SUFFIX,
+                    error.getMessage());
+        }
+    }
+
+    @Test
+    public void parseMissionFields_validAndNullInput_preservesValidationContract() throws Exception {
+        assertEquals("Runes: Part 1!", ParserUtil.parseMissionName("  Runes:  Part 1!  "));
+        assertEquals(LocalDate.of(2000, 2, 29), ParserUtil.parseMissionDeadline(" 2000-02-29 "));
+        assertThrows(NullPointerException.class, () -> ParserUtil.parseMissionName(null));
+        assertThrows(NullPointerException.class, () -> ParserUtil.parseMissionDeadline(null));
+    }
 
     @Test
     public void parse_validArguments_normalizesNameAndAcceptsPastLeapDate() throws Exception {
@@ -76,6 +96,9 @@ public class AddMissionCommandParserTest {
             ParseException error = assertThrows(ParseException.class, () ->
                     parser.parse("m/M01 n/Runes d/" + date));
             assertEquals(ParserUtil.MESSAGE_INVALID_MISSION_DEADLINE, error.getMessage());
+            ParseException error = assertThrows(ParseException.class, () -> parser.parse("n/Runes d/" + date));
+            assertEquals(ParserUtil.MESSAGE_INVALID_MISSION_DEADLINE + USAGE_SUFFIX,
+                    error.getMessage());
         }
     }
 
@@ -86,11 +109,25 @@ public class AddMissionCommandParserTest {
             ParseException error = assertThrows(ParseException.class, () ->
                     parser.parse("m/M01 n/Runes d/" + date));
             assertEquals(ParserUtil.MESSAGE_INVALID_MISSION_CALENDAR_DATE, error.getMessage());
+            ParseException error = assertThrows(ParseException.class, () -> parser.parse("n/Runes d/" + date));
+            assertEquals(ParserUtil.MESSAGE_INVALID_MISSION_CALENDAR_DATE + USAGE_SUFFIX,
+                    error.getMessage());
         }
     }
 
     @Test
     public void parseCommand_missingMissionFields_reportsCliSyntaxMessages() {
+    public void parse_validCalendarBoundaries_acceptsDeadline() throws Exception {
+        for (String date : List.of("2026-01-01", "2026-12-31", "2026-04-30", "2026-02-28",
+                "2024-02-29", "2000-02-29")) {
+            assertEquals(new AddMissionCommand("Runes", LocalDate.parse(date)),
+                    parser.parse("n/Runes d/ " + date + " "));
+        }
+    }
+
+    @Test
+    public void parse_invalidFields_reportsSpecificMessage() {
+        String usage = Messages.MESSAGE_INVALID_COMMAND;
         String[][] cases = {
             {"addmission", String.join("\n", CliSyntax.PREFIX_MISSION.getMissingMessage(),
                     CliSyntax.PREFIX_NAME.getMissingMessage(), CliSyntax.PREFIX_DATE.getMissingMessage())},
@@ -100,11 +137,29 @@ public class AddMissionCommandParserTest {
             {"addmission m/M01 n/ d/2026-10-20", ParserUtil.MESSAGE_INVALID_MISSION_NAME},
             {"addmission m/M01 n/Track my time", CliSyntax.PREFIX_DATE.getMissingMessage()}
         };
+        for (String[] testCase : cases) {
+            ParseException error = assertThrows(ParseException.class, () -> parser.parse(testCase[0]));
+            assertEquals(testCase[1] + USAGE_SUFFIX,
+                    error.getMessage());
+        }
+    }
 
+    @Test
+    public void parseCommand_missingMissionFields_reportsMissingPrefixesBeforeValues() {
+        String[][] cases = {
+            {"addmission n/", CliSyntax.PREFIX_DATE.getMissingMessage()},
+            {"addmission n/ \t", CliSyntax.PREFIX_DATE.getMissingMessage()},
+            {"addmission n/\u2003", CliSyntax.PREFIX_DATE.getMissingMessage()},
+            {"addmission n/ d/invalid", ParserUtil.MESSAGE_INVALID_MISSION_NAME},
+            {"addmission n/Track my time", CliSyntax.PREFIX_DATE.getMissingMessage()},
+            {"addmission n/ Track my time  ", CliSyntax.PREFIX_DATE.getMissingMessage()},
+            {"addmission n/A n/B", CliSyntax.PREFIX_DATE.getMissingMessage()}
+        };
         for (String[] testCase : cases) {
             ParseException error = assertThrows(ParseException.class, () ->
                     new AddressBookParser().parseCommand(testCase[0]));
-            assertEquals(testCase[1], error.getMessage());
+            assertEquals(testCase[1] + USAGE_SUFFIX,
+                    error.getMessage());
         }
     }
 }

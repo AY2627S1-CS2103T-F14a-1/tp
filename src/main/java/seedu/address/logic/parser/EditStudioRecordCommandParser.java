@@ -26,12 +26,16 @@ public class EditStudioRecordCommandParser implements Parser<EditStudioRecordCom
     @Override
     public EditStudioRecordCommand parse(String args) throws ParseException {
         requireNonNull(args);
-        ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
-                args, EditStudioRecordCommand.MESSAGE_USAGE, PREFIX_INDEX, PREFIX_WEEK, PREFIX_STUDIO_EFFORT);
+        try {
+            ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
+                    args, PREFIX_INDEX, PREFIX_WEEK, PREFIX_STUDIO_EFFORT);
 
-        Index index = ParserUtil.parseIndex(argMultimap.getValue(PREFIX_INDEX).get());
-        int week = ParserUtil.parseWeek(argMultimap.getValue(PREFIX_WEEK).get());
-        int effortScore = ParserUtil.parseEffortScore(argMultimap.getValue(PREFIX_STUDIO_EFFORT).get());
-        return new EditStudioRecordCommand(index, week, new StudioRecord(effortScore));
+            Index index = ParserUtil.parseIndex(argMultimap.getValue(PREFIX_INDEX).get());
+            int week = ParserUtil.parseWeek(argMultimap.getValue(PREFIX_WEEK).get());
+            int effortScore = ParserUtil.parseEffortScore(argMultimap.getValue(PREFIX_STUDIO_EFFORT).get());
+            return new EditStudioRecordCommand(index, week, new StudioRecord(effortScore));
+        } catch (ParseException e) {
+            throw new ParseException(e.getMessage() + "\n" + EditStudioRecordCommand.MESSAGE_USAGE);
+        }
     }
 }

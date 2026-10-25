@@ -9,10 +9,10 @@ Participant ":Logic" as logic LOGIC_COLOR
 Participant ":Model" as model MODEL_COLOR
 Participant ":Storage" as storage STORAGE_COLOR
 
-user -[USER_COLOR]> ui : "view 1"
+user -[USER_COLOR]> ui : "view id/1"
 activate ui USER_COLOR
 
-ui -[UI_COLOR]> logic : execute("view 1")
+ui -[UI_COLOR]> logic : execute("view id/1")
 activate logic LOGIC_COLOR
 
 logic -[LOGIC_COLOR]> model : getFilteredStudentList()

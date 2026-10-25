@@ -25,11 +25,15 @@ public class UnmarkMissionCommandParser implements Parser<UnmarkMissionCommand> 
     @Override
     public UnmarkMissionCommand parse(String args) throws ParseException {
         requireNonNull(args);
-        ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
-                args, UnmarkMissionCommand.MESSAGE_USAGE, PREFIX_INDEX, PREFIX_MISSION);
+        try {
+            ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
+                    args, PREFIX_INDEX, PREFIX_MISSION);
 
-        Index index = ParserUtil.parseIndex(argMultimap.getValue(PREFIX_INDEX).get());
-        MissionId missionId = ParserUtil.parseMissionId(argMultimap.getValue(PREFIX_MISSION).get());
-        return new UnmarkMissionCommand(index, missionId);
+            Index index = ParserUtil.parseIndex(argMultimap.getValue(PREFIX_INDEX).get());
+            MissionId missionId = ParserUtil.parseMissionId(argMultimap.getValue(PREFIX_MISSION).get());
+            return new UnmarkMissionCommand(index, missionId);
+        } catch (ParseException e) {
+            throw new ParseException(e.getMessage() + "\n" + UnmarkMissionCommand.MESSAGE_USAGE);
+        }
     }
 }

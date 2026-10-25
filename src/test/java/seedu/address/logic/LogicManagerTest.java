@@ -27,10 +27,18 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
+import seedu.address.logic.commands.AddMasteryCheckCommand;
 import seedu.address.logic.commands.AddStudentCommand;
+import seedu.address.logic.commands.AddStudioRecordCommand;
 import seedu.address.logic.commands.CommandResult;
+import seedu.address.logic.commands.DeleteMasteryCheckCommand;
+import seedu.address.logic.commands.DeleteNoteCommand;
+import seedu.address.logic.commands.DeleteStudioRecordCommand;
 import seedu.address.logic.commands.EditStudioRecordCommand;
 import seedu.address.logic.commands.ListCommand;
+import seedu.address.logic.commands.MarkMasteryCheckCommand;
+import seedu.address.logic.commands.MarkMissionCommand;
+import seedu.address.logic.commands.UnmarkMissionCommand;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.logic.parser.ParserUtil;
 import seedu.address.logic.parser.exceptions.ParseException;
@@ -40,7 +48,9 @@ import seedu.address.model.ReadOnlyAddressBook;
 import seedu.address.model.UserPrefs;
 import seedu.address.model.masterycheck.MasteryCheck;
 import seedu.address.model.mission.MissionId;
+import seedu.address.model.student.Note;
 import seedu.address.model.student.RegisteredMasteryChecks;
+import seedu.address.model.student.RegisteredNotes;
 import seedu.address.model.student.Student;
 import seedu.address.model.student.StudioRecord;
 import seedu.address.storage.JsonAddressBookStorage;
@@ -203,7 +213,8 @@ public class LogicManagerTest {
         assertStudioState(model, storage, withWeekThree);
 
         String savedJson = Files.readString(storage.getAddressBookFilePath());
-        assertThrows(ParseException.class, MESSAGE_INVALID_EFFORT, () ->
+        assertThrows(ParseException.class,
+                MESSAGE_INVALID_EFFORT + "\n" + AddStudioRecordCommand.MESSAGE_USAGE, () ->
                 logic.execute("addstudiorecord id/1 w/4 ef/-1"));
         assertEquals(savedJson, Files.readString(storage.getAddressBookFilePath()));
         assertStudioState(model, storage, withWeekThree);
@@ -247,7 +258,8 @@ public class LogicManagerTest {
         assertStudioState(reloadedModel, storage, withWeekThirteen);
 
         String savedAfterDeletion = Files.readString(storage.getAddressBookFilePath());
-        assertThrows(ParseException.class, MESSAGE_INVALID_WEEK, () ->
+        assertThrows(ParseException.class,
+                MESSAGE_INVALID_WEEK + "\n" + DeleteStudioRecordCommand.MESSAGE_USAGE, () ->
                 reloadedLogic.execute("delstudiorecord id/1 w/14"));
         assertEquals(savedAfterDeletion, Files.readString(storage.getAddressBookFilePath()));
         assertStudioState(reloadedModel, storage, withWeekThirteen);
@@ -290,7 +302,8 @@ public class LogicManagerTest {
                 reloadedLogic.execute("markmission id/1 m/M03").getFeedbackToUser());
 
         String savedJson = Files.readString(filePath);
-        assertThrows(ParseException.class, MissionId.MESSAGE_CONSTRAINTS, () ->
+        assertThrows(ParseException.class,
+                MissionId.MESSAGE_CONSTRAINTS + "\n" + MarkMissionCommand.MESSAGE_USAGE, () ->
                 reloadedLogic.execute("markmission id/1 m/invalid"));
         assertEquals(savedJson, Files.readString(filePath));
         assertEquals(Set.of(new MissionId("M05"), new MissionId("M03")), reloadedModel.getFilteredStudentList().get(0)
@@ -325,7 +338,8 @@ public class LogicManagerTest {
                 .getMissionSubmissions().getSubmittedMissionIds());
 
         String savedJson = Files.readString(filePath);
-        assertThrows(ParseException.class, MissionId.MESSAGE_CONSTRAINTS, () ->
+        assertThrows(ParseException.class,
+                MissionId.MESSAGE_CONSTRAINTS + "\n" + UnmarkMissionCommand.MESSAGE_USAGE, () ->
                 reloadedLogic.execute("unmarkmission id/1 m/invalid"));
         assertEquals(savedJson, Files.readString(filePath));
         assertEquals(Set.of(new MissionId("M13")), reloadedModel.getFilteredStudentList().get(0)
@@ -367,7 +381,8 @@ public class LogicManagerTest {
 
         String saved = Files.readString(storage.getAddressBookFilePath());
         for (String invalid : List.of("addmc id/1 num/2 dt/31-04|14:30", "addmc id/1 num/2 dt/18-08|24:00")) {
-            assertThrows(ParseException.class, ParserUtil.MESSAGE_INVALID_MASTERY_CHECK_DATETIME, () ->
+            assertThrows(ParseException.class,
+                ParserUtil.MESSAGE_INVALID_MASTERY_CHECK_DATETIME + "\n" + AddMasteryCheckCommand.MESSAGE_USAGE, () ->
                     logic.execute(invalid));
             assertEquals(saved, Files.readString(storage.getAddressBookFilePath()));
             assertStudioState(model, storage, expected);
@@ -432,7 +447,8 @@ public class LogicManagerTest {
         assertStudioState(model, storage, withSecond);
 
         String saved = Files.readString(storage.getAddressBookFilePath());
-        assertThrows(ParseException.class, RegisteredMasteryChecks.MESSAGE_CONSTRAINTS, () ->
+        assertThrows(ParseException.class,
+                RegisteredMasteryChecks.MESSAGE_CONSTRAINTS + "\n" + DeleteMasteryCheckCommand.MESSAGE_USAGE, () ->
                 logic.execute("delmc id/1 num/0"));
         assertEquals(saved, Files.readString(storage.getAddressBookFilePath()));
         assertStudioState(model, storage, withSecond);
@@ -458,6 +474,48 @@ public class LogicManagerTest {
     }
 
     @Test
+    public void execute_deleteNoteAndReload_persistsDeletionAndRejectedState() throws Exception {
+        RegisteredNotes notes = new RegisteredNotes()
+                .withNote(3, new Note("Review lecture notes"))
+                .withNote(4, new Note("Prepare tutorial"));
+        Student original = AMY.withRegisteredNotes(notes);
+        Student withRemainingNote = original.withRegisteredNotes(notes.withoutNote(3));
+        Student withoutNotes = original.withRegisteredNotes(notes.withoutNote(3).withoutNote(4));
+        model.addStudent(original);
+        model.addStudent(BOB);
+        JsonAddressBookStorage storage = new JsonAddressBookStorage(temporaryFolder.resolve("addressBook.json"));
+
+        assertEquals(String.format(DeleteNoteCommand.MESSAGE_SUCCESS, original.getName(), 3),
+                logic.execute("delnote id/1 ni/3").getFeedbackToUser());
+        assertStudioState(model, storage, withRemainingNote);
+
+        String saved = Files.readString(storage.getAddressBookFilePath());
+        assertThrows(ParseException.class, RegisteredNotes.MESSAGE_CONSTRAINTS
+                + "\n" + DeleteNoteCommand.MESSAGE_USAGE, () ->
+                logic.execute("delnote id/1 ni/0"));
+        assertEquals(saved, Files.readString(storage.getAddressBookFilePath()));
+        assertStudioState(model, storage, withRemainingNote);
+
+        Model restored = new ModelManager(storage.readAddressBook().orElseThrow(), new UserPrefs());
+        Logic restoredLogic = new LogicManager(restored, new StorageManager(storage,
+                new JsonUserPrefsStorage(temporaryFolder.resolve("deleteNotePrefs.json"))));
+        assertEquals(String.format(DeleteNoteCommand.MESSAGE_ALREADY_NOT_RECORDED, original.getName()),
+                restoredLogic.execute("DELNOTE id/1 ni/3").getFeedbackToUser());
+        assertEquals(saved, Files.readString(storage.getAddressBookFilePath()));
+        assertStudioState(restored, storage, withRemainingNote);
+
+        assertEquals(String.format(DeleteNoteCommand.MESSAGE_SUCCESS, original.getName(), 4),
+                restoredLogic.execute("delnote id/1 ni/4").getFeedbackToUser());
+        assertStudioState(restored, storage, withoutNotes);
+
+        String savedAfterDeletion = Files.readString(storage.getAddressBookFilePath());
+        assertThrows(CommandException.class, MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX, () ->
+                restoredLogic.execute("delnote id/3 ni/4"));
+        assertEquals(savedAfterDeletion, Files.readString(storage.getAddressBookFilePath()));
+        assertStudioState(restored, storage, withoutNotes);
+    }
+
+    @Test
     public void execute_markAndUnmarkMasteryChecksAndReload_preservesStatusesAndRejectedState() throws Exception {
         model.addMission(new MissionId("M01"), "Mission 1", LocalDate.of(2026, 10, 15));
         LocalDateTime time = LocalDateTime.of(2026, 8, 18, 14, 30, 45, 123456789);
@@ -478,7 +536,8 @@ public class LogicManagerTest {
         assertStudioState(model, storage, marked);
 
         String saved = Files.readString(storage.getAddressBookFilePath());
-        assertThrows(ParseException.class, RegisteredMasteryChecks.MESSAGE_CONSTRAINTS, () ->
+        assertThrows(ParseException.class,
+                RegisteredMasteryChecks.MESSAGE_CONSTRAINTS + "\n" + MarkMasteryCheckCommand.MESSAGE_USAGE, () ->
                 logic.execute("markmc id/1 num/0"));
         assertEquals(saved, Files.readString(storage.getAddressBookFilePath()));
         assertStudioState(model, storage, marked);

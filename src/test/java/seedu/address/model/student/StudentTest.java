@@ -15,12 +15,15 @@ import static seedu.address.testutil.TypicalStudents.BOB;
 
 import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
 import seedu.address.model.masterycheck.MasteryCheck;
+import seedu.address.model.mission.MissionId;
 import seedu.address.testutil.StudentBuilder;
 
+/** Tests student identity, value equality, and preservation of fields when copying activity records. */
 public class StudentTest {
 
     @Test
@@ -124,7 +127,7 @@ public class StudentTest {
         assertThrows(NullPointerException.class, () ->
                 new Student(ALICE.getName(), ALICE.getPhone(), ALICE.getEmail(),
                         ALICE.getTags(), ALICE.getStudioGroup(), null, ALICE.getRegisteredStudioRecords(),
-                        ALICE.getRegisteredMasteryChecks()));
+                        ALICE.getRegisteredMasteryChecks(), ALICE.getRegisteredNotes()));
     }
 
     @Test
@@ -149,11 +152,114 @@ public class StudentTest {
     }
 
     @Test
+    public void withMissionSubmissions_validSubmissions_replacesSubmissionsAndPreservesOtherFields() {
+        MasteryCheck check = new MasteryCheck(LocalDateTime.of(2026, 8, 18, 14, 30));
+        check.markComplete();
+        Student original = new StudentBuilder(ALICE).withMissionSubmissions("M03")
+                .withStudioRecords(new StudentBuilder.StudioRecordSet(3, new StudioRecord(20)))
+                .withMasteryChecks(Map.of(1, check)).build();
+        Student originalSnapshot = new StudentBuilder(original).build();
+        MissionSubmissions replacements = new MissionSubmissions(Set.of(new MissionId("M05")));
+
+        Student updated = original.withMissionSubmissions(replacements);
+
+        assertNotSame(original, updated);
+        assertEquals(replacements, updated.getMissionSubmissions());
+        assertEquals(original.getName(), updated.getName());
+        assertEquals(original.getPhone(), updated.getPhone());
+        assertEquals(original.getEmail(), updated.getEmail());
+        assertEquals(original.getTags(), updated.getTags());
+        assertEquals(original.getStudioGroup(), updated.getStudioGroup());
+        assertEquals(original.getRegisteredStudioRecords(), updated.getRegisteredStudioRecords());
+        assertEquals(original.getRegisteredMasteryChecks(), updated.getRegisteredMasteryChecks());
+        assertEquals(originalSnapshot, original);
+        assertEquals(Set.of(new MissionId("M03")), original.getMissionSubmissions().getSubmittedMissionIds());
+        assertTrue(check.isComplete());
+    }
+
+    @Test
+    public void withMissionSubmissions_nullSubmissions_throwsNullPointerException() {
+        Student student = new StudentBuilder().build();
+
+        assertThrows(NullPointerException.class, () -> student.withMissionSubmissions(null));
+    }
+
+    @Test
+    public void withMissionSubmissions_emptySubmissions_clearsOnlySubmissions() {
+        MasteryCheck check = new MasteryCheck(LocalDateTime.of(2026, 8, 18, 14, 30));
+        Student original = new StudentBuilder(ALICE).withMissionSubmissions("M03")
+                .withStudioRecords(new StudentBuilder.StudioRecordSet(3, new StudioRecord(20)))
+                .withMasteryChecks(Map.of(1, check)).build();
+        Student expected = new StudentBuilder(original).withMissionSubmissions().build();
+
+        Student updated = original.withMissionSubmissions(new MissionSubmissions());
+
+        assertNotSame(original, updated);
+        assertEquals(expected, updated);
+        assertEquals(Set.of(new MissionId("M03")), original.getMissionSubmissions().getSubmittedMissionIds());
+    }
+
+    @Test
+    public void withRegisteredMasteryChecks_validRegistrations_replacesChecksAndPreservesOtherFields() {
+        MasteryCheck originalCheck = new MasteryCheck(LocalDateTime.of(2026, 8, 18, 14, 30));
+        originalCheck.markComplete();
+        Student original = new StudentBuilder(ALICE).withMissionSubmissions("M03")
+                .withStudioRecords(new StudentBuilder.StudioRecordSet(3, new StudioRecord(20)))
+                .withMasteryChecks(Map.of(1, originalCheck)).build();
+        Student originalSnapshot = new StudentBuilder(original).build();
+        MasteryCheck replacementCheck = new MasteryCheck(LocalDateTime.of(2026, 8, 19, 15, 0));
+        RegisteredMasteryChecks replacements = new RegisteredMasteryChecks(Map.of(2, replacementCheck));
+
+        Student updated = original.withRegisteredMasteryChecks(replacements);
+
+        assertNotSame(original, updated);
+        assertEquals(replacements, updated.getRegisteredMasteryChecks());
+        assertEquals(original.getName(), updated.getName());
+        assertEquals(original.getPhone(), updated.getPhone());
+        assertEquals(original.getEmail(), updated.getEmail());
+        assertEquals(original.getTags(), updated.getTags());
+        assertEquals(original.getStudioGroup(), updated.getStudioGroup());
+        assertEquals(original.getMissionSubmissions(), updated.getMissionSubmissions());
+        assertEquals(original.getRegisteredStudioRecords(), updated.getRegisteredStudioRecords());
+        assertEquals(originalSnapshot, original);
+        assertEquals(Map.of(1, originalCheck), original.getRegisteredMasteryChecks().getMasteryCheckAppointments());
+        assertTrue(originalCheck.isComplete());
+        assertFalse(replacementCheck.isComplete());
+    }
+
+    @Test
+    public void withRegisteredMasteryChecks_nullRegistrations_throwsNullPointerException() {
+        Student student = new StudentBuilder().build();
+
+        assertThrows(NullPointerException.class, () -> student.withRegisteredMasteryChecks(null));
+    }
+
+    @Test
+    public void withRegisteredMasteryChecks_emptyRegistrations_clearsOnlyMasteryChecks() {
+        MasteryCheck check = new MasteryCheck(LocalDateTime.of(2026, 8, 18, 14, 30));
+        check.markComplete();
+        Student original = new StudentBuilder(ALICE).withMissionSubmissions("M03")
+                .withStudioRecords(new StudentBuilder.StudioRecordSet(3, new StudioRecord(20)))
+                .withMasteryChecks(Map.of(1, check)).build();
+        Student expected = new StudentBuilder(original).withMasteryChecks(Map.of()).build();
+
+        Student updated = original.withRegisteredMasteryChecks(new RegisteredMasteryChecks());
+
+        assertNotSame(original, updated);
+        assertEquals(expected, updated);
+        assertEquals(Map.of(1, check), original.getRegisteredMasteryChecks().getMasteryCheckAppointments());
+        assertTrue(check.isComplete());
+    }
+
+    @Test
     public void withRegisteredStudioRecords_validRecords_replacesRecordsAndPreservesOtherFields() {
+        MasteryCheck check = new MasteryCheck(LocalDateTime.of(2026, 8, 18, 14, 30));
+        check.markComplete();
         StudioRecord originalRecord = new StudioRecord(20);
         Student original = new StudentBuilder(ALICE)
                 .withMissionSubmissions("M03")
                 .withStudioRecords(new StudentBuilder.StudioRecordSet(3, originalRecord))
+                .withMasteryChecks(Map.of(1, check))
                 .build();
         RegisteredStudioRecords updatedRecords = new RegisteredStudioRecords(Map.of(4, new StudioRecord(40)));
 
@@ -166,6 +272,8 @@ public class StudentTest {
         assertEquals(original.getTags(), updated.getTags());
         assertEquals(original.getStudioGroup(), updated.getStudioGroup());
         assertEquals(original.getMissionSubmissions(), updated.getMissionSubmissions());
+        assertEquals(original.getRegisteredMasteryChecks(), updated.getRegisteredMasteryChecks());
+        assertTrue(check.isComplete());
         assertEquals(updatedRecords, updated.getRegisteredStudioRecords());
         assertEquals(originalRecord, original.getRegisteredStudioRecords().getRecordsByWeek().get(3));
     }
@@ -188,7 +296,7 @@ public class StudentTest {
     public void constructor_nullMasteryChecks_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> new Student(ALICE.getName(), ALICE.getPhone(), ALICE.getEmail(),
                 ALICE.getTags(), ALICE.getStudioGroup(), ALICE.getMissionSubmissions(),
-                ALICE.getRegisteredStudioRecords(), null));
+                ALICE.getRegisteredStudioRecords(), null, ALICE.getRegisteredNotes()));
     }
 
     @Test
@@ -224,7 +332,8 @@ public class StudentTest {
                 + ", studioGroup=" + student.getStudioGroup()
                 + ", missionSubmissions=" + student.getMissionSubmissions()
                 + ", registeredStudioRecords=" + student.getRegisteredStudioRecords()
-                + ", registeredMasteryChecks=" + student.getRegisteredMasteryChecks() + "}";
+                + ", registeredMasteryChecks=" + student.getRegisteredMasteryChecks()
+                + ", registeredNotes=" + student.getRegisteredNotes() + "}";
         assertEquals(expected, student.toString());
     }
 }
