@@ -49,6 +49,7 @@ After every rejected command, run `view id/1` and confirm that both notes and sa
 | NOTE-DELETE-003 | Run `delnote id/1 ni/0`, `delnote id/1`, and `delnote 1 ni/4`, viewing student 1 after each command. | The invalid-ID, missing-`ni/`, and invalid-format messages appear respectively. Neither note changes. |
 | NOTE-DELETE-004 | Run `delnote id/3 ni/4`, then view both students. | Invalid-index feedback appears; no student changes. |
 | NOTE-DELETE-005 | Run `delnote id/1 ni/4`, restart, and view student 1. | The Notes table shows the empty-state message. The deletion persists across restart. |
+| NOTE-DELETE-006 | Run `delnote id/1 ni/3 ni/4`, then view student 1. | Duplicate-`ni/` feedback appears. Both notes and the saved data remain unchanged. |
 
 ## Mission regression sequence
 
