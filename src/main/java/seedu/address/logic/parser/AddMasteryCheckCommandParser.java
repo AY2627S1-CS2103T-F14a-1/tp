@@ -29,12 +29,16 @@ public class AddMasteryCheckCommandParser implements Parser<AddMasteryCheckComma
     @Override
     public AddMasteryCheckCommand parse(String args) throws ParseException {
         requireNonNull(args);
-        ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
-                args, AddMasteryCheckCommand.MESSAGE_USAGE, PREFIX_INDEX, PREFIX_NUMBER, PREFIX_DATETIME);
+        try {
+            ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
+                    args, PREFIX_INDEX, PREFIX_NUMBER, PREFIX_DATETIME);
 
-        Index index = ParserUtil.parseIndex(argMultimap.getValue(PREFIX_INDEX).get());
-        int number = ParserUtil.parseMasteryCheckNumber(argMultimap.getValue(PREFIX_NUMBER).get());
-        LocalDateTime dateTime = ParserUtil.parseMasteryCheckDateTime(argMultimap.getValue(PREFIX_DATETIME).get());
-        return new AddMasteryCheckCommand(index, number, new MasteryCheck(dateTime));
+            Index index = ParserUtil.parseIndex(argMultimap.getValue(PREFIX_INDEX).get());
+            int number = ParserUtil.parseMasteryCheckNumber(argMultimap.getValue(PREFIX_NUMBER).get());
+            LocalDateTime dateTime = ParserUtil.parseMasteryCheckDateTime(argMultimap.getValue(PREFIX_DATETIME).get());
+            return new AddMasteryCheckCommand(index, number, new MasteryCheck(dateTime));
+        } catch (ParseException e) {
+            throw new ParseException(e.getMessage() + "\n" + AddMasteryCheckCommand.MESSAGE_USAGE);
+        }
     }
 }

@@ -16,6 +16,8 @@ import seedu.address.model.student.StudioRecord;
  */
 public class AddStudioRecordCommandParserTest {
 
+    private static final String USAGE_SUFFIX = "\n" + AddStudioRecordCommand.MESSAGE_USAGE;
+
     private final AddStudioRecordCommandParser parser = new AddStudioRecordCommandParser();
 
     @Test
@@ -32,7 +34,8 @@ public class AddStudioRecordCommandParserTest {
     public void parse_missingEffort_reportsMissingPrefix() {
         String missingEffort = CliSyntax.PREFIX_STUDIO_EFFORT.getMissingMessage();
 
-        assertParseFailure(parser, "id/1 w/3", missingEffort);
+        assertParseFailure(parser, "id/1 w/3",
+                missingEffort + USAGE_SUFFIX);
     }
 
     @Test
@@ -40,15 +43,18 @@ public class AddStudioRecordCommandParserTest {
         String[] effortScores = {"", "-1", "1.5", "abc", "2147483648"};
         for (String effortScore : effortScores) {
             assertParseFailure(parser, "id/1 w/3 ef/" + effortScore,
-                    MESSAGE_INVALID_EFFORT);
+                MESSAGE_INVALID_EFFORT + USAGE_SUFFIX);
         }
     }
 
     @Test
     public void parse_invalidIndexOrWeek_reportsValidationMessage() {
-        assertParseFailure(parser, "id/0 w/3 ef/50", ParserUtil.MESSAGE_INVALID_INDEX);
-        assertParseFailure(parser, "id/1 w/-1 ef/50", MESSAGE_INVALID_WEEK);
-        assertParseFailure(parser, "id/1 w/14 ef/50", MESSAGE_INVALID_WEEK);
+        assertParseFailure(parser, "id/0 w/3 ef/50",
+                ParserUtil.MESSAGE_INVALID_INDEX + USAGE_SUFFIX);
+        assertParseFailure(parser, "id/1 w/-1 ef/50",
+                MESSAGE_INVALID_WEEK + USAGE_SUFFIX);
+        assertParseFailure(parser, "id/1 w/14 ef/50",
+                MESSAGE_INVALID_WEEK + USAGE_SUFFIX);
     }
 }
 

@@ -1,7 +1,7 @@
 package seedu.address.logic.parser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
+import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
 
@@ -18,6 +18,8 @@ import seedu.address.model.mission.MissionId;
  * Tests mission-edit field validation and command routing.
  */
 public class EditMissionCommandParserTest {
+
+    private static final String USAGE_SUFFIX = "\n" + EditMissionCommand.MESSAGE_USAGE;
 
     private final EditMissionCommandParser parser = new EditMissionCommandParser();
 
@@ -48,39 +50,48 @@ public class EditMissionCommandParserTest {
 
     @Test
     public void parse_missingIdOrPreamble_reportsUsage() {
-        String expectedMessage = String.format(
-                MESSAGE_INVALID_COMMAND_FORMAT, EditMissionCommand.MESSAGE_USAGE);
+        String expectedMessage = MESSAGE_INVALID_COMMAND + USAGE_SUFFIX;
 
-        for (String input : List.of("", "n/New", "extra m/M01 n/New", "M/M01 n/New")) {
+        for (String input : List.of("", "n/New")) {
+            assertParseFailure(parser, input,
+                    CliSyntax.PREFIX_MISSION.getMissingMessage() + USAGE_SUFFIX);
+        }
+        for (String input : List.of("extra m/M01 n/New", "M/M01 n/New")) {
             assertParseFailure(parser, input, expectedMessage);
         }
     }
 
     @Test
     public void parse_noReplacementFields_reportsNotEdited() {
-        assertParseFailure(parser, "m/M01", EditMissionCommand.MESSAGE_NOT_EDITED);
+        assertParseFailure(parser, "m/M01",
+                EditMissionCommand.MESSAGE_NOT_EDITED + USAGE_SUFFIX);
     }
 
     @Test
     public void parse_invalidFields_reportsSpecificConstraint() {
-        assertParseFailure(parser, "m/3 n/New", MissionId.MESSAGE_CONSTRAINTS);
-        assertParseFailure(parser, "m/ n/New", MissionId.MESSAGE_CONSTRAINTS);
-        assertParseFailure(parser, "m/M01 n/", ParserUtil.MESSAGE_INVALID_MISSION_NAME);
-        assertParseFailure(parser, "m/M01 n/\u00a0", ParserUtil.MESSAGE_INVALID_MISSION_NAME);
-        assertParseFailure(parser, "m/M01 d/", ParserUtil.MESSAGE_INVALID_MISSION_DEADLINE);
+        assertParseFailure(parser, "m/3 n/New",
+                MissionId.MESSAGE_CONSTRAINTS + USAGE_SUFFIX);
+        assertParseFailure(parser, "m/ n/New",
+                MissionId.MESSAGE_CONSTRAINTS + USAGE_SUFFIX);
+        assertParseFailure(parser, "m/M01 n/",
+                ParserUtil.MESSAGE_INVALID_MISSION_NAME + USAGE_SUFFIX);
+        assertParseFailure(parser, "m/M01 n/\u00a0",
+                ParserUtil.MESSAGE_INVALID_MISSION_NAME + USAGE_SUFFIX);
+        assertParseFailure(parser, "m/M01 d/",
+                ParserUtil.MESSAGE_INVALID_MISSION_DEADLINE + USAGE_SUFFIX);
         assertParseFailure(parser, "m/M01 d/2026-1-01",
-                ParserUtil.MESSAGE_INVALID_MISSION_DEADLINE);
+                ParserUtil.MESSAGE_INVALID_MISSION_DEADLINE + USAGE_SUFFIX);
         assertParseFailure(parser, "m/M01 d/2026-02-30",
-                ParserUtil.MESSAGE_INVALID_MISSION_CALENDAR_DATE);
+                ParserUtil.MESSAGE_INVALID_MISSION_CALENDAR_DATE + USAGE_SUFFIX);
     }
 
     @Test
     public void parse_duplicateFields_reportsDuplicatePrefix() {
         assertParseFailure(parser, "m/M01 m/M02 n/New",
-                CliSyntax.PREFIX_MISSION.getDuplicateMessage());
+                CliSyntax.PREFIX_MISSION.getDuplicateMessage() + USAGE_SUFFIX);
         assertParseFailure(parser, "m/M01 n/First n/Second",
-                CliSyntax.PREFIX_NAME.getDuplicateMessage());
+                CliSyntax.PREFIX_NAME.getDuplicateMessage() + USAGE_SUFFIX);
         assertParseFailure(parser, "m/M01 d/2026-10-20 d/2026-10-21",
-                CliSyntax.PREFIX_DATE.getDuplicateMessage());
+                CliSyntax.PREFIX_DATE.getDuplicateMessage() + USAGE_SUFFIX);
     }
 }
