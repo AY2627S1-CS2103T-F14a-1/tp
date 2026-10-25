@@ -26,10 +26,13 @@ public class ListMissionsCommandParser implements Parser<ListMissionsCommand> {
     @Override
     public ListMissionsCommand parse(String args) throws ParseException {
         requireNonNull(args);
-        ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
-                args, ListMissionsCommand.MESSAGE_USAGE, PREFIX_MISSION);
+        try {
+            ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(args, PREFIX_MISSION);
 
-        MissionId missionId = ParserUtil.parseMissionId(argMultimap.getValue(PREFIX_MISSION).get());
-        return new ListMissionsCommand(missionId);
+            MissionId missionId = ParserUtil.parseMissionId(argMultimap.getValue(PREFIX_MISSION).get());
+            return new ListMissionsCommand(missionId);
+        } catch (ParseException e) {
+            throw new ParseException(e.getMessage() + "\n" + ListMissionsCommand.MESSAGE_USAGE);
+        }
     }
 }

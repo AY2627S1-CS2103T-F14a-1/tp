@@ -3,7 +3,7 @@ package seedu.address.logic.parser;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
+import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND;
 import static seedu.address.logic.commands.CommandTestUtil.EMAIL_DESC_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.EMAIL_DESC_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_EMAIL_DESC;
@@ -50,10 +50,12 @@ import seedu.address.testutil.EditStudentDescriptorBuilder;
 
 public class EditCommandParserTest {
 
+    private static final String USAGE_SUFFIX = "\n" + EditCommand.MESSAGE_USAGE;
+
     private static final String TAG_EMPTY = " " + PREFIX_TAG;
 
     private static final String MESSAGE_INVALID_FORMAT =
-            String.format(MESSAGE_INVALID_COMMAND_FORMAT, EditCommand.MESSAGE_USAGE);
+            MESSAGE_INVALID_COMMAND + USAGE_SUFFIX;
 
     private EditCommandParser parser = new EditCommandParser();
 
@@ -63,10 +65,11 @@ public class EditCommandParserTest {
         assertParseFailure(parser, VALID_NAME_AMY, MESSAGE_INVALID_FORMAT);
 
         // no field specified
-        assertParseFailure(parser, "id/1", EditCommand.MESSAGE_NOT_EDITED);
+        assertParseFailure(parser, "id/1",
+                EditCommand.MESSAGE_NOT_EDITED + USAGE_SUFFIX);
 
         // no index and no field specified
-        assertParseFailure(parser, "", MESSAGE_INVALID_FORMAT);
+        assertParseFailure(parser, "", CliSyntax.PREFIX_INDEX.getMissingMessage() + USAGE_SUFFIX);
     }
 
     @Test
@@ -86,25 +89,34 @@ public class EditCommandParserTest {
 
     @Test
     public void parse_invalidValue_failure() {
-        assertParseFailure(parser, "id/1" + INVALID_NAME_DESC, Name.MESSAGE_CONSTRAINTS); // invalid name
-        assertParseFailure(parser, "id/1" + INVALID_PHONE_DESC, Phone.MESSAGE_CONSTRAINTS); // invalid phone
-        assertParseFailure(parser, "id/1" + INVALID_EMAIL_DESC, Email.MESSAGE_CONSTRAINTS); // invalid email
-        assertParseFailure(parser, "id/1" + INVALID_TAG_DESC, Tag.MESSAGE_CONSTRAINTS); // invalid tag
+        assertParseFailure(parser, "id/1" + INVALID_NAME_DESC,
+                Name.MESSAGE_CONSTRAINTS + USAGE_SUFFIX); // invalid name
+        assertParseFailure(parser, "id/1" + INVALID_PHONE_DESC,
+                Phone.MESSAGE_CONSTRAINTS + USAGE_SUFFIX); // invalid phone
+        assertParseFailure(parser, "id/1" + INVALID_EMAIL_DESC,
+                Email.MESSAGE_CONSTRAINTS + USAGE_SUFFIX); // invalid email
+        assertParseFailure(parser, "id/1" + INVALID_TAG_DESC,
+                Tag.MESSAGE_CONSTRAINTS + USAGE_SUFFIX); // invalid tag
         assertParseFailure(
-                parser, "id/1" + INVALID_STUDIO_GROUP_DESC, StudioGroup.MESSAGE_CONSTRAINTS); // invalid studio group
+                parser, "id/1" + INVALID_STUDIO_GROUP_DESC,
+                StudioGroup.MESSAGE_CONSTRAINTS + USAGE_SUFFIX); // invalid studio group
 
         // invalid phone followed by valid email
-        assertParseFailure(parser, "id/1" + INVALID_PHONE_DESC + EMAIL_DESC_AMY, Phone.MESSAGE_CONSTRAINTS);
+        assertParseFailure(parser, "id/1" + INVALID_PHONE_DESC + EMAIL_DESC_AMY,
+                Phone.MESSAGE_CONSTRAINTS + USAGE_SUFFIX);
 
         // while parsing {@code PREFIX_TAG} alone will reset the tags of the {@code Student} being edited,
         // parsing it together with a valid tag results in error
-        assertParseFailure(parser, "id/1" + TAG_DESC_FRIEND + TAG_DESC_HUSBAND + TAG_EMPTY, Tag.MESSAGE_CONSTRAINTS);
-        assertParseFailure(parser, "id/1" + TAG_DESC_FRIEND + TAG_EMPTY + TAG_DESC_HUSBAND, Tag.MESSAGE_CONSTRAINTS);
-        assertParseFailure(parser, "id/1" + TAG_EMPTY + TAG_DESC_FRIEND + TAG_DESC_HUSBAND, Tag.MESSAGE_CONSTRAINTS);
+        assertParseFailure(parser, "id/1" + TAG_DESC_FRIEND + TAG_DESC_HUSBAND + TAG_EMPTY,
+                Tag.MESSAGE_CONSTRAINTS + USAGE_SUFFIX);
+        assertParseFailure(parser, "id/1" + TAG_DESC_FRIEND + TAG_EMPTY + TAG_DESC_HUSBAND,
+                Tag.MESSAGE_CONSTRAINTS + USAGE_SUFFIX);
+        assertParseFailure(parser, "id/1" + TAG_EMPTY + TAG_DESC_FRIEND + TAG_DESC_HUSBAND,
+                Tag.MESSAGE_CONSTRAINTS + USAGE_SUFFIX);
 
         // multiple invalid values, but only the first invalid value is captured
         assertParseFailure(parser, "id/1" + INVALID_NAME_DESC + INVALID_EMAIL_DESC + VALID_PHONE_AMY,
-                Name.MESSAGE_CONSTRAINTS);
+                Name.MESSAGE_CONSTRAINTS + USAGE_SUFFIX);
     }
 
     @Test
@@ -177,12 +189,14 @@ public class EditCommandParserTest {
         Index targetIndex = INDEX_FIRST_STUDENT;
         String userInput = "id/" + targetIndex.getOneBased() + INVALID_PHONE_DESC + PHONE_DESC_BOB;
 
-        assertParseFailure(parser, userInput, CliSyntax.PREFIX_PHONE.getDuplicateMessage());
+        assertParseFailure(parser, userInput,
+                CliSyntax.PREFIX_PHONE.getDuplicateMessage() + USAGE_SUFFIX);
 
         // invalid followed by valid
         userInput = "id/" + targetIndex.getOneBased() + PHONE_DESC_BOB + INVALID_PHONE_DESC;
 
-        assertParseFailure(parser, userInput, CliSyntax.PREFIX_PHONE.getDuplicateMessage());
+        assertParseFailure(parser, userInput,
+                CliSyntax.PREFIX_PHONE.getDuplicateMessage() + USAGE_SUFFIX);
 
         // multiple valid fields repeated
         userInput = "id/" + targetIndex.getOneBased() + PHONE_DESC_AMY + EMAIL_DESC_AMY
@@ -191,7 +205,7 @@ public class EditCommandParserTest {
                 + STUDIO_GROUP_DESC_BOB;
 
         assertParseFailure(parser, userInput,
-                CliSyntax.PREFIX_PHONE.getDuplicateMessage());
+                CliSyntax.PREFIX_PHONE.getDuplicateMessage() + USAGE_SUFFIX);
 
         // multiple invalid values
         userInput = "id/" + targetIndex.getOneBased() + INVALID_PHONE_DESC + INVALID_STUDIO_GROUP_DESC
@@ -199,7 +213,7 @@ public class EditCommandParserTest {
                 + INVALID_EMAIL_DESC + INVALID_STUDIO_GROUP_DESC;
 
         assertParseFailure(parser, userInput,
-                CliSyntax.PREFIX_PHONE.getDuplicateMessage());
+                CliSyntax.PREFIX_PHONE.getDuplicateMessage() + USAGE_SUFFIX);
     }
 
     @Test
@@ -225,12 +239,14 @@ public class EditCommandParserTest {
 
     @Test
     public void parse_emptyStudioGroup_failure() {
-        assertParseFailure(parser, "id/1 g/", StudioGroup.MESSAGE_CONSTRAINTS);
+        assertParseFailure(parser, "id/1 g/",
+                StudioGroup.MESSAGE_CONSTRAINTS + USAGE_SUFFIX);
     }
 
     @Test
     public void parse_invalidStudioGroup_failure() {
-        assertParseFailure(parser, "id/1 g/2a", StudioGroup.MESSAGE_CONSTRAINTS);
+        assertParseFailure(parser, "id/1 g/2a",
+                StudioGroup.MESSAGE_CONSTRAINTS + USAGE_SUFFIX);
     }
 
     @Test
@@ -245,13 +261,16 @@ public class EditCommandParserTest {
 
     @Test
     public void parse_repeatedIndex_reportsDuplicateIndex() {
-        assertParseFailure(parser, "id/1 id/2" + NAME_DESC_AMY, CliSyntax.PREFIX_INDEX.getDuplicateMessage());
+        assertParseFailure(parser, "id/1 id/2" + NAME_DESC_AMY,
+                CliSyntax.PREFIX_INDEX.getDuplicateMessage() + USAGE_SUFFIX);
     }
 
     @Test
     public void parse_invalidIndexWithValidEdit_reportsIndexConstraint() {
-        assertParseFailure(parser, "id/0" + NAME_DESC_AMY, ParserUtil.MESSAGE_INVALID_INDEX);
-        assertParseFailure(parser, "id/" + NAME_DESC_AMY, ParserUtil.MESSAGE_INVALID_INDEX);
+        assertParseFailure(parser, "id/0" + NAME_DESC_AMY,
+                ParserUtil.MESSAGE_INVALID_INDEX + USAGE_SUFFIX);
+        assertParseFailure(parser, "id/" + NAME_DESC_AMY,
+                ParserUtil.MESSAGE_INVALID_INDEX + USAGE_SUFFIX);
     }
 
     @Test
