@@ -9,40 +9,8 @@ jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Install Graphviz 16.0.0
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            build-essential \
-            autoconf \
-            automake \
-            libtool \
-            libltdl-dev \
-            pkg-config \
-            bison \
-            flex \
-            libexpat1-dev \
-            zlib1g-dev \
-            libcairo2-dev \
-            libpango1.0-dev \
-            libgd-dev
-
-          curl -fL \
-            https://gitlab.com/graphviz/graphviz/-/archive/16.0.0/graphviz-16.0.0.tar.gz \
-            -o graphviz.tar.gz
-
-          tar -xzf graphviz.tar.gz
-          cd graphviz-16.0.0
-
-          ./autogen.sh
-          ./configure --prefix=/usr/local
-          make -j2
-          sudo make install
-          sudo ldconfig
-
-          echo "/usr/local/bin" >> "$GITHUB_PATH"
-
-          /usr/local/bin/dot -V
+      - name: Install Graphviz
+        run: sudo apt-get install -y graphviz
       - name: Install Java
         uses: actions/setup-java@v3
         with:
