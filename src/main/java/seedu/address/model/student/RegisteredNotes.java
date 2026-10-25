@@ -2,11 +2,16 @@ package seedu.address.model.student;
 
 import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.AppUtil.checkArgument;
+import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 import static seedu.address.model.student.Note.isValidNoteText;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import seedu.address.commons.core.index.Index;
 
 /**
  * Represents an immutable collection of a student's notes.
@@ -14,40 +19,36 @@ import java.util.Map;
  */
 public final class RegisteredNotes {
 
-    public static final int MIN_NOTE_ID = 1;
     public static final int MAX_NOTE_ID = 10;
-
     public static final String MESSAGE_CONSTRAINTS =
-            "Note ID must be between " + MIN_NOTE_ID + " and " + MAX_NOTE_ID + " inclusive";
+            "The number of notes cannot must be at most " + MAX_NOTE_ID;
 
-    private final Map<Integer, Note> notesById;
+    private final List<Note> registeredNotes;
 
     /**
      * Constructs a {@code RegisteredNotes} collection with no registered notes.
      */
     public RegisteredNotes() {
-        this.notesById = Collections.emptyMap();
+        this.registeredNotes = Collections.emptyList();
     }
 
     /**
      * Creates {@code RegisteredNotes} from the given notes.
      *
-     * @param notesById Notes and their ID.
-     * @throws NullPointerException If the map, any ID, or any note is {@code null}.
+     * @param registeredNotes Registered notes.
+     * @throws NullPointerException If the list, any ID, or any note is {@code null}.
      * @throws IllegalArgumentException If any note ID is outside the valid range.
      */
-    public RegisteredNotes(Map<Integer, Note> notesById) {
-        requireNonNull(notesById);
+    public RegisteredNotes(List<Note> registeredNotes) {
+        requireAllNonNull(registeredNotes);
 
-        Map<Integer, Note> copiedNotes = new HashMap<>(notesById);
+        List<Note> copiedNotes = new ArrayList<>(registeredNotes);
 
-        for (Map.Entry<Integer, Note> entry : notesById.entrySet()) {
-            requireNonNull(entry.getKey());
-            requireNonNull(entry.getValue());
-            checkArgument(isValidNoteText(entry.getValue().getNoteText()), Note.MESSAGE_CONSTRAINTS);
-            checkArgument(isValidNoteId(entry.getKey()), MESSAGE_CONSTRAINTS);
+        checkArgument(registeredNotes.size() <= MAX_NOTE_ID, RegisteredNotes.MESSAGE_CONSTRAINTS);
+        for (Note note : copiedNotes) {
+            checkArgument(isValidNoteText(note.getNoteText()), Note.MESSAGE_CONSTRAINTS);
         }
-        this.notesById = Collections.unmodifiableMap(copiedNotes);
+        this.registeredNotes = Collections.unmodifiableList(copiedNotes);
     }
 
     /**
@@ -57,7 +58,7 @@ public final class RegisteredNotes {
      * @return True if note ID has been registered.
      * @throws IllegalArgumentException If the note ID is outside the valid range.
      */
-    public boolean hasNote(int id) {
+    public boolean hasNote(Index targetIndex) {
         checkArgument(isValidNoteId(id), MESSAGE_CONSTRAINTS);
         return notesById.containsKey(id);
     }
