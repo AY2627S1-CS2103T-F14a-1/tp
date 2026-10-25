@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_DATETIME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_INDEX;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_MISSION;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_NOTE_ID;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_NOTE_TEXT;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NUMBER;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_STUDIO_EFFORT;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_WEEK;
@@ -45,6 +47,8 @@ public class RequiredPrefixCommandParserTest {
         verifyRequiredPrefixes(new ListMissionsCommandParser(), List.of(PREFIX_MISSION), List.of("M01"));
         verifyRequiredPrefixes(new AddMissionCommandParser(),
                 List.of(CliSyntax.PREFIX_NAME, CliSyntax.PREFIX_DATE), List.of("Runes", "2026-10-20"));
+        verifyRequiredPrefixes(new AddNoteCommandParser(),
+                List.of(PREFIX_INDEX, PREFIX_NOTE_ID, PREFIX_NOTE_TEXT), List.of("1", "3", "Review notes"));
     }
 
     /**

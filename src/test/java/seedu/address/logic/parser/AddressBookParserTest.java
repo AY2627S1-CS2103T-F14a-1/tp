@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 
 import seedu.address.logic.commands.AddMasteryCheckCommand;
+import seedu.address.logic.commands.AddNoteCommand;
 import seedu.address.logic.commands.AddStudentCommand;
 import seedu.address.logic.commands.AddStudioRecordCommand;
 import seedu.address.logic.commands.ClearCommand;
@@ -37,6 +38,7 @@ import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.masterycheck.MasteryCheck;
 import seedu.address.model.mission.MissionId;
 import seedu.address.model.student.NameContainsKeywordsPredicate;
+import seedu.address.model.student.Note;
 import seedu.address.model.student.RegisteredMasteryChecks;
 import seedu.address.model.student.Student;
 import seedu.address.model.student.StudioRecord;
@@ -53,6 +55,15 @@ public class AddressBookParserTest {
         Student student = new StudentBuilder().build();
         AddStudentCommand command = (AddStudentCommand) parser.parseCommand(StudentUtil.getAddStudentCommand(student));
         assertEquals(new AddStudentCommand(student), command);
+    }
+
+    @Test
+    public void parseCommand_addNoteIgnoringCase_returnsCommand() throws Exception {
+        AddNoteCommand expected = new AddNoteCommand(INDEX_FIRST_STUDENT, 3, new Note("Review lecture notes"));
+
+        assertEquals(expected, parser.parseCommand("addnote id/1 ni/3 nt/Review lecture notes"));
+        assertEquals(expected, parser.parseCommand("ADDNOTE id/1 ni/3 nt/Review lecture notes"));
+        assertEquals(expected, parser.parseCommand("  AddNote\tid/1\tni/3 nt/Review lecture notes  "));
     }
 
     @Test

@@ -10,6 +10,21 @@ unchanged text, invalid student indexes, and invalid constructor arguments.
 Add interactive cases only after the command is wired into the parser and
 dispatcher.
 
+## Add-note command regression
+
+Start with two students and no notes for student 1. After every rejected
+command, run `view id/1` and confirm that the note list and saved data are
+unchanged.
+
+| ID | Steps | Expected result |
+| --- | --- | --- |
+| NOTE-ADD-001 | Run `addnote id/1 ni/3 nt/Review lecture notes`, then view student 1. | Success feedback names student 1 and note ID 3. The note list contains `3: Review lecture notes`; student 2 is unchanged. |
+| NOTE-ADD-002 | Run `addnote id/1 ni/3 nt/Different text`, then view student 1. | Duplicate-ID feedback appears. ID 3 still contains `Review lecture notes`. |
+| NOTE-ADD-003 | Run `addnote id/1 ni/0 nt/Invalid`, then `addnote id/1 ni/4 nt/Invalid!`, viewing student 1 after each command. | The invalid ID and invalid-text messages appear respectively. ID 4 is not added and ID 3 remains unchanged. |
+| NOTE-ADD-004 | Run `addnote id/1 ni/4`, then `addnote id/1 ni/4 nt/Valid ni/5`, viewing student 1 after each command. | The first command reports missing `nt/`; the second reports duplicate `ni/`. No note is added. |
+| NOTE-ADD-005 | Run `addnote id/3 ni/4 nt/Invalid index`, then view both students. | Invalid-index feedback appears; neither student changes. |
+| NOTE-ADD-006 | Restart after NOTE-ADD-001 and view student 1. | Note ID 3 and its text are restored unchanged. |
+
 ## Mission regression sequence
 
 Use a temporary data directory with two students and an empty catalogue. After each rejected
