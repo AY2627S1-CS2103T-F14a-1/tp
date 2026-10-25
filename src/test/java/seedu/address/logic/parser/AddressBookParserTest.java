@@ -25,6 +25,7 @@ import seedu.address.logic.commands.DeleteStudentCommand;
 import seedu.address.logic.commands.DeleteStudioRecordCommand;
 import seedu.address.logic.commands.EditCommand;
 import seedu.address.logic.commands.EditCommand.EditStudentDescriptor;
+import seedu.address.logic.commands.EditNoteCommand;
 import seedu.address.logic.commands.EditStudioRecordCommand;
 import seedu.address.logic.commands.ExitCommand;
 import seedu.address.logic.commands.FindCommand;
@@ -56,24 +57,6 @@ public class AddressBookParserTest {
         Student student = new StudentBuilder().build();
         AddStudentCommand command = (AddStudentCommand) parser.parseCommand(StudentUtil.getAddStudentCommand(student));
         assertEquals(new AddStudentCommand(student), command);
-    }
-
-    @Test
-    public void parseCommand_addNoteIgnoringCase_returnsCommand() throws Exception {
-        AddNoteCommand expected = new AddNoteCommand(INDEX_FIRST_STUDENT, 3, new Note("Review lecture notes"));
-
-        assertEquals(expected, parser.parseCommand("addnote id/1 ni/3 nt/Review lecture notes"));
-        assertEquals(expected, parser.parseCommand("ADDNOTE id/1 ni/3 nt/Review lecture notes"));
-        assertEquals(expected, parser.parseCommand("  AddNote\tid/1\tni/3 nt/Review lecture notes  "));
-    }
-
-    @Test
-    public void parseCommand_deleteNoteIgnoringCase_returnsCommand() throws Exception {
-        DeleteNoteCommand expected = new DeleteNoteCommand(INDEX_FIRST_STUDENT, 3);
-
-        assertEquals(expected, parser.parseCommand("delnote id/1 ni/3"));
-        assertEquals(expected, parser.parseCommand("DELNOTE id/1 ni/3"));
-        assertEquals(expected, parser.parseCommand("  DelNote\tid/1\tni/3  "));
     }
 
     @Test
@@ -296,4 +279,30 @@ public class AddressBookParserTest {
         assertEquals(expected, parser.parseCommand("unmarkmc id/1 num/1"));
         assertEquals(expected, parser.parseCommand("UNMARKMC id/1 num/1"));
     }
+
+    @Test
+    public void parseCommand_addNoteIgnoringCase_returnsCommand() throws Exception {
+        AddNoteCommand expected = new AddNoteCommand(INDEX_FIRST_STUDENT, 3, new Note("Review lecture notes"));
+
+        assertEquals(expected, parser.parseCommand("addnote id/1 ni/3 nt/Review lecture notes"));
+        assertEquals(expected, parser.parseCommand("ADDNOTE id/1 ni/3 nt/Review lecture notes"));
+        assertEquals(expected, parser.parseCommand("  AddNote\tid/1\tni/3 nt/Review lecture notes  "));
+    }
+
+    @Test
+    public void parseCommand_deleteNoteIgnoringCase_returnsCommand() throws Exception {
+        DeleteNoteCommand expected = new DeleteNoteCommand(INDEX_FIRST_STUDENT, 3);
+
+        assertEquals(expected, parser.parseCommand("delnote id/1 ni/3"));
+        assertEquals(expected, parser.parseCommand("DELNOTE id/1 ni/3"));
+        assertEquals(expected, parser.parseCommand("  DelNote\tid/1\tni/3  "));
+    }
+
+    @Test
+    public void parseCommand_editNote() throws ParseException {
+        EditNoteCommand command = (EditNoteCommand) parser.parseCommand(EditNoteCommand.COMMAND_WORD + " id/"
+                + INDEX_FIRST_STUDENT.getOneBased() + " ni/1 nt/hello");
+        assertEquals(new EditNoteCommand(INDEX_FIRST_STUDENT, 1, new Note("hello")), command);
+    }
+
 }

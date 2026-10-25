@@ -102,6 +102,7 @@ public class EditNoteCommandTest {
         assertNotEquals(new EditNoteCommand(INDEX_SECOND_STUDENT, NOTE_ID, UPDATED_NOTE), command);
         assertNotEquals(new EditNoteCommand(INDEX_FIRST_STUDENT, NOTE_ID + 1, UPDATED_NOTE), command);
         assertNotEquals(new EditNoteCommand(INDEX_FIRST_STUDENT, NOTE_ID, ORIGINAL_NOTE), command);
+        assertNotEquals(new EditNoteCommand(INDEX_FIRST_STUDENT, NOTE_ID, UPDATED_NOTE), 1);
         assertNotEquals(null, command);
         assertNotEquals("editnote", command);
     }

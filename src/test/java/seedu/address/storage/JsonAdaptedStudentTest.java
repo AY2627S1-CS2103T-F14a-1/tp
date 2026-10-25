@@ -23,6 +23,7 @@ import seedu.address.model.mission.MissionId;
 import seedu.address.model.student.Email;
 import seedu.address.model.student.MissionSubmissions;
 import seedu.address.model.student.Name;
+import seedu.address.model.student.Note;
 import seedu.address.model.student.Phone;
 import seedu.address.model.student.RegisteredMasteryChecks;
 import seedu.address.model.student.RegisteredNotes;
@@ -528,6 +529,39 @@ public class JsonAdaptedStudentTest {
         }
     }
 
+    @Test
+    public void toModelRegisteredNotes_malformedRecords_throwsIllegalValueException() {
+        for (Object record : Arrays.asList(null, 1, "note", Map.of(), List.of(), List.of(1),
+                List.of(1, "Valid note", "extra"))) {
+            JsonAdaptedStudent adapted = withSavedNotes(Arrays.asList(record));
+
+            assertThrows(IllegalValueException.class, RegisteredNotes.MESSAGE_CONSTRAINTS,
+                    adapted::toModelRegisteredNotes);
+        }
+    }
+
+    @Test
+    public void toModelRegisteredNotes_invalidNoteIds_throwsIllegalValueException() {
+        for (Object noteId : Arrays.asList(null, 0, -1, 11, Integer.MAX_VALUE, 1L, 1.0, "1", true)) {
+            JsonAdaptedStudent adapted = withSavedNotes(List.of(Arrays.asList(noteId, "Valid note")));
+
+            assertThrows(IllegalValueException.class, RegisteredNotes.MESSAGE_CONSTRAINTS,
+                    adapted::toModelRegisteredNotes);
+        }
+    }
+
+    @Test
+    public void toModelRegisteredNotes_invalidNoteTexts_throwsIllegalValueException() {
+        String overlongNote = "a".repeat(Note.MAX_NOTE_LENGTH + 1);
+        for (Object noteText : Arrays.asList(null, "", " ", "Invalid note!", overlongNote,
+                1, true, List.of(), Map.of())) {
+            JsonAdaptedStudent adapted = withSavedNotes(List.of(Arrays.asList(1, noteText)));
+
+            assertThrows(IllegalValueException.class, Note.MESSAGE_CONSTRAINTS,
+                    adapted::toModelRegisteredNotes);
+        }
+    }
+
     /**
      * Creates valid adapted student details with the supplied saved mastery check entries.
      *
@@ -537,6 +571,17 @@ public class JsonAdaptedStudentTest {
     private static JsonAdaptedStudent withSavedMasteryChecks(List<?> appointments) {
         return new JsonAdaptedStudent(VALID_NAME, VALID_PHONE, VALID_EMAIL, VALID_TAGS, VALID_STUDIO_GROUP,
                 VALID_MISSION_SUBMISSIONS, VALID_REGISTERED_STUDIO_RECORDS, appointments, VALID_REGISTERED_NOTES);
+    }
+
+    /**
+     * Creates valid adapted student details with the supplied saved note entries.
+     *
+     * @param notes Raw note records.
+     * @return Adapted student containing the supplied note records.
+     */
+    private static JsonAdaptedStudent withSavedNotes(List<?> notes) {
+        return new JsonAdaptedStudent(VALID_NAME, VALID_PHONE, VALID_EMAIL, VALID_TAGS, VALID_STUDIO_GROUP,
+                VALID_MISSION_SUBMISSIONS, VALID_REGISTERED_STUDIO_RECORDS, VALID_MASTERY_CHECKS, notes);
     }
 
 }
