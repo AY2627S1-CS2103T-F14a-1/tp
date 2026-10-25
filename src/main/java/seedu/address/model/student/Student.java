@@ -12,7 +12,7 @@ import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.model.tag.Tag;
 
 /**
- * Represents a student with profile details, mission submissions, studio records, and mastery check registrations.
+ * Represents a student with profile details, mission submissions, studio records, mastery check registrations, and notes.
  * Mastery check completion status remains mutable through the registered appointment objects.
  */
 public class Student {
@@ -58,6 +58,7 @@ public class Student {
      * @param missionSubmissions Student's recorded mission submissions.
      * @param registeredStudioRecords Student's registered studio records.
      * @param registeredMasteryChecks Student's numbered mastery check appointments.
+     * @param registeredNotes Student's registered notes.
      * @throws NullPointerException If the name, phone, email, tag set, or any activity collection is null.
      */
     public Student(Name name, Phone phone, Email email, Set<Tag> tags, StudioGroup studioGroup,
