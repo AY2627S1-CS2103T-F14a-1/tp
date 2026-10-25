@@ -23,8 +23,10 @@ import seedu.address.model.mission.MissionId;
 import seedu.address.model.student.Email;
 import seedu.address.model.student.MissionSubmissions;
 import seedu.address.model.student.Name;
+import seedu.address.model.student.Note;
 import seedu.address.model.student.Phone;
 import seedu.address.model.student.RegisteredMasteryChecks;
+import seedu.address.model.student.RegisteredNotes;
 import seedu.address.model.student.RegisteredStudioRecords;
 import seedu.address.model.student.Student;
 import seedu.address.model.student.StudioGroup;
@@ -41,7 +43,7 @@ public class JsonAdaptedStudentTest {
     private static final Student VALID_STUDENT = new Student(
             new Name("Benson Meier"), new Phone("98765432"), new Email("johnd@example.com"), Set.of(),
             new StudioGroup("1A"), new MissionSubmissions(), new RegisteredStudioRecords(),
-            new RegisteredMasteryChecks());
+            new RegisteredMasteryChecks(), new RegisteredNotes());
 
     private static final String VALID_NAME = VALID_STUDENT.getName().toString();
     private static final String VALID_PHONE = VALID_STUDENT.getPhone().toString();
@@ -53,6 +55,7 @@ public class JsonAdaptedStudentTest {
     private static final List<?> VALID_MISSION_SUBMISSIONS = List.of();
     private static final List<?> VALID_REGISTERED_STUDIO_RECORDS = List.of();
     private static final List<?> VALID_MASTERY_CHECKS = List.of();
+    private static final List<?> VALID_REGISTERED_NOTES = List.of();
 
     @Test
     public void toModelType_validStudentDetails_returnsStudent() throws Exception {
@@ -64,7 +67,7 @@ public class JsonAdaptedStudentTest {
     public void toModelType_invalidName_throwsIllegalValueException() {
         JsonAdaptedStudent student = new JsonAdaptedStudent(INVALID_NAME, VALID_PHONE, VALID_EMAIL,
                 VALID_TAGS, VALID_STUDIO_GROUP, VALID_MISSION_SUBMISSIONS, VALID_REGISTERED_STUDIO_RECORDS,
-                VALID_MASTERY_CHECKS);
+                VALID_MASTERY_CHECKS, VALID_REGISTERED_NOTES);
         String expectedMessage = Name.MESSAGE_CONSTRAINTS;
         assertThrows(IllegalValueException.class, expectedMessage, student::toModelType);
     }
@@ -73,7 +76,7 @@ public class JsonAdaptedStudentTest {
     public void toModelType_nullName_throwsIllegalValueException() {
         JsonAdaptedStudent student = new JsonAdaptedStudent(null, VALID_PHONE, VALID_EMAIL,
                 VALID_TAGS, VALID_STUDIO_GROUP, VALID_MISSION_SUBMISSIONS, VALID_REGISTERED_STUDIO_RECORDS,
-                VALID_MASTERY_CHECKS);
+                VALID_MASTERY_CHECKS, VALID_REGISTERED_NOTES);
         String expectedMessage = String.format(MISSING_FIELD_MESSAGE_FORMAT, Name.class.getSimpleName());
         assertThrows(IllegalValueException.class, expectedMessage, student::toModelType);
     }
@@ -82,7 +85,7 @@ public class JsonAdaptedStudentTest {
     public void toModelType_invalidPhone_throwsIllegalValueException() {
         JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, INVALID_PHONE, VALID_EMAIL,
                 VALID_TAGS, VALID_STUDIO_GROUP, VALID_MISSION_SUBMISSIONS, VALID_REGISTERED_STUDIO_RECORDS,
-                VALID_MASTERY_CHECKS);
+                VALID_MASTERY_CHECKS, VALID_REGISTERED_NOTES);
         String expectedMessage = Phone.MESSAGE_CONSTRAINTS;
         assertThrows(IllegalValueException.class, expectedMessage, student::toModelType);
     }
@@ -91,7 +94,7 @@ public class JsonAdaptedStudentTest {
     public void toModelType_nullPhone_throwsIllegalValueException() {
         JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, null, VALID_EMAIL,
                 VALID_TAGS, VALID_STUDIO_GROUP, VALID_MISSION_SUBMISSIONS, VALID_REGISTERED_STUDIO_RECORDS,
-                VALID_MASTERY_CHECKS);
+                VALID_MASTERY_CHECKS, VALID_REGISTERED_NOTES);
         String expectedMessage = String.format(MISSING_FIELD_MESSAGE_FORMAT, Phone.class.getSimpleName());
         assertThrows(IllegalValueException.class, expectedMessage, student::toModelType);
     }
@@ -100,7 +103,7 @@ public class JsonAdaptedStudentTest {
     public void toModelType_invalidEmail_throwsIllegalValueException() {
         JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_PHONE, INVALID_EMAIL,
                 VALID_TAGS, VALID_STUDIO_GROUP, VALID_MISSION_SUBMISSIONS, VALID_REGISTERED_STUDIO_RECORDS,
-                VALID_MASTERY_CHECKS);
+                VALID_MASTERY_CHECKS, VALID_REGISTERED_NOTES);
         String expectedMessage = Email.MESSAGE_CONSTRAINTS;
         assertThrows(IllegalValueException.class, expectedMessage, student::toModelType);
     }
@@ -109,7 +112,7 @@ public class JsonAdaptedStudentTest {
     public void toModelType_nullEmail_throwsIllegalValueException() {
         JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_PHONE, null,
                 VALID_TAGS, VALID_STUDIO_GROUP, VALID_MISSION_SUBMISSIONS, VALID_REGISTERED_STUDIO_RECORDS,
-                VALID_MASTERY_CHECKS);
+                VALID_MASTERY_CHECKS, VALID_REGISTERED_NOTES);
         String expectedMessage = String.format(MISSING_FIELD_MESSAGE_FORMAT, Email.class.getSimpleName());
         assertThrows(IllegalValueException.class, expectedMessage, student::toModelType);
     }
@@ -120,7 +123,7 @@ public class JsonAdaptedStudentTest {
         invalidTags.add(new JsonAdaptedTag(INVALID_TAG));
         JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_PHONE, VALID_EMAIL,
                 invalidTags, VALID_STUDIO_GROUP, VALID_MISSION_SUBMISSIONS, VALID_REGISTERED_STUDIO_RECORDS,
-                VALID_MASTERY_CHECKS);
+                VALID_MASTERY_CHECKS, VALID_REGISTERED_NOTES);
         assertThrows(IllegalValueException.class, student::toModelType);
     }
 
@@ -128,7 +131,7 @@ public class JsonAdaptedStudentTest {
     public void toModelType_invalidStudioGroup_throwsIllegalValueException() {
         JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_PHONE, VALID_EMAIL,
                 VALID_TAGS, INVALID_STUDIO_GROUP, VALID_MISSION_SUBMISSIONS, VALID_REGISTERED_STUDIO_RECORDS,
-                VALID_MASTERY_CHECKS);
+                VALID_MASTERY_CHECKS, VALID_REGISTERED_NOTES);
         String expectedMessage = StudioGroup.MESSAGE_CONSTRAINTS;
         assertThrows(IllegalValueException.class, expectedMessage, student::toModelType);
     }
@@ -136,7 +139,8 @@ public class JsonAdaptedStudentTest {
     @Test
     public void toModelType_nullStudioGroup_throwsIllegalValueException() {
         JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_PHONE, VALID_EMAIL,
-                VALID_TAGS, null, VALID_MISSION_SUBMISSIONS, VALID_REGISTERED_STUDIO_RECORDS, VALID_MASTERY_CHECKS);
+                VALID_TAGS, null, VALID_MISSION_SUBMISSIONS, VALID_REGISTERED_STUDIO_RECORDS,
+                VALID_MASTERY_CHECKS, VALID_REGISTERED_NOTES);
         String expectedMessage = String.format(MISSING_FIELD_MESSAGE_FORMAT, StudioGroup.class.getSimpleName());
         assertThrows(IllegalValueException.class, expectedMessage, student::toModelType);
     }
@@ -146,7 +150,8 @@ public class JsonAdaptedStudentTest {
         Student expected = withMissionSubmissions(VALID_STUDENT, "M03", "M04", "M11", "M12", "M13");
         JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_PHONE, VALID_EMAIL,
                 VALID_TAGS, VALID_STUDIO_GROUP,
-                List.of("M03", "M04", "M11", "M12", "M13"), VALID_REGISTERED_STUDIO_RECORDS, VALID_MASTERY_CHECKS);
+                List.of("M03", "M04", "M11", "M12", "M13"), VALID_REGISTERED_STUDIO_RECORDS,
+                VALID_MASTERY_CHECKS, VALID_REGISTERED_NOTES);
 
         assertEquals(expected, student.toModelType());
     }
@@ -156,7 +161,7 @@ public class JsonAdaptedStudentTest {
         for (String invalidId : List.of("", "M00", "M1", "m01", "M001")) {
             JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_PHONE, VALID_EMAIL,
                     VALID_TAGS, VALID_STUDIO_GROUP, List.of("M05", invalidId), VALID_REGISTERED_STUDIO_RECORDS,
-                    VALID_MASTERY_CHECKS);
+                    VALID_MASTERY_CHECKS, VALID_REGISTERED_NOTES);
 
             assertThrows(IllegalValueException.class, MissionId.MESSAGE_CONSTRAINTS,
                     student::toModelType);
@@ -168,7 +173,7 @@ public class JsonAdaptedStudentTest {
         Student expected = withMissionSubmissions(VALID_STUDENT);
         JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_PHONE, VALID_EMAIL,
                 VALID_TAGS, VALID_STUDIO_GROUP, VALID_MISSION_SUBMISSIONS, VALID_REGISTERED_STUDIO_RECORDS,
-                VALID_MASTERY_CHECKS);
+                VALID_MASTERY_CHECKS, VALID_REGISTERED_NOTES);
 
         assertEquals(expected, student.toModelType());
     }
@@ -177,7 +182,7 @@ public class JsonAdaptedStudentTest {
     public void toModelType_nullMissionSubmissionId_throwsIllegalValueException() {
         JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_PHONE, VALID_EMAIL,
                 VALID_TAGS, VALID_STUDIO_GROUP, Arrays.asList("M05", null), VALID_REGISTERED_STUDIO_RECORDS,
-                VALID_MASTERY_CHECKS);
+                VALID_MASTERY_CHECKS, VALID_REGISTERED_NOTES);
 
         assertThrows(IllegalValueException.class, MissionId.MESSAGE_CONSTRAINTS,
                 student::toModelType);
@@ -187,7 +192,8 @@ public class JsonAdaptedStudentTest {
     public void toModelType_nullMissionSubmissions_returnsStudentWithoutSubmissions() throws Exception {
         Student expected = withMissionSubmissions(VALID_STUDENT);
         JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_PHONE, VALID_EMAIL,
-                VALID_TAGS, VALID_STUDIO_GROUP, null, VALID_REGISTERED_STUDIO_RECORDS, VALID_MASTERY_CHECKS);
+                VALID_TAGS, VALID_STUDIO_GROUP, null, VALID_REGISTERED_STUDIO_RECORDS,
+                VALID_MASTERY_CHECKS, VALID_REGISTERED_NOTES);
 
         assertEquals(expected, student.toModelType());
     }
@@ -197,7 +203,7 @@ public class JsonAdaptedStudentTest {
         Student expected = withMissionSubmissions(VALID_STUDENT, "M05", "M04");
         JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_PHONE, VALID_EMAIL,
                 VALID_TAGS, VALID_STUDIO_GROUP, List.of("M05", "M05", "M04"), VALID_REGISTERED_STUDIO_RECORDS,
-                VALID_MASTERY_CHECKS);
+                VALID_MASTERY_CHECKS, VALID_REGISTERED_NOTES);
 
         assertEquals(expected, student.toModelType());
     }
@@ -245,7 +251,7 @@ public class JsonAdaptedStudentTest {
         JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_PHONE, VALID_EMAIL,
                 VALID_TAGS, VALID_STUDIO_GROUP, VALID_MISSION_SUBMISSIONS,
                 List.of(List.of(3, 10), List.of(4, 25), List.of(11, 50),
-                        List.of(12, 75), List.of(13, 100)), VALID_MASTERY_CHECKS);
+                        List.of(12, 75), List.of(13, 100)), VALID_MASTERY_CHECKS, VALID_REGISTERED_NOTES);
 
         assertEquals(expected, student.toModelType());
     }
@@ -255,7 +261,7 @@ public class JsonAdaptedStudentTest {
         for (int week : new int[] {-1, 14}) {
             JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_PHONE, VALID_EMAIL,
                     VALID_TAGS, VALID_STUDIO_GROUP, VALID_MISSION_SUBMISSIONS,
-                    List.of(List.of(5, 50), List.of(week, 50)), VALID_MASTERY_CHECKS);
+                    List.of(List.of(5, 50), List.of(week, 50)), VALID_MASTERY_CHECKS, VALID_REGISTERED_NOTES);
 
             assertThrows(IllegalValueException.class, RegisteredStudioRecords.MESSAGE_CONSTRAINTS,
                     student::toModelType);
@@ -266,7 +272,7 @@ public class JsonAdaptedStudentTest {
     public void toModelType_invalidStudioRecordEffortScore_throwsIllegalValueException() {
         JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_PHONE, VALID_EMAIL,
                 VALID_TAGS, VALID_STUDIO_GROUP, VALID_MISSION_SUBMISSIONS,
-                List.of(List.of(5, -1)), VALID_MASTERY_CHECKS);
+                List.of(List.of(5, -1)), VALID_MASTERY_CHECKS, VALID_REGISTERED_NOTES);
 
         assertThrows(IllegalValueException.class, StudioRecord.MESSAGE_CONSTRAINTS,
                 student::toModelType);
@@ -277,7 +283,7 @@ public class JsonAdaptedStudentTest {
         Student expected = withStudioRecordsByWeek(VALID_STUDENT, Map.of());
         JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_PHONE, VALID_EMAIL,
                 VALID_TAGS, VALID_STUDIO_GROUP, VALID_MISSION_SUBMISSIONS, VALID_REGISTERED_STUDIO_RECORDS,
-                VALID_MASTERY_CHECKS);
+                VALID_MASTERY_CHECKS, VALID_REGISTERED_NOTES);
 
         assertEquals(expected, student.toModelType());
     }
@@ -286,7 +292,7 @@ public class JsonAdaptedStudentTest {
     public void toModelType_nullStudioRecordWeek_throwsIllegalValueException() {
         JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_PHONE, VALID_EMAIL,
                 VALID_TAGS, VALID_STUDIO_GROUP, VALID_MISSION_SUBMISSIONS,
-                List.of(Arrays.asList(null, 50)), VALID_MASTERY_CHECKS);
+                List.of(Arrays.asList(null, 50)), VALID_MASTERY_CHECKS, VALID_REGISTERED_NOTES);
 
         assertThrows(IllegalValueException.class, RegisteredStudioRecords.MESSAGE_CONSTRAINTS,
                 student::toModelType);
@@ -296,7 +302,8 @@ public class JsonAdaptedStudentTest {
     public void toModelType_nullRegisteredStudioRecords_returnsStudentWithoutRecords() throws Exception {
         Student expected = withStudioRecordsByWeek(VALID_STUDENT, Map.of());
         JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_PHONE, VALID_EMAIL,
-                VALID_TAGS, VALID_STUDIO_GROUP, VALID_MISSION_SUBMISSIONS, null, VALID_MASTERY_CHECKS);
+                VALID_TAGS, VALID_STUDIO_GROUP, VALID_MISSION_SUBMISSIONS, null,
+                VALID_MASTERY_CHECKS, VALID_REGISTERED_NOTES);
 
         assertEquals(expected, student.toModelType());
     }
@@ -308,7 +315,7 @@ public class JsonAdaptedStudentTest {
                 5, new StudioRecord(100)));
         JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_PHONE, VALID_EMAIL,
                 VALID_TAGS, VALID_STUDIO_GROUP, VALID_MISSION_SUBMISSIONS,
-                List.of(List.of(5, 50), List.of(5, 100), List.of(4, 25)), VALID_MASTERY_CHECKS);
+                List.of(List.of(5, 50), List.of(5, 100), List.of(4, 25)), VALID_MASTERY_CHECKS, VALID_REGISTERED_NOTES);
 
         assertEquals(expected, student.toModelType());
     }
@@ -336,7 +343,7 @@ public class JsonAdaptedStudentTest {
         for (Object value : Arrays.asList(3, List.of(3), List.of(3, 50, 75), null)) {
             JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_PHONE, VALID_EMAIL,
                     VALID_TAGS, VALID_STUDIO_GROUP, VALID_MISSION_SUBMISSIONS,
-                    Arrays.asList(value), VALID_MASTERY_CHECKS);
+                    Arrays.asList(value), VALID_MASTERY_CHECKS, VALID_REGISTERED_NOTES);
 
             assertThrows(IllegalValueException.class, RegisteredStudioRecords.MESSAGE_CONSTRAINTS,
                     student::toModelType);
@@ -379,7 +386,7 @@ public class JsonAdaptedStudentTest {
         Set<MissionId> submittedIds = Arrays.stream(missionIds).map(MissionId::new).collect(Collectors.toSet());
         return new Student(student.getName(), student.getPhone(), student.getEmail(), student.getTags(),
                 student.getStudioGroup(), new MissionSubmissions(submittedIds), student.getRegisteredStudioRecords(),
-                student.getRegisteredMasteryChecks());
+                student.getRegisteredMasteryChecks(), student.getRegisteredNotes());
     }
 
     /**
@@ -394,7 +401,7 @@ public class JsonAdaptedStudentTest {
         return new Student(student.getName(), student.getPhone(), student.getEmail(), student.getTags(),
                 student.getStudioGroup(), student.getMissionSubmissions(),
                 new RegisteredStudioRecords(studioRecordsByWeek),
-                student.getRegisteredMasteryChecks());
+                student.getRegisteredMasteryChecks(), student.getRegisteredNotes());
     }
 
     /**
@@ -522,6 +529,39 @@ public class JsonAdaptedStudentTest {
         }
     }
 
+    @Test
+    public void toModelRegisteredNotes_malformedRecords_throwsIllegalValueException() {
+        for (Object record : Arrays.asList(null, 1, "note", Map.of(), List.of(), List.of(1),
+                List.of(1, "Valid note", "extra"))) {
+            JsonAdaptedStudent adapted = withSavedNotes(Arrays.asList(record));
+
+            assertThrows(IllegalValueException.class, RegisteredNotes.MESSAGE_CONSTRAINTS,
+                    adapted::toModelRegisteredNotes);
+        }
+    }
+
+    @Test
+    public void toModelRegisteredNotes_invalidNoteIds_throwsIllegalValueException() {
+        for (Object noteId : Arrays.asList(null, 0, -1, 11, Integer.MAX_VALUE, 1L, 1.0, "1", true)) {
+            JsonAdaptedStudent adapted = withSavedNotes(List.of(Arrays.asList(noteId, "Valid note")));
+
+            assertThrows(IllegalValueException.class, RegisteredNotes.MESSAGE_CONSTRAINTS,
+                    adapted::toModelRegisteredNotes);
+        }
+    }
+
+    @Test
+    public void toModelRegisteredNotes_invalidNoteTexts_throwsIllegalValueException() {
+        String overlongNote = "a".repeat(Note.MAX_NOTE_LENGTH + 1);
+        for (Object noteText : Arrays.asList(null, "", " ", "Invalid note!", overlongNote,
+                1, true, List.of(), Map.of())) {
+            JsonAdaptedStudent adapted = withSavedNotes(List.of(Arrays.asList(1, noteText)));
+
+            assertThrows(IllegalValueException.class, Note.MESSAGE_CONSTRAINTS,
+                    adapted::toModelRegisteredNotes);
+        }
+    }
+
     /**
      * Creates valid adapted student details with the supplied saved mastery check entries.
      *
@@ -530,7 +570,18 @@ public class JsonAdaptedStudentTest {
      */
     private static JsonAdaptedStudent withSavedMasteryChecks(List<?> appointments) {
         return new JsonAdaptedStudent(VALID_NAME, VALID_PHONE, VALID_EMAIL, VALID_TAGS, VALID_STUDIO_GROUP,
-                VALID_MISSION_SUBMISSIONS, VALID_REGISTERED_STUDIO_RECORDS, appointments);
+                VALID_MISSION_SUBMISSIONS, VALID_REGISTERED_STUDIO_RECORDS, appointments, VALID_REGISTERED_NOTES);
+    }
+
+    /**
+     * Creates valid adapted student details with the supplied saved note entries.
+     *
+     * @param notes Raw note records.
+     * @return Adapted student containing the supplied note records.
+     */
+    private static JsonAdaptedStudent withSavedNotes(List<?> notes) {
+        return new JsonAdaptedStudent(VALID_NAME, VALID_PHONE, VALID_EMAIL, VALID_TAGS, VALID_STUDIO_GROUP,
+                VALID_MISSION_SUBMISSIONS, VALID_REGISTERED_STUDIO_RECORDS, VALID_MASTERY_CHECKS, notes);
     }
 
 }

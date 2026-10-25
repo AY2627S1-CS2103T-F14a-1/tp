@@ -26,6 +26,8 @@ import seedu.address.storage.StorageManager;
 /** Tests numeric mission parsing and ensures pending execution cannot alter saved data. */
 public class DeleteMissionCommandParserTest {
 
+    private static final String USAGE_SUFFIX = "\n" + DeleteMissionCommand.MESSAGE_USAGE;
+
     @TempDir
     public Path directory;
 
@@ -47,7 +49,7 @@ public class DeleteMissionCommandParserTest {
                 "M9223372036854775808", "999999999999999999999999", "3 4", "3 x/test")) {
             ParseException error = assertThrows(ParseException.class, () ->
                     new DeleteMissionCommandParser().parse("m/" + value));
-            assertEquals(MissionId.MESSAGE_CONSTRAINTS,
+            assertEquals(MissionId.MESSAGE_CONSTRAINTS + USAGE_SUFFIX,
                     error.getMessage());
         }
     }
@@ -57,12 +59,13 @@ public class DeleteMissionCommandParserTest {
         for (String input : List.of("", " ")) {
             ParseException error = assertThrows(ParseException.class, () ->
                     new DeleteMissionCommandParser().parse(input));
-            assertEquals(CliSyntax.PREFIX_MISSION.getMissingMessage(), error.getMessage());
+            assertEquals(CliSyntax.PREFIX_MISSION.getMissingMessage() + USAGE_SUFFIX,
+                    error.getMessage());
         }
-        assertEquals(CliSyntax.PREFIX_MISSION.getDuplicateMessage(),
-                assertThrows(ParseException.class, () ->
+        assertEquals(CliSyntax.PREFIX_MISSION.getDuplicateMessage() + USAGE_SUFFIX,
+                    assertThrows(ParseException.class, () ->
                         new DeleteMissionCommandParser().parse("m/M03 m/M03")).getMessage());
-        assertEquals(String.format(Messages.MESSAGE_INVALID_COMMAND_FORMAT, DeleteMissionCommand.MESSAGE_USAGE),
+        assertEquals(Messages.MESSAGE_INVALID_COMMAND + USAGE_SUFFIX,
                 assertThrows(ParseException.class, () ->
                         new DeleteMissionCommandParser().parse("extra m/M03")).getMessage());
     }
@@ -77,7 +80,8 @@ public class DeleteMissionCommandParserTest {
         String saved = Files.readString(file);
         LogicManager logic = new LogicManager(model, storage);
         CommandException error = assertThrows(CommandException.class, () -> logic.execute("delmission m/M03"));
-        assertEquals("Mission M03 does not exist.", error.getMessage());
+        assertEquals("Mission M03 does not exist.",
+                    error.getMessage());
         assertEquals(saved, Files.readString(file));
         assertEquals(storage.readAddressBook().orElseThrow(), model.getAddressBook());
     }

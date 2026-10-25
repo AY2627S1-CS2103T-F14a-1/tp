@@ -22,11 +22,15 @@ public class AddMissionCommandParser implements Parser<AddMissionCommand> {
     @Override
     public AddMissionCommand parse(String args) throws ParseException {
         requireNonNull(args);
-        ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
-                args, AddMissionCommand.MESSAGE_USAGE, PREFIX_NAME, PREFIX_DATE);
+        try {
+            ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
+                    args, PREFIX_NAME, PREFIX_DATE);
 
-        String name = ParserUtil.parseMissionName(argMultimap.getValue(PREFIX_NAME).get());
-        LocalDate deadline = ParserUtil.parseMissionDeadline(argMultimap.getValue(PREFIX_DATE).get());
-        return new AddMissionCommand(name, deadline);
+            String name = ParserUtil.parseMissionName(argMultimap.getValue(PREFIX_NAME).get());
+            LocalDate deadline = ParserUtil.parseMissionDeadline(argMultimap.getValue(PREFIX_DATE).get());
+            return new AddMissionCommand(name, deadline);
+        } catch (ParseException e) {
+            throw new ParseException(e.getMessage() + "\n" + AddMissionCommand.MESSAGE_USAGE);
+        }
     }
 }

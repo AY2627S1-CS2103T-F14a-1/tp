@@ -15,14 +15,17 @@ import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 
 import seedu.address.logic.commands.AddMasteryCheckCommand;
+import seedu.address.logic.commands.AddNoteCommand;
 import seedu.address.logic.commands.AddStudentCommand;
 import seedu.address.logic.commands.AddStudioRecordCommand;
 import seedu.address.logic.commands.ClearCommand;
 import seedu.address.logic.commands.DeleteMasteryCheckCommand;
+import seedu.address.logic.commands.DeleteNoteCommand;
 import seedu.address.logic.commands.DeleteStudentCommand;
 import seedu.address.logic.commands.DeleteStudioRecordCommand;
 import seedu.address.logic.commands.EditCommand;
 import seedu.address.logic.commands.EditCommand.EditStudentDescriptor;
+import seedu.address.logic.commands.EditNoteCommand;
 import seedu.address.logic.commands.EditStudioRecordCommand;
 import seedu.address.logic.commands.ExitCommand;
 import seedu.address.logic.commands.FindCommand;
@@ -37,6 +40,7 @@ import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.masterycheck.MasteryCheck;
 import seedu.address.model.mission.MissionId;
 import seedu.address.model.student.NameContainsKeywordsPredicate;
+import seedu.address.model.student.Note;
 import seedu.address.model.student.RegisteredMasteryChecks;
 import seedu.address.model.student.Student;
 import seedu.address.model.student.StudioRecord;
@@ -178,7 +182,8 @@ public class AddressBookParserTest {
     @Test
     public void parseCommand_addStudioRecordMissingArguments_reportsAllMissingPrefixes() {
         String expected = String.join("\n", CliSyntax.PREFIX_INDEX.getMissingMessage(),
-                CliSyntax.PREFIX_WEEK.getMissingMessage(), CliSyntax.PREFIX_STUDIO_EFFORT.getMissingMessage());
+                CliSyntax.PREFIX_WEEK.getMissingMessage(), CliSyntax.PREFIX_STUDIO_EFFORT.getMissingMessage(),
+                AddStudioRecordCommand.MESSAGE_USAGE);
 
         assertThrows(ParseException.class, expected, () ->
                 parser.parseCommand("addstudiorecord"));
@@ -203,7 +208,7 @@ public class AddressBookParserTest {
     @Test
     public void parseCommand_deleteStudioRecordMissingArguments_reportsAllMissingPrefixes() {
         String expected = String.join("\n", CliSyntax.PREFIX_INDEX.getMissingMessage(),
-                CliSyntax.PREFIX_WEEK.getMissingMessage());
+                CliSyntax.PREFIX_WEEK.getMissingMessage(), DeleteStudioRecordCommand.MESSAGE_USAGE);
 
         assertThrows(ParseException.class, expected, () ->
                 parser.parseCommand("delstudiorecord"));
@@ -241,7 +246,8 @@ public class AddressBookParserTest {
 
     @Test
     public void parseCommand_masteryCheckInvalidDate_throwsParseException() {
-        assertThrows(ParseException.class, ParserUtil.MESSAGE_INVALID_MASTERY_CHECK_DATETIME, () ->
+        assertThrows(ParseException.class,
+                ParserUtil.MESSAGE_INVALID_MASTERY_CHECK_DATETIME + "\n" + AddMasteryCheckCommand.MESSAGE_USAGE, () ->
                 parser.parseCommand("addmc id/1 num/1 dt/31-04|14:30"));
     }
 
@@ -257,7 +263,7 @@ public class AddressBookParserTest {
     @Test
     public void parseCommand_deleteMasteryCheckInvalidNumber_reportsMasteryCheckConstraint() {
         assertThrows(ParseException.class,
-                RegisteredMasteryChecks.MESSAGE_CONSTRAINTS, () ->
+                RegisteredMasteryChecks.MESSAGE_CONSTRAINTS + "\n" + DeleteMasteryCheckCommand.MESSAGE_USAGE, () ->
                 parser.parseCommand("delmc id/1 num/0"));
     }
 
@@ -275,4 +281,30 @@ public class AddressBookParserTest {
         assertEquals(expected, parser.parseCommand("unmarkmc id/1 num/1"));
         assertEquals(expected, parser.parseCommand("UNMARKMC id/1 num/1"));
     }
+
+    @Test
+    public void parseCommand_addNoteIgnoringCase_returnsCommand() throws Exception {
+        AddNoteCommand expected = new AddNoteCommand(INDEX_FIRST_STUDENT, 3, new Note("Review lecture notes"));
+
+        assertEquals(expected, parser.parseCommand("addnote id/1 ni/3 nt/Review lecture notes"));
+        assertEquals(expected, parser.parseCommand("ADDNOTE id/1 ni/3 nt/Review lecture notes"));
+        assertEquals(expected, parser.parseCommand("  AddNote\tid/1\tni/3 nt/Review lecture notes  "));
+    }
+
+    @Test
+    public void parseCommand_deleteNoteIgnoringCase_returnsCommand() throws Exception {
+        DeleteNoteCommand expected = new DeleteNoteCommand(INDEX_FIRST_STUDENT, 3);
+
+        assertEquals(expected, parser.parseCommand("delnote id/1 ni/3"));
+        assertEquals(expected, parser.parseCommand("DELNOTE id/1 ni/3"));
+        assertEquals(expected, parser.parseCommand("  DelNote\tid/1\tni/3  "));
+    }
+
+    @Test
+    public void parseCommand_editNote() throws ParseException {
+        EditNoteCommand command = (EditNoteCommand) parser.parseCommand(EditNoteCommand.COMMAND_WORD + " id/"
+                + INDEX_FIRST_STUDENT.getOneBased() + " ni/1 nt/hello");
+        assertEquals(new EditNoteCommand(INDEX_FIRST_STUDENT, 1, new Note("hello")), command);
+    }
+
 }
