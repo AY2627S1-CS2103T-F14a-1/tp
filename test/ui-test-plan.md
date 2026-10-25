@@ -1,5 +1,17 @@
 # UI Test Plan
 
+## Notes details panel
+
+Use two students: student 1 has note IDs 5 and 2, added in that order, while
+student 2 has no notes.
+
+| ID | Steps | Expected result |
+| --- | --- | --- |
+| NOTE-VIEW-001 | Run `view id/1`. | A Notes table appears with `ID` and `Note` headers. Notes 2 and 5 appear in ascending ID order with their full text. |
+| NOTE-VIEW-002 | Run `view id/2`. | The Notes table retains its headers and shows `No notes recorded.` across both columns. No notes from student 1 remain visible. |
+| NOTE-VIEW-003 | Run `view id/1` again. | Notes 2 and 5 reappear once each, without duplicated or stale rows. |
+| NOTE-VIEW-004 | Resize the window from narrow to wide and back while viewing student 1. | Note text wraps within the Notes table and no horizontal scrollbar appears. |
+
 ## Edit-note command regression
 
 `EditNoteCommand` is currently not registered with a parser or command
