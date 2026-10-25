@@ -15,7 +15,7 @@ import seedu.address.model.masterycheck.MasteryCheck;
  */
 public final class RegisteredMasteryChecks {
 
-    public static final String MESSAGE_CONSTRAINTS = "Provided integer is smaller or equal to 0. "
+    public static final String MESSAGE_CONSTRAINTS = "Provided integer is smaller than or equal to 0. "
             + "Mastery check number should be an integer greater than 0";
     public static final String MESSAGE_NON_NUMBER = "Non-integer value detected. "
             + "Mastery check number should be an integer";
