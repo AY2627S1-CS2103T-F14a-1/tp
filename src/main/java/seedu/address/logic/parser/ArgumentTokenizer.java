@@ -75,9 +75,10 @@ public class ArgumentTokenizer {
             String prefix,
             int fromIndex) {
 
-        int prefixIndex = argsString.indexOf(prefix, fromIndex);
-
-        while (prefixIndex != -1) {
+        for (int prefixIndex = fromIndex; prefixIndex <= argsString.length() - prefix.length(); prefixIndex++) {
+            if (!argsString.regionMatches(true, prefixIndex, prefix, 0, prefix.length())) {
+                continue;
+            }
             boolean isAtStart = prefixIndex == 0;
             boolean hasWhitespaceBefore =
                     prefixIndex > 0
@@ -87,8 +88,6 @@ public class ArgumentTokenizer {
             if (isAtStart || hasWhitespaceBefore) {
                 return prefixIndex;
             }
-
-            prefixIndex = argsString.indexOf(prefix, prefixIndex + 1);
         }
 
         return -1;

@@ -64,6 +64,15 @@ public class AddStudentCommandParserTest {
     }
 
     @Test
+    public void parse_uppercasePrefixes_success() {
+        Student expectedStudent = new StudentBuilder(BOB).withTags(VALID_TAG_FRIEND).build();
+
+        assertParseSuccess(parser, "N/" + VALID_NAME_BOB + " P/" + VALID_PHONE_BOB
+                        + " E/" + VALID_EMAIL_BOB + " T/" + VALID_TAG_FRIEND + " G/" + VALID_STUDIO_GROUP_BOB,
+                new AddStudentCommand(expectedStudent));
+    }
+
+    @Test
     public void parse_repeatedNonTagValue_failure() {
         String validExpectedStudentString = NAME_DESC_BOB + PHONE_DESC_BOB + EMAIL_DESC_BOB
                 + TAG_DESC_FRIEND + STUDIO_GROUP_DESC_BOB;
