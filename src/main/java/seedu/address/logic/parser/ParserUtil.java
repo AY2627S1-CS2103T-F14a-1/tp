@@ -260,7 +260,7 @@ public class ParserUtil {
             }
             return trimmedNumber;
         } catch (NumberFormatException _) {
-            throw new ParseException(RegisteredMasteryChecks.MESSAGE_CONSTRAINTS);
+            throw new ParseException(RegisteredMasteryChecks.MESSAGE_NON_NUMBER);
         }
     }
 

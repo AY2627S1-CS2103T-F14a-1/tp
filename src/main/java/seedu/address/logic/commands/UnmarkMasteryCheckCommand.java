@@ -36,7 +36,7 @@ public class UnmarkMasteryCheckCommand extends Command {
             "%1$s’s mastery check %2$s is already incomplete. No changes made.";
 
     public static final String MESSAGE_MASTERY_CHECK_NOT_FOUND =
-            "Mastery check %1$s does not exist for %2$s.";
+            "Mastery check %1$s does not exist for %2$s. You can add one using the addmc command.";
 
     private static final Logger logger = LogsCenter.getLogger(UnmarkMasteryCheckCommand.class);
 

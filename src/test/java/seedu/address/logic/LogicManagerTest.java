@@ -541,8 +541,9 @@ public class LogicManagerTest {
                 logic.execute("markmc id/1 num/0"));
         assertEquals(saved, Files.readString(storage.getAddressBookFilePath()));
         assertStudioState(model, storage, marked);
-        assertThrows(CommandException.class, "Mastery check 3 does not exist for Amy Bee.", () ->
-                logic.execute("unmarkmc id/1 num/3"));
+        assertThrows(CommandException.class,
+                "Mastery check 3 does not exist for Amy Bee. You can add one using the addmc command.", () ->
+                        logic.execute("unmarkmc id/1 num/3"));
         assertEquals(saved, Files.readString(storage.getAddressBookFilePath()));
         assertStudioState(model, storage, marked);
 
