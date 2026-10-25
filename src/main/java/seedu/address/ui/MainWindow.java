@@ -1,6 +1,7 @@
 package seedu.address.ui;
 
 import java.nio.file.Path;
+import java.util.List;
 import java.util.logging.Logger;
 
 import javafx.event.ActionEvent;
@@ -274,8 +275,16 @@ public class MainWindow extends UiPart<Stage> {
                     .getSelectionModel()
                     .clearSelection();
 
-            resultDisplay.setFeedbackToUser(
-                    commandResult.getFeedbackToUser());
+            List<String> warnings = commandResult.getWarnings();
+            if (warnings.isEmpty()) {
+                resultDisplay.setFeedbackToUser(commandResult.getFeedbackToUser());
+            } else {
+                resultDisplay.setFeedbackToUser(
+                        commandResult.getFeedbackToUser()
+                                + "\n"
+                                + "WARNING:\n"
+                                + String.join("\n", warnings));
+            }
 
             commandResult.getStudentToView().ifPresent(student -> {
                 studentDetailsPanel.showStudent(student,

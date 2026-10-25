@@ -24,6 +24,7 @@ public class CommandResult {
      * Student to display in the profile panel, if any.
      */
     private final String feedbackToUser;
+    private final List<String> warnings;
 
     /** Help information should be shown to the user. */
     private final boolean showHelp;
@@ -49,11 +50,13 @@ public class CommandResult {
                          boolean showHelp,
                          boolean exit,
                          Student studentToView,
+                         List<String> warnings,
                          List<Mission> missions) {
         this.feedbackToUser = requireNonNull(feedbackToUser);
         this.showHelp = showHelp;
         this.exit = exit;
         this.studentToView = studentToView;
+        this.warnings = requireNonNull(warnings);
         this.missions = requireNonNull(missions);
     }
 
@@ -69,7 +72,7 @@ public class CommandResult {
             Student studentToView,
             List<Mission> missions) {
 
-        this(feedbackToUser, false, false, studentToView, missions);
+        this(feedbackToUser, false, false, studentToView, List.of(), missions);
     }
 
     /**
@@ -79,7 +82,7 @@ public class CommandResult {
      * @param feedbackToUser feedback message displayed to the user
      */
     public CommandResult(String feedbackToUser) {
-        this(feedbackToUser, false, false, null, List.of());
+        this(feedbackToUser, false, false, null, List.of(), List.of());
     }
 
     /**
@@ -90,7 +93,7 @@ public class CommandResult {
      * @param studentToView student to display in the profile panel
      */
     public CommandResult(String feedbackToUser, Student studentToView) {
-        this(feedbackToUser, false, false, studentToView, List.of());
+        this(feedbackToUser, false, false, studentToView, List.of(), List.of());
     }
 
     /**
@@ -101,7 +104,18 @@ public class CommandResult {
      * @param exit whether the application should exit
      */
     public CommandResult(String feedbackToUser, boolean showHelp, boolean exit) {
-        this(feedbackToUser, showHelp, exit, null, List.of());
+        this(feedbackToUser, showHelp, exit, null, List.of(), List.of());
+    }
+
+    /**
+     * Creates a {@code CommandResult} that displays the specified student in the profile panel with a warning.
+     *
+     * @param feedbackToUser feedback message displayed to the user
+     * @param warnings warnings to display to the user
+     * @param studentToView student to display in the profile panel
+     */
+    public CommandResult(String feedbackToUser, List<String> warnings, Student studentToView) {
+        this(feedbackToUser, false, false, studentToView, warnings, List.of());
     }
 
     /**
@@ -120,6 +134,15 @@ public class CommandResult {
      */
     public String getFeedbackToUser() {
         return feedbackToUser;
+    }
+
+    /**
+     * Returns the warnings for the user.
+     *
+     * @return warnings to display
+     */
+    public List<String> getWarnings() {
+        return warnings;
     }
 
     /**
@@ -164,12 +187,13 @@ public class CommandResult {
                 && showHelp == otherCommandResult.showHelp
                 && exit == otherCommandResult.exit
                 && Objects.equals(studentToView, otherCommandResult.studentToView)
+                && Objects.equals(warnings, otherCommandResult.warnings)
                 && Objects.equals(missions, otherCommandResult.missions);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(feedbackToUser, showHelp, exit, studentToView, missions);
+        return Objects.hash(feedbackToUser, showHelp, exit, studentToView, warnings, missions);
     }
 
     @Override
@@ -179,6 +203,7 @@ public class CommandResult {
                 .add("showHelp", showHelp)
                 .add("exit", exit)
                 .add("studentToView", studentToView)
+                .add("warnings", warnings)
                 .add("missions", missions)
                 .toString();
     }
