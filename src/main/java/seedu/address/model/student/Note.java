@@ -11,7 +11,8 @@ public final class Note {
 
     public static final int MAX_NOTE_LENGTH = 100;
     public static final String MESSAGE_CONSTRAINTS =
-            "Notes should only contain alphanumeric characters and spaces, and should not be blank";
+            "Notes should only contain alphanumeric characters and spaces, should not be blank, "
+                    + "and be less than or equal to " + Note.MAX_NOTE_LENGTH + " characters";
 
     /*
      * The first character of the text must not be a whitespace,
