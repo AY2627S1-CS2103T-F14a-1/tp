@@ -265,3 +265,19 @@ ParserUtil and ArgumentMultimap tests continue to expect problem-only messages.
 Preamble-error regression: commands using the shared structure validator must
 show `Invalid command format!` followed by their usage exactly once, without a
 literal `%1$s` placeholder. Keep the intentional invalid-preamble cases above.
+
+
+## Mastery-check number error regression
+
+Run the complete ParserUtilTest and all four mastery-check command parser test suites.
+Non-positive integers (0, -1, and -2147483648) must report MESSAGE_CONSTRAINTS.
+Blank, malformed, and overflowing values must report MESSAGE_NON_NUMBER.
+Command parser errors must append the corresponding command usage.
+
+| ID | Steps | Expected result |
+| --- | --- | --- |
+| MC-NUMBER-001 | Register appointment 1 using `addmc id/1 num/1 dt/18-08|14:30`, then view the student. | Appointment 1 is registered and incomplete. |
+| MC-NUMBER-002 | Run each of addmc, delmc, markmc, and unmarkmc with `id/1 num/0` and `id/1 num/-1`; include a valid dt/ argument for addmc. Inspect saved data and view the student after each attempt. | Each error identifies a non-positive integer and includes its command usage. Records and saved data are unchanged. |
+| MC-NUMBER-003 | Run `markmc id/1 num/1`, then view the student. | Appointment 1 is completed. |
+| MC-NUMBER-004 | Repeat the four-command rejection sequence with blank num/, abc, 1.5, and 2147483648. Inspect saved data and view the student after each attempt. | Each error uses the non-integer message and includes its command usage. Appointment 1 remains completed; other records and saved data are unchanged. |
+| MC-NUMBER-005 | Run `unmarkmc id/1 num/1`, then view the student. | Appointment 1 returns to incomplete with its original time. |

@@ -259,9 +259,17 @@ public class ParserUtilTest {
     }
 
     @Test
-    public void parseMasteryCheckNumber_invalidValues_throwsParseException() {
-        for (String number : List.of("", WHITESPACE, "0", "-1", "1.5", "1e2", "abc", "1 2", "2147483648")) {
+    public void parseMasteryCheckNumber_nonPositiveValues_reportsNumberConstraint() {
+        for (String number : List.of("0", "-1", "-2147483648")) {
             assertThrows(ParseException.class, RegisteredMasteryChecks.MESSAGE_CONSTRAINTS, () ->
+                    ParserUtil.parseMasteryCheckNumber(number));
+        }
+    }
+
+    @Test
+    public void parseMasteryCheckNumber_nonIntegerOrOverflowingValues_reportsNonNumberMessage() {
+        for (String number : List.of("", WHITESPACE, "1.5", "1e2", "abc", "1 2", "2147483648")) {
+            assertThrows(ParseException.class, RegisteredMasteryChecks.MESSAGE_NON_NUMBER, () ->
                     ParserUtil.parseMasteryCheckNumber(number));
         }
     }

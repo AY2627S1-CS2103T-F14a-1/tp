@@ -47,10 +47,18 @@ public class MarkMasteryCheckCommandParserTest {
     }
 
     @Test
-    public void parse_invalidNumber_reportsMasteryCheckConstraint() {
-        for (String number : List.of("", "0", "-1", "abc", "1.5", "2147483648")) {
-            assertParseFailure(parser, "id/1 num/" + number,
-                RegisteredMasteryChecks.MESSAGE_CONSTRAINTS + USAGE_SUFFIX);
+    public void parse_nonPositiveNumber_reportsNumberConstraint() {
+        for (String number : List.of("0", "-1", "-2147483648")) {
+            assertParseFailure(parser, "id/1 num/" + number + "",
+                    RegisteredMasteryChecks.MESSAGE_CONSTRAINTS + USAGE_SUFFIX);
+        }
+    }
+
+    @Test
+    public void parse_nonIntegerOrOverflowingNumber_reportsNonNumberMessage() {
+        for (String number : List.of("", "1.5", "abc", "2147483648")) {
+            assertParseFailure(parser, "id/1 num/" + number + "",
+                    RegisteredMasteryChecks.MESSAGE_NON_NUMBER + USAGE_SUFFIX);
         }
     }
 
