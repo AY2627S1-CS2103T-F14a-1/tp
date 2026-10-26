@@ -1,6 +1,7 @@
 package seedu.address.logic.parser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.logic.parser.ParserUtil.MESSAGE_INVALID_EFFORT;
 import static seedu.address.logic.parser.ParserUtil.MESSAGE_INVALID_INDEX;
@@ -12,6 +13,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Year;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
@@ -424,5 +426,30 @@ public class ParserUtilTest {
             assertThrows(ParseException.class, ParserUtil.MESSAGE_INVALID_MISSION_CALENDAR_DATE, () ->
                     ParserUtil.parseMissionDeadline(value));
         }
+    }
+
+    @Test
+    public void parseMissionOverdueFilter_absent_returnsFalse() throws Exception {
+        assertFalse(ParserUtil.parseMissionOverdueFilter(Optional.empty()));
+    }
+
+    @Test
+    public void parseMissionOverdueFilter_validValue_returnsTrue() throws Exception {
+        assertTrue(ParserUtil.parseMissionOverdueFilter(Optional.of("overdue")));
+        assertTrue(ParserUtil.parseMissionOverdueFilter(Optional.of(" OVERDUE ")));
+    }
+
+    @Test
+    public void parseMissionOverdueFilter_invalidValue_throwsParseException() {
+        for (String value : new String[]{"", " ", "submitted", "overdue extra"}) {
+            assertThrows(ParseException.class, () ->
+                    ParserUtil.parseMissionOverdueFilter(Optional.of(value)));
+        }
+    }
+
+    @Test
+    public void parseMissionOverdueFilter_nullOptional_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () ->
+                ParserUtil.parseMissionOverdueFilter(null));
     }
 }

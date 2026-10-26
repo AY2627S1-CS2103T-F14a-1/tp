@@ -587,8 +587,8 @@ Format: `viewmission m/MISSION_ID [s/overdue]`
   does not confirm that no submission was made.
 * An invalid or nonexistent mission leaves records and the displayed list
   unchanged.
-* * With `s/overdue`, displays only students without a recorded submission
-    whose mission deadline is before today's local date.
+* With `s/overdue`, displays only students without a recorded submission
+  whose mission deadline is before today's local date.
 * Submitted students never appear in overdue results.
 * An empty result clears the displayed student list and reports count 0.
 * Marking a displayed overdue student removes them from the filtered list.

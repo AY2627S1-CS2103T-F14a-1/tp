@@ -4,8 +4,6 @@ import static java.util.Objects.requireNonNull;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_MISSION;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_STATUS;
 
-import java.util.Optional;
-
 import seedu.address.logic.commands.ViewMissionCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.mission.MissionId;
@@ -17,8 +15,6 @@ public class ViewMissionCommandParser implements Parser<ViewMissionCommand> {
 
     public static final String MESSAGE_INVALID_STATUS =
             "Invalid status filter. Use s/overdue or omit s/.";
-
-    private static final String STATUS_OVERDUE = "overdue";
 
     /**
      * Parses mission listing arguments without accessing application state.
@@ -40,29 +36,11 @@ public class ViewMissionCommandParser implements Parser<ViewMissionCommand> {
                     PREFIX_MISSION, PREFIX_STATUS);
             MissionId missionId =
                     ParserUtil.parseMissionId(arguments.getValue(PREFIX_MISSION).orElseThrow());
-            boolean overdueOnly = parseOverdueFilter(arguments.getValue(PREFIX_STATUS));
+            boolean overdueOnly =
+                    ParserUtil.parseMissionOverdueFilter(arguments.getValue(PREFIX_STATUS));
             return new ViewMissionCommand(missionId, overdueOnly);
         } catch (ParseException e) {
             throw new ParseException(e.getMessage() + "\n\n" + ViewMissionCommand.MESSAGE_USAGE);
         }
-    }
-
-    /**
-     * Validates the optional overdue filter.
-     *
-     * @param status Optional status value supplied by the user.
-     * @return True when the overdue filter is present.
-     * @throws ParseException If a supplied value is not overdue.
-     */
-    private boolean parseOverdueFilter(Optional<String> status) throws ParseException {
-        assert status != null;
-
-        if (status.isEmpty()) {
-            return false;
-        }
-        if (!STATUS_OVERDUE.equalsIgnoreCase(status.orElseThrow().strip())) {
-            throw new ParseException(MESSAGE_INVALID_STATUS);
-        }
-        return true;
     }
 }
