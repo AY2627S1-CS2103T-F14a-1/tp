@@ -855,7 +855,7 @@ testers are expected to do more *exploratory* testing.
    Expected: The student no longer appears in the submission report.
 
 1. Enter `markmission id/1 m/UNKNOWN` and `listmissions m/UNKNOWN`.
-   Expected: Both commands report that the mission does not exist and do not
+   Expected: Both commands report that the mission ID is invalid and do not
    change records. Enter `find g/1A`, then `listmissions m/M01`.
    Expected: Only students in the current filtered list are considered, and
    result indexes still correspond to that displayed list.
@@ -875,7 +875,7 @@ testers are expected to do more *exploratory* testing.
 
 ### Saving data and clearing records
 
-1. After successful commands in the preceding scenarios, close and relaunch
+1. Add a note, a mastery check, a mission, a mission submission, close and relaunch
    the app from the same working directory. Enter `view id/1`.
    Expected: The saved students, missions, studio records, notes, mastery
    checks, and submissions are restored.
