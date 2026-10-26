@@ -2,6 +2,7 @@ package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_MISSION;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_STATUS;
 import static seedu.address.model.Model.PREDICATE_SHOW_ALL_STUDENTS;
 
 import java.time.Clock;
@@ -19,21 +20,23 @@ import seedu.address.model.mission.MissionId;
 import seedu.address.model.student.Student;
 
 /**
- * Displays every student's recorded submission status for a selected mission.
+ * Displays submission statuses for a selected mission, optionally filtering to overdue records.
  */
 public class ViewMissionCommand extends Command {
 
     public static final String COMMAND_WORD = "viewmission";
 
     public static final String MESSAGE_USAGE = COMMAND_WORD
-            + ": Lists all students' submission statuses for a mission.\n"
-            + "Parameters: " + PREFIX_MISSION + "MISSION_ID\n"
-            + "Example: " + COMMAND_WORD + " " + PREFIX_MISSION + "M03";
+            + ": Lists submission statuses for a mission across all students.\n"
+            + "Parameters: " + PREFIX_MISSION + "MISSION_ID ["
+            + PREFIX_STATUS + "overdue]\n"
+            + "Example: " + COMMAND_WORD + " " + PREFIX_MISSION
+            + "M03 " + PREFIX_STATUS + "overdue";
 
     public static final String MESSAGE_SUCCESS =
             "%1$s\n%2$d student(s) listed.\n%3$s\n%4$s";
 
-    public static final String MESSAGE_NO_RESULTS = "No students to display.";
+    public static final String MESSAGE_NO_RESULTS = "No students match the query.";
 
     public static final String MESSAGE_MANUAL_RECORDS =
             "Results reflect manually maintained AvengerHub records.\n"
@@ -44,27 +47,41 @@ public class ViewMissionCommand extends Command {
     private static final String STATUS_OVERDUE = "Overdue";
 
     private final MissionId missionId;
+    private final boolean overdueOnly;
     private final Clock clock;
 
     /**
-     * Creates a command using the computer's local date.
+     * Creates a command listing every student's status using the local date.
      *
      * @param missionId Mission whose submission statuses should be displayed.
      * @throws NullPointerException If the mission ID is null.
      */
     public ViewMissionCommand(MissionId missionId) {
-        this(missionId, Clock.systemDefaultZone());
+        this(missionId, false);
+    }
+
+    /**
+     * Creates a command using the computer's local date.
+     *
+     * @param missionId Mission whose submission statuses should be displayed.
+     * @param overdueOnly Whether to show only missing submissions past the deadline.
+     * @throws NullPointerException If the mission ID is null.
+     */
+    public ViewMissionCommand(MissionId missionId, boolean overdueOnly) {
+        this(missionId, overdueOnly, Clock.systemDefaultZone());
     }
 
     /**
      * Creates a command using a supplied date source.
      *
      * @param missionId Mission whose submission statuses should be displayed.
+     * @param overdueOnly Whether to show only missing submissions past the deadline.
      * @param clock Clock supplying the evaluation date and time zone.
-     * @throws NullPointerException If either argument is null.
+     * @throws NullPointerException If the mission ID or clock is null.
      */
-    ViewMissionCommand(MissionId missionId, Clock clock) {
+    ViewMissionCommand(MissionId missionId, boolean overdueOnly, Clock clock) {
         this.missionId = requireNonNull(missionId);
+        this.overdueOnly = overdueOnly;
         this.clock = requireNonNull(clock);
     }
 
@@ -85,7 +102,12 @@ public class ViewMissionCommand extends Command {
         LocalDate today = LocalDate.now(clock);
         boolean isPastDeadline = mission.isPastDeadline(today);
 
-        model.updateFilteredStudentList(PREDICATE_SHOW_ALL_STUDENTS);
+        if (overdueOnly) {
+            model.updateFilteredStudentList(student -> isPastDeadline
+                    && !student.getMissionSubmissions().hasSubmission(missionId));
+        } else {
+            model.updateFilteredStudentList(PREDICATE_SHOW_ALL_STUDENTS);
+        }
         List<Student> displayedStudents = model.getFilteredStudentList();
         String rows = formatRows(displayedStudents, isPastDeadline);
 
@@ -139,18 +161,20 @@ public class ViewMissionCommand extends Command {
         }
         return other instanceof ViewMissionCommand otherCommand
                 && missionId.equals(otherCommand.missionId)
+                && overdueOnly == otherCommand.overdueOnly
                 && clock.equals(otherCommand.clock);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(missionId, clock);
+        return Objects.hash(missionId, overdueOnly, clock);
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
                 .add("missionId", missionId)
+                .add("overdueOnly", overdueOnly)
                 .add("clock", clock)
                 .toString();
     }

@@ -1,7 +1,9 @@
 package seedu.address.logic.commands;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -12,6 +14,7 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
@@ -49,7 +52,7 @@ public class ViewMissionCommandTest {
     public void execute_previousFilter_listsAllStudentsAndStatuses() throws Exception {
         model.updateFilteredStudentList(student -> student.equals(alice));
 
-        CommandResult result = new ViewMissionCommand(MISSION_ID, CLOCK).execute(model);
+        CommandResult result = new ViewMissionCommand(MISSION_ID, false, CLOCK).execute(model);
 
         assertEquals(List.of(alice, bob), model.getFilteredStudentList());
         assertEquals(
@@ -67,7 +70,7 @@ public class ViewMissionCommandTest {
         Mission mission = model.findMission(MISSION_ID).orElseThrow();
         model.setMission(mission, new Mission(MISSION_ID, mission.getName(), TODAY));
 
-        CommandResult result = new ViewMissionCommand(MISSION_ID, CLOCK).execute(model);
+        CommandResult result = new ViewMissionCommand(MISSION_ID, false, CLOCK).execute(model);
 
         assertEquals(
                 "M03 · Rune Reading (Due: 2026-10-26)\n"
@@ -83,7 +86,7 @@ public class ViewMissionCommandTest {
         model.updateFilteredStudentList(student -> student.equals(bob));
 
         CommandException exception = assertThrows(CommandException.class, () ->
-                new ViewMissionCommand(new MissionId("M99"), CLOCK).execute(model));
+                new ViewMissionCommand(new MissionId("M99"), false, CLOCK).execute(model));
 
         assertEquals("Mission M99 does not exist.", exception.getMessage());
         assertEquals(List.of(bob), model.getFilteredStudentList());
@@ -95,7 +98,7 @@ public class ViewMissionCommandTest {
         model.deleteStudent(alice);
         model.deleteStudent(bob);
 
-        CommandResult result = new ViewMissionCommand(MISSION_ID, CLOCK).execute(model);
+        CommandResult result = new ViewMissionCommand(MISSION_ID, false, CLOCK).execute(model);
 
         assertEquals(
                 "M03 · Rune Reading (Due: 2026-10-25)\n"
@@ -104,5 +107,90 @@ public class ViewMissionCommandTest {
                         + ViewMissionCommand.MESSAGE_MANUAL_RECORDS,
                 result.getFeedbackToUser());
         assertEquals(List.of(), model.getFilteredStudentList());
+    }
+
+    @Test
+    public void execute_overdueFilter_searchesAllStudentsAndExcludesSubmitted() throws Exception {
+        model.updateFilteredStudentList(student -> student.equals(alice));
+
+        CommandResult result = new ViewMissionCommand(MISSION_ID, true, CLOCK).execute(model);
+
+        assertEquals(List.of(bob), model.getFilteredStudentList());
+        assertEquals(
+                "M03 · Rune Reading (Due: 2026-10-25)\n"
+                        + "1 student(s) listed.\n"
+                        + "1. Bob Lee - Overdue\n"
+                        + ViewMissionCommand.MESSAGE_MANUAL_RECORDS,
+                result.getFeedbackToUser());
+        assertEquals(List.of(alice, bob), model.getAddressBook().getStudentList());
+    }
+
+    @Test
+    public void execute_deadlineTodayOrTomorrow_returnsNoOverdueStudents() throws Exception {
+        for (LocalDate deadline : List.of(TODAY, TODAY.plusDays(1))) {
+            Mission mission = model.findMission(MISSION_ID).orElseThrow();
+            model.setMission(mission, new Mission(MISSION_ID, mission.getName(), deadline));
+
+            CommandResult result = new ViewMissionCommand(MISSION_ID, true, CLOCK).execute(model);
+
+            assertEquals(List.of(), model.getFilteredStudentList());
+            assertEquals(
+                    "M03 · Rune Reading (Due: " + deadline + ")\n"
+                            + "0 student(s) listed.\n"
+                            + ViewMissionCommand.MESSAGE_NO_RESULTS + "\n"
+                            + ViewMissionCommand.MESSAGE_MANUAL_RECORDS,
+                    result.getFeedbackToUser());
+        }
+    }
+
+    @Test
+    public void execute_differentLocalDates_usesClockTimeZone() throws Exception {
+        Mission mission = model.findMission(MISSION_ID).orElseThrow();
+        model.setMission(mission, new Mission(MISSION_ID, mission.getName(), TODAY));
+        Instant instant = Instant.parse("2026-10-26T16:30:00Z");
+        Clock utcClock = Clock.fixed(instant, ZoneId.of("UTC"));
+        Clock localClock = Clock.fixed(instant, ZoneId.of("Asia/Makassar"));
+
+        new ViewMissionCommand(MISSION_ID, true, utcClock).execute(model);
+        assertEquals(List.of(), model.getFilteredStudentList());
+
+        new ViewMissionCommand(MISSION_ID, true, localClock).execute(model);
+        assertEquals(List.of(bob), model.getFilteredStudentList());
+    }
+
+    @Test
+    public void execute_filteredIndexes_viewMarkAndUnmarkTargetDisplayedStudent() throws Exception {
+        Index firstIndex = Index.fromOneBased(1);
+        new ViewMissionCommand(MISSION_ID, true, CLOCK).execute(model);
+
+        CommandResult viewResult = new ViewCommand(firstIndex).execute(model);
+        assertEquals(bob, viewResult.getStudentToView().orElseThrow());
+
+        new MarkMissionCommand(firstIndex, MISSION_ID).execute(model);
+        assertEquals(List.of(), model.getFilteredStudentList());
+        assertTrue(model.getAddressBook().getStudentList().get(1)
+                .getMissionSubmissions().hasSubmission(MISSION_ID));
+
+        new ViewMissionCommand(MISSION_ID, false, CLOCK).execute(model);
+        new UnmarkMissionCommand(Index.fromOneBased(2), MISSION_ID).execute(model);
+        assertFalse(model.getAddressBook().getStudentList().get(1)
+                .getMissionSubmissions().hasSubmission(MISSION_ID));
+
+        new ViewMissionCommand(MISSION_ID, true, CLOCK).execute(model);
+        assertEquals(List.of(bob), model.getFilteredStudentList());
+    }
+
+    @Test
+    public void execute_markFirstOverdueStudent_updatesRemainingDisplayedIndexes() throws Exception {
+        Student charlie = new StudentBuilder().withName("Charlie Lim").build();
+        model.addStudent(charlie);
+        new ViewMissionCommand(MISSION_ID, true, CLOCK).execute(model);
+        assertEquals(List.of(bob, charlie), model.getFilteredStudentList());
+
+        new MarkMissionCommand(Index.fromOneBased(1), MISSION_ID).execute(model);
+
+        assertEquals(List.of(charlie), model.getFilteredStudentList());
+        CommandResult result = new ViewCommand(Index.fromOneBased(1)).execute(model);
+        assertEquals(charlie, result.getStudentToView().orElseThrow());
     }
 }

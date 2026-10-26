@@ -52,4 +52,37 @@ public class ViewMissionCommandParserTest {
             assertParseFailure(parser, input, MissionId.MESSAGE_CONSTRAINTS + USAGE_SUFFIX);
         }
     }
+
+    @Test
+    public void parse_overdueFilter_returnsFilteredCommand() throws Exception {
+        ViewMissionCommand expected = new ViewMissionCommand(new MissionId("M03"), true);
+
+        assertParseSuccess(parser, "m/M03 s/overdue", expected);
+        assertParseSuccess(parser, "s/OVERDUE m/m03", expected);
+        assertParseSuccess(parser, "\tM/M03\tS/overdue\t", expected);
+        assertEquals(expected,
+                new AddressBookParser().parseCommand("VIEWMISSION m/M03 s/overdue"));
+    }
+
+    @Test
+    public void parse_invalidStatus_throwsParseException() {
+        for (String input : new String[]{
+            "m/M03 s/", "m/M03 s/submitted", "m/M03 s/overdue extra", "m/M03 s/overdue x/test"
+        }) {
+            assertParseFailure(parser, input,
+                    ViewMissionCommandParser.MESSAGE_INVALID_STATUS + USAGE_SUFFIX);
+        }
+    }
+
+    @Test
+    public void parse_duplicateStatus_throwsParseException() {
+        assertParseFailure(parser, "m/M03 s/overdue s/overdue",
+                CliSyntax.PREFIX_STATUS.getDuplicateMessage() + USAGE_SUFFIX);
+    }
+
+    @Test
+    public void parse_statusWithoutMission_throwsParseException() {
+        assertParseFailure(parser, "s/overdue",
+                CliSyntax.PREFIX_MISSION.getMissingMessage() + USAGE_SUFFIX);
+    }
 }
