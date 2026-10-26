@@ -118,14 +118,14 @@ public class StudentDetailsPanel extends UiPart<Region> {
     }
 
     /**
-     * Populates the notes grid with notes in ascending note-ID order.
+     * Populates the notes grid with notes in ascending note index order.
      * Displays an empty-state message when the student has no notes.
      *
      * @param student Student whose notes are displayed.
      */
     private void populateNotes(Student student) {
         notesGrid.getChildren().clear();
-        addGridLabel(notesGrid, "ID", 0, 0, true);
+        addGridLabel(notesGrid, "Index", 0, 0, true);
         addGridLabel(notesGrid, "Note", 1, 0, true);
 
         List<Note> notes = student.getRegisteredNotes().getRegisteredNotes();
