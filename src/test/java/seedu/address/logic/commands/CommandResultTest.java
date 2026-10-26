@@ -45,6 +45,26 @@ public class CommandResultTest {
     }
 
     @Test
+    public void equals_differentWarningsOrMissions_returnsFalse() {
+        Mission mission = new Mission(
+                new MissionId("M01"),
+                "Runes",
+                java.time.LocalDate.of(2026, 10, 20));
+        CommandResult commandResult = new CommandResult(
+                "feedback", false, false, AMY, List.of("Matching note text"), List.of(mission));
+        CommandResult matchingResult = new CommandResult(
+                "feedback", false, false, AMY, List.of("Matching note text"), List.of(mission));
+        CommandResult differentWarnings = new CommandResult(
+                "feedback", false, false, AMY, List.of("Other warning"), List.of(mission));
+        CommandResult differentMissions = new CommandResult(
+                "feedback", false, false, AMY, List.of("Matching note text"), List.of());
+
+        assertEquals(commandResult, matchingResult);
+        assertNotEquals(commandResult, differentWarnings);
+        assertNotEquals(commandResult, differentMissions);
+    }
+
+    @Test
     public void hashcode() {
         CommandResult commandResult = new CommandResult("feedback");
 

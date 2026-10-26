@@ -165,6 +165,15 @@ public class RegisteredNotesTest {
     }
 
     @Test
+    public void hasNoteText_matchingAbsentOrNullText_returnsExpectedResult() {
+        RegisteredNotes registeredNotes = new RegisteredNotes(Map.of(RegisteredNotes.MIN_NOTE_ID, FIRST_NOTE));
+
+        assertTrue(registeredNotes.hasNoteText(FIRST_NOTE.getNoteText()));
+        assertFalse(registeredNotes.hasNoteText(SECOND_NOTE.getNoteText()));
+        assertThrows(NullPointerException.class, () -> registeredNotes.hasNoteText(null));
+    }
+
+    @Test
     public void getNotesById_modifyMap_throwsUnsupportedOperationException() {
         RegisteredNotes registeredNotes = new RegisteredNotes(Map.of(RegisteredNotes.MIN_NOTE_ID, FIRST_NOTE));
         Map<Integer, Note> notes = registeredNotes.getNotesById();
