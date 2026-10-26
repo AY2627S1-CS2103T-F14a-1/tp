@@ -10,5 +10,8 @@
   },
   "devDependencies": {
     "markbind-cli": "7.2.1"
+  },
+  "dependencies": {
+    "serve": "^14.2.6"
   }
 }
