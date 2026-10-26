@@ -62,7 +62,7 @@ public class AddNoteCommand extends Command {
         RegisteredNotes updatedNotes;
         try {
             updatedNotes = registeredNotes.withNote(note);
-        } catch (IllegalArgumentException exception) {
+        } catch (IllegalStateException exception) {
             return new CommandResult(String.format(
                     MESSAGE_MAXIMUM_NOTES_REACHED, studentToUpdate.getName(), RegisteredNotes.MAX_NOTE_INDEX));
         }

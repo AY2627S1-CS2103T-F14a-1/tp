@@ -78,8 +78,8 @@ public class RegisteredNotesTest {
         RegisteredNotes registeredNotes = new RegisteredNotes(
                 Collections.nCopies(RegisteredNotes.MAX_NOTE_INDEX, FIRST_NOTE));
 
-        IllegalArgumentException exception = assertThrows(
-                IllegalArgumentException.class, () -> registeredNotes.withNote(SECOND_NOTE));
+        IllegalStateException exception = assertThrows(
+                IllegalStateException.class, () -> registeredNotes.withNote(SECOND_NOTE));
         assertEquals(RegisteredNotes.MESSAGE_CONSTRAINTS, exception.getMessage());
     }
 
