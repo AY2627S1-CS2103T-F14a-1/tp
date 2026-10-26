@@ -2,7 +2,6 @@ package seedu.address.logic.commands;
 
 import static java.util.Objects.hash;
 import static java.util.Objects.requireNonNull;
-import static seedu.address.commons.util.AppUtil.checkArgument;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_INDEX;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NOTE_TEXT;
 
@@ -34,6 +33,7 @@ public class AddNoteCommand extends Command {
             "Added %1$s's note.";
     public static final String MESSAGE_ALREADY_RECORDED =
             "%1$s’s note index has already been registered. No changes made.";
+    public static final String MESSAGE_WARNING_MATCHING_TEXT = "%1$s has a matching note text.";
 
     private final Index targetIndex;
     private final Note note;
@@ -57,10 +57,19 @@ public class AddNoteCommand extends Command {
         Student studentToUpdate = getStudentAtDisplayedIndex(model, targetIndex);
         RegisteredNotes registeredNotes = studentToUpdate.getRegisteredNotes();
 
+        boolean hasMatchingNoteText = registeredNotes.hasNoteText(note.getNoteText());
+
         Student updatedStudent = studentToUpdate.withRegisteredNotes(
                 registeredNotes.withNote(note));
         model.setStudent(studentToUpdate, updatedStudent);
-        return new CommandResult(String.format(MESSAGE_SUCCESS, studentToUpdate.getName()));
+
+        CommandResult result = new CommandResult(
+                String.format(MESSAGE_SUCCESS, studentToUpdate.getName()));
+        if (hasMatchingNoteText) {
+            return result.withWarning(
+                    String.format(MESSAGE_WARNING_MATCHING_TEXT, studentToUpdate.getName()));
+        }
+        return result;
     }
 
     @Override

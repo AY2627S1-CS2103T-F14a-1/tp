@@ -289,9 +289,9 @@ public class ParserUtil {
      *
      * @throws ParseException if the given {@code noteIndex} is invalid.
      */
-    public static Index parseNoteIndex(String noteIndex_str) throws ParseException {
-        requireNonNull(noteIndex_str);
-        Index noteIndex = ParserUtil.parseIndex(noteIndex_str);
+    public static Index parseNoteIndex(String noteIndexStr) throws ParseException {
+        requireNonNull(noteIndexStr);
+        Index noteIndex = ParserUtil.parseIndex(noteIndexStr);
         try {
             if (!RegisteredNotes.isValidNoteIndex(noteIndex)) {
                 throw new ParseException(RegisteredNotes.MESSAGE_CONSTRAINTS);

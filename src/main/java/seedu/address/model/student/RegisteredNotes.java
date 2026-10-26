@@ -64,6 +64,18 @@ public final class RegisteredNotes {
     }
 
     /**
+     * Returns whether a note with the same text has been registered.
+     *
+     * @param text Note text to check.
+     * @return True if matching note text has been registered.
+     * @throws NullPointerException If the text is {@code null}.
+     */
+    public boolean hasNoteText(String text) {
+        requireNonNull(text);
+        return registeredNotes.contains(new Note(text));
+    }
+
+    /**
      * Returns {@code RegisteredNotes} including the given note
      * without changing this object. Returns the same object if
      * the number of notes has reached capacity.

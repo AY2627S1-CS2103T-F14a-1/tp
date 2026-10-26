@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.Messages;
+import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.UserPrefs;
@@ -62,6 +63,25 @@ public class AddNoteCommandTest {
 
         assertCommandSuccess(command, model,
                 String.format(AddNoteCommand.MESSAGE_SUCCESS, studentToUpdate.getName()), expectedModel);
+    }
+
+    @Test
+    public void execute_matchingNoteText_appendsNoteAndReturnsWarning() throws CommandException {
+        Model model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
+        Student studentToUpdate = model.getFilteredStudentList().get(INDEX_FIRST_STUDENT.getZeroBased());
+        RegisteredNotes existingNotes = new RegisteredNotes(List.of(NOTE));
+        Student studentWithNote = studentToUpdate.withRegisteredNotes(existingNotes);
+        model.setStudent(studentToUpdate, studentWithNote);
+        AddNoteCommand command = new AddNoteCommand(INDEX_FIRST_STUDENT, NOTE);
+
+        CommandResult result = command.execute(model);
+        Student expectedStudent = studentWithNote.withRegisteredNotes(existingNotes.withNote(NOTE));
+
+        assertEquals(String.format(AddNoteCommand.MESSAGE_SUCCESS, studentToUpdate.getName()),
+                result.getFeedbackToUser());
+        assertEquals(List.of(String.format(
+                AddNoteCommand.MESSAGE_WARNING_MATCHING_TEXT, studentToUpdate.getName())), result.getWarnings());
+        assertEquals(expectedStudent, model.getFilteredStudentList().get(INDEX_FIRST_STUDENT.getZeroBased()));
     }
 
     @Test
