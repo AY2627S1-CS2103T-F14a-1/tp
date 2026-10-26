@@ -7,13 +7,17 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
+
+import seedu.address.commons.core.index.Index;
 
 /** Tests registered-note validation, immutability, updates, and value semantics. */
 public class RegisteredNotesTest {
@@ -30,7 +34,7 @@ public class RegisteredNotesTest {
     public void constructor_boundaryIds_storesNotes() {
         Map<Integer, Note> notes = Map.of(
                 RegisteredNotes.MIN_NOTE_ID, FIRST_NOTE,
-                RegisteredNotes.MAX_NOTE_ID, SECOND_NOTE);
+                RegisteredNotes.MAX_NOTE_INDEX, SECOND_NOTE);
 
         assertEquals(notes, new RegisteredNotes(notes).getNotesById());
     }
@@ -53,7 +57,7 @@ public class RegisteredNotesTest {
         assertThrows(IllegalArgumentException.class, () -> new RegisteredNotes(
                 Map.of(RegisteredNotes.MIN_NOTE_ID - 1, FIRST_NOTE)));
         assertThrows(IllegalArgumentException.class, () -> new RegisteredNotes(
-                Map.of(RegisteredNotes.MAX_NOTE_ID + 1, FIRST_NOTE)));
+                Map.of(RegisteredNotes.MAX_NOTE_INDEX + 1, FIRST_NOTE)));
     }
 
     @Test
@@ -61,77 +65,73 @@ public class RegisteredNotesTest {
         Map<Integer, Note> notes = new HashMap<>(Map.of(RegisteredNotes.MIN_NOTE_ID, FIRST_NOTE));
         RegisteredNotes registeredNotes = new RegisteredNotes(notes);
         notes.clear();
-        notes.put(RegisteredNotes.MAX_NOTE_ID, SECOND_NOTE);
+        notes.put(RegisteredNotes.MAX_NOTE_INDEX, SECOND_NOTE);
 
         assertEquals(Map.of(RegisteredNotes.MIN_NOTE_ID, FIRST_NOTE), registeredNotes.getNotesById());
     }
 
     @Test
-    public void withNote_newId_returnsUpdatedCopy() {
-        RegisteredNotes original = new RegisteredNotes(Map.of(RegisteredNotes.MIN_NOTE_ID, FIRST_NOTE));
-        RegisteredNotes updated = original.withNote(RegisteredNotes.MAX_NOTE_ID, SECOND_NOTE);
+    public void withNote_noteProvided_returnsUpdatedCopy() {
+        RegisteredNotes original = new RegisteredNotes(List.of(FIRST_NOTE));
+        RegisteredNotes updated = original.withNote(SECOND_NOTE);
 
-        assertEquals(Map.of(RegisteredNotes.MIN_NOTE_ID, FIRST_NOTE), original.getNotesById());
-        assertEquals(Map.of(
-                RegisteredNotes.MIN_NOTE_ID, FIRST_NOTE,
-                RegisteredNotes.MAX_NOTE_ID, SECOND_NOTE), updated.getNotesById());
+        assertEquals(List.of(FIRST_NOTE), original.getNotesById());
+        assertEquals(List.of(FIRST_NOTE, SECOND_NOTE), updated.getNotesById());
     }
 
     @Test
-    public void withNote_existingId_returnsSameInstance() {
-        RegisteredNotes registeredNotes = new RegisteredNotes(Map.of(RegisteredNotes.MIN_NOTE_ID, FIRST_NOTE));
+    public void withNote_maximumNotesReached_throwsIllegalStateException() {
+        RegisteredNotes registeredNotes = new RegisteredNotes(
+                Collections.nCopies(RegisteredNotes.MAX_NOTE_INDEX, FIRST_NOTE));
 
-        assertSame(registeredNotes, registeredNotes.withNote(RegisteredNotes.MIN_NOTE_ID, SECOND_NOTE));
+        IllegalStateException exception = assertThrows(
+                IllegalStateException.class, () -> registeredNotes.withNote(SECOND_NOTE));
+        assertEquals(RegisteredNotes.MESSAGE_MAX_NOTES, exception.getMessage());
     }
 
     @Test
-    public void withNote_nullNoteOrInvalidId_throwsException() {
+    public void withNote_nullNote_throwsNullPointerException() {
         RegisteredNotes registeredNotes = new RegisteredNotes();
 
-        assertThrows(NullPointerException.class, () -> registeredNotes.withNote(RegisteredNotes.MIN_NOTE_ID, null));
-        assertThrows(IllegalArgumentException.class, () ->
-                registeredNotes.withNote(RegisteredNotes.MIN_NOTE_ID - 1, FIRST_NOTE));
-        assertThrows(IllegalArgumentException.class, () ->
-                registeredNotes.withNote(RegisteredNotes.MAX_NOTE_ID + 1, FIRST_NOTE));
+        assertThrows(NullPointerException.class, () -> registeredNotes.withNote(null));
         assertTrue(registeredNotes.getNotesById().isEmpty());
     }
 
     @Test
-    public void withoutNote_existingAndMissingIds_returnsExpectedCopies() {
-        RegisteredNotes registeredNotes = new RegisteredNotes(Map.of(
-                RegisteredNotes.MIN_NOTE_ID, FIRST_NOTE,
-                RegisteredNotes.MAX_NOTE_ID, SECOND_NOTE));
+    public void withoutNote_existingAndMissingIndexes_returnsExpectedCopies() {
+        RegisteredNotes registeredNotes = new RegisteredNotes(List.of(FIRST_NOTE, SECOND_NOTE));
 
-        assertEquals(Map.of(RegisteredNotes.MAX_NOTE_ID, SECOND_NOTE),
-                registeredNotes.withoutNote(RegisteredNotes.MIN_NOTE_ID).getNotesById());
-        assertEquals(Map.of(RegisteredNotes.MIN_NOTE_ID, FIRST_NOTE, RegisteredNotes.MAX_NOTE_ID, SECOND_NOTE),
-                registeredNotes.getNotesById());
-        assertSame(registeredNotes, registeredNotes.withoutNote(2));
+        assertEquals(List.of(SECOND_NOTE),
+                registeredNotes.withoutNote(Index.fromOneBased(1)).getNotesById());
+        assertEquals(List.of(FIRST_NOTE, SECOND_NOTE), registeredNotes.getNotesById());
+        assertSame(registeredNotes, registeredNotes.withoutNote(Index.fromOneBased(3)));
     }
 
     @Test
-    public void withoutNote_invalidId_throwsIllegalArgumentException() {
+    public void withoutNote_nullOrInvalidIndex_throwsException() {
         RegisteredNotes registeredNotes = new RegisteredNotes();
 
-        assertThrows(IllegalArgumentException.class, () -> registeredNotes.withoutNote(0));
-        assertThrows(IllegalArgumentException.class, () -> registeredNotes.withoutNote(11));
+        assertThrows(NullPointerException.class, () -> registeredNotes.withoutNote(null));
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
+                registeredNotes.withoutNote(Index.fromOneBased(RegisteredNotes.MAX_NOTE_INDEX + 1)));
+        assertEquals(RegisteredNotes.MESSAGE_CONSTRAINTS, exception.getMessage());
     }
 
     @Test
     public void editNote_existingIdWithDifferentNote_returnsUpdatedCopy() {
         RegisteredNotes registeredNotes = new RegisteredNotes(Map.of(
                 RegisteredNotes.MIN_NOTE_ID, FIRST_NOTE,
-                RegisteredNotes.MAX_NOTE_ID, SECOND_NOTE));
+                RegisteredNotes.MAX_NOTE_INDEX, SECOND_NOTE));
         Note updatedNote = new Note("Prepare tutorial");
 
         RegisteredNotes updatedNotes = registeredNotes.editNote(RegisteredNotes.MIN_NOTE_ID, updatedNote);
 
         assertEquals(Map.of(
                 RegisteredNotes.MIN_NOTE_ID, FIRST_NOTE,
-                RegisteredNotes.MAX_NOTE_ID, SECOND_NOTE), registeredNotes.getNotesById());
+                RegisteredNotes.MAX_NOTE_INDEX, SECOND_NOTE), registeredNotes.getNotesById());
         assertEquals(Map.of(
                 RegisteredNotes.MIN_NOTE_ID, updatedNote,
-                RegisteredNotes.MAX_NOTE_ID, SECOND_NOTE), updatedNotes.getNotesById());
+                RegisteredNotes.MAX_NOTE_INDEX, SECOND_NOTE), updatedNotes.getNotesById());
     }
 
     @Test
@@ -150,7 +150,7 @@ public class RegisteredNotesTest {
         assertThrows(IllegalArgumentException.class, () ->
                 registeredNotes.editNote(RegisteredNotes.MIN_NOTE_ID - 1, SECOND_NOTE));
         assertThrows(IllegalArgumentException.class, () ->
-                registeredNotes.editNote(RegisteredNotes.MAX_NOTE_ID + 1, SECOND_NOTE));
+                registeredNotes.editNote(RegisteredNotes.MAX_NOTE_INDEX + 1, SECOND_NOTE));
         assertEquals(Map.of(RegisteredNotes.MIN_NOTE_ID, FIRST_NOTE), registeredNotes.getNotesById());
     }
 
@@ -159,7 +159,7 @@ public class RegisteredNotesTest {
         RegisteredNotes registeredNotes = new RegisteredNotes(Map.of(RegisteredNotes.MIN_NOTE_ID, FIRST_NOTE));
 
         assertTrue(registeredNotes.hasNote(RegisteredNotes.MIN_NOTE_ID));
-        assertFalse(registeredNotes.hasNote(RegisteredNotes.MAX_NOTE_ID));
+        assertFalse(registeredNotes.hasNote(RegisteredNotes.MAX_NOTE_INDEX));
         assertThrows(IllegalArgumentException.class, () -> registeredNotes.hasNote(0));
         assertThrows(IllegalArgumentException.class, () -> registeredNotes.hasNote(11));
     }
@@ -178,9 +178,9 @@ public class RegisteredNotesTest {
     @Test
     public void isValidNoteId_boundaryAndOutOfRangeIds_returnsExpectedValidity() {
         assertTrue(RegisteredNotes.isValidNoteId(RegisteredNotes.MIN_NOTE_ID));
-        assertTrue(RegisteredNotes.isValidNoteId(RegisteredNotes.MAX_NOTE_ID));
+        assertTrue(RegisteredNotes.isValidNoteId(RegisteredNotes.MAX_NOTE_INDEX));
         assertFalse(RegisteredNotes.isValidNoteId(RegisteredNotes.MIN_NOTE_ID - 1));
-        assertFalse(RegisteredNotes.isValidNoteId(RegisteredNotes.MAX_NOTE_ID + 1));
+        assertFalse(RegisteredNotes.isValidNoteId(RegisteredNotes.MAX_NOTE_INDEX + 1));
         assertFalse(RegisteredNotes.isValidNoteId(Integer.MIN_VALUE));
         assertFalse(RegisteredNotes.isValidNoteId(Integer.MAX_VALUE));
     }
@@ -189,7 +189,7 @@ public class RegisteredNotesTest {
     public void equals_hashCodeAndHashSetLookup_respectValueEquality() {
         RegisteredNotes first = new RegisteredNotes(Map.of(RegisteredNotes.MIN_NOTE_ID, FIRST_NOTE));
         RegisteredNotes equal = new RegisteredNotes(Map.of(RegisteredNotes.MIN_NOTE_ID, new Note("Review lecture")));
-        RegisteredNotes different = new RegisteredNotes(Map.of(RegisteredNotes.MAX_NOTE_ID, FIRST_NOTE));
+        RegisteredNotes different = new RegisteredNotes(Map.of(RegisteredNotes.MAX_NOTE_INDEX, FIRST_NOTE));
         Set<RegisteredNotes> notes = new HashSet<>();
         notes.add(first);
 

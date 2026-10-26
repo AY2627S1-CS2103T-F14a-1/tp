@@ -36,7 +36,7 @@ public class EditNoteCommandTest {
         assertThrows(IllegalArgumentException.class, () ->
                 new EditNoteCommand(INDEX_FIRST_STUDENT, RegisteredNotes.MIN_NOTE_ID - 1, UPDATED_NOTE));
         assertThrows(IllegalArgumentException.class, () ->
-                new EditNoteCommand(INDEX_FIRST_STUDENT, RegisteredNotes.MAX_NOTE_ID + 1, UPDATED_NOTE));
+                new EditNoteCommand(INDEX_FIRST_STUDENT, RegisteredNotes.MAX_NOTE_INDEX + 1, UPDATED_NOTE));
     }
 
     @Test

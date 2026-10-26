@@ -32,7 +32,7 @@ public class DeleteNoteCommandTest {
         assertThrows(IllegalArgumentException.class, () ->
                 new DeleteNoteCommand(INDEX_FIRST_STUDENT, RegisteredNotes.MIN_NOTE_ID - 1));
         assertThrows(IllegalArgumentException.class, () ->
-                new DeleteNoteCommand(INDEX_FIRST_STUDENT, RegisteredNotes.MAX_NOTE_ID + 1));
+                new DeleteNoteCommand(INDEX_FIRST_STUDENT, RegisteredNotes.MAX_NOTE_INDEX + 1));
     }
 
     @Test

@@ -33,7 +33,7 @@ public class AddNoteCommandTest {
         assertThrows(IllegalArgumentException.class, () ->
                 new AddNoteCommand(INDEX_FIRST_STUDENT, RegisteredNotes.MIN_NOTE_ID - 1, NOTE));
         assertThrows(IllegalArgumentException.class, () ->
-                new AddNoteCommand(INDEX_FIRST_STUDENT, RegisteredNotes.MAX_NOTE_ID + 1, NOTE));
+                new AddNoteCommand(INDEX_FIRST_STUDENT, RegisteredNotes.MAX_NOTE_INDEX + 1, NOTE));
     }
 
     @Test

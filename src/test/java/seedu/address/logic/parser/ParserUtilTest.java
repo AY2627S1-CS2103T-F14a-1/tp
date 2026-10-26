@@ -282,7 +282,7 @@ public class ParserUtilTest {
     @Test
     public void parseNoteId_validBoundaries_returnsTrimmedNumber() throws Exception {
         assertEquals(RegisteredNotes.MIN_NOTE_ID, ParserUtil.parseNoteId("1"));
-        assertEquals(RegisteredNotes.MAX_NOTE_ID, ParserUtil.parseNoteId(" " + RegisteredNotes.MAX_NOTE_ID + " "));
+        assertEquals(RegisteredNotes.MAX_NOTE_INDEX, ParserUtil.parseNoteId(" " + RegisteredNotes.MAX_NOTE_INDEX + " "));
     }
 
     @Test
