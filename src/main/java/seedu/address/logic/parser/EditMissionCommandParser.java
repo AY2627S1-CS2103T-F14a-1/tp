@@ -48,7 +48,7 @@ public class EditMissionCommandParser implements Parser<EditMissionCommand> {
             MissionId missionId = ParserUtil.parseMissionId(argMultimap.getValue(PREFIX_MISSION).orElseThrow());
             return new EditMissionCommand(missionId, editMissionDescriptor);
         } catch (ParseException e) {
-            throw new ParseException(e.getMessage() + "\n" + EditMissionCommand.MESSAGE_USAGE);
+            throw new ParseException(e.getMessage() + "\n\n" + EditMissionCommand.MESSAGE_USAGE);
         }
     }
 }

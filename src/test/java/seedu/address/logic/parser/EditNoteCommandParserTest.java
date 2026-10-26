@@ -36,7 +36,7 @@ public class EditNoteCommandParserTest {
     public void parse_invalidIndex_reportsIndexConstraint() {
         for (String index : List.of("", "0", "-1", "abc", "1 extra", "2147483648")) {
             assertParseFailure(parser, "id/" + index + " ni/3 nt/Valid note",
-                    ParserUtil.MESSAGE_INVALID_INDEX + "\n" + EditNoteCommand.MESSAGE_USAGE);
+                    ParserUtil.MESSAGE_INVALID_INDEX + "\n\n" + EditNoteCommand.MESSAGE_USAGE);
         }
     }
 
@@ -44,7 +44,7 @@ public class EditNoteCommandParserTest {
     public void parse_invalidNoteId_reportsNoteIdConstraint() {
         for (String noteId : List.of("", "0", "11", "-1", "1.5", "abc", "2147483648")) {
             assertParseFailure(parser, "id/1 ni/" + noteId + " nt/Valid note",
-                    RegisteredNotes.MESSAGE_CONSTRAINTS + "\n" + EditNoteCommand.MESSAGE_USAGE);
+                    RegisteredNotes.MESSAGE_CONSTRAINTS + "\n\n" + EditNoteCommand.MESSAGE_USAGE);
         }
     }
 
@@ -52,20 +52,20 @@ public class EditNoteCommandParserTest {
     public void parse_invalidNoteText_reportsNoteTextConstraint() {
         for (String noteText : List.of("", "   ", "Invalid!", "a".repeat(Note.MAX_NOTE_LENGTH + 1))) {
             assertParseFailure(parser, "id/1 ni/3 nt/" + noteText,
-                    Note.MESSAGE_CONSTRAINTS + "\n" + EditNoteCommand.MESSAGE_USAGE);
+                    Note.MESSAGE_CONSTRAINTS + "\n\n" + EditNoteCommand.MESSAGE_USAGE);
         }
     }
 
     @Test
     public void parse_missingAndDuplicatePrefixes_reportsPrefixSpecificMessages() {
         assertParseFailure(parser, "id/1 ni/3",
-                CliSyntax.PREFIX_NOTE_TEXT.getMissingMessage() + "\n" + EditNoteCommand.MESSAGE_USAGE);
+                CliSyntax.PREFIX_NOTE_TEXT.getMissingMessage() + "\n\n" + EditNoteCommand.MESSAGE_USAGE);
         assertParseFailure(parser, "id/1 nt/Valid note",
-                CliSyntax.PREFIX_NOTE_ID.getMissingMessage() + "\n" + EditNoteCommand.MESSAGE_USAGE);
+                CliSyntax.PREFIX_NOTE_ID.getMissingMessage() + "\n\n" + EditNoteCommand.MESSAGE_USAGE);
         assertParseFailure(parser, "ni/3 nt/Valid note",
-                CliSyntax.PREFIX_INDEX.getMissingMessage() + "\n" + EditNoteCommand.MESSAGE_USAGE);
+                CliSyntax.PREFIX_INDEX.getMissingMessage() + "\n\n" + EditNoteCommand.MESSAGE_USAGE);
         assertParseFailure(parser, "id/1 ni/3 nt/Valid note nt/Other note",
-                CliSyntax.PREFIX_NOTE_TEXT.getDuplicateMessage() + "\n" + EditNoteCommand.MESSAGE_USAGE);
+                CliSyntax.PREFIX_NOTE_TEXT.getDuplicateMessage() + "\n\n" + EditNoteCommand.MESSAGE_USAGE);
     }
 
     @Test

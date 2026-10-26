@@ -35,7 +35,7 @@ public class DeleteNoteCommandParserTest {
     public void parse_invalidIndex_reportsIndexConstraint() {
         for (String index : List.of("", "0", "-1", "abc", "1 extra", "2147483648")) {
             assertParseFailure(parser, "id/" + index + " ni/3",
-                    ParserUtil.MESSAGE_INVALID_INDEX + "\n" + DeleteNoteCommand.MESSAGE_USAGE);
+                    ParserUtil.MESSAGE_INVALID_INDEX + "\n\n" + DeleteNoteCommand.MESSAGE_USAGE);
         }
     }
 
@@ -43,18 +43,18 @@ public class DeleteNoteCommandParserTest {
     public void parse_invalidNoteId_reportsNoteIdConstraint() {
         for (String noteId : List.of("", "0", "11", "-1", "1.5", "abc", "2147483648")) {
             assertParseFailure(parser, "id/1 ni/" + noteId,
-                    RegisteredNotes.MESSAGE_CONSTRAINTS + "\n" + DeleteNoteCommand.MESSAGE_USAGE);
+                    RegisteredNotes.MESSAGE_CONSTRAINTS + "\n\n" + DeleteNoteCommand.MESSAGE_USAGE);
         }
     }
 
     @Test
     public void parse_missingAndDuplicatePrefixes_reportsPrefixSpecificMessages() {
         assertParseFailure(parser, "id/1",
-                CliSyntax.PREFIX_NOTE_ID.getMissingMessage() + "\n" + DeleteNoteCommand.MESSAGE_USAGE);
+                CliSyntax.PREFIX_NOTE_ID.getMissingMessage() + "\n\n" + DeleteNoteCommand.MESSAGE_USAGE);
         assertParseFailure(parser, "ni/3",
-                CliSyntax.PREFIX_INDEX.getMissingMessage() + "\n" + DeleteNoteCommand.MESSAGE_USAGE);
+                CliSyntax.PREFIX_INDEX.getMissingMessage() + "\n\n" + DeleteNoteCommand.MESSAGE_USAGE);
         assertParseFailure(parser, "id/1 ni/3 ni/4",
-                CliSyntax.PREFIX_NOTE_ID.getDuplicateMessage() + "\n" + DeleteNoteCommand.MESSAGE_USAGE);
+                CliSyntax.PREFIX_NOTE_ID.getDuplicateMessage() + "\n\n" + DeleteNoteCommand.MESSAGE_USAGE);
     }
 
     @Test

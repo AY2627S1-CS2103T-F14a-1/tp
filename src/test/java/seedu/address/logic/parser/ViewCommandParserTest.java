@@ -10,7 +10,7 @@ import seedu.address.logic.commands.ViewCommand;
 
 public class ViewCommandParserTest {
 
-    private static final String USAGE_SUFFIX = "\n" + ViewCommand.MESSAGE_USAGE;
+    private static final String USAGE_SUFFIX = "\n\n" + ViewCommand.MESSAGE_USAGE;
 
     private final ViewCommandParser parser = new ViewCommandParser();
 

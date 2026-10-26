@@ -98,11 +98,13 @@
 
                 <GridPane fx:id="studioRecordGrid"
                           hgap="0"
-                          vgap="0">
+                          vgap="0"
+                          styleClass="details-grid">
 
                     <columnConstraints>
-                        <ColumnConstraints percentWidth="50"/>
-                        <ColumnConstraints percentWidth="50"/>
+                        <ColumnConstraints percentWidth="20"/>
+                        <ColumnConstraints percentWidth="40"/>
+                        <ColumnConstraints percentWidth="40"/>
                     </columnConstraints>
                 </GridPane>
 

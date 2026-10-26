@@ -19,7 +19,7 @@ import seedu.address.model.mission.MissionId;
  */
 public class EditMissionCommandParserTest {
 
-    private static final String USAGE_SUFFIX = "\n" + EditMissionCommand.MESSAGE_USAGE;
+    private static final String USAGE_SUFFIX = "\n\n" + EditMissionCommand.MESSAGE_USAGE;
 
     private final EditMissionCommandParser parser = new EditMissionCommandParser();
 
@@ -41,6 +41,8 @@ public class EditMissionCommandParserTest {
         nameDescriptor.setName("New Runes");
         assertParseSuccess(parser, "m/M01 n/New Runes",
                 new EditMissionCommand(new MissionId("M01"), nameDescriptor));
+        assertParseSuccess(parser, "M/M01 N/New Runes",
+                new EditMissionCommand(new MissionId("M01"), nameDescriptor));
 
         EditMissionDescriptor deadlineDescriptor = new EditMissionDescriptor();
         deadlineDescriptor.setDeadline(LocalDate.of(2000, 2, 29));
@@ -56,7 +58,7 @@ public class EditMissionCommandParserTest {
             assertParseFailure(parser, input,
                     CliSyntax.PREFIX_MISSION.getMissingMessage() + USAGE_SUFFIX);
         }
-        for (String input : List.of("extra m/M01 n/New", "M/M01 n/New")) {
+        for (String input : List.of("extra m/M01 n/New", "extra M/M01 n/New")) {
             assertParseFailure(parser, input, expectedMessage);
         }
     }

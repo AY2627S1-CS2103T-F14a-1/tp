@@ -174,7 +174,7 @@ public class ParserUtil {
     }
 
     /**
-     * Parses a case-insensitive mission ID into its canonical uppercase form.
+     * Trims and validates a mission ID; {@link MissionId} normalizes its case.
      *
      * @param missionIdText Mission ID text.
      * @return The validated mission ID.
@@ -185,7 +185,7 @@ public class ParserUtil {
         requireNonNull(missionIdText);
 
         try {
-            return new MissionId(missionIdText.trim().toUpperCase(Locale.ROOT));
+            return new MissionId(missionIdText.trim());
         } catch (IllegalArgumentException e) {
             throw new ParseException(MESSAGE_INVALID_MISSION_ID);
         }
@@ -223,7 +223,7 @@ public class ParserUtil {
             throw new ParseException(MESSAGE_INVALID_WEEK);
         }
         int weekNumber = Integer.parseInt(trimmedWeek);
-        if (weekNumber > 13) {
+        if (weekNumber < 0 || weekNumber > 13) {
             throw new ParseException(MESSAGE_INVALID_WEEK);
         }
         return weekNumber;
@@ -260,7 +260,7 @@ public class ParserUtil {
             }
             return trimmedNumber;
         } catch (NumberFormatException _) {
-            throw new ParseException(RegisteredMasteryChecks.MESSAGE_CONSTRAINTS);
+            throw new ParseException(RegisteredMasteryChecks.MESSAGE_NON_NUMBER);
         }
     }
 
@@ -317,4 +317,3 @@ public class ParserUtil {
         return new Note(trimmedNoteText);
     }
 }
-

@@ -50,7 +50,7 @@ import seedu.address.testutil.EditStudentDescriptorBuilder;
 
 public class EditCommandParserTest {
 
-    private static final String USAGE_SUFFIX = "\n" + EditCommand.MESSAGE_USAGE;
+    private static final String USAGE_SUFFIX = "\n\n" + EditCommand.MESSAGE_USAGE;
 
     private static final String TAG_EMPTY = " " + PREFIX_TAG;
 

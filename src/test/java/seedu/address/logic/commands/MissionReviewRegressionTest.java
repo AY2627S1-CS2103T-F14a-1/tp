@@ -17,7 +17,6 @@ import org.junit.jupiter.api.io.TempDir;
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.exceptions.DataLoadingException;
 import seedu.address.logic.LogicManager;
-import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.logic.parser.AddressBookParser;
 import seedu.address.model.AddressBook;
 import seedu.address.model.ModelManager;
@@ -42,17 +41,19 @@ public class MissionReviewRegressionTest {
     @Test
     public void catalogue_duplicateNames_rejectsAtomically() {
         MissionCatalogue catalogue = new MissionCatalogue();
-        Mission original = catalogue.add("Rune Reading", DEADLINE);
+        Mission original = catalogue.add(new MissionId("M01"), "Rune Reading", DEADLINE);
+        int nextNumber = 2;
         for (String name : List.of("rune reading", " RUNE   READING ", "Rune\u00a0Reading")) {
-            assertThrows(IllegalArgumentException.class, () -> catalogue.add(name, DEADLINE));
-            Mission duplicate = new Mission(new MissionId("M02"), name, DEADLINE);
+            MissionId duplicateId = new MissionId("M%02d".formatted(nextNumber++));
+            assertThrows(IllegalArgumentException.class, () -> catalogue.add(duplicateId, name, DEADLINE));
+            Mission duplicate = new Mission(duplicateId, name, DEADLINE);
             IllegalArgumentException error = assertThrows(IllegalArgumentException.class, () ->
-                    catalogue.restore(List.of(original, duplicate), 3));
+                    catalogue.restore(List.of(original, duplicate)));
             assertEquals(MissionCatalogue.MESSAGE_DUPLICATE_NAME, error.getMessage());
             assertEquals(List.of(original), catalogue.getMissions());
-            assertEquals(2, catalogue.getNextMissionNumber());
         }
-        assertEquals(new MissionId("M02"), catalogue.add("Rune Reading!", DEADLINE).getId());
+        assertEquals(new MissionId("M05"),
+                catalogue.add(new MissionId("M05"), "Rune Reading!", DEADLINE).getId());
     }
 
     @Test
@@ -62,7 +63,7 @@ public class MissionReviewRegressionTest {
                 {"students":[],"missions":[
                   {"id":"M01","name":"Runes","deadline":"2026-10-20"},
                   {"id":"M02","name":" RUNES ","deadline":"2026-10-21"}
-                ],"nextMissionNumber":3}
+                ]}
                 """;
         Files.writeString(file, json);
         assertThrows(DataLoadingException.class, () -> new JsonAddressBookStorage(file).readAddressBook());
@@ -70,36 +71,35 @@ public class MissionReviewRegressionTest {
     }
 
     @Test
-    public void execute_exhaustedCounter_reportsFeedbackWithoutSaving() throws Exception {
+    public void execute_manualId_savesMission() throws Exception {
         AddressBook book = new AddressBook();
-        book.restoreMissions(List.of(), Long.MAX_VALUE);
-        Path file = directory.resolve("exhausted.json");
+        Path file = directory.resolve("manual-id.json");
         StorageManager storage = new StorageManager(new JsonAddressBookStorage(file),
                 new JsonUserPrefsStorage(directory.resolve("prefs.json")));
         storage.saveAddressBook(book);
         String saved = Files.readString(file);
         ModelManager model = new ModelManager(book, new UserPrefs());
-        CommandException error = assertThrows(CommandException.class, () ->
-                new LogicManager(model, storage).execute("addmission n/Runes d/2026-10-20"));
-        assertEquals(MissionCatalogue.MESSAGE_IDS_EXHAUSTED, error.getMessage());
-        assertEquals(book, model.getAddressBook());
-        assertEquals(saved, Files.readString(file));
+        new LogicManager(model, storage).execute("addmission m/M105 n/Runes d/2026-10-20");
+        assertEquals(new MissionId("M105"), model.getMissionList().getFirst().getId());
+        assertTrue(!saved.equals(Files.readString(file)));
+        assertEquals(model.getAddressBook(),
+                new JsonAddressBookStorage(file).readAddressBook().orElseThrow());
     }
 
     @Test
     public void parse_usageExample_createsValidCommand() throws Exception {
         String example = AddMissionCommand.MESSAGE_USAGE.split("Example: ", 2)[1];
-        assertEquals(new AddMissionCommand("Rune Reading", DEADLINE),
+        assertEquals(new AddMissionCommand(new MissionId("M01"), "Rune Reading", DEADLINE),
                 new AddressBookParser().parseCommand(example));
     }
 
     @Test
     public void hashCode_equalCommands_supportsHashCollections() {
         MissionId id = new MissionId("M01");
-        List<Command> commands = List.of(new AddMissionCommand("Runes", DEADLINE),
+        List<Command> commands = List.of(new AddMissionCommand(id, "Runes", DEADLINE),
                 new DeleteMissionCommand(id), new MarkMissionCommand(Index.fromOneBased(1), id),
                 new UnmarkMissionCommand(Index.fromOneBased(1), id));
-        List<Command> equalCommands = List.of(new AddMissionCommand("Runes", DEADLINE),
+        List<Command> equalCommands = List.of(new AddMissionCommand(id, "Runes", DEADLINE),
                 new DeleteMissionCommand(id), new MarkMissionCommand(Index.fromOneBased(1), id),
                 new UnmarkMissionCommand(Index.fromOneBased(1), id));
         Set<Command> set = new HashSet<>(commands);

@@ -47,8 +47,8 @@ public class EditMissionCommandTest {
     @BeforeEach
     public void setUp() {
         model = new ModelManager();
-        model.addMission("Runes", LocalDate.of(2026, 10, 20));
-        model.addMission("Curves", LocalDate.of(2026, 10, 21));
+        model.addMission(new MissionId("M01"), "Runes", LocalDate.of(2026, 10, 20));
+        model.addMission(new MissionId("M02"), "Curves", LocalDate.of(2026, 10, 21));
         john = new StudentBuilder().withName("John Doe")
                 .withMissionSubmissions("M01").build();
         model.addStudent(john);
@@ -70,7 +70,6 @@ public class EditMissionCommandTest {
         assertEquals("Curves", model.getMissionList().get(1).getName());
         assertEquals(List.of(john), model.getAddressBook().getStudentList());
         assertTrue(model.getFilteredStudentList().isEmpty());
-        assertEquals(3, model.getAddressBook().getNextMissionNumber());
     }
 
     @Test
@@ -149,7 +148,6 @@ public class EditMissionCommandTest {
         assertEquals(model.getAddressBook(), reloaded);
         assertTrue(reloaded.getStudentList().getFirst().getMissionSubmissions()
                 .hasSubmission(new MissionId("M01")));
-        assertEquals(3, reloaded.getNextMissionNumber());
     }
 
     @Test
@@ -227,7 +225,6 @@ public class EditMissionCommandTest {
                 model.getMissionList().getFirst().getDeadline());
         assertEquals(List.of(john), model.getAddressBook().getStudentList());
         assertTrue(model.getFilteredStudentList().isEmpty());
-        assertEquals(3, model.getAddressBook().getNextMissionNumber());
     }
 
     @Test

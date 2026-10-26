@@ -23,8 +23,11 @@ import javafx.scene.layout.VBox;
 import seedu.address.model.masterycheck.MasteryCheck;
 import seedu.address.model.mission.Mission;
 import seedu.address.model.mission.MissionId;
+import seedu.address.model.student.RegisteredStudioRecords;
 import seedu.address.model.student.Student;
+import seedu.address.model.student.StudioRecord;
 import seedu.address.testutil.StudentBuilder;
+import seedu.address.testutil.StudentBuilder.StudioRecordSet;
 
 public class StudentDetailsPanelTest {
 
@@ -185,6 +188,64 @@ public class StudentDetailsPanelTest {
         });
     }
 
+    @Test
+    public void showStudent_studioRecords_displaysAttendanceFromRecordPresence() throws Exception {
+        runOnJavaFxThread(() -> {
+            Student student = new StudentBuilder(AMY)
+                    .withStudioRecords(
+                            new StudioRecordSet(3, new StudioRecord(50)),
+                            new StudioRecordSet(4, new StudioRecord(0)))
+                    .build();
+            StudentDetailsPanel panel = new StudentDetailsPanel();
+
+            panel.showStudent(student, List.of());
+
+            GridPane grid = getStudioRecordGrid(panel);
+            assertEquals("Week", getGridCell(grid, 0, 0));
+            assertEquals("Attendance", getGridCell(grid, 1, 0));
+            assertEquals("Effort Score", getGridCell(grid, 2, 0));
+            assertEquals("Attended", getGridCell(grid, 1, getStudioRow(3)));
+            assertEquals("50", getGridCell(grid, 2, getStudioRow(3)));
+            assertEquals("Attended", getGridCell(grid, 1, getStudioRow(4)));
+            assertEquals("0", getGridCell(grid, 2, getStudioRow(4)));
+            assertEquals("Not attended", getGridCell(grid, 1, getStudioRow(5)));
+            assertEquals("0", getGridCell(grid, 2, getStudioRow(5)));
+        });
+    }
+
+    @Test
+    public void showStudent_switchStudents_refreshesStudioAttendance() throws Exception {
+        runOnJavaFxThread(() -> {
+            Student attendedStudent = new StudentBuilder(AMY)
+                    .withStudioRecords(new StudioRecordSet(3, new StudioRecord(50)))
+                    .build();
+            Student studentWithoutRecords = new StudentBuilder(AMY).withStudioRecords().build();
+            StudentDetailsPanel panel = new StudentDetailsPanel();
+
+            panel.showStudent(attendedStudent, List.of());
+            GridPane grid = getStudioRecordGrid(panel);
+            assertEquals("Attended", getGridCell(grid, 1, getStudioRow(3)));
+
+            panel.showStudent(studentWithoutRecords, List.of());
+            assertEquals("Not attended", getGridCell(grid, 1, getStudioRow(3)));
+
+            panel.showStudent(attendedStudent, List.of());
+            assertEquals("Attended", getGridCell(grid, 1, getStudioRow(3)));
+            int displayedWeeks = RegisteredStudioRecords.MAX_WEEK - RegisteredStudioRecords.MIN_WEEK + 1;
+            assertEquals((displayedWeeks + 1) * 3, grid.getChildren().size());
+        });
+    }
+
+    /**
+     * Returns the studio grid row corresponding to the specified week.
+     *
+     * @param week Studio week whose row is required.
+     * @return One-based data-row index for the specified week.
+     */
+    private static int getStudioRow(int week) {
+        return week - RegisteredStudioRecords.MIN_WEEK + 1;
+    }
+
     private static GridPane getMissionGrid(
             StudentDetailsPanel panel) {
 
@@ -192,6 +253,11 @@ public class StudentDetailsPanelTest {
 
         return (GridPane) panel.getRoot()
                 .lookup("#missionSubmissionsGrid");
+    }
+
+    private static GridPane getStudioRecordGrid(StudentDetailsPanel panel) {
+        prepareRoot(panel);
+        return (GridPane) panel.getRoot().lookup("#studioRecordGrid");
     }
 
     private static Label getLabel(
@@ -299,6 +365,18 @@ public class StudentDetailsPanelTest {
      * @return Text displayed in the specified grid cell.
      */
     private static String getMasteryCell(GridPane grid, int column, int row) {
+        return getGridCell(grid, column, row);
+    }
+
+    /**
+     * Returns the text of a label at the specified grid coordinates.
+     *
+     * @param grid Grid containing the labels.
+     * @param column Zero-based column index.
+     * @param row Zero-based row index.
+     * @return Text displayed in the specified grid cell.
+     */
+    private static String getGridCell(GridPane grid, int column, int row) {
         return grid.getChildren().stream()
                 .filter(node -> Integer.valueOf(column).equals(GridPane.getColumnIndex(node))
                         && Integer.valueOf(row).equals(GridPane.getRowIndex(node)))

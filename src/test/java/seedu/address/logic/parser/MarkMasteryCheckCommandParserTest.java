@@ -16,7 +16,7 @@ import seedu.address.model.student.RegisteredMasteryChecks;
 /** Tests completion-command syntax, caller-specific feedback, and shared parser validation. */
 public class MarkMasteryCheckCommandParserTest {
 
-    private static final String USAGE_SUFFIX = "\n" + MarkMasteryCheckCommand.MESSAGE_USAGE;
+    private static final String USAGE_SUFFIX = "\n\n" + MarkMasteryCheckCommand.MESSAGE_USAGE;
     private final MarkMasteryCheckCommandParser parser = new MarkMasteryCheckCommandParser();
 
     @Test
@@ -47,10 +47,18 @@ public class MarkMasteryCheckCommandParserTest {
     }
 
     @Test
-    public void parse_invalidNumber_reportsMasteryCheckConstraint() {
-        for (String number : List.of("", "0", "-1", "abc", "1.5", "2147483648")) {
-            assertParseFailure(parser, "id/1 num/" + number,
-                RegisteredMasteryChecks.MESSAGE_CONSTRAINTS + USAGE_SUFFIX);
+    public void parse_nonPositiveNumber_reportsNumberConstraint() {
+        for (String number : List.of("0", "-1", "-2147483648")) {
+            assertParseFailure(parser, "id/1 num/" + number + "",
+                    RegisteredMasteryChecks.MESSAGE_CONSTRAINTS + USAGE_SUFFIX);
+        }
+    }
+
+    @Test
+    public void parse_nonIntegerOrOverflowingNumber_reportsNonNumberMessage() {
+        for (String number : List.of("", "1.5", "abc", "2147483648")) {
+            assertParseFailure(parser, "id/1 num/" + number + "",
+                    RegisteredMasteryChecks.MESSAGE_NON_NUMBER + USAGE_SUFFIX);
         }
     }
 

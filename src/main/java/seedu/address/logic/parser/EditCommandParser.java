@@ -47,7 +47,7 @@ public class EditCommandParser implements Parser<EditCommand> {
             Index index = ParserUtil.parseIndex(argMultimap.getValue(PREFIX_INDEX).get());
             return new EditCommand(index, editStudentDescriptor);
         } catch (ParseException e) {
-            throw new ParseException(e.getMessage() + "\n" + EditCommand.MESSAGE_USAGE);
+            throw new ParseException(e.getMessage() + "\n\n" + EditCommand.MESSAGE_USAGE);
         }
     }
 

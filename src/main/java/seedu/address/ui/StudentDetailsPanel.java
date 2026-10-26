@@ -228,8 +228,9 @@ public class StudentDetailsPanel extends UiPart<Region> {
     /**
      * Populates the studio-record grid for the specified student.
      *
-     * <p>Each supported week is displayed with its corresponding effort
-     * score. A score of zero is displayed when no record exists.</p>
+     * <p>Each supported week is displayed with its attendance and corresponding
+     * effort score. A week is attended when a record exists. Otherwise, it is
+     * not attended and has a displayed score of zero.</p>
      *
      * @param student student whose studio records are displayed
      */
@@ -249,8 +250,15 @@ public class StudentDetailsPanel extends UiPart<Region> {
 
         addGridLabel(
                 studioRecordGrid,
-                "Effort Score",
+                "Attendance",
                 1,
+                0,
+                true);
+
+        addGridLabel(
+                studioRecordGrid,
+                "Effort Score",
+                2,
                 0,
                 true);
 
@@ -270,8 +278,15 @@ public class StudentDetailsPanel extends UiPart<Region> {
 
             addGridLabel(
                     studioRecordGrid,
-                    String.valueOf(score),
+                    hasAttended ? "Attended" : "Not attended",
                     1,
+                    row,
+                    false);
+
+            addGridLabel(
+                    studioRecordGrid,
+                    String.valueOf(score),
+                    2,
                     row,
                     false);
 

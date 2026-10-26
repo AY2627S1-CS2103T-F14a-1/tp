@@ -157,6 +157,14 @@ public class ArgumentTokenizerTest {
     }
 
     @Test
+    public void tokenize_prefixMatchingIsCaseInsensitive_preservesArgumentValue() {
+        ArgumentMultimap arguments = ArgumentTokenizer.tokenize("P/Value n/Alice", pSlash, new Prefix("n/"));
+
+        assertArgumentPresent(arguments, pSlash, "Value");
+        assertArgumentPresent(arguments, new Prefix("n/"), "Alice");
+    }
+
+    @Test
     public void tokenize_whitespaceAndEmbeddedPrefixes_recognizesOnlyArgumentBoundaries() {
         ArgumentMultimap arguments = ArgumentTokenizer.tokenize("p/firstp/embedded\t-t last\np/second", pSlash, dashT);
 

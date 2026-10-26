@@ -46,9 +46,12 @@ public class SampleDataUtil {
         for (Student sampleStudent : getSampleStudents()) {
             sampleAb.addStudent(sampleStudent);
         }
-        sampleAb.addMission("Understanding the Force", LocalDate.of(2026, 10, 15));
-        sampleAb.addMission("Rune Reading", LocalDate.of(2026, 10, 22));
-        sampleAb.addMission("Beyond the Second Dimension", LocalDate.of(2026, 10, 29));
+        sampleAb.addMission(new seedu.address.model.mission.MissionId("M01"),
+                "Understanding the Force", LocalDate.of(2026, 10, 15));
+        sampleAb.addMission(new seedu.address.model.mission.MissionId("M02"),
+                "Rune Reading", LocalDate.of(2026, 10, 22));
+        sampleAb.addMission(new seedu.address.model.mission.MissionId("M03"),
+                "Beyond the Second Dimension", LocalDate.of(2026, 10, 29));
         return sampleAb;
     }
 

@@ -17,7 +17,7 @@ import seedu.address.model.student.RegisteredMasteryChecks;
 /** Tests deletion argument structure, number validation, and delete-specific usage feedback. */
 public class DeleteMasteryCheckCommandParserTest {
 
-    private static final String USAGE_SUFFIX = "\n" + DeleteMasteryCheckCommand.MESSAGE_USAGE;
+    private static final String USAGE_SUFFIX = "\n\n" + DeleteMasteryCheckCommand.MESSAGE_USAGE;
     private final DeleteMasteryCheckCommandParser parser = new DeleteMasteryCheckCommandParser();
 
     @Test
@@ -57,10 +57,18 @@ public class DeleteMasteryCheckCommandParserTest {
     }
 
     @Test
-    public void parse_invalidNumber_reportsMasteryCheckConstraint() {
-        for (String number : List.of("", "0", "-1", "1.5", "abc", "2147483648")) {
-            assertParseFailure(parser, "id/1 num/" + number,
-                RegisteredMasteryChecks.MESSAGE_CONSTRAINTS + USAGE_SUFFIX);
+    public void parse_nonPositiveNumber_reportsNumberConstraint() {
+        for (String number : List.of("0", "-1", "-2147483648")) {
+            assertParseFailure(parser, "id/1 num/" + number + "",
+                    RegisteredMasteryChecks.MESSAGE_CONSTRAINTS + USAGE_SUFFIX);
+        }
+    }
+
+    @Test
+    public void parse_nonIntegerOrOverflowingNumber_reportsNonNumberMessage() {
+        for (String number : List.of("", "1.5", "abc", "2147483648")) {
+            assertParseFailure(parser, "id/1 num/" + number + "",
+                    RegisteredMasteryChecks.MESSAGE_NON_NUMBER + USAGE_SUFFIX);
         }
     }
 

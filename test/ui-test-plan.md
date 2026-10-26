@@ -65,17 +65,19 @@ Inspect the saved file before running that verification command to ensure reject
 
 | ID | Steps | Expected result |
 | --- | --- | --- |
-| MISSION-001 | Run `addmission n/`, then `addmission n/Runes`. | Request a name using `n/NAME`, then a deadline in `YYYY-MM-DD` using `d/DEADLINE`; no mission is added. |
-| MISSION-002 | Copy the example from addmission usage, then view student 1. | Creates M01, Rune Reading, due 2026-10-20, not submitted. |
-| MISSION-003 | Run `addmission n/ RUNE   READING d/2026-10-21`. | Duplicate feedback; M01 and the next ID remain unchanged. |
-| MISSION-004 | Run `addmission n/Curves d/2026-10-21`, then `editmission m/M02 n/Rune Reading`. | M02 is added; the duplicate edit is rejected. |
+| MISSION-001 | Run `addmission`, `addmission m/M01`, and `addmission m/M01 n/Runes`. | Reports the missing prefixes using their `CliSyntax` messages; no mission is added. |
+| MISSION-002 | Run `addmission m/M01 n/Rune Reading d/2026-10-20`, then view student 1. | Creates M01, Rune Reading, due 2026-10-20, not submitted. |
+| MISSION-003 | Run `addmission m/M02 n/ RUNE   READING d/2026-10-21`. | Duplicate-name feedback; M01 and saved state remain unchanged. |
+| MISSION-004 | Run `addmission m/M02 n/Curves d/2026-10-21`, then `editmission m/M02 n/Rune Reading`. | M02 is added; the duplicate edit is rejected. |
+| MISSION-012 | Attempt `addmission m/M01 n/Curves d/2026-10-21`, then `addmission m/M1 n/Curves d/2026-10-21` and `addmission m/M00 n/Curves d/2026-10-21`. | Duplicate ID feedback for M01; malformed IDs are rejected with the ID format constraint. Catalogue and saved data remain unchanged. |
+| MISSION-013 | Add `addmission m/M10 n/Curves d/2026-10-21`, restart, and inspect the catalogue. | M10 is stored and restored unchanged. |
 | MISSION-005 | Run `markmission 1 m/m01`, repeat it, then `unmarkmission 1 m/M99`. | First marks M01, repeat reports no change, unknown ID reports `Mission M99 does not exist.`; student 2 remains unchanged. |
 | MISSION-006 | Filter to student 1; run `listmissions m/M01` and `listoverdue`. | Submitted list uses displayed index 1. Overdue excludes M01 and includes only missing missions due before the local date. Hidden students are excluded. |
 | MISSION-007 | Run `editmission m/M01 n/New Runes d/2026-10-22`, then restart and view student 1. | ID and submission survive; name and deadline are updated and persisted. |
 | MISSION-008 | Run `unmarkmission 1 m/M01`, then an invalid date edit `editmission m/M01 d/2026-02-30`; restart. | M01 stays not submitted; invalid edit leaves its name/deadline unchanged. |
-| MISSION-009 | Mark M01 for both students; filter to one student; delete M01. Restart, run `list`, and inspect both profiles. Add New Runes again. | Mission and submissions are removed from both students. Recreated mission uses M03 and has no submissions. |
+| MISSION-009 | Mark M01 for both students; add M10; filter to one student; delete M01. Restart, run `list`, and inspect both profiles. | M10 retains its ID, and M01 plus its submissions are removed from both students. |
 | MISSION-010 | Back up data. In an isolated fixture, give two missions different IDs but equal names ignoring case/spaces. Start the app, inspect file, then run `list`. | Empty-address-book fallback; startup preserves invalid file, successful list saves the empty book. |
-| MISSION-011 | In an isolated valid fixture set `nextMissionNumber` to 9223372036854775807. Run `addmission n/Limit d/2026-10-20`. | `No further mission IDs can be allocated.`; memory and file remain unchanged. |
+| MISSION-011 | Add M10, delete it, then add `addmission m/M10 n/Limit d/2026-10-20`. | The deleted ID can be explicitly reused; the supplied ID is persisted unchanged. |
 
 ## Studio parsing regression
 
@@ -115,10 +117,10 @@ Run the complete UI plan below to check existing studio behavior.
 
 | ID | Steps | Expected result |
 | --- | --- | --- |
-| STUDIO-SUMMARY-001 | View a student with records for weeks 3, 4, and 13, including an effort score of 0 for week 4. | The summary lists every week from 3 to 13 under `Week`, `Attendance`, and `Effort`. Recorded weeks show `Present` and their saved effort score, including 0; weeks without a record show `Absent` and effort score `0`. |
+| STUDIO-SUMMARY-001 | View a student with records for weeks 3, 4, and 13, including an effort score of 0 for week 4. | The summary lists every week from 3 to 13 under `Week`, `Attendance`, and `Effort Score`. Recorded weeks show `Attended` and their saved effort score, including 0; weeks without a record show `Not attended` and effort score `0`. |
 | STUDIO-LABEL-001 | View the student list after adding a studio record. | The student card prefixes the weekly record summary with `Studio records:` and does not expose a Java class name. |
 | STUDIO-LAYOUT-001 | View a student with a week 13 effort score of 2147483647. Resize the window from narrow to wide and back. | All three columns and their headers remain inside the studio table. Effort values remain readable, wrapping when necessary, without horizontal scrolling. JUnit also checks every cell at table widths of 240 and 900 pixels. |
-| STUDIO-SWITCH-001 | View a student with week 3 effort 50, then view another student without studio records, then view the first student again. | The second student shows every week as `Absent` with effort `0`. Returning to the first student restores `Present` and effort `50` for week 3, without duplicated rows. |
+| STUDIO-SWITCH-001 | View a student with week 3 effort 50, then view another student without studio records, then view the first student again. | The second student shows every week as `Not attended` with effort `0`. Returning to the first student restores `Attended` and effort `50` for week 3, without duplicated rows. |
 | STUDIO-PERSISTENCE-001 | Add studio records with different effort scores, exit the application, inspect the saved student record, restart the application, and view the same student. | The saved JSON uses the `registeredStudioRecords` property. Each recorded week and its corresponding effort score are restored unchanged. |
 
 ## Studio commands
@@ -207,12 +209,14 @@ Run `PrefixTest`, `ArgumentMultimapTest`, `ArgumentStructureValidatorTest`,
 | PREFIX-006 | Run `editstudiorecord id/1 w/3 ef/`, then `view id/1`. | Invalid-effort message; effort remains 75. |
 | PREFIX-007 | Run `editstudiorecord 1 w/3 ef/100`, then `view id/1`. | Invalid-command-format message rejects the preamble; effort remains 75. |
 | PREFIX-008 | Restart and run `view id/1`, then view student 2. | Student 1 retains week 3 effort 75; student 2 is unchanged. |
+| PREFIX-009 | With two students, run `addstudent N/Alice Example P/12345678 E/alice@example.com G/1A`, then list students. | Uppercase prefixes are recognized and the student is added with the supplied values. |
 
 ## Mission parser removal and edit/prefix branch regression
 
 Run the full Gradle suite and `coverage` with Java 25 and assertions enabled.
 Verify 100% JaCoCo branch coverage for `EditCommandParser` and `Prefix`.
-`PrefixTest` exercises null-backed hashing and every equality path. The private
+`PrefixTest` exercises null-backed hashing and equality, including comparisons
+between null and non-null prefix values. The private
 edit-tag assertion is tested through reflection because tokenizer-produced tag
 collections are never null; this internal invariant has no UI input equivalent.
 
@@ -222,7 +226,21 @@ collections are never null; this internal invariant has no UI input equivalent.
 | EDIT-PREFIX-002 | Run `edit unexpected id/1 n/Rejected Name`, then `view id/1`. | Invalid-format feedback; the first student retains Updated Name. |
 | EDIT-PREFIX-003 | Run `edit id/1 t/`, then `view id/1`. | Tags are cleared; other fields are unchanged. |
 | EDIT-PREFIX-004 | Run `edit id/1 id/2 n/Rejected Name`, then view both students. | Duplicate-index feedback; both students remain unchanged. |
-| MISSION-EDIT-001 | Create a mission with `addmission n/Runes d/2026-10-20`, then edit its returned ID using `editmission m/ID n/New Runes`. | Editing succeeds through ParserUtil without MissionParser; the mission keeps its ID and deadline. |
+| MISSION-EDIT-001 | Create a mission with `addmission m/M01 n/Runes d/2026-10-20`, then edit it using `editmission m/M01 n/New Runes`. | Editing succeeds; the mission keeps its ID and deadline. |
+
+## Mission parser value regression
+
+Run the corresponding `ParserUtilTest` cases. These parser-level checks have no
+direct UI equivalent.
+
+| ID | Steps | Expected result |
+| --- | --- | --- |
+| MISSION-PARSE-001 | Parse a mission name containing leading/trailing and repeated whitespace, punctuation, and mixed case. | Surrounding whitespace is removed, internal whitespace collapses to single spaces, and punctuation/case are preserved. |
+| MISSION-PARSE-002 | Parse an empty or whitespace-only mission name, then a valid name. | Blank names produce the mission-name `ParseException`; valid parsing still succeeds. |
+| MISSION-PARSE-003 | Parse a leap-day deadline `2024-02-29`, a valid regular date, and a date with surrounding whitespace. | Valid dates parse to the expected `LocalDate`; surrounding whitespace is trimmed. |
+| MISSION-PARSE-004 | Parse malformed deadline formats and impossible calendar dates, then parse a valid date. | Invalid formats and impossible dates produce their respective `ParseException` messages; valid parsing still succeeds. |
+| MISSION-PARSE-005 | Parse lowercase `m/m03` with surrounding whitespace. | The parser trims the input and returns canonical ID `M03`; `MissionId` owns case normalization. |
+| MISSION-DELETE-RECREATE-001 | With mission `M03` submitted by a student, delete `M03`, then recreate it using `m/M03` with a new name and deadline. | The recreated mission uses ID `M03` and has no previous submissions. |
 
 ## Missing-prefix usage suffix regression
 
@@ -252,16 +270,34 @@ The shared validator returns problem-only messages; command parsers append usage
 
 ## Command parser error usage regression
 
-Run all parser tests and the full Gradle suite. Exact error assertions must include
-one newline and the complete command usage after the problem message, while direct
-ParserUtil and ArgumentMultimap tests continue to expect problem-only messages.
+Run all parser tests and the full Gradle suite. Every command error that includes
+usage must place a blank line between the problem message and the complete usage
+text. Direct ParserUtil and ArgumentMultimap tests continue to expect only the
+problem message.
 
 | ID | Steps | Expected result |
 | --- | --- | --- |
-| ERROR-USAGE-001 | Run `edit id/1 p/invalid`, then `view id/1`. | Phone validation feedback ends with edit usage exactly once; student fields are unchanged. |
+| ERROR-USAGE-001 | Run `edit id/1 p/invalid`, then `view id/1`. | Phone validation feedback is followed by a blank line and edit usage exactly once; student fields are unchanged. |
 | ERROR-USAGE-002 | Run `edit id/1 p/91234567`, then `view id/1`. | Phone updates successfully; other fields remain unchanged. |
-| ERROR-USAGE-003 | Run `edit id/1 p/91234567 p/98765432`, then `view id/1`. | Duplicate-phone feedback ends with edit usage exactly once; the phone remains 91234567. |
+| ERROR-USAGE-003 | Run `edit id/1 p/91234567 p/98765432`, then `view id/1`. | Duplicate-phone feedback is followed by a blank line and edit usage exactly once; the phone remains 91234567. |
+| ERROR-USAGE-004 | Run `addmission m/M01 n/Runes d/2026-02-30`. | Date validation feedback is followed by a blank line and AddMission usage; no mission is added. |
 
 Preamble-error regression: commands using the shared structure validator must
 show `Invalid command format!` followed by their usage exactly once, without a
 literal `%1$s` placeholder. Keep the intentional invalid-preamble cases above.
+
+
+## Mastery-check number error regression
+
+Run the complete ParserUtilTest and all four mastery-check command parser test suites.
+Non-positive integers (0, -1, and -2147483648) must report MESSAGE_CONSTRAINTS.
+Blank, malformed, and overflowing values must report MESSAGE_NON_NUMBER.
+Command parser errors must append the corresponding command usage.
+
+| ID | Steps | Expected result |
+| --- | --- | --- |
+| MC-NUMBER-001 | Register appointment 1 using `addmc id/1 num/1 dt/18-08|14:30`, then view the student. | Appointment 1 is registered and incomplete. |
+| MC-NUMBER-002 | Run each of addmc, delmc, markmc, and unmarkmc with `id/1 num/0` and `id/1 num/-1`; include a valid dt/ argument for addmc. Inspect saved data and view the student after each attempt. | Each error identifies a non-positive integer and includes its command usage. Records and saved data are unchanged. |
+| MC-NUMBER-003 | Run `markmc id/1 num/1`, then view the student. | Appointment 1 is completed. |
+| MC-NUMBER-004 | Repeat the four-command rejection sequence with blank num/, abc, 1.5, and 2147483648. Inspect saved data and view the student after each attempt. | Each error uses the non-integer message and includes its command usage. Appointment 1 remains completed; other records and saved data are unchanged. |
+| MC-NUMBER-005 | Run `unmarkmc id/1 num/1`, then view the student. | Appointment 1 returns to incomplete with its original time. |

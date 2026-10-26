@@ -31,7 +31,7 @@ public class UnmarkMasteryCheckCommandParser implements Parser<UnmarkMasteryChec
             int number = ParserUtil.parseMasteryCheckNumber(argMultimap.getValue(PREFIX_NUMBER).get());
             return new UnmarkMasteryCheckCommand(index, number);
         } catch (ParseException e) {
-            throw new ParseException(e.getMessage() + "\n" + UnmarkMasteryCheckCommand.MESSAGE_USAGE);
+            throw new ParseException(e.getMessage() + "\n\n" + UnmarkMasteryCheckCommand.MESSAGE_USAGE);
         }
     }
 }

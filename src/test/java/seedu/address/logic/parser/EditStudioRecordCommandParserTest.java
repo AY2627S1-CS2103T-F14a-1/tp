@@ -15,7 +15,7 @@ import seedu.address.model.student.StudioRecord;
  */
 public class EditStudioRecordCommandParserTest {
 
-    private static final String USAGE_SUFFIX = "\n" + EditStudioRecordCommand.MESSAGE_USAGE;
+    private static final String USAGE_SUFFIX = "\n\n" + EditStudioRecordCommand.MESSAGE_USAGE;
 
     private final EditStudioRecordCommandParser parser = new EditStudioRecordCommandParser();
 

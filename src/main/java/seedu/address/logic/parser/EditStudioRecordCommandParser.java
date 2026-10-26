@@ -35,7 +35,7 @@ public class EditStudioRecordCommandParser implements Parser<EditStudioRecordCom
             int effortScore = ParserUtil.parseEffortScore(argMultimap.getValue(PREFIX_STUDIO_EFFORT).get());
             return new EditStudioRecordCommand(index, week, new StudioRecord(effortScore));
         } catch (ParseException e) {
-            throw new ParseException(e.getMessage() + "\n" + EditStudioRecordCommand.MESSAGE_USAGE);
+            throw new ParseException(e.getMessage() + "\n\n" + EditStudioRecordCommand.MESSAGE_USAGE);
         }
     }
 }

@@ -35,7 +35,7 @@ public class AddStudioRecordCommandParser implements Parser<AddStudioRecordComma
             int effortScore = ParserUtil.parseEffortScore(argMultimap.getValue(PREFIX_STUDIO_EFFORT).get());
             return new AddStudioRecordCommand(index, week, new StudioRecord(effortScore));
         } catch (ParseException e) {
-            throw new ParseException(e.getMessage() + "\n" + AddStudioRecordCommand.MESSAGE_USAGE);
+            throw new ParseException(e.getMessage() + "\n\n" + AddStudioRecordCommand.MESSAGE_USAGE);
         }
     }
 }

@@ -38,7 +38,7 @@ public class AddMasteryCheckCommandParser implements Parser<AddMasteryCheckComma
             LocalDateTime dateTime = ParserUtil.parseMasteryCheckDateTime(argMultimap.getValue(PREFIX_DATETIME).get());
             return new AddMasteryCheckCommand(index, number, new MasteryCheck(dateTime));
         } catch (ParseException e) {
-            throw new ParseException(e.getMessage() + "\n" + AddMasteryCheckCommand.MESSAGE_USAGE);
+            throw new ParseException(e.getMessage() + "\n\n" + AddMasteryCheckCommand.MESSAGE_USAGE);
         }
     }
 }
