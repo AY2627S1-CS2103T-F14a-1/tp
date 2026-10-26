@@ -65,7 +65,7 @@ public class AddNoteCommand extends Command {
         Student studentToUpdate = getStudentAtDisplayedIndex(model, targetIndex);
         RegisteredNotes registeredNotes = studentToUpdate.getRegisteredNotes();
 
-        if (registeredNotes.hasNote(noteId)) {
+        if (registeredNotes.hasNoteId(noteId)) {
             return new CommandResult(String.format(MESSAGE_ALREADY_RECORDED, studentToUpdate.getName()));
         }
 

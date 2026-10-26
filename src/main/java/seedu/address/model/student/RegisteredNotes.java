@@ -57,7 +57,7 @@ public final class RegisteredNotes {
      * @return True if note ID has been registered.
      * @throws IllegalArgumentException If the note ID is outside the valid range.
      */
-    public boolean hasNote(int id) {
+    public boolean hasNoteId(int id) {
         checkArgument(isValidNoteId(id), MESSAGE_CONSTRAINTS);
         return notesById.containsKey(id);
     }
@@ -74,7 +74,7 @@ public final class RegisteredNotes {
      */
     public RegisteredNotes withNote(int id, Note note) {
         requireNonNull(note);
-        if (hasNote(id)) {
+        if (hasNoteId(id)) {
             return this;
         }
 
@@ -94,7 +94,7 @@ public final class RegisteredNotes {
      *      the note with the given ID.
      */
     public RegisteredNotes withoutNote(int id) {
-        if (!hasNote(id)) {
+        if (!hasNoteId(id)) {
             return this;
         }
 
@@ -115,7 +115,7 @@ public final class RegisteredNotes {
      */
     public RegisteredNotes editNote(int noteId, Note note) {
         requireNonNull(note);
-        if (!hasNote(noteId)) {
+        if (!hasNoteId(noteId)) {
             return this;
         }
 
