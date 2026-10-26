@@ -88,7 +88,7 @@ public final class RegisteredNotes {
     public RegisteredNotes withNote(Note note) {
         requireNonNull(note);
         if (registeredNotes.size() >= MAX_NOTE_INDEX) {
-            throw new IllegalArgumentException(MESSAGE_CONSTRAINTS);
+            throw new IllegalStateException(MESSAGE_CONSTRAINTS);
         }
 
         List<Note> updatedNotes = new ArrayList<>(registeredNotes);
