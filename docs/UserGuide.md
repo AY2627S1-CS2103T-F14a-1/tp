@@ -574,7 +574,7 @@ studio group 1A with a recorded submission for M01.
 Shows every student's recorded submission status for one mission and replaces
 the displayed student list.
 
-Format: `viewmission m/MISSION_ID`
+Format: `viewmission m/MISSION_ID [s/overdue]`
 
 * Searches all students, including students hidden by an earlier filter.
 * Displays the mission ID, description, deadline, and result count.
@@ -587,6 +587,15 @@ Format: `viewmission m/MISSION_ID`
   does not confirm that no submission was made.
 * An invalid or nonexistent mission leaves records and the displayed list
   unchanged.
+* * With `s/overdue`, displays only students without a recorded submission
+    whose mission deadline is before today's local date.
+* Submitted students never appear in overdue results.
+* An empty result clears the displayed student list and reports count 0.
+* Marking a displayed overdue student removes them from the filtered list.
+  Remaining displayed indexes change accordingly.
+* Rerun `viewmission` to refresh results after the date or mission deadline changes.
+* Use `viewmission m/MISSION_ID` to restore all students before selecting a
+  student who disappeared after marking.
 
 ### Clearing all entries: `clear`
 
@@ -662,7 +671,7 @@ Action     | Format, Examples
 **Edit mission** | `editmission m/MISSION_ID [n/NAME] [d/DEADLINE]`<br> e.g., `editmission m/M01 n/Rune Reading d/2026-10-22`                                                         
 **List overdue submissions** | `listoverdue`                                                                                                                                                      
 **List mission submissions** | `listmissions m/MISSION_ID`<br> e.g., `listmissions m/M01`  
-**View mission statuses** | `viewmission m/MISSION_ID`
+**View mission statuses** | `viewmission m/MISSION_ID [s/overdue]`
 **Clear**  | `clear`                                                                                                                                                            
 **Find**   | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find James Jake`                                                                                                         
 **List**   | `list`                                                                                                                                                             
