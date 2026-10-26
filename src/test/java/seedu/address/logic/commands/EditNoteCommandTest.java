@@ -65,7 +65,7 @@ public class EditNoteCommandTest {
         Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
 
         assertCommandSuccess(command, model,
-                String.format(EditNoteCommand.MESSAGE_ID_NOT_RECORDED,
+                String.format(EditNoteCommand.MESSAGE_INDEX_NOT_RECORDED,
                         studentToUpdate.getName(), INDEX_THIRD_NOTE.getOneBased()),
                 expectedModel);
     }

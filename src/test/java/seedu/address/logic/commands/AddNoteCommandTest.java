@@ -85,7 +85,7 @@ public class AddNoteCommandTest {
     }
 
     @Test
-    public void execute_maximumNotesReached_throwsIllegalArgumentExceptionAndPreservesModel() {
+    public void execute_maximumNotesReached_reportsNoChangeAndPreservesModel() {
         Model model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
         Student studentToUpdate = model.getFilteredStudentList().get(INDEX_FIRST_STUDENT.getZeroBased());
         RegisteredNotes maximumNotes = new RegisteredNotes(
@@ -94,8 +94,9 @@ public class AddNoteCommandTest {
         Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
         AddNoteCommand command = new AddNoteCommand(INDEX_FIRST_STUDENT, NOTE);
 
-        assertThrows(IllegalArgumentException.class, () -> command.execute(model));
-        assertEquals(expectedModel, model);
+        assertCommandSuccess(command, model,
+                String.format(AddNoteCommand.MESSAGE_MAXIMUM_NOTES_REACHED,
+                        studentToUpdate.getName(), RegisteredNotes.MAX_NOTE_INDEX), expectedModel);
     }
 
     @Test
