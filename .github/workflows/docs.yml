@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Install Graphviz
-        run: sudo apt-get install graphviz
+        run: sudo apt-get install -y graphviz
       - name: Install Java
         uses: actions/setup-java@v3
         with:

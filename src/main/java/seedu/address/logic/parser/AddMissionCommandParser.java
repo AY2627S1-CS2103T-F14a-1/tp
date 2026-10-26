@@ -2,31 +2,38 @@ package seedu.address.logic.parser;
 
 import static java.util.Objects.requireNonNull;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_DATE;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_MISSION;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
 
 import java.time.LocalDate;
 
 import seedu.address.logic.commands.AddMissionCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.model.mission.MissionId;
 
-/** Parses the name and calendar deadline of a shared mission. */
+/** Parses the ID, name, and calendar deadline of a shared mission. */
 public class AddMissionCommandParser implements Parser<AddMissionCommand> {
 
     /**
-     * Parses exactly one name and deadline without consulting or changing the model.
+     * Parses exactly one mission ID, name, and deadline without consulting or changing the model.
      *
      * @param args Arguments after the command word.
-     * @return Command containing trimmed name and date.
+     * @return Command containing the mission ID, trimmed name, and date.
      * @throws ParseException If a field is missing, repeated, empty, or invalid, or a preamble exists.
      */
     @Override
     public AddMissionCommand parse(String args) throws ParseException {
         requireNonNull(args);
-        ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
-                args, AddMissionCommand.MESSAGE_USAGE, PREFIX_NAME, PREFIX_DATE);
+        try {
+            ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
+                    args, PREFIX_MISSION, PREFIX_NAME, PREFIX_DATE);
 
-        String name = ParserUtil.parseMissionName(argMultimap.getValue(PREFIX_NAME).get());
-        LocalDate deadline = ParserUtil.parseMissionDeadline(argMultimap.getValue(PREFIX_DATE).get());
-        return new AddMissionCommand(name, deadline);
+            MissionId missionId = ParserUtil.parseMissionId(argMultimap.getValue(PREFIX_MISSION).orElseThrow());
+            String name = ParserUtil.parseMissionName(argMultimap.getValue(PREFIX_NAME).orElse(""));
+            LocalDate deadline = ParserUtil.parseMissionDeadline(argMultimap.getValue(PREFIX_DATE).orElseThrow());
+            return new AddMissionCommand(missionId, name, deadline);
+        } catch (ParseException e) {
+            throw new ParseException(e.getMessage() + "\n\n" + AddMissionCommand.MESSAGE_USAGE);
+        }
     }
 }

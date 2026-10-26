@@ -17,6 +17,7 @@ import seedu.address.logic.parser.AddressBookParser;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.UserPrefs;
+import seedu.address.model.mission.MissionId;
 import seedu.address.model.student.Student;
 import seedu.address.testutil.StudentBuilder;
 
@@ -31,9 +32,9 @@ public class ListOverdueCommandTest {
     @Test
     public void execute_pastTodayAndFutureDeadlines_listsOnlyMissingPastSubmission() {
         Model model = new ModelManager();
-        model.addMission("Past", LocalDate.of(2026, 10, 19));
-        model.addMission("Today", LocalDate.of(2026, 10, 20));
-        model.addMission("Future", LocalDate.of(2026, 10, 21));
+        model.addMission(new MissionId("M01"), "Past", LocalDate.of(2026, 10, 19));
+        model.addMission(new MissionId("M02"), "Today", LocalDate.of(2026, 10, 20));
+        model.addMission(new MissionId("M03"), "Future", LocalDate.of(2026, 10, 21));
         model.addStudent(new StudentBuilder().withName("John Doe")
                 .withMissionSubmissions("M01").build());
         model.addStudent(new StudentBuilder().withName("Betsy Crowe").build());
@@ -48,8 +49,8 @@ public class ListOverdueCommandTest {
     @Test
     public void execute_multipleMissingMissions_ordersByStudentThenMissionId() {
         Model model = new ModelManager();
-        model.addMission("First", LocalDate.of(2026, 10, 18));
-        model.addMission("Second", LocalDate.of(2026, 10, 19));
+        model.addMission(new MissionId("M01"), "First", LocalDate.of(2026, 10, 18));
+        model.addMission(new MissionId("M02"), "Second", LocalDate.of(2026, 10, 19));
         model.addStudent(new StudentBuilder().withName("John Doe").build());
         model.addStudent(new StudentBuilder().withName("Betsy Crowe").build());
 
@@ -64,7 +65,7 @@ public class ListOverdueCommandTest {
     @Test
     public void execute_hiddenMissingSubmission_preservesFilterAndReportsNoOverdue() {
         Model model = new ModelManager();
-        model.addMission("Past", LocalDate.of(2026, 10, 19));
+        model.addMission(new MissionId("M01"), "Past", LocalDate.of(2026, 10, 19));
         Student john = new StudentBuilder().withName("John Doe")
                 .withMissionSubmissions("M01").build();
         model.addStudent(john);
@@ -80,7 +81,7 @@ public class ListOverdueCommandTest {
     @Test
     public void execute_emptyFilteredList_reportsNoOverdueSubmissions() {
         Model model = new ModelManager();
-        model.addMission("Past", LocalDate.of(2026, 10, 19));
+        model.addMission(new MissionId("M01"), "Past", LocalDate.of(2026, 10, 19));
         model.addStudent(new StudentBuilder().build());
         model.updateFilteredStudentList(student -> false);
         Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
@@ -102,7 +103,7 @@ public class ListOverdueCommandTest {
     @Test
     public void execute_localDateDiffersFromUtc_usesClockTimeZone() {
         Model model = new ModelManager();
-        model.addMission("Runes", LocalDate.of(2026, 10, 20));
+        model.addMission(new MissionId("M01"), "Runes", LocalDate.of(2026, 10, 20));
         model.addStudent(new StudentBuilder().withName("John Doe").build());
         Clock localClock = Clock.fixed(
                 Instant.parse("2026-10-20T17:00:00Z"), ZoneId.of("Asia/Makassar"));

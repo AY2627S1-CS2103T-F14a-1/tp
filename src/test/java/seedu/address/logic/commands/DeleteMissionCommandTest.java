@@ -29,19 +29,19 @@ import seedu.address.storage.Storage;
 import seedu.address.storage.StorageManager;
 import seedu.address.testutil.StudentBuilder;
 
-/** Tests deletion across hidden students, persistent records, and allocation state. */
+/** Tests deletion across hidden students and persistent records. */
 public class DeleteMissionCommandTest {
 
     @TempDir
     public Path directory;
 
     @Test
-    public void execute_existingMission_cleansAllStudentsAndPersistsWithoutReusingIds() throws Exception {
+    public void execute_existingMission_cleansAllStudentsAndPreservesRemainingIds() throws Exception {
         AddressBook book = new AddressBook();
         LocalDate deadline = LocalDate.of(2026, 10, 20);
-        book.addMission("Runes", deadline);
-        book.addMission("Curves", deadline);
-        Student alice = new StudentBuilder(ALICE).withMissionSubmissions("M01", "M02").build();
+        book.addMission(new MissionId("M01"), "Runes", deadline);
+        book.addMission(new MissionId("M10"), "Curves", deadline);
+        Student alice = new StudentBuilder(ALICE).withMissionSubmissions("M01", "M10").build();
         Student benson = new StudentBuilder(BENSON).withMissionSubmissions("M01").build();
         book.addStudent(alice);
         book.addStudent(benson);
@@ -53,20 +53,20 @@ public class DeleteMissionCommandTest {
         LogicManager logic = new LogicManager(model, storage);
         assertEquals("Deleted mission: M01 · Runes (Due: 2026-10-20).",
                 logic.execute("delmission m/m01").getFeedbackToUser());
-        assertEquals(List.of(new StudentBuilder(alice).withMissionSubmissions("M02").build(),
+        assertEquals(List.of(new StudentBuilder(alice).withMissionSubmissions("M10").build(),
                 new StudentBuilder(benson).withMissionSubmissions().build()), model.getAddressBook().getStudentList());
         assertEquals(1, model.getFilteredStudentList().size());
-        assertEquals(new MissionId("M02"), model.getMissionList().getFirst().getId());
-        assertEquals(3, model.getAddressBook().getNextMissionNumber());
+        assertEquals(new MissionId("M10"), model.getMissionList().getFirst().getId());
         assertEquals(model.getAddressBook(), storage.readAddressBook().orElseThrow());
         String saved = Files.readString(file);
         CommandException error = assertThrows(CommandException.class, () -> logic.execute("delmission m/M01"));
         assertEquals("Mission M01 does not exist.", error.getMessage());
         assertEquals(saved, Files.readString(file));
-        logic.execute("delmission m/M02");
+        logic.execute("delmission m/M10");
         AddressBook restored = new AddressBook(storage.readAddressBook().orElseThrow());
         assertTrue(restored.getMissionList().isEmpty());
-        assertEquals(new MissionId("M03"), restored.addMission("Next", deadline).getId());
+        assertEquals(new MissionId("M10"),
+                restored.addMission(new MissionId("M10"), "Reused ID", deadline).getId());
     }
 
     @Test

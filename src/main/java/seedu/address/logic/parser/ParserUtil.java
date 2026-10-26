@@ -21,8 +21,10 @@ import seedu.address.model.mission.Mission;
 import seedu.address.model.mission.MissionId;
 import seedu.address.model.student.Email;
 import seedu.address.model.student.Name;
+import seedu.address.model.student.Note;
 import seedu.address.model.student.Phone;
 import seedu.address.model.student.RegisteredMasteryChecks;
+import seedu.address.model.student.RegisteredNotes;
 import seedu.address.model.student.StudioGroup;
 import seedu.address.model.tag.Tag;
 
@@ -172,7 +174,7 @@ public class ParserUtil {
     }
 
     /**
-     * Parses a case-insensitive mission ID into its canonical uppercase form.
+     * Trims and validates a mission ID; {@link MissionId} normalizes its case.
      *
      * @param missionIdText Mission ID text.
      * @return The validated mission ID.
@@ -183,7 +185,7 @@ public class ParserUtil {
         requireNonNull(missionIdText);
 
         try {
-            return new MissionId(missionIdText.trim().toUpperCase(Locale.ROOT));
+            return new MissionId(missionIdText.trim());
         } catch (IllegalArgumentException e) {
             throw new ParseException(MESSAGE_INVALID_MISSION_ID);
         }
@@ -221,7 +223,7 @@ public class ParserUtil {
             throw new ParseException(MESSAGE_INVALID_WEEK);
         }
         int weekNumber = Integer.parseInt(trimmedWeek);
-        if (weekNumber > 13) {
+        if (weekNumber < 0 || weekNumber > 13) {
             throw new ParseException(MESSAGE_INVALID_WEEK);
         }
         return weekNumber;
@@ -258,7 +260,7 @@ public class ParserUtil {
             }
             return trimmedNumber;
         } catch (NumberFormatException _) {
-            throw new ParseException(RegisteredMasteryChecks.MESSAGE_CONSTRAINTS);
+            throw new ParseException(RegisteredMasteryChecks.MESSAGE_NON_NUMBER);
         }
     }
 
@@ -280,5 +282,38 @@ public class ParserUtil {
         } catch (DateTimeParseException e) {
             throw new ParseException(MESSAGE_INVALID_MASTERY_CHECK_DATETIME);
         }
+    }
+
+    /**
+     * Parses a {@code String note ID} into a {@code int} note ID.
+     *
+     * @throws ParseException if the given {@code noteId} is invalid.
+     */
+    public static int parseNoteId(String noteId) throws ParseException {
+        requireNonNull(noteId);
+        String trimmedNoteId = noteId.trim();
+        try {
+            int noteIdNumber = Integer.parseInt(trimmedNoteId);
+            if (!RegisteredNotes.isValidNoteId(noteIdNumber)) {
+                throw new ParseException(RegisteredNotes.MESSAGE_CONSTRAINTS);
+            }
+            return noteIdNumber;
+        } catch (NumberFormatException e) {
+            throw new ParseException(RegisteredNotes.MESSAGE_CONSTRAINTS);
+        }
+    }
+
+    /**
+     * Parses a {@code noteText} into a {@code Note}.
+     *
+     * @throws ParseException if the given {@code noteText} is invalid.
+     */
+    public static Note parseNoteText(String noteText) throws ParseException {
+        requireNonNull(noteText);
+        String trimmedNoteText = noteText.trim();
+        if (!Note.isValidNoteText(trimmedNoteText)) {
+            throw new ParseException(Note.MESSAGE_CONSTRAINTS);
+        }
+        return new Note(trimmedNoteText);
     }
 }

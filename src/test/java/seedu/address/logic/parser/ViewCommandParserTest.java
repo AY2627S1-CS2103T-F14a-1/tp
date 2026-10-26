@@ -10,6 +10,8 @@ import seedu.address.logic.commands.ViewCommand;
 
 public class ViewCommandParserTest {
 
+    private static final String USAGE_SUFFIX = "\n\n" + ViewCommand.MESSAGE_USAGE;
+
     private final ViewCommandParser parser = new ViewCommandParser();
 
     @Test
@@ -20,9 +22,13 @@ public class ViewCommandParserTest {
 
     @Test
     public void parse_invalidArgs_throwsParseException() {
-        assertParseFailure(parser, "id/0", ParserUtil.MESSAGE_INVALID_INDEX);
-        assertParseFailure(parser, "id/-1", ParserUtil.MESSAGE_INVALID_INDEX);
-        assertParseFailure(parser, "id/abc", ParserUtil.MESSAGE_INVALID_INDEX);
-        assertParseFailure(parser, "", CliSyntax.PREFIX_INDEX.getMissingMessage());
+        assertParseFailure(parser, "id/0",
+                ParserUtil.MESSAGE_INVALID_INDEX + USAGE_SUFFIX);
+        assertParseFailure(parser, "id/-1",
+                ParserUtil.MESSAGE_INVALID_INDEX + USAGE_SUFFIX);
+        assertParseFailure(parser, "id/abc",
+                ParserUtil.MESSAGE_INVALID_INDEX + USAGE_SUFFIX);
+        assertParseFailure(parser, "",
+                CliSyntax.PREFIX_INDEX.getMissingMessage() + USAGE_SUFFIX);
     }
 }

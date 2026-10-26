@@ -26,11 +26,15 @@ public class DeleteMasteryCheckCommandParser implements Parser<DeleteMasteryChec
     @Override
     public DeleteMasteryCheckCommand parse(String args) throws ParseException {
         requireNonNull(args);
-        ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
-                args, DeleteMasteryCheckCommand.MESSAGE_USAGE, PREFIX_INDEX, PREFIX_NUMBER);
+        try {
+            ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
+                    args, PREFIX_INDEX, PREFIX_NUMBER);
 
-        Index index = ParserUtil.parseIndex(argMultimap.getValue(PREFIX_INDEX).get());
-        int number = ParserUtil.parseMasteryCheckNumber(argMultimap.getValue(PREFIX_NUMBER).get());
-        return new DeleteMasteryCheckCommand(index, number);
+            Index index = ParserUtil.parseIndex(argMultimap.getValue(PREFIX_INDEX).get());
+            int number = ParserUtil.parseMasteryCheckNumber(argMultimap.getValue(PREFIX_NUMBER).get());
+            return new DeleteMasteryCheckCommand(index, number);
+        } catch (ParseException e) {
+            throw new ParseException(e.getMessage() + "\n\n" + DeleteMasteryCheckCommand.MESSAGE_USAGE);
+        }
     }
 }

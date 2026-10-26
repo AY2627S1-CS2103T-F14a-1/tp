@@ -24,10 +24,14 @@ public class UnmarkMasteryCheckCommandParser implements Parser<UnmarkMasteryChec
     @Override
     public UnmarkMasteryCheckCommand parse(String args) throws ParseException {
         requireNonNull(args);
-        ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
-                args, UnmarkMasteryCheckCommand.MESSAGE_USAGE, PREFIX_INDEX, PREFIX_NUMBER);
-        Index index = ParserUtil.parseIndex(argMultimap.getValue(PREFIX_INDEX).get());
-        int number = ParserUtil.parseMasteryCheckNumber(argMultimap.getValue(PREFIX_NUMBER).get());
-        return new UnmarkMasteryCheckCommand(index, number);
+        try {
+            ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
+                    args, PREFIX_INDEX, PREFIX_NUMBER);
+            Index index = ParserUtil.parseIndex(argMultimap.getValue(PREFIX_INDEX).get());
+            int number = ParserUtil.parseMasteryCheckNumber(argMultimap.getValue(PREFIX_NUMBER).get());
+            return new UnmarkMasteryCheckCommand(index, number);
+        } catch (ParseException e) {
+            throw new ParseException(e.getMessage() + "\n\n" + UnmarkMasteryCheckCommand.MESSAGE_USAGE);
+        }
     }
 }

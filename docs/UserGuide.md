@@ -61,6 +61,9 @@ AvengerHub is a **desktop address book application for managing students, optimi
 * Prefixed parameters can be in any order unless a command states otherwise.<br>
   For example, if the command specifies `n/NAME p/PHONE_NUMBER`, `p/PHONE_NUMBER n/NAME` is also acceptable.
 
+* Prefixes are case-insensitive.<br>
+  For example, `n/John Doe` and `N/John Doe` both specify the same name parameter.
+
 * Extraneous parameters for commands that take no parameters, such as `help`, `list`, `exit`, and `clear`, are ignored.<br>
   For example, `help 123` is interpreted as `help`.
 
@@ -107,7 +110,7 @@ Format: `view id/INDEX`
   including results from `find`.
 * The index must be a positive integer identifying a displayed student.
 * The profile displays the student's name, studio group, phone number,
-  email address, tags, and configured missions with their submission statuses.
+  email address, tags, studio records, missions, mastery checks, and notes.
 * Mission statuses are `Submitted` or `Not submitted`, based on the records
   maintained in AvengerHub.
 * An empty mission catalogue displays `No missions configured.`
@@ -260,6 +263,58 @@ For example, if the first student is Amy Bee and her week 3 studio record is rec
 Edited Amy Bee's studio record for studio week 3.
 ```
 
+### Adding a student note: `addnote`
+
+Adds a note for an existing student in the address book.
+
+Format: `addnote id/INDEX ni/ID nt/TEXT`
+
+* Adds a note with id `ID` and text `TEXT` for the student at the specified `INDEX`.
+* The index refers to the index number shown in the displayed student list.
+* The index **must be a positive integer** 1, 2, 3, ...
+* The ID must be an integer from 1 to 10, inclusive.
+* The text should only contain alphanumeric characters and spaces, should not be blank, and be less than or equal to 100 characters.
+* Adding a note with the same ID as an existing one leaves the existing note unchanged, even if a different text is supplied.
+* The current list filter stays active.
+
+Examples:
+*  `addnote id/1 ni/1 nt/hello` Adds a note with id `1` and text `hello` for the 1st student.
+
+
+### Deleting a student note: `delnote`
+
+Deletes a note for an existing student in the address book.
+
+Format: `delnote id/INDEX ni/ID`
+
+* Deletes a note with id `ID` for the student at the specified `INDEX`.
+* The index refers to the index number shown in the displayed student list.
+* The index **must be a positive integer** 1, 2, 3, ...
+* The ID must be an integer from 1 to 10, inclusive.
+* If the ID doesn't match any existing notes for the given student, the notes will be unchanged.
+* The current list filter stays active.
+
+Examples:
+*  `delnote id/1 ni/1` Deletes a note with id `1` for the 1st student.
+
+
+### Editing a student note: `editnote`
+
+Edits a note for an existing student in the address book.
+
+Format: `editnote id/INDEX ni/ID nt/TEXT`
+
+* Edits a note with id `ID`, replacing its text with `TEXT` for the student at the specified `INDEX`.
+* The index refers to the index number shown in the displayed student list.
+* The index **must be a positive integer** 1, 2, 3, ...
+* The ID must be an integer from 1 to 10, inclusive.
+* The text should only contain alphanumeric characters and spaces, should not be blank, and be less than or equal to 100 characters.
+* If the ID doesn't match any existing notes for the given student, or matches the existing text, the notes will be unchanged.
+* The current list filter stays active.
+
+Examples:
+*  `editnote id/1 ni/1 nt/hello` Edits a note with id `1`, replacing its text with `hello` for the 1st student.
+
 ### Adding a mastery check: `addmc`
 
 Adds a numbered mastery check appointment for a student.
@@ -270,7 +325,7 @@ Format: `addmc id/INDEX num/NUMBER dt/DATE-TIME`
 * `NUMBER` must be an integer from **1 to 2147483647**, inclusive. Numbers are unique within each student's appointments.
 * `DATE-TIME` must be a real date and 24-hour time in `dd-MM|HH:mm` format, such as `29-10|13:30`.
   The current year is filled in automatically. Impossible dates, `24:00`, and times with seconds are rejected.
-* Supply lowercase `id/`, `num/`, and `dt/` exactly once each, in any order. Do not put text before the first prefix.
+* Supply `id/`, `num/`, and `dt/` exactly once each, in any letter case and in any order. Do not put text before the first prefix.
 * New mastery checks show **Not completed**. Adding an existing number leaves its time and status unchanged.
 * Any invalid input produces an error without changing records.
 
@@ -290,7 +345,7 @@ Format: `delmc id/INDEX num/NUMBER`
 
 * `INDEX` must be a positive integer identifying a student in the **currently displayed list**, including `find` results.
 * `NUMBER` must be an integer from **1 to 2147483647**, inclusive. Numbers are unique within each student's appointments.
-* Supply the lowercase `id/` and `num/` prefixes exactly once. Do not put text before the first prefix.
+* Supply the `id/` and `num/` prefixes exactly once, in any letter case. Do not put text before the first prefix.
 * If the number is not registered for that student, the command reports that no changes were made.
 * Other mastery check appointments and the student remain in the address book.
 * Any invalid input produces an error without changing records.
@@ -307,7 +362,7 @@ Format: `markmc id/INDEX num/NUMBER`
 
 * `INDEX` must be a positive integer identifying a student in the **currently displayed list**, including `find` results.
 * `NUMBER` must be an integer from **1 to 2147483647**, inclusive. Numbers are unique within each student's appointments.
-* Supply the lowercase `id/` and `num/` prefixes exactly once. Do not put text before the first prefix.
+* Supply the `id/` and `num/` prefixes exactly once, in any letter case. Do not put text before the first prefix.
 * Marking an already completed mastery check reports that no changes were made.
 * Any invalid input produces an error without changing records.
 
@@ -336,10 +391,13 @@ Example:
 Creates one mission shared by all students. Adding a mission does not mark anyone as having
 submitted it; students without a submission record show **Not submitted**.
 
-Format: `addmission n/NAME d/DEADLINE`
+Format: `addmission m/MISSION_ID n/NAME d/DEADLINE`
 
-* Supply exactly one lowercase `n/` and one lowercase `d/`, in either order. Do not put text
+* Supply exactly one `m/`, `n/`, and `d/` prefix, in any letter case and in either order. Do not put text
   before the first prefix. The command word is case-insensitive.
+* `MISSION_ID` must start with `M` followed by a positive integer of at least two digits,
+  without unnecessary leading zeros. For example, `M01`, `M02`, and `M105` are valid;
+  `M1` and `M00` are not. IDs must be unique among configured missions.
 * `NAME` must not be blank. Multiple words and ordinary punctuation are allowed.
   Leading and trailing whitespace is removed, and internal whitespace becomes a single space.
   Letter case and punctuation are preserved for display and saving.
@@ -350,30 +408,30 @@ Format: `addmission n/NAME d/DEADLINE`
 * `DEADLINE` must be a real calendar date in `YYYY-MM-DD` format. For example, `2024-02-29`
   is valid but `2026-15-32` is not. Times and single-digit months or days are rejected.
   Past deadlines are accepted for recording existing assignments.
-* The app assigns an ID such as `M01`. Use the ID shown in the success message for submission commands.
+* Choose the ID yourself; the application does not assign IDs automatically. Existing mission
+  IDs do not change when another mission is deleted. A deleted ID can be chosen again afterward.
 * Successful additions are saved automatically. Invalid or duplicate additions do not change
-  the catalogue, consume an ID, or save the data file. Existing students and their list filter are preserved.
+  the catalogue or save the data file. Existing students and their list filter are preserved.
 
 Examples:
 
-* `addmission n/Rune Reading d/2026-10-20`
-* `addmission d/2024-02-29 n/Mission 1:  Rune Reading!` stores the name `Mission 1: Rune Reading!`.
+* `addmission m/M01 n/Rune Reading d/2026-10-20`
+* `addmission d/2024-02-29 m/M105 n/Mission 1:  Rune Reading!` stores the name `Mission 1: Rune Reading!`.
 
-For an empty catalogue with its allocation counter at 1, the first example displays:
+The first example displays:
 
 ```text
 New mission added: M01 · Rune Reading (Due: 2026-10-20)
 ```
 
-Missing or blank names produce `Provide a mission name using n/NAME.` A valid name without
+Missing IDs produce `Specify a mission ID using m/MISSION_ID.` Invalid IDs show the ID format
+constraint. Missing or blank names produce `Provide a mission name using n/NAME.` A valid name without
 a deadline produces `Specify a deadline in YYYY-MM-DD format using d/DEADLINE.` Unexpected text
 before the prefixes produces a format error with usage instructions. Repeated prefixes identify the repeated fields;
 invalid dates
 produce their respective constraint messages. An existing name produces
-`This mission already exists in the mission list.`
-
-If all mission IDs have been allocated, the command reports
-`No further mission IDs can be allocated.` and leaves the catalogue and saved file unchanged.
+`This mission already exists in the mission list.` An ID already used by a configured mission produces
+`A mission with this ID already exists.`
 
 ![result for adding a mission](images/addMissionResult.png)
 
@@ -383,7 +441,7 @@ Format: `delmission m/MISSIONID`
 
 Example: `delmission m/M03`
 
-Use exactly one lowercase `m/` prefix. Mission IDs are case-insensitive, so `m/m03` also
+Use exactly one `m/` prefix, in any letter case. Mission IDs are case-insensitive, so `m/m03` also
 identifies `M03`. Numeric-only values such as `m/3` are rejected. Use the stable mission ID,
 not a student index or a position in the displayed list.
 
@@ -402,7 +460,7 @@ Format: `markmission id/INDEX m/MISSION_ID`
 * `INDEX` identifies a student in the **currently displayed list**, including `find` results.
 * The index must be a positive integer without a sign or leading zeros.
 * `MISSION_ID` must identify a configured mission, for example `M01` or `M105`.
-* Use the lowercase `m/` prefix exactly once. Mission IDs are case-insensitive: `m/m01` and `m/M01` both identify `M01`. IDs are displayed and saved in uppercase.
+* Use the `m/` prefix exactly once, in any letter case. Mission IDs are case-insensitive: `m/m01` and `m/M01` both identify `M01`. IDs are displayed and saved in uppercase.
 * Each mission ID identifies one configured assignment.
 * Repeated marking reports that the submission is already recorded and changes nothing.
 * Other students, other submissions, studio records, and the current student filter are preserved.
@@ -434,8 +492,8 @@ Changes a shared mission's name, deadline, or both.
 
 Format: `editmission m/MISSION_ID [n/NAME] [d/DEADLINE]`
 
-* Supply exactly one lowercase `m/` prefix and an existing mission ID.
-* Supply at least one lowercase `n/` or `d/` prefix. Each may appear once.
+* Supply exactly one `m/` prefix and an existing mission ID; prefix matching ignores letter case.
+* Supply at least one `n/` or `d/` prefix. Each may appear once.
 * Prefixes may appear in any order. Do not put text before the first prefix.
 * The command word and mission ID are case-insensitive.
 * Names and deadlines follow the same validation rules as `addmission`.
@@ -498,7 +556,7 @@ Shows which students in the currently displayed student list submitted a mission
 
 Format: `listmissions m/MISSION_ID`
 
-* Supply exactly one lowercase `m/` prefix and an existing mission ID.
+* Supply exactly one `m/` prefix and an existing mission ID; prefix matching ignores letter case.
 * The command word and mission ID are case-insensitive.
 * Students hidden by `find` are excluded.
 * Result numbers retain the indexes in the displayed student list.
@@ -571,11 +629,14 @@ Action     | Format, Examples
 **Add studio record** | `addstudiorecord id/INDEX w/WEEK ef/EFFORT`<br> e.g., `addstudiorecord id/1 w/3 ef/30`                                                                             
 **Delete studio record** | `delstudiorecord id/INDEX w/WEEK`<br> e.g., `delstudiorecord id/1 w/3`                                                                                             
 **Edit studio record** | `editstudiorecord id/INDEX w/WEEK ef/EFFORT`<br> e.g., `editstudiorecord id/1 w/3 ef/30`                                                                           
+**Add note** | `addnote id/INDEX ni/ID nt/TEXT`<br> e.g., `addnote id/1 ni/1 nt/hello`                                                                           
+**Delete note** | `delnote id/INDEX ni/ID`<br> e.g., `delnote id/1 ni/1`                                                                           
+**Edit note** | `editnote id/INDEX ni/ID nt/TEXT`<br> e.g., `editnote id/1 ni/1 nt/hello`                                                                           
 **Add mastery check** | `addmc id/INDEX num/NUMBER dt/DATE-TIME`<br> e.g., `addmc id/1 num/2 dt/29-09\|23:59`                                                                              
 **Delete mastery check** | `delmc id/INDEX num/NUMBER`<br> e.g. `delmc id/1 num/2`                                                                                                               
 **Mark mastery check** | `markmc id/INDEX num/NUMBER`<br> e.g. `markmc id/1 num/2`                                                                                                             
 **Unmark mastery check** | `unmarkmc id/INDEX num/NUMBER`<br> e.g. `unmarkmc id/1 num/2`                                                                                                         
-**Add mission** | `addmission n/NAME d/DEADLINE`<br> e.g., `addmission n/Rune Reading d/2026-10-20`                                                                                  
+**Add mission** | `addmission m/MISSION_ID n/NAME d/DEADLINE`<br> e.g., `addmission m/M01 n/Rune Reading d/2026-10-20`
 **Delete mission** | `delmission m/MISSIONID`<br> e.g., `delmission m/M03`                                                                                                              
 **Record mission submission** | `markmission id/INDEX m/MISSION_ID`<br> e.g., `markmission id/1 m/M01`                                                                                                
 **Remove mission submission** | `unmarkmission id/INDEX m/MISSION_ID`<br> e.g., `unmarkmission id/1 m/M01`                                                                                            

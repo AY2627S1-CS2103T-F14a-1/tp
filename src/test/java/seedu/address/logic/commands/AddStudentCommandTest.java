@@ -98,7 +98,7 @@ public class AddStudentCommandTest {
         }
 
         @Override
-        public Mission addMission(String description, LocalDate deadline) {
+        public Mission addMission(MissionId id, String description, LocalDate deadline) {
             throw new AssertionError("Unexpected mission creation");
         }
 

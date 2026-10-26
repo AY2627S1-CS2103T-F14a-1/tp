@@ -15,6 +15,8 @@ import seedu.address.model.student.StudioRecord;
  */
 public class EditStudioRecordCommandParserTest {
 
+    private static final String USAGE_SUFFIX = "\n\n" + EditStudioRecordCommand.MESSAGE_USAGE;
+
     private final EditStudioRecordCommandParser parser = new EditStudioRecordCommandParser();
 
     @Test
@@ -31,7 +33,7 @@ public class EditStudioRecordCommandParserTest {
 
         for (String effortScore : effortScores) {
             assertParseFailure(parser, "id/1 w/3 ef/" + effortScore,
-                    MESSAGE_INVALID_EFFORT);
+                MESSAGE_INVALID_EFFORT + USAGE_SUFFIX);
         }
     }
 
@@ -45,7 +47,9 @@ public class EditStudioRecordCommandParserTest {
 
     @Test
     public void parse_emptyIndexOrWeek_reportsValueError() {
-        assertParseFailure(parser, "id/ w/3 ef/50", ParserUtil.MESSAGE_INVALID_INDEX);
-        assertParseFailure(parser, "id/1 w/ ef/50", ParserUtil.MESSAGE_INVALID_WEEK);
+        assertParseFailure(parser, "id/ w/3 ef/50",
+                ParserUtil.MESSAGE_INVALID_INDEX + USAGE_SUFFIX);
+        assertParseFailure(parser, "id/1 w/ ef/50",
+                ParserUtil.MESSAGE_INVALID_WEEK + USAGE_SUFFIX);
     }
 }

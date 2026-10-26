@@ -20,8 +20,10 @@ import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.mission.MissionId;
 import seedu.address.model.student.Email;
 import seedu.address.model.student.Name;
+import seedu.address.model.student.Note;
 import seedu.address.model.student.Phone;
 import seedu.address.model.student.RegisteredMasteryChecks;
+import seedu.address.model.student.RegisteredNotes;
 import seedu.address.model.student.StudioGroup;
 import seedu.address.model.tag.Tag;
 
@@ -257,10 +259,55 @@ public class ParserUtilTest {
     }
 
     @Test
-    public void parseMasteryCheckNumber_invalidValues_throwsParseException() {
-        for (String number : List.of("", WHITESPACE, "0", "-1", "1.5", "1e2", "abc", "1 2", "2147483648")) {
+    public void parseMasteryCheckNumber_nonPositiveValues_reportsNumberConstraint() {
+        for (String number : List.of("0", "-1", "-2147483648")) {
             assertThrows(ParseException.class, RegisteredMasteryChecks.MESSAGE_CONSTRAINTS, () ->
                     ParserUtil.parseMasteryCheckNumber(number));
+        }
+    }
+
+    @Test
+    public void parseMasteryCheckNumber_nonIntegerOrOverflowingValues_reportsNonNumberMessage() {
+        for (String number : List.of("", WHITESPACE, "1.5", "1e2", "abc", "1 2", "2147483648")) {
+            assertThrows(ParseException.class, RegisteredMasteryChecks.MESSAGE_NON_NUMBER, () ->
+                    ParserUtil.parseMasteryCheckNumber(number));
+        }
+    }
+
+    @Test
+    public void parseNoteId_null_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> ParserUtil.parseNoteId(null));
+    }
+
+    @Test
+    public void parseNoteId_validBoundaries_returnsTrimmedNumber() throws Exception {
+        assertEquals(RegisteredNotes.MIN_NOTE_ID, ParserUtil.parseNoteId("1"));
+        assertEquals(RegisteredNotes.MAX_NOTE_ID, ParserUtil.parseNoteId(" " + RegisteredNotes.MAX_NOTE_ID + " "));
+    }
+
+    @Test
+    public void parseNoteId_invalidValues_throwsParseException() {
+        for (String noteId : List.of("", WHITESPACE, "0", "11", "-1", "1.5", "abc", "1 2", "2147483648")) {
+            assertThrows(ParseException.class,
+                    RegisteredNotes.MESSAGE_CONSTRAINTS, () -> ParserUtil.parseNoteId(noteId));
+        }
+    }
+
+    @Test
+    public void parseNoteText_null_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> ParserUtil.parseNoteText(null));
+    }
+
+    @Test
+    public void parseNoteText_validValueWithWhitespace_returnsTrimmedNote() throws Exception {
+        assertEquals(new Note("Review lecture notes"),
+                ParserUtil.parseNoteText(WHITESPACE + "Review lecture notes" + WHITESPACE));
+    }
+
+    @Test
+    public void parseNoteText_invalidValues_throwsParseException() {
+        for (String noteText : List.of("", WHITESPACE, "Review!", "a".repeat(Note.MAX_NOTE_LENGTH + 1))) {
+            assertThrows(ParseException.class, Note.MESSAGE_CONSTRAINTS, () -> ParserUtil.parseNoteText(noteText));
         }
     }
 
@@ -327,5 +374,55 @@ public class ParserUtilTest {
             assertThrows(ParseException.class, MissionId.MESSAGE_CONSTRAINTS, () -> ParserUtil.parseMissionId(value));
         }
         assertThrows(NullPointerException.class, () -> ParserUtil.parseMissionId(null));
+    }
+
+    @Test
+    public void parseMissionName_nullInput_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> ParserUtil.parseMissionName(null));
+    }
+
+    @Test
+    public void parseMissionName_blankInput_throwsParseException() {
+        for (String value : List.of("", " ", WHITESPACE)) {
+            assertThrows(ParseException.class, ParserUtil.MESSAGE_INVALID_MISSION_NAME, () ->
+                    ParserUtil.parseMissionName(value));
+        }
+    }
+
+    @Test
+    public void parseMissionName_validInput_normalizesWhitespaceAndPreservesText() throws ParseException {
+        assertEquals("Mission 1: Rune Reading!",
+                ParserUtil.parseMissionName(" \tMission 1:   Rune\n Reading! \n"));
+    }
+
+    @Test
+    public void parseMissionDeadline_nullInput_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> ParserUtil.parseMissionDeadline(null));
+    }
+
+    @Test
+    public void parseMissionDeadline_validDates_returnsLocalDate() throws ParseException {
+        assertEquals(LocalDate.of(2024, 2, 29), ParserUtil.parseMissionDeadline("2024-02-29"));
+        assertEquals(LocalDate.of(2026, 10, 20), ParserUtil.parseMissionDeadline("2026-10-20"));
+        assertEquals(LocalDate.of(2026, 10, 20),
+                ParserUtil.parseMissionDeadline(WHITESPACE + "2026-10-20" + WHITESPACE));
+    }
+
+    @Test
+    public void parseMissionDeadline_malformedFormat_throwsParseException() {
+        for (String value : List.of("", WHITESPACE, "2026-2-03", "26-10-20", "2026/10/20",
+                "2026-10-20 extra", "2026-10-20T00:00")) {
+            assertThrows(ParseException.class, ParserUtil.MESSAGE_INVALID_MISSION_DEADLINE, () ->
+                    ParserUtil.parseMissionDeadline(value));
+        }
+    }
+
+    @Test
+    public void parseMissionDeadline_impossibleCalendarDate_throwsParseException() {
+        for (String value : List.of("2026-02-29", "2026-04-31", "2026-13-01", "2026-00-10",
+                "2026-10-00")) {
+            assertThrows(ParseException.class, ParserUtil.MESSAGE_INVALID_MISSION_CALENDAR_DATE, () ->
+                    ParserUtil.parseMissionDeadline(value));
+        }
     }
 }

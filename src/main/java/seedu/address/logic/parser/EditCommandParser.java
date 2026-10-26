@@ -1,7 +1,6 @@
 package seedu.address.logic.parser;
 
 import static java.util.Objects.requireNonNull;
-import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_EMAIL;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_INDEX;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
@@ -32,19 +31,36 @@ public class EditCommandParser implements Parser<EditCommand> {
      */
     public EditCommand parse(String args) throws ParseException {
         requireNonNull(args);
-        ArgumentMultimap argMultimap =
-                ArgumentTokenizer.tokenize(args,
-                        PREFIX_INDEX, PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL, PREFIX_TAG, PREFIX_STUDIO_GROUP);
 
-        if (!argMultimap.arePrefixesPresent(PREFIX_INDEX)
-                || !argMultimap.getPreamble().isEmpty()) {
-            throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT,
-                    EditCommand.MESSAGE_USAGE));
+        try {
+            ArgumentMultimap argMultimap =
+                    ArgumentStructureValidator.validateStructureWithOptionals(args,
+                            new Prefix[]{PREFIX_INDEX},
+                            new Prefix[]{PREFIX_INDEX, PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL, PREFIX_STUDIO_GROUP},
+                            PREFIX_INDEX, PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL, PREFIX_TAG, PREFIX_STUDIO_GROUP);
+
+            EditStudentDescriptor editStudentDescriptor = buildEditStudentDescriptor(argMultimap);
+            if (!editStudentDescriptor.isAnyFieldEdited()) {
+                throw new ParseException(EditCommand.MESSAGE_NOT_EDITED);
+            }
+
+            Index index = ParserUtil.parseIndex(argMultimap.getValue(PREFIX_INDEX).get());
+            return new EditCommand(index, editStudentDescriptor);
+        } catch (ParseException e) {
+            throw new ParseException(e.getMessage() + "\n\n" + EditCommand.MESSAGE_USAGE);
         }
+    }
 
-        argMultimap.verifyNoDuplicatePrefixesFor(
-                PREFIX_INDEX, PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL, PREFIX_STUDIO_GROUP);
-
+    /**
+     * Builds an {@code EditStudentDescriptor} from the optional edit fields, leaving fields without prefixes unchanged
+     * in the descriptor.
+     * A single empty tag value clears the tags.
+     *
+     * @param argMultimap Tokenized command arguments containing the optional edit fields.
+     * @return A descriptor containing only the supplied edits.
+     * @throws ParseException If a supplied field value is invalid.
+     */
+    private EditStudentDescriptor buildEditStudentDescriptor(ArgumentMultimap argMultimap) throws ParseException {
         EditStudentDescriptor editStudentDescriptor = new EditStudentDescriptor();
 
         if (argMultimap.getValue(PREFIX_NAME).isPresent()) {
@@ -61,13 +77,7 @@ public class EditCommandParser implements Parser<EditCommand> {
             editStudentDescriptor.setStudioGroup(
                     ParserUtil.parseStudioGroup(argMultimap.getValue(PREFIX_STUDIO_GROUP).get()));
         }
-
-        if (!editStudentDescriptor.isAnyFieldEdited()) {
-            throw new ParseException(EditCommand.MESSAGE_NOT_EDITED);
-        }
-
-        Index index = ParserUtil.parseIndex(argMultimap.getValue(PREFIX_INDEX).get());
-        return new EditCommand(index, editStudentDescriptor);
+        return editStudentDescriptor;
     }
 
     /**

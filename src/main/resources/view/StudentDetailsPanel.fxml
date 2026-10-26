@@ -72,16 +72,39 @@
 
                 <Separator/>
 
+                <Label text="Notes"
+                       styleClass="section-heading"/>
+
+                <GridPane fx:id="notesGrid"
+                          hgap="0"
+                          vgap="0"
+                          styleClass="details-grid">
+
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="20"/>
+                        <ColumnConstraints percentWidth="80"/>
+                    </columnConstraints>
+
+                    <padding>
+                        <Insets top="4"
+                                right="0"
+                                bottom="0"
+                                left="0"/>
+                    </padding>
+                </GridPane>
+
                 <Label text="Studio Record"
                        styleClass="section-heading"/>
 
                 <GridPane fx:id="studioRecordGrid"
                           hgap="0"
-                          vgap="0">
+                          vgap="0"
+                          styleClass="details-grid">
 
                     <columnConstraints>
-                        <ColumnConstraints percentWidth="50"/>
-                        <ColumnConstraints percentWidth="50"/>
+                        <ColumnConstraints percentWidth="20"/>
+                        <ColumnConstraints percentWidth="40"/>
+                        <ColumnConstraints percentWidth="40"/>
                     </columnConstraints>
                 </GridPane>
 
