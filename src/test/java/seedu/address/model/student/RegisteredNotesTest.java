@@ -158,10 +158,10 @@ public class RegisteredNotesTest {
     public void hasNote_presentAbsentAndInvalidIds_returnsExpectedResult() {
         RegisteredNotes registeredNotes = new RegisteredNotes(Map.of(RegisteredNotes.MIN_NOTE_ID, FIRST_NOTE));
 
-        assertTrue(registeredNotes.hasNote(RegisteredNotes.MIN_NOTE_ID));
-        assertFalse(registeredNotes.hasNote(RegisteredNotes.MAX_NOTE_ID));
-        assertThrows(IllegalArgumentException.class, () -> registeredNotes.hasNote(0));
-        assertThrows(IllegalArgumentException.class, () -> registeredNotes.hasNote(11));
+        assertTrue(registeredNotes.hasNoteId(RegisteredNotes.MIN_NOTE_ID));
+        assertFalse(registeredNotes.hasNoteId(RegisteredNotes.MAX_NOTE_ID));
+        assertThrows(IllegalArgumentException.class, () -> registeredNotes.hasNoteId(0));
+        assertThrows(IllegalArgumentException.class, () -> registeredNotes.hasNoteId(11));
     }
 
     @Test
