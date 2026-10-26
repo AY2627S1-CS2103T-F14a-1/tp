@@ -25,7 +25,7 @@ public class DeleteNoteCommand extends Command {
             + "Parameters: " + PREFIX_INDEX + "INDEX " + PREFIX_NOTE_ID + "ID\n"
             + "INDEX must be a positive integer identifying a displayed student.\n"
             + "ID must be between " + RegisteredNotes.MIN_NOTE_ID
-            + " and " + RegisteredNotes.MAX_NOTE_ID + " inclusive.\n"
+            + " and " + RegisteredNotes.MAX_NOTE_INDEX + " inclusive.\n"
             + "Example: " + COMMAND_WORD + " " + PREFIX_INDEX + "1 "
             + PREFIX_NOTE_ID + "3";
 

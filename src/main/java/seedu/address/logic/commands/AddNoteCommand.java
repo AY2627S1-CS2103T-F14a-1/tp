@@ -27,7 +27,7 @@ public class AddNoteCommand extends Command {
             + "Parameters: " + PREFIX_INDEX + "INDEX " + PREFIX_NOTE_ID + "ID " + PREFIX_NOTE_TEXT + "TEXT\n"
             + "INDEX must be a positive integer identifying a displayed student.\n"
             + "ID must be between " + RegisteredNotes.MIN_NOTE_ID
-            + " and " + RegisteredNotes.MAX_NOTE_ID + " inclusive.\n"
+            + " and " + RegisteredNotes.MAX_NOTE_INDEX + " inclusive.\n"
             + "TEXT must only contain alphanumeric characters and spaces, should not be blank, and "
             + "be less than or equal to " + Note.MAX_NOTE_LENGTH + " characters.\n"
             + "Example: " + COMMAND_WORD + " " + PREFIX_INDEX + "1 "
