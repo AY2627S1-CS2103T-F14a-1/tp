@@ -2,6 +2,7 @@ package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -108,14 +109,18 @@ public class CommandResult {
     }
 
     /**
-     * Creates a {@code CommandResult} that displays the specified student in the profile panel with a warning.
+     * Returns a new {@code CommandResult} containing the given warning in addition to existing warnings.
      *
-     * @param feedbackToUser feedback message displayed to the user
-     * @param warnings warnings to display to the user
-     * @param studentToView student to display in the profile panel
+     * @param warning warning to add
+     * @return a new command result containing the warning
      */
-    public CommandResult(String feedbackToUser, List<String> warnings, Student studentToView) {
-        this(feedbackToUser, false, false, studentToView, warnings, List.of());
+    public CommandResult withWarning(String warning) {
+        requireNonNull(warning);
+
+        List<String> updatedWarnings = new ArrayList<>(warnings);
+        updatedWarnings.add(warning);
+        return new CommandResult(
+                feedbackToUser, showHelp, exit, studentToView, updatedWarnings, missions);
     }
 
     /**
