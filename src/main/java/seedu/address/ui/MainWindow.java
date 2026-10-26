@@ -276,15 +276,7 @@ public class MainWindow extends UiPart<Stage> {
                     .clearSelection();
 
             List<String> warnings = commandResult.getWarnings();
-            if (warnings.isEmpty()) {
-                resultDisplay.setFeedbackToUser(commandResult.getFeedbackToUser());
-            } else {
-                resultDisplay.setFeedbackToUser(
-                        commandResult.getFeedbackToUser()
-                                + "\n"
-                                + "WARNING:\n"
-                                + String.join("\n", warnings));
-            }
+            resultDisplay.setFeedbackToUser(commandResult.getFeedbackToUser(), warnings);
 
             commandResult.getStudentToView().ifPresent(student -> {
                 studentDetailsPanel.showStudent(student,

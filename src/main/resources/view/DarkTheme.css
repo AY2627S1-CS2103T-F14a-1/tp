@@ -53,6 +53,10 @@ SplitPane {
     -fx-text-fill: #d06651 !important;
 }
 
+.command-warning {
+    -fx-text-fill: #ffd54f;
+}
+
 .list-view,
 .list-cell,
 .student-list-container,
