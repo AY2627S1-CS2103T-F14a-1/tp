@@ -31,8 +31,8 @@ public class AddNoteCommand extends Command {
 
     public static final String MESSAGE_SUCCESS =
             "Added %1$s's note.";
-    public static final String MESSAGE_ALREADY_RECORDED =
-            "%1$s’s note index has already been registered. No changes made.";
+    public static final String MESSAGE_MAXIMUM_NOTES_REACHED =
+            "%1$s already has the maximum of %2$d notes. No changes made.";
     public static final String MESSAGE_WARNING_MATCHING_TEXT = "%1$s has a matching note text.";
 
     private final Index targetIndex;
@@ -59,8 +59,14 @@ public class AddNoteCommand extends Command {
 
         boolean hasMatchingNoteText = registeredNotes.hasNoteText(note.getNoteText());
 
-        Student updatedStudent = studentToUpdate.withRegisteredNotes(
-                registeredNotes.withNote(note));
+        RegisteredNotes updatedNotes;
+        try {
+            updatedNotes = registeredNotes.withNote(note);
+        } catch (IllegalArgumentException exception) {
+            return new CommandResult(String.format(
+                    MESSAGE_MAXIMUM_NOTES_REACHED, studentToUpdate.getName(), RegisteredNotes.MAX_NOTE_INDEX));
+        }
+        Student updatedStudent = studentToUpdate.withRegisteredNotes(updatedNotes);
         model.setStudent(studentToUpdate, updatedStudent);
 
         CommandResult result = new CommandResult(
