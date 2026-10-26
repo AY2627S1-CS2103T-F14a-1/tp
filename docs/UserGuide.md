@@ -267,53 +267,54 @@ Edited Amy Bee's studio record for studio week 3.
 
 Adds a note for an existing student in the address book.
 
-Format: `addnote id/INDEX ni/ID nt/TEXT`
+Format: `addnote id/INDEX nt/TEXT`
 
-* Adds a note with id `ID` and text `TEXT` for the student at the specified `INDEX`.
+* Adds a note with text `TEXT` for the student at the specified `INDEX`.
 * The index refers to the index number shown in the displayed student list.
 * The index **must be a positive integer** 1, 2, 3, ...
-* The ID must be an integer from 1 to 10, inclusive.
 * The text should only contain alphanumeric characters and spaces, should not be blank, and be less than or equal to 100 characters.
-* Adding a note with the same ID as an existing one leaves the existing note unchanged, even if a different text is supplied.
+* A student can have up to 10 notes.
 * The current list filter stays active.
 
 Examples:
-*  `addnote id/1 ni/1 nt/hello` Adds a note with id `1` and text `hello` for the 1st student.
+*  `addnote id/1 nt/hello` Adds a note with text `hello` for the 1st student.
 
 
 ### Deleting a student note: `delnote`
 
 Deletes a note for an existing student in the address book.
 
-Format: `delnote id/INDEX ni/ID`
+Format: `delnote id/INDEX ni/NOTE_INDEX`
 
-* Deletes a note with id `ID` for the student at the specified `INDEX`.
+* Deletes a note with index `NOTE_INDEX` for the student at the specified `INDEX`.
 * The index refers to the index number shown in the displayed student list.
 * The index **must be a positive integer** 1, 2, 3, ...
-* The ID must be an integer from 1 to 10, inclusive.
-* If the ID doesn't match any existing notes for the given student, the notes will be unchanged.
+* The note index refers to the index number shown in the list of notes for a given student in the display panel.
+* The note index must be an integer from 1 to 10, inclusive.
+* If the note index doesn't match any existing notes for the given student, the notes will be unchanged.
 * The current list filter stays active.
 
 Examples:
-*  `delnote id/1 ni/1` Deletes a note with id `1` for the 1st student.
+*  `delnote id/1 ni/1` Deletes the first note for the 1st student.
 
 
 ### Editing a student note: `editnote`
 
 Edits a note for an existing student in the address book.
 
-Format: `editnote id/INDEX ni/ID nt/TEXT`
+Format: `editnote id/INDEX ni/NOTE_INDEX nt/TEXT`
 
-* Edits a note with id `ID`, replacing its text with `TEXT` for the student at the specified `INDEX`.
+* Edits a note with index `NOTE_INDEX`, replacing its text with `TEXT` for the student at the specified `INDEX`.
 * The index refers to the index number shown in the displayed student list.
 * The index **must be a positive integer** 1, 2, 3, ...
-* The ID must be an integer from 1 to 10, inclusive.
+* The note index refers to the index number shown in the list of notes for a given student in the display panel.
+* The note index must be an integer from 1 to 10, inclusive.
 * The text should only contain alphanumeric characters and spaces, should not be blank, and be less than or equal to 100 characters.
-* If the ID doesn't match any existing notes for the given student, or matches the existing text, the notes will be unchanged.
+* If the note index doesn't match any existing notes for the given student, or matches the existing text, the notes will be unchanged.
 * The current list filter stays active.
 
 Examples:
-*  `editnote id/1 ni/1 nt/hello` Edits a note with id `1`, replacing its text with `hello` for the 1st student.
+*  `editnote id/1 ni/1 nt/hello` Edits the first note, replacing its text with `hello` for the 1st student.
 
 ### Adding a mastery check: `addmc`
 
@@ -636,9 +637,9 @@ Action     | Format, Examples
 **Add studio record** | `addstudiorecord id/INDEX w/WEEK ef/EFFORT`<br> e.g., `addstudiorecord id/1 w/3 ef/30`                                                                             
 **Delete studio record** | `delstudiorecord id/INDEX w/WEEK`<br> e.g., `delstudiorecord id/1 w/3`                                                                                             
 **Edit studio record** | `editstudiorecord id/INDEX w/WEEK ef/EFFORT`<br> e.g., `editstudiorecord id/1 w/3 ef/30`                                                                           
-**Add note** | `addnote id/INDEX ni/ID nt/TEXT`<br> e.g., `addnote id/1 ni/1 nt/hello`                                                                           
-**Delete note** | `delnote id/INDEX ni/ID`<br> e.g., `delnote id/1 ni/1`                                                                           
-**Edit note** | `editnote id/INDEX ni/ID nt/TEXT`<br> e.g., `editnote id/1 ni/1 nt/hello`                                                                           
+**Add note** | `addnote id/INDEX nt/TEXT`<br> e.g., `addnote id/1 nt/hello`                                                                           
+**Delete note** | `delnote id/INDEX ni/NOTE_INDEX`<br> e.g., `delnote id/1 ni/1`                                                                           
+**Edit note** | `editnote id/INDEX ni/NOTE_INDEX nt/TEXT`<br> e.g., `editnote id/1 ni/1 nt/hello`                                                                           
 **Add mastery check** | `addmc id/INDEX num/NUMBER dt/DATE-TIME`<br> e.g., `addmc id/1 num/2 dt/29-09\|23:59`                                                                              
 **Delete mastery check** | `delmc id/INDEX num/NUMBER`<br> e.g. `delmc id/1 num/2`                                                                                                               
 **Mark mastery check** | `markmc id/INDEX num/NUMBER`<br> e.g. `markmc id/1 num/2`                                                                                                             
