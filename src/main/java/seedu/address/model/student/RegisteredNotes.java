@@ -71,11 +71,12 @@ public final class RegisteredNotes {
      * @param note Note to include.
      * @return {@code RegisteredNotes} containing the existing notes and given note.
      * @throws NullPointerException If the note is {@code null}.
+     * @throws IllegalStateException If the list of notes has reached capacity.
      */
     public RegisteredNotes withNote(Note note) {
         requireNonNull(note);
         if (registeredNotes.size() >= MAX_NOTE_INDEX) {
-            return this;
+            throw new IllegalArgumentException(MESSAGE_CONSTRAINTS);
         }
 
         List<Note> updatedNotes = new ArrayList<>(registeredNotes);

@@ -60,7 +60,7 @@ class JsonAdaptedStudent {
      * @param missionSubmissions Recorded mission IDs, or null for no submissions.
      * @param registeredMasteryChecks Saved records containing a number, ISO local date-time string,
      *         and completion flag, or null for no appointments.
-     * @param registeredNotes Saved records containing a note ID and note text, or null for no notes.
+     * @param registeredNotes Saved note text strings in display order, or null for no notes.
      */
     @JsonCreator
     public JsonAdaptedStudent(@JsonProperty("name") String name, @JsonProperty("phone") String phone,
@@ -125,10 +125,9 @@ class JsonAdaptedStudent {
                                 entry.getValue().getAppointmentTime().toString(),
                                 entry.getValue().isComplete()))
                 .collect(Collectors.toList()));
-        registeredNotes.addAll(source.getRegisteredNotes().getNotesById().entrySet()
+        registeredNotes.addAll(source.getRegisteredNotes().getRegisteredNotes()
                 .stream()
-                .sorted(Map.Entry.comparingByKey())
-                .map(entry -> List.of(entry.getKey(), entry.getValue().getNoteText()))
+                .map(Note::getNoteText)
                 .collect(Collectors.toList()));
     }
 
@@ -286,32 +285,24 @@ class JsonAdaptedStudent {
     }
 
     /**
-     * Validates saved note records containing a note ID and note text, in that order.
-     * If an ID is repeated, the last saved note for that ID is retained. Missing or null
-     * note lists are treated as empty by the storage constructor.
+     * Validates saved note text strings in display order. Missing or null note lists are
+     * treated as empty by the storage constructor.
      *
-     * @return Registered notes containing the saved note IDs and text.
-     * @throws IllegalValueException If an entry has the wrong structure or types, an invalid ID,
-     *         or invalid note text.
+     * @return Registered notes containing the saved note text in its original order.
+     * @throws IllegalValueException If there are too many notes or an entry is not valid note text.
      */
     public RegisteredNotes toModelRegisteredNotes() throws IllegalValueException {
-        Map<Integer, Note> notesById = new HashMap<>();
+        if (registeredNotes.size() > RegisteredNotes.MAX_NOTE_INDEX) {
+            throw new IllegalValueException(RegisteredNotes.MESSAGE_CONSTRAINTS);
+        }
+
+        List<Note> notes = new ArrayList<>();
         for (Object value : registeredNotes) {
-            if (!(value instanceof List<?> noteRecord) || noteRecord.size() != 2) {
-                throw new IllegalValueException(RegisteredNotes.MESSAGE_CONSTRAINTS);
-            }
-
-            Object savedId = noteRecord.get(0);
-            if (!(savedId instanceof Integer noteId) || !RegisteredNotes.isValidNoteId(noteId)) {
-                throw new IllegalValueException(RegisteredNotes.MESSAGE_CONSTRAINTS);
-            }
-
-            Object savedText = noteRecord.get(1);
-            if (!(savedText instanceof String noteText) || !Note.isValidNoteText(noteText)) {
+            if (!(value instanceof String noteText) || !Note.isValidNoteText(noteText)) {
                 throw new IllegalValueException(Note.MESSAGE_CONSTRAINTS);
             }
-            notesById.put(noteId, new Note(noteText));
+            notes.add(new Note(noteText));
         }
-        return new RegisteredNotes(notesById);
+        return new RegisteredNotes(notes);
     }
 }

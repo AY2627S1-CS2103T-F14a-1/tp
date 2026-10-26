@@ -18,6 +18,6 @@ public class CliSyntax {
     public static final Prefix PREFIX_DATE = new Prefix("d/");
     public static final Prefix PREFIX_DATETIME = new Prefix("dt/");
     public static final Prefix PREFIX_MISSION = new Prefix("m/");
-    public static final Prefix PREFIX_NOTE_ID = new Prefix("ni/");
+    public static final Prefix PREFIX_NOTE_INDEX = new Prefix("ni/");
     public static final Prefix PREFIX_NOTE_TEXT = new Prefix("nt/");
 }
