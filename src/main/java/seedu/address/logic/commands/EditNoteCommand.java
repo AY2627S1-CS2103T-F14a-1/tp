@@ -22,15 +22,15 @@ public class EditNoteCommand extends Command {
 
     public static final String COMMAND_WORD = "editnote";
 
-    public static final String MESSAGE_ID_NOT_RECORDED =
-            "%1$s does not have a registered note with ID %2$d. No changes made.";
+    public static final String MESSAGE_INDEX_NOT_RECORDED =
+            "%1$s does not have a registered note with index %2$d. No changes made.";
     public static final String MESSAGE_SAME_NOTE =
-            "%1$s’s note with ID %2$d is already the same. No changes made.";
+            "%1$s’s note with index %2$d is already the same. No changes made.";
     public static final String MESSAGE_SUCCESS =
-            "Edited %1$s's note with ID %2$d.";
+            "Edited %1$s's note with index %2$d.";
     public static final String MESSAGE_USAGE = COMMAND_WORD
             + ": Edits a registered note for the selected student.\n"
-            + "Parameters: " + PREFIX_INDEX + "INDEX " + PREFIX_NOTE_INDEX + "ID " + PREFIX_NOTE_TEXT + "TEXT\n"
+            + "Parameters: " + PREFIX_INDEX + "INDEX " + PREFIX_NOTE_INDEX + "index " + PREFIX_NOTE_TEXT + "TEXT\n"
             + "INDEX must be a positive integer identifying a displayed student.\n"
             + "NOTE_INDEX must be a positive integer less than or equal to "
             + RegisteredNotes.MAX_NOTE_INDEX + " inclusive.\n"
@@ -45,7 +45,7 @@ public class EditNoteCommand extends Command {
 
     /**
      * @param targetIndex Index of the student in the filtered student list to edit.
-     * @param noteIndex ID of note to edit.
+     * @param noteIndex Index of note to edit.
      * @param updatedNote Updated note to register.
      */
     public EditNoteCommand(Index targetIndex, Index noteIndex, Note updatedNote) {
@@ -65,7 +65,7 @@ public class EditNoteCommand extends Command {
         RegisteredNotes registeredNotes = studentToUpdate.getRegisteredNotes();
 
         if (!registeredNotes.hasNote(noteIndex)) {
-            return new CommandResult(String.format(MESSAGE_ID_NOT_RECORDED, studentToUpdate.getName(),
+            return new CommandResult(String.format(MESSAGE_INDEX_NOT_RECORDED, studentToUpdate.getName(),
                     noteIndex.getOneBased()));
         }
 

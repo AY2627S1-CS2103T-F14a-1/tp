@@ -285,7 +285,7 @@ public class ParserUtil {
     }
 
     /**
-     * Parses a {@code String note index} into a {@code int} note ID.
+     * Parses a {@code String note index} into a {@code Index} and returns it.
      *
      * @throws ParseException if the given {@code noteIndex} is invalid.
      */

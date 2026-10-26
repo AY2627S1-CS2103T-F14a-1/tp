@@ -30,16 +30,16 @@ public class DeleteNoteCommand extends Command {
             + PREFIX_NOTE_INDEX + "3";
 
     public static final String MESSAGE_SUCCESS =
-            "Deleted %1$s's note at ID %2$d.";
+            "Deleted %1$s's note at index %2$d.";
     public static final String MESSAGE_ALREADY_NOT_RECORDED =
-            "%1$s’s note ID does not exist. No changes made.";
+            "%1$s’s note index does not exist. No changes made.";
 
     private final Index targetIndex;
     private final Index noteIndex;
 
     /**
      * @param targetIndex Index of the student in the filtered student list to delete a note from.
-     * @param noteIndex ID of note to delete.
+     * @param noteIndex Index of note to delete.
      */
     public DeleteNoteCommand(Index targetIndex, Index noteIndex) {
         requireNonNull(targetIndex);
