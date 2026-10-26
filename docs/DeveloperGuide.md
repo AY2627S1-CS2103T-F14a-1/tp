@@ -75,7 +75,7 @@ The UI consists of a `MainWindow` and its parts: `CommandBox`, `ResultDisplay`, 
 
 `MainWindow` connects the student list, command feedback, and student details. Executing `view id/INDEX` displays the requested student's profile and mission statuses in `StudentDetailsPanel`, using the index in the currently displayed student list.
 
-`ResultDisplay` presents command feedback, including submission and overdue reports, in a scrollable area. Listing commands produce textual feedback without replacing the current student filter. Student details use model objects and the mission catalogue supplied through the logic component.
+`ResultDisplay` presents command feedback, including submission and overdue reports, in a scrollable area. `listmissions` and `listoverdue` produce textual feedback without replacing the current student filter. `viewmission` replaces the displayed student list with its query results and displays the selected mission's submission statuses in `ResultDisplay`. Student details use model objects and the mission catalogue supplied through the logic component.
 
 The `UI` component uses the JavaFX UI framework. The layouts of these UI parts are defined in matching `.fxml` files in `src/main/resources/view`. For example, [`MainWindow.fxml`](https://github.com/AY2627S1-CS2103T-F14a-1/tp/blob/master/src/main/resources/view/MainWindow.fxml) specifies the layout of [`MainWindow`](https://github.com/AY2627S1-CS2103T-F14a-1/tp/blob/master/src/main/java/seedu/address/ui/MainWindow.java).
 
@@ -245,7 +245,33 @@ After any of these commands returns successfully, `LogicManager` calls `Storage.
 
 Parsing and command-validation failures exit before the saving step. If saving itself fails, `LogicManager` reports a `CommandException`; the in-memory change has already occurred and is not rolled back. On loading, storage validates the catalogue and requires saved submission IDs to refer to existing missions.
 
+### Viewing mission submission statuses
 
+For `viewmission m/MISSION_ID [s/overdue]`, `AddressBookParser` delegates to `ViewMissionCommandParser`. The parser reuses `ArgumentStructureValidator#validateStructureWithOptionals(...)` to require exactly one mission prefix and allow at most one status prefix.
+`ParserUtil#parseMissionId(...)` validates the mission ID. When supplied, the status value must be `overdue`, ignoring case. Missing required prefixes, duplicate prefixes, unexpected preamble text, invalid mission IDs, and invalid status values cause a `ParseException`.
+
+When executed, `ViewMissionCommand` first calls `Model#findMission(...)`. A nonexistent mission causes a `CommandException` before the displayed student list changes. The command then obtains the current local date using `LocalDate.now(clock)` and calls `Mission#isPastDeadline(...)`.
+
+Without a status filter, the command calls `Model#updateFilteredStudentList(...)` with `PREDICATE_SHOW_ALL_STUDENTS`. With `s/overdue`, it installs a predicate that accepts a student only when the mission deadline has passed and `MissionSubmissions#hasSubmission(...)` returns false for that mission.
+
+`ModelManager` maintains a `FilteredList<Student>` backed by the complete address-book student list. Replacing its predicate evaluates the query across all students, including students hidden by an earlier search.
+The UI observes the same filtered list and updates automatically.
+
+The command formats rows from `Model#getFilteredStudentList()` after installing the predicate. Row numbers therefore match the displayed student indexes. Existing `view`, `markmission`, and `unmarkmission` commands continue to resolve indexes through `Command#getStudentAtDisplayedIndex(...)`.
+
+Submission status is derived as follows:
+
+* A recorded submission is `Submitted`, regardless of the deadline.
+* An absent submission is `Overdue` only when today's local date is strictly after the deadline.
+* Otherwise, an absent submission is `Not submitted`.
+
+A mission due today is not overdue. No overdue flag or submission timestamp is stored. The command uses `Clock.systemDefaultZone()` during normal operation and accepts an injected `Clock` through a package-private constructor for deterministic tests.
+
+The installed predicate retains the deadline result calculated for that execution. Rerunning `viewmission` refreshes the query after the date or mission deadline changes. Student replacements still cause the filtered list to reevaluate the affected records: marking a displayed overdue student removes that student from the results, and remaining indexes shift.
+
+Feedback includes the mission ID, description, deadline, result count, and numbered status rows. An empty result clears the displayed list and includes an explanatory message. Feedback also explains that results reflect manually maintained AvengerHub records; an absent record does not confirm that a student made no submission.
+
+The query changes only the displayed student filter. It does not modify student records, mission definitions, or recorded submissions.
 --------------------------------------------------------------------------------------------------------------------
 
 ## **Documentation, logging, testing, dev-ops**
@@ -290,6 +316,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 | `* * *`  | TA                             | record a student's mark for a given assessment                           | keep their performance data alongside other student records                          |
 | `* * *`  | TA with multiple studio groups | see which studio group a student belongs to                              | avoid mixing up students across studio groups                                        |
 | `* *`    | TA                             | view a summary of a student's studio records, participation, and submissions | understand their overall engagement without checking multiple records                |
+| `* * *`  | TA                             | list submission statuses for a selected mission and filter overdue records | identify students who may need a submission reminder |
 
 The user stories above represent the main intended functionality and selected future enhancements of the application. Other user stories may be considered as the project develops.
 
@@ -694,6 +721,51 @@ student filter remain unchanged throughout this use case.
 Deadlines are inclusive: missions due today are not overdue. The current
 date follows the computer's local date and time zone. Recorded submissions
 are excluded, regardless of when they were recorded.
+
+**Use case: View mission submission statuses**
+
+**Actor:** Tutor
+
+**MSS**
+
+1. Tutor requests submission statuses for a mission, optionally
+   selecting the overdue filter.
+2. AvengerHub evaluates the query across all students and replaces the
+   displayed student list with the matching students.
+3. AvengerHub displays the mission ID, description, deadline, result count,
+   and each matching student's recorded submission status.
+
+   Use case ends.
+
+**Extensions**
+
+* 1a. The command contains missing, duplicate, or invalid arguments.
+
+    * 1a1. AvengerHub explains the invalid input and displays command usage.
+      Records and the displayed student list remain unchanged.
+
+      Use case ends.
+
+* 1b. The specified mission does not exist.
+
+    * 1b1. AvengerHub reports that the mission does not exist.
+      Records and the displayed student list remain unchanged.
+
+      Use case ends.
+
+* 2a. No students match the query.
+
+    * 2a1. AvengerHub clears the displayed student list and displays the
+      mission details, result count zero, and an empty-result explanation.
+
+      Use case ends.
+
+Without a status filter, all students are included. With the overdue
+filter, only students without a recorded submission whose mission deadline
+is before today's local date are included. Submitted students are never
+included in overdue results.
+
+*{More to be added}*
 
 ### Non-Functional Requirements
 
