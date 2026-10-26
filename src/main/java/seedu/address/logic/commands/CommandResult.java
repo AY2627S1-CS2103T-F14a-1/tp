@@ -57,8 +57,8 @@ public class CommandResult {
         this.showHelp = showHelp;
         this.exit = exit;
         this.studentToView = studentToView;
-        this.warnings = requireNonNull(warnings);
-        this.missions = requireNonNull(missions);
+        this.warnings = List.copyOf(requireNonNull(warnings));
+        this.missions = List.copyOf(requireNonNull(missions));
     }
 
     /**
