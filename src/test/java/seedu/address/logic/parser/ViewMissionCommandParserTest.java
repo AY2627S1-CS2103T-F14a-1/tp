@@ -3,6 +3,7 @@ package seedu.address.logic.parser;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
+import static seedu.address.testutil.Assert.assertThrows;
 
 import org.junit.jupiter.api.Test;
 
@@ -84,5 +85,10 @@ public class ViewMissionCommandParserTest {
     public void parse_statusWithoutMission_throwsParseException() {
         assertParseFailure(parser, "s/overdue",
                 CliSyntax.PREFIX_MISSION.getMissingMessage() + USAGE_SUFFIX);
+    }
+
+    @Test
+    public void parse_nullArguments_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> parser.parse(null));
     }
 }

@@ -2,6 +2,7 @@ package seedu.address.logic.commands;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -192,5 +193,85 @@ public class ViewMissionCommandTest {
         assertEquals(List.of(charlie), model.getFilteredStudentList());
         CommandResult result = new ViewCommand(Index.fromOneBased(1)).execute(model);
         assertEquals(charlie, result.getStudentToView().orElseThrow());
+    }
+
+    @Test
+    public void equals_sameInstance_returnsTrue() {
+        ViewMissionCommand command = new ViewMissionCommand(MISSION_ID, false, CLOCK);
+
+        assertEquals(command, command);
+    }
+
+    @Test
+    public void equals_sameArguments_returnsTrue() {
+        ViewMissionCommand command = new ViewMissionCommand(MISSION_ID, false, CLOCK);
+        ViewMissionCommand equivalentCommand =
+                new ViewMissionCommand(new MissionId("M03"), false, CLOCK);
+
+        assertEquals(command, equivalentCommand);
+        assertEquals(equivalentCommand, command);
+    }
+
+    @Test
+    public void equals_differentArguments_returnsFalse() {
+        ViewMissionCommand command = new ViewMissionCommand(MISSION_ID, false, CLOCK);
+
+        assertNotEquals(command,
+                new ViewMissionCommand(new MissionId("M04"), false, CLOCK));
+        assertNotEquals(command,
+                new ViewMissionCommand(MISSION_ID, true, CLOCK));
+        assertNotEquals(command,
+                new ViewMissionCommand(MISSION_ID, false,
+                        Clock.fixed(CLOCK.instant().plusSeconds(1), CLOCK.getZone())));
+    }
+
+    @Test
+    public void equals_nullOrDifferentType_returnsFalse() {
+        ViewMissionCommand command = new ViewMissionCommand(MISSION_ID, false, CLOCK);
+
+        assertNotEquals(command, null);
+        assertNotEquals(command, "M03");
+    }
+
+    @Test
+    public void hashCode_equalCommands_returnsSameHashCode() {
+        ViewMissionCommand command = new ViewMissionCommand(MISSION_ID, false, CLOCK);
+        ViewMissionCommand equivalentCommand =
+                new ViewMissionCommand(new MissionId("M03"), false, CLOCK);
+
+        assertEquals(command.hashCode(), equivalentCommand.hashCode());
+    }
+
+    @Test
+    public void toString_validCommand_containsCommandFields() {
+        ViewMissionCommand command = new ViewMissionCommand(MISSION_ID, true, CLOCK);
+
+        String expected = ViewMissionCommand.class.getCanonicalName()
+                + "{missionId=" + MISSION_ID
+                + ", overdueOnly=true"
+                + ", clock=" + CLOCK + "}";
+
+        assertEquals(expected, command.toString());
+    }
+
+    @Test
+    public void constructor_nullMissionId_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> new ViewMissionCommand(null));
+        assertThrows(NullPointerException.class, () -> new ViewMissionCommand(null, true));
+        assertThrows(NullPointerException.class, () ->
+                new ViewMissionCommand(null, false, CLOCK));
+    }
+
+    @Test
+    public void constructor_nullClock_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () ->
+                new ViewMissionCommand(MISSION_ID, false, null));
+    }
+
+    @Test
+    public void execute_nullModel_throwsNullPointerException() {
+        ViewMissionCommand command = new ViewMissionCommand(MISSION_ID, false, CLOCK);
+
+        assertThrows(NullPointerException.class, () -> command.execute(null));
     }
 }
