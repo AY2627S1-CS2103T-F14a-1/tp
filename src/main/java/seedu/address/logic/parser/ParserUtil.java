@@ -12,6 +12,7 @@ import java.time.temporal.ChronoField;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Set;
 
 import seedu.address.commons.core.index.Index;
@@ -42,12 +43,16 @@ public class ParserUtil {
     public static final String MESSAGE_INVALID_MISSION_CALENDAR_DATE =
             "Deadline is not a valid calendar date. Month must be 01–12, "
                     + "and day must be valid for the selected month and year.";
+    public static final String MESSAGE_INVALID_MISSION_STATUS =
+            "Invalid status filter. Use s/overdue or omit s/.";
 
     public static final String MESSAGE_INVALID_MASTERY_CHECK_DATETIME =
             "Mastery check appointment must be a valid date and 24-hour time in dd-MM|HH:mm format.";
 
     public static final String MESSAGE_INVALID_EFFORT = "Effort score must be a positive integer.";
     public static final String MESSAGE_INVALID_WEEK = "Week must be a positive integer.";
+
+    private static final String MISSION_STATUS_OVERDUE = "overdue";
 
     /** Strict input formatter whose default year is captured when this class is initialized. */
     private static final DateTimeFormatter MASTERY_CHECK_DATETIME_FORMATTER =
@@ -189,6 +194,26 @@ public class ParserUtil {
         } catch (IllegalArgumentException e) {
             throw new ParseException(MESSAGE_INVALID_MISSION_ID);
         }
+    }
+
+    /**
+     * Parses the optional mission overdue filter.
+     *
+     * @param status Optional status value supplied by the user.
+     * @return True if the overdue filter is supplied, or false if omitted.
+     * @throws NullPointerException If the optional container is null.
+     * @throws ParseException If a supplied value is not overdue.
+     */
+    public static boolean parseMissionOverdueFilter(Optional<String> status) throws ParseException {
+        requireNonNull(status);
+
+        if (status.isEmpty()) {
+            return false;
+        }
+        if (!MISSION_STATUS_OVERDUE.equalsIgnoreCase(status.orElseThrow().strip())) {
+            throw new ParseException(MESSAGE_INVALID_MISSION_STATUS);
+        }
+        return true;
     }
 
     /**

@@ -20,4 +20,5 @@ public class CliSyntax {
     public static final Prefix PREFIX_MISSION = new Prefix("m/");
     public static final Prefix PREFIX_NOTE_INDEX = new Prefix("ni/");
     public static final Prefix PREFIX_NOTE_TEXT = new Prefix("nt/");
+    public static final Prefix PREFIX_STATUS = new Prefix("s/");
 }
