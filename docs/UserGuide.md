@@ -569,6 +569,25 @@ Format: `listmissions m/MISSION_ID`
 Example: `find g/1A`, followed by `listmissions m/M01`, lists students in
 studio group 1A with a recorded submission for M01.
 
+### Viewing mission submission statuses: `viewmission`
+
+Shows every student's recorded submission status for one mission and replaces
+the displayed student list.
+
+Format: `viewmission m/MISSION_ID`
+
+* Searches all students, including students hidden by an earlier filter.
+* Displays the mission ID, description, deadline, and result count.
+* Displays Submitted when a submission is recorded.
+* Displays Overdue when no submission is recorded and the deadline has passed.
+* A mission due today is not overdue.
+* Subsequent `view`, `markmission`, and `unmarkmission` commands use the
+  indexes in the displayed list.
+* Results reflect manually maintained AvengerHub records. A missing record
+  does not confirm that no submission was made.
+* An invalid or nonexistent mission leaves records and the displayed list
+  unchanged.
+
 ### Clearing all entries: `clear`
 
 Clears all entries from the address book.
@@ -642,7 +661,8 @@ Action     | Format, Examples
 **Remove mission submission** | `unmarkmission id/INDEX m/MISSION_ID`<br> e.g., `unmarkmission id/1 m/M01`                                                                                            
 **Edit mission** | `editmission m/MISSION_ID [n/NAME] [d/DEADLINE]`<br> e.g., `editmission m/M01 n/Rune Reading d/2026-10-22`                                                         
 **List overdue submissions** | `listoverdue`                                                                                                                                                      
-**List mission submissions** | `listmissions m/MISSION_ID`<br> e.g., `listmissions m/M01`                                                                                                         
+**List mission submissions** | `listmissions m/MISSION_ID`<br> e.g., `listmissions m/M01`  
+**View mission statuses** | `viewmission m/MISSION_ID`
 **Clear**  | `clear`                                                                                                                                                            
 **Find**   | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find James Jake`                                                                                                         
 **List**   | `list`                                                                                                                                                             
