@@ -42,6 +42,7 @@ unchanged.
 | NOTE-ADD-004 | Run `addnote id/1 ni/4`, then `addnote id/1 ni/4 nt/Valid ni/5`, viewing student 1 after each command. | The first command reports missing `nt/`; the second reports duplicate `ni/`. No note is added. |
 | NOTE-ADD-005 | Run `addnote id/3 ni/4 nt/Invalid index`, then view both students. | Invalid-index feedback appears; neither student changes. |
 | NOTE-ADD-006 | Restart after NOTE-ADD-001 and view student 1. | Note ID 3 and its text are restored unchanged. |
+| NOTE-ADD-007 | After NOTE-ADD-001, run `addnote id/1 ni/4 nt/Review lecture notes`, then view student 1. | Success feedback identifies note ID 4 in the normal result text color. A matching-note-text warning appears below it in yellow, without changing the result text color. Notes 3 and 4 both contain `Review lecture notes`; student 2 is unchanged. |
 
 ## Delete-note command regression
 
