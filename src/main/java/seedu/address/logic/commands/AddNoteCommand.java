@@ -37,6 +37,7 @@ public class AddNoteCommand extends Command {
             "Added %1$s's note as ID %2$d.";
     public static final String MESSAGE_ALREADY_RECORDED =
             "%1$s’s note ID has already been registered. No changes made.";
+    public static final String MESSAGE_WARNING_MATCHING_TEXT = "%1$s has a matching note text.";
 
     private final Index targetIndex;
     private final int noteId;
@@ -65,14 +66,23 @@ public class AddNoteCommand extends Command {
         Student studentToUpdate = getStudentAtDisplayedIndex(model, targetIndex);
         RegisteredNotes registeredNotes = studentToUpdate.getRegisteredNotes();
 
-        if (registeredNotes.hasNote(noteId)) {
+        if (registeredNotes.hasNoteId(noteId)) {
             return new CommandResult(String.format(MESSAGE_ALREADY_RECORDED, studentToUpdate.getName()));
         }
+
+        boolean hasMatchingNoteText = registeredNotes.hasNoteText(note.getNoteText());
 
         Student updatedStudent = studentToUpdate.withRegisteredNotes(
                 registeredNotes.withNote(noteId, note));
         model.setStudent(studentToUpdate, updatedStudent);
-        return new CommandResult(String.format(MESSAGE_SUCCESS, studentToUpdate.getName(), noteId));
+
+        CommandResult result = new CommandResult(
+                String.format(MESSAGE_SUCCESS, studentToUpdate.getName(), noteId));
+        if (hasMatchingNoteText) {
+            return result.withWarning(
+                    String.format(MESSAGE_WARNING_MATCHING_TEXT, studentToUpdate.getName()));
+        }
+        return result;
     }
 
     @Override

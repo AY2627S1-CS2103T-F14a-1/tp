@@ -9,6 +9,8 @@ import static seedu.address.logic.commands.CommandTestUtil.assertCommandSuccess;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_STUDENT;
 import static seedu.address.testutil.TypicalStudents.getTypicalAddressBook;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 
 import seedu.address.commons.core.index.Index;
@@ -24,6 +26,7 @@ import seedu.address.model.student.Student;
 public class AddNoteCommandTest {
 
     private static final int NOTE_ID = 3;
+    private static final int MATCHING_NOTE_ID = NOTE_ID + 1;
     private static final Note NOTE = new Note("Review lecture notes");
 
     @Test
@@ -47,6 +50,28 @@ public class AddNoteCommandTest {
 
         assertCommandSuccess(command, model,
                 String.format(AddNoteCommand.MESSAGE_SUCCESS, studentToUpdate.getName(), NOTE_ID), expectedModel);
+    }
+
+    @Test
+    public void execute_matchingNoteText_addsNoteAndReturnsWarning() throws Exception {
+        Model model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
+        Student originalStudent = model.getFilteredStudentList().get(INDEX_FIRST_STUDENT.getZeroBased());
+        Student studentWithExistingNote = originalStudent.withRegisteredNotes(
+                new RegisteredNotes().withNote(NOTE_ID, NOTE));
+        model.setStudent(originalStudent, studentWithExistingNote);
+        AddNoteCommand command = new AddNoteCommand(INDEX_FIRST_STUDENT, MATCHING_NOTE_ID, NOTE);
+
+        CommandResult result = command.execute(model);
+        Student expectedStudent = studentWithExistingNote.withRegisteredNotes(
+                studentWithExistingNote.getRegisteredNotes().withNote(MATCHING_NOTE_ID, NOTE));
+
+        assertEquals(String.format(
+                AddNoteCommand.MESSAGE_SUCCESS, studentWithExistingNote.getName(), MATCHING_NOTE_ID),
+                result.getFeedbackToUser());
+        assertEquals(List.of(String.format(
+                AddNoteCommand.MESSAGE_WARNING_MATCHING_TEXT, studentWithExistingNote.getName())),
+                result.getWarnings());
+        assertEquals(expectedStudent, model.getFilteredStudentList().get(INDEX_FIRST_STUDENT.getZeroBased()));
     }
 
     @Test

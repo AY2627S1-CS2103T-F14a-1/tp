@@ -72,7 +72,7 @@ AvengerHub is a **desktop address book application for managing students, optimi
 
 ### Viewing help: `help`
 
-Shows a message explaining how to access the help page.
+Opens the help window containing usage instructions for the commands.
 
 ![help message](images/helpMessage.png)
 
@@ -409,7 +409,8 @@ Format: `addmission m/MISSION_ID n/NAME d/DEADLINE`
   is valid but `2026-15-32` is not. Times and single-digit months or days are rejected.
   Past deadlines are accepted for recording existing assignments.
 * Choose the ID yourself; the application does not assign IDs automatically. Existing mission
-  IDs do not change when another mission is deleted. A deleted ID can be chosen again afterward.
+  IDs do not change when another mission is deleted. A deleted ID can be chosen again afterward,
+  but its previous submission records are removed and are not restored.
 * Successful additions are saved automatically. Invalid or duplicate additions do not change
   the catalogue or save the data file. Existing students and their list filter are preserved.
 
@@ -449,7 +450,8 @@ Deletion removes the mission and its submission records from **every student**, 
 students hidden by the current filter. Student details, studio records, and other missions are
 preserved. The current student filter stays active. The result area shows deletion feedback;
 run `view id/INDEX` to see the updated profile. Deletion is automatically saved and survives restart.
-Deleted IDs are not reused. Unknown or invalid IDs leave data unchanged.
+The deleted ID can be explicitly reused by a later `addmission` command, but the old submission
+records are not restored. Unknown or invalid IDs leave data unchanged.
 
 ![result for deleting a mission](images/delMissionResult.png)
 
@@ -599,7 +601,8 @@ Format: `viewmission m/MISSION_ID [s/overdue]`
 
 ### Clearing all entries: `clear`
 
-Clears all entries from the address book.
+Clears all student records and the shared mission catalogue, including the students' associated
+studio records, notes, mastery checks, and submission records.
 
 Format: `clear`
 
@@ -617,7 +620,11 @@ Mission submission marking and unmarking are saved automatically and retained wh
 
 ### Editing the data file
 
-AvengerHub's address book data is saved automatically as a JSON file `[JAR file location]/data/addressbook.json`. Advanced users are welcome to update data directly by editing that data file.
+AvengerHub's address book data is saved automatically as the JSON file
+`data/addressbook.json`, relative to the application's working directory (the
+directory from which it is launched). When following the Quick start
+instructions, this is the folder containing the JAR file. Advanced users can
+update data directly by editing that file.
 
 <box type="warning" seamless>
 
@@ -676,3 +683,4 @@ Action     | Format, Examples
 **Find**   | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find James Jake`                                                                                                         
 **List**   | `list`                                                                                                                                                             
 **Help**   | `help`                                                                                                                                                             
+**Exit**   | `exit`
