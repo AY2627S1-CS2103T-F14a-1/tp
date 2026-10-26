@@ -291,15 +291,17 @@ public class ParserUtil {
      */
     public static Index parseNoteIndex(String noteIndexStr) throws ParseException {
         requireNonNull(noteIndexStr);
-        Index noteIndex = ParserUtil.parseIndex(noteIndexStr);
+        Index noteIndex;
         try {
-            if (!RegisteredNotes.isValidNoteIndex(noteIndex)) {
-                throw new ParseException(RegisteredNotes.MESSAGE_CONSTRAINTS);
-            }
-            return noteIndex;
+            noteIndex = ParserUtil.parseIndex(noteIndexStr);
         } catch (NumberFormatException e) {
             throw new ParseException(RegisteredNotes.MESSAGE_CONSTRAINTS);
         }
+
+        if (!RegisteredNotes.isValidNoteIndex(noteIndex)) {
+            throw new ParseException(RegisteredNotes.MESSAGE_CONSTRAINTS);
+        }
+        return noteIndex;
     }
 
     /**
