@@ -70,9 +70,6 @@ public final class RegisteredStudioRecords {
         requireNonNull(studioRecord);
         checkArgument(isValidWeek(week), MESSAGE_CONSTRAINTS);
 
-        if (!recordsByWeek.containsKey(week)) {
-            return false;
-        }
         return recordsByWeek.containsKey(week) && recordsByWeek.get(week).equals(studioRecord);
     }
 
