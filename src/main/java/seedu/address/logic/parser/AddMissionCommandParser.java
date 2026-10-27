@@ -28,9 +28,10 @@ public class AddMissionCommandParser implements Parser<AddMissionCommand> {
             ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
                     args, PREFIX_MISSION, PREFIX_NAME, PREFIX_DATE);
 
-            MissionId missionId = ParserUtil.parseMissionId(argMultimap.getValue(PREFIX_MISSION).orElseThrow());
-            String name = ParserUtil.parseMissionName(argMultimap.getValue(PREFIX_NAME).orElse(""));
-            LocalDate deadline = ParserUtil.parseMissionDeadline(argMultimap.getValue(PREFIX_DATE).orElseThrow());
+            MissionId missionId = MissionParserUtil.parseMissionId(argMultimap.getValue(PREFIX_MISSION).orElseThrow());
+            String name = MissionParserUtil.parseMissionName(argMultimap.getValue(PREFIX_NAME).orElse(""));
+            LocalDate deadline = MissionParserUtil.parseMissionDeadline(argMultimap.getValue(PREFIX_DATE)
+                    .orElseThrow());
             return new AddMissionCommand(missionId, name, deadline);
         } catch (ParseException e) {
             throw new ParseException(e.getMessage() + "\n\n" + AddMissionCommand.MESSAGE_USAGE);

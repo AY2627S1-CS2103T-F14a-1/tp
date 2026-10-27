@@ -225,7 +225,7 @@ The sequence diagram below illustrates the successful interaction flow using `ex
 
 ### Marking and unmarking mission submissions
 
-For `markmission id/INDEX m/MISSION_ID` or `unmarkmission id/INDEX m/MISSION_ID`, `AddressBookParser` delegates to `MarkMissionCommandParser` or `UnmarkMissionCommandParser`. Both reuse `MissionParser` to validate a positive student index and exactly one case-insensitive mission ID, then create the corresponding command. Invalid or extra arguments cause a `ParseException`; whether the mission and displayed student exist is checked during execution.
+For `markmission id/INDEX m/MISSION_ID` or `unmarkmission id/INDEX m/MISSION_ID`, `AddressBookParser` delegates to `MarkMissionCommandParser` or `UnmarkMissionCommandParser`. Both reuse `MissionParserUtil` to validate a positive student index and exactly one case-insensitive mission ID, then create the corresponding command. Invalid or extra arguments cause a `ParseException`; whether the mission and displayed student exist is checked during execution.
 
 When executed, the command calls `Model#findMission(...)` and retrieves the selected student from `Model#getFilteredStudentList()`. Marking uses `MissionSubmissions#withSubmission(...)`; unmarking uses `MissionSubmissions#withoutSubmission(...)`. Each produces updated immutable submission data, which the command places in a replacement `Student` before calling `Model#setStudent(...)`. Other student details and the current filter are preserved, and the observable student list notifies the UI of the replacement.
 

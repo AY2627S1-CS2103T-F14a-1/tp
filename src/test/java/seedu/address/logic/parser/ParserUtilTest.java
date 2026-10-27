@@ -1,22 +1,18 @@
 package seedu.address.logic.parser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.logic.parser.ParserUtil.MESSAGE_INVALID_INDEX;
 import static seedu.address.testutil.Assert.assertThrows;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_STUDENT;
 
-import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.parser.exceptions.ParseException;
-import seedu.address.model.mission.MissionId;
 import seedu.address.model.student.Email;
 import seedu.address.model.student.Name;
 import seedu.address.model.student.Note;
@@ -238,97 +234,5 @@ public class ParserUtilTest {
         for (String noteText : List.of("", WHITESPACE, "Review!", "a".repeat(Note.MAX_NOTE_LENGTH + 1))) {
             assertThrows(ParseException.class, Note.MESSAGE_CONSTRAINTS, () -> ParserUtil.parseNoteText(noteText));
         }
-    }
-
-    @Test
-    public void parseMissionId_validCaseWhitespaceAndBoundary_returnsCanonicalId() throws ParseException {
-        assertEquals(new MissionId("M01"), ParserUtil.parseMissionId(" \tm01\n"));
-        assertEquals(new MissionId("M105"), ParserUtil.parseMissionId("M105"));
-        assertEquals(new MissionId("M9223372036854775807"),
-                ParserUtil.parseMissionId("m9223372036854775807"));
-    }
-
-    @Test
-    public void parseMissionId_invalidValues_throwsParseException() {
-        for (String value : List.of("", " ", "M1", "M00", "M001", "M-1", "M+1", "M1.0", "1",
-                "M01 extra", "M01 x/test", "M9223372036854775808")) {
-            assertThrows(ParseException.class, MissionId.MESSAGE_CONSTRAINTS, () -> ParserUtil.parseMissionId(value));
-        }
-        assertThrows(NullPointerException.class, () -> ParserUtil.parseMissionId(null));
-    }
-
-    @Test
-    public void parseMissionName_nullInput_throwsNullPointerException() {
-        assertThrows(NullPointerException.class, () -> ParserUtil.parseMissionName(null));
-    }
-
-    @Test
-    public void parseMissionName_blankInput_throwsParseException() {
-        for (String value : List.of("", " ", WHITESPACE)) {
-            assertThrows(ParseException.class, ParserUtil.MESSAGE_INVALID_MISSION_NAME, () ->
-                    ParserUtil.parseMissionName(value));
-        }
-    }
-
-    @Test
-    public void parseMissionName_validInput_normalizesWhitespaceAndPreservesText() throws ParseException {
-        assertEquals("Mission 1: Rune Reading!",
-                ParserUtil.parseMissionName(" \tMission 1:   Rune\n Reading! \n"));
-    }
-
-    @Test
-    public void parseMissionDeadline_nullInput_throwsNullPointerException() {
-        assertThrows(NullPointerException.class, () -> ParserUtil.parseMissionDeadline(null));
-    }
-
-    @Test
-    public void parseMissionDeadline_validDates_returnsLocalDate() throws ParseException {
-        assertEquals(LocalDate.of(2024, 2, 29), ParserUtil.parseMissionDeadline("2024-02-29"));
-        assertEquals(LocalDate.of(2026, 10, 20), ParserUtil.parseMissionDeadline("2026-10-20"));
-        assertEquals(LocalDate.of(2026, 10, 20),
-                ParserUtil.parseMissionDeadline(WHITESPACE + "2026-10-20" + WHITESPACE));
-    }
-
-    @Test
-    public void parseMissionDeadline_malformedFormat_throwsParseException() {
-        for (String value : List.of("", WHITESPACE, "2026-2-03", "26-10-20", "2026/10/20",
-                "2026-10-20 extra", "2026-10-20T00:00")) {
-            assertThrows(ParseException.class, ParserUtil.MESSAGE_INVALID_MISSION_DEADLINE, () ->
-                    ParserUtil.parseMissionDeadline(value));
-        }
-    }
-
-    @Test
-    public void parseMissionDeadline_impossibleCalendarDate_throwsParseException() {
-        for (String value : List.of("2026-02-29", "2026-04-31", "2026-13-01", "2026-00-10",
-                "2026-10-00")) {
-            assertThrows(ParseException.class, ParserUtil.MESSAGE_INVALID_MISSION_CALENDAR_DATE, () ->
-                    ParserUtil.parseMissionDeadline(value));
-        }
-    }
-
-    @Test
-    public void parseMissionOverdueFilter_absent_returnsFalse() throws Exception {
-        assertFalse(ParserUtil.parseMissionOverdueFilter(Optional.empty()));
-    }
-
-    @Test
-    public void parseMissionOverdueFilter_validValue_returnsTrue() throws Exception {
-        assertTrue(ParserUtil.parseMissionOverdueFilter(Optional.of("overdue")));
-        assertTrue(ParserUtil.parseMissionOverdueFilter(Optional.of(" OVERDUE ")));
-    }
-
-    @Test
-    public void parseMissionOverdueFilter_invalidValue_throwsParseException() {
-        for (String value : new String[]{"", " ", "submitted", "overdue extra"}) {
-            assertThrows(ParseException.class, () ->
-                    ParserUtil.parseMissionOverdueFilter(Optional.of(value)));
-        }
-    }
-
-    @Test
-    public void parseMissionOverdueFilter_nullOptional_throwsNullPointerException() {
-        assertThrows(NullPointerException.class, () ->
-                ParserUtil.parseMissionOverdueFilter(null));
     }
 }

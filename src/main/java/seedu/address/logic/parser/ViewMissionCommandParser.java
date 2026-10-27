@@ -35,9 +35,9 @@ public class ViewMissionCommandParser implements Parser<ViewMissionCommand> {
                     new Prefix[]{PREFIX_MISSION, PREFIX_STATUS},
                     PREFIX_MISSION, PREFIX_STATUS);
             MissionId missionId =
-                    ParserUtil.parseMissionId(arguments.getValue(PREFIX_MISSION).orElseThrow());
+                    MissionParserUtil.parseMissionId(arguments.getValue(PREFIX_MISSION).orElseThrow());
             boolean overdueOnly =
-                    ParserUtil.parseMissionOverdueFilter(arguments.getValue(PREFIX_STATUS));
+                    MissionParserUtil.parseMissionOverdueFilter(arguments.getValue(PREFIX_STATUS));
             return new ViewMissionCommand(missionId, overdueOnly);
         } catch (ParseException e) {
             throw new ParseException(e.getMessage() + "\n\n" + ViewMissionCommand.MESSAGE_USAGE);

@@ -29,7 +29,7 @@ public class ListMissionsCommandParser implements Parser<ListMissionsCommand> {
         try {
             ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(args, PREFIX_MISSION);
 
-            MissionId missionId = ParserUtil.parseMissionId(argMultimap.getValue(PREFIX_MISSION).get());
+            MissionId missionId = MissionParserUtil.parseMissionId(argMultimap.getValue(PREFIX_MISSION).get());
             return new ListMissionsCommand(missionId);
         } catch (ParseException e) {
             throw new ParseException(e.getMessage() + "\n\n" + ListMissionsCommand.MESSAGE_USAGE);
