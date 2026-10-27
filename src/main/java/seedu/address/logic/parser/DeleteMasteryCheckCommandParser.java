@@ -31,7 +31,7 @@ public class DeleteMasteryCheckCommandParser implements Parser<DeleteMasteryChec
                     args, PREFIX_INDEX, PREFIX_NUMBER);
 
             Index index = ParserUtil.parseIndex(argMultimap.getValue(PREFIX_INDEX).get());
-            int number = ParserUtil.parseMasteryCheckNumber(argMultimap.getValue(PREFIX_NUMBER).get());
+            int number = MasteryCheckParserUtil.parseMasteryCheckNumber(argMultimap.getValue(PREFIX_NUMBER).get());
             return new DeleteMasteryCheckCommand(index, number);
         } catch (ParseException e) {
             throw new ParseException(e.getMessage() + "\n\n" + DeleteMasteryCheckCommand.MESSAGE_USAGE);
