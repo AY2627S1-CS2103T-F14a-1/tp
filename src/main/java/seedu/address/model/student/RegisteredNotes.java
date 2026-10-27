@@ -200,13 +200,13 @@ public final class RegisteredNotes {
     @Override
     public String toString() {
         StringBuilder summary = new StringBuilder();
-        for (int id = 0; id < registeredNotes.size(); id++) {
-            Note note = registeredNotes.get(id);
+        for (int i = 0; i < registeredNotes.size(); i++) {
+            Note note = registeredNotes.get(i);
             if (note == null) {
                 continue;
             }
             String noteText = note.getNoteText();
-            summary.append(id + 1)
+            summary.append(Index.fromZeroBased(i).getOneBased())
                     .append(": ").append(noteText).append('\n');
         }
         return summary.toString();
