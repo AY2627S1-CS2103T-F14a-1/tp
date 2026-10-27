@@ -24,7 +24,7 @@ public class DeleteMissionCommandParser implements Parser<DeleteMissionCommand> 
             ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
                     args, PREFIX_MISSION);
 
-            MissionId missionId = ParserUtil.parseMissionId(argMultimap.getValue(PREFIX_MISSION).get());
+            MissionId missionId = MissionParserUtil.parseMissionId(argMultimap.getValue(PREFIX_MISSION).get());
             return new DeleteMissionCommand(missionId);
         } catch (ParseException e) {
             throw new ParseException(e.getMessage() + "\n\n" + DeleteMissionCommand.MESSAGE_USAGE);

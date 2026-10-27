@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
+import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.AddMasteryCheckCommand;
 import seedu.address.logic.commands.AddNoteCommand;
 import seedu.address.logic.commands.AddStudentCommand;
@@ -285,16 +286,16 @@ public class AddressBookParserTest {
 
     @Test
     public void parseCommand_addNoteIgnoringCase_returnsCommand() throws Exception {
-        AddNoteCommand expected = new AddNoteCommand(INDEX_FIRST_STUDENT, 3, new Note("Review lecture notes"));
+        AddNoteCommand expected = new AddNoteCommand(INDEX_FIRST_STUDENT, new Note("Review lecture notes"));
 
-        assertEquals(expected, parser.parseCommand("addnote id/1 ni/3 nt/Review lecture notes"));
-        assertEquals(expected, parser.parseCommand("ADDNOTE id/1 ni/3 nt/Review lecture notes"));
-        assertEquals(expected, parser.parseCommand("  AddNote\tid/1\tni/3 nt/Review lecture notes  "));
+        assertEquals(expected, parser.parseCommand("addnote id/1 nt/Review lecture notes"));
+        assertEquals(expected, parser.parseCommand("ADDNOTE id/1 nt/Review lecture notes"));
+        assertEquals(expected, parser.parseCommand("  AddNote\tid/1\tnt/Review lecture notes  "));
     }
 
     @Test
     public void parseCommand_deleteNoteIgnoringCase_returnsCommand() throws Exception {
-        DeleteNoteCommand expected = new DeleteNoteCommand(INDEX_FIRST_STUDENT, 3);
+        DeleteNoteCommand expected = new DeleteNoteCommand(INDEX_FIRST_STUDENT, Index.fromOneBased(3));
 
         assertEquals(expected, parser.parseCommand("delnote id/1 ni/3"));
         assertEquals(expected, parser.parseCommand("DELNOTE id/1 ni/3"));
@@ -305,7 +306,7 @@ public class AddressBookParserTest {
     public void parseCommand_editNote() throws ParseException {
         EditNoteCommand command = (EditNoteCommand) parser.parseCommand(EditNoteCommand.COMMAND_WORD + " id/"
                 + INDEX_FIRST_STUDENT.getOneBased() + " ni/1 nt/hello");
-        assertEquals(new EditNoteCommand(INDEX_FIRST_STUDENT, 1, new Note("hello")), command);
+        assertEquals(new EditNoteCommand(INDEX_FIRST_STUDENT, Index.fromOneBased(1), new Note("hello")), command);
     }
 
 }

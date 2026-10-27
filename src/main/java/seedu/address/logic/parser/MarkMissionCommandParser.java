@@ -30,7 +30,7 @@ public class MarkMissionCommandParser implements Parser<MarkMissionCommand> {
                     args, PREFIX_INDEX, PREFIX_MISSION);
 
             Index index = ParserUtil.parseIndex(argMultimap.getValue(PREFIX_INDEX).get());
-            MissionId missionId = ParserUtil.parseMissionId(argMultimap.getValue(PREFIX_MISSION).get());
+            MissionId missionId = MissionParserUtil.parseMissionId(argMultimap.getValue(PREFIX_MISSION).get());
             return new MarkMissionCommand(index, missionId);
         } catch (ParseException e) {
             throw new ParseException(e.getMessage() + "\n\n" + MarkMissionCommand.MESSAGE_USAGE);

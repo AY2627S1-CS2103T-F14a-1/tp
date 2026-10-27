@@ -25,17 +25,17 @@ public class AddMissionCommandParserTest {
         for (String name : List.of("\u00a0", "\u2003", " \t\u00a0 ")) {
             ParseException error = assertThrows(ParseException.class, () ->
                     parser.parse("m/M01 n/" + name + " d/2026-10-20"));
-            assertEquals(ParserUtil.MESSAGE_INVALID_MISSION_NAME + USAGE_SUFFIX,
+            assertEquals(MissionParserUtil.MESSAGE_INVALID_MISSION_NAME + USAGE_SUFFIX,
                     error.getMessage());
         }
     }
 
     @Test
     public void parseMissionFields_validAndNullInput_preservesValidationContract() throws Exception {
-        assertEquals("Runes: Part 1!", ParserUtil.parseMissionName("  Runes:  Part 1!  "));
-        assertEquals(LocalDate.of(2000, 2, 29), ParserUtil.parseMissionDeadline(" 2000-02-29 "));
-        assertThrows(NullPointerException.class, () -> ParserUtil.parseMissionName(null));
-        assertThrows(NullPointerException.class, () -> ParserUtil.parseMissionDeadline(null));
+        assertEquals("Runes: Part 1!", MissionParserUtil.parseMissionName("  Runes:  Part 1!  "));
+        assertEquals(LocalDate.of(2000, 2, 29), MissionParserUtil.parseMissionDeadline(" 2000-02-29 "));
+        assertThrows(NullPointerException.class, () -> MissionParserUtil.parseMissionName(null));
+        assertThrows(NullPointerException.class, () -> MissionParserUtil.parseMissionDeadline(null));
     }
 
     @Test
@@ -64,15 +64,15 @@ public class AddMissionCommandParserTest {
             {"", String.join("\n", CliSyntax.PREFIX_MISSION.getMissingMessage(),
                     CliSyntax.PREFIX_NAME.getMissingMessage(), CliSyntax.PREFIX_DATE.getMissingMessage())},
             {"n/A d/2026-10-20", CliSyntax.PREFIX_MISSION.getMissingMessage()},
-            {"m/M1 n/A d/2026-10-20", ParserUtil.MESSAGE_INVALID_MISSION_ID},
-            {"m/M00 n/A d/2026-10-20", ParserUtil.MESSAGE_INVALID_MISSION_ID},
-            {"m/ n/Runes d/2026-10-20", ParserUtil.MESSAGE_INVALID_MISSION_ID},
+            {"m/M1 n/A d/2026-10-20", MissionParserUtil.MESSAGE_INVALID_MISSION_ID},
+            {"m/M00 n/A d/2026-10-20", MissionParserUtil.MESSAGE_INVALID_MISSION_ID},
+            {"m/ n/Runes d/2026-10-20", MissionParserUtil.MESSAGE_INVALID_MISSION_ID},
             {"m/M01", String.join("\n", CliSyntax.PREFIX_NAME.getMissingMessage(),
                     CliSyntax.PREFIX_DATE.getMissingMessage())},
-            {"m/M01 n/ \t d/2026-10-20", ParserUtil.MESSAGE_INVALID_MISSION_NAME},
+            {"m/M01 n/ \t d/2026-10-20", MissionParserUtil.MESSAGE_INVALID_MISSION_NAME},
             {"m/M01 n/Runes", CliSyntax.PREFIX_DATE.getMissingMessage()},
-            {"m/M01 n/Runes d/", ParserUtil.MESSAGE_INVALID_MISSION_DEADLINE},
-            {"m/M01 n/Runes d/2026-02-30", ParserUtil.MESSAGE_INVALID_MISSION_CALENDAR_DATE},
+            {"m/M01 n/Runes d/", MissionParserUtil.MESSAGE_INVALID_MISSION_DEADLINE},
+            {"m/M01 n/Runes d/2026-02-30", MissionParserUtil.MESSAGE_INVALID_MISSION_CALENDAR_DATE},
             {"m/M01 m/M02 n/A d/2026-10-20",
                     CliSyntax.PREFIX_MISSION.getDuplicateMessage()},
             {"m/M01 n/A n/B d/2026-10-20",
@@ -94,7 +94,7 @@ public class AddMissionCommandParserTest {
                 "2026-10-20T12:00", "2026-10-20 extra")) {
             ParseException error = assertThrows(ParseException.class, () ->
                     parser.parse("m/M01 n/Runes d/" + date));
-            assertEquals(ParserUtil.MESSAGE_INVALID_MISSION_DEADLINE + USAGE_SUFFIX, error.getMessage());
+            assertEquals(MissionParserUtil.MESSAGE_INVALID_MISSION_DEADLINE + USAGE_SUFFIX, error.getMessage());
             ParseException missingIdError = assertThrows(ParseException.class, () ->
                     parser.parse("n/Runes d/" + date));
             assertEquals(CliSyntax.PREFIX_MISSION.getMissingMessage() + USAGE_SUFFIX,
@@ -108,7 +108,7 @@ public class AddMissionCommandParserTest {
                 "2026-00-01", "2026-10-00", "2026-10-32")) {
             ParseException error = assertThrows(ParseException.class, () ->
                     parser.parse("m/M01 n/Runes d/" + date));
-            assertEquals(ParserUtil.MESSAGE_INVALID_MISSION_CALENDAR_DATE + USAGE_SUFFIX, error.getMessage());
+            assertEquals(MissionParserUtil.MESSAGE_INVALID_MISSION_CALENDAR_DATE + USAGE_SUFFIX, error.getMessage());
             ParseException missingIdError = assertThrows(ParseException.class, () ->
                     parser.parse("n/Runes d/" + date));
             assertEquals(CliSyntax.PREFIX_MISSION.getMissingMessage() + USAGE_SUFFIX,

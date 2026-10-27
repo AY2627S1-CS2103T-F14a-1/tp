@@ -71,7 +71,7 @@ public class ViewMissionCommandParserTest {
             "m/M03 s/", "m/M03 s/submitted", "m/M03 s/overdue extra", "m/M03 s/overdue x/test"
         }) {
             assertParseFailure(parser, input,
-                    ParserUtil.MESSAGE_INVALID_MISSION_STATUS + USAGE_SUFFIX);
+                    MissionParserUtil.MESSAGE_INVALID_MISSION_STATUS + USAGE_SUFFIX);
         }
     }
 
