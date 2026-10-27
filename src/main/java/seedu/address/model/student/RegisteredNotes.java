@@ -75,6 +75,21 @@ public final class RegisteredNotes {
     }
 
     /**
+     * Returns whether the same note has been recorded with the given ID.
+     *
+     * @param id ID to check.
+     * @param note Note to check.
+     * @return True if the same note has been recorded with the given ID.
+     * @throws IllegalArgumentException If {@code id} is outside the valid ID range.
+     * @throws NullPointerException If {@code note} is {@code null}.
+     */
+    public boolean noteMatches(int id, Note note) {
+        requireNonNull(note);
+        checkArgument(isValidNoteId(id), MESSAGE_CONSTRAINTS);
+        return notesById.containsKey(id) && notesById.get(id).equals(note);
+    }
+
+    /**
      * Returns {@code RegisteredNotes} including the given note
      * without changing this object. Returns this object if a note with
      * the same ID is already registered.
