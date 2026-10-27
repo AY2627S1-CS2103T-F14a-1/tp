@@ -29,7 +29,7 @@ public class UnmarkMasteryCheckCommandParser implements Parser<UnmarkMasteryChec
             ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
                     args, PREFIX_INDEX, PREFIX_NUMBER);
             Index index = ParserUtil.parseIndex(argMultimap.getValue(PREFIX_INDEX).get());
-            int number = parseMasteryCheckNumber(argMultimap.getValue(PREFIX_NUMBER).get());
+            int number = MasteryCheckParserUtil.parseMasteryCheckNumber(argMultimap.getValue(PREFIX_NUMBER).get());
             return new UnmarkMasteryCheckCommand(index, number);
         } catch (ParseException e) {
             throw new ParseException(e.getMessage() + "\n\n" + UnmarkMasteryCheckCommand.MESSAGE_USAGE);
