@@ -253,22 +253,17 @@ public class ParserUtil {
     }
 
     /**
-     * Parses a {@code String note ID} into a {@code int} note ID.
+     * Parses a {@code String note index} into a {@code Index} and returns it.
      *
-     * @throws ParseException if the given {@code noteId} is invalid.
+     * @throws ParseException if the given {@code noteIndex} is invalid.
      */
-    public static int parseNoteId(String noteId) throws ParseException {
-        requireNonNull(noteId);
-        String trimmedNoteId = noteId.trim();
-        try {
-            int noteIdNumber = Integer.parseInt(trimmedNoteId);
-            if (!RegisteredNotes.isValidNoteId(noteIdNumber)) {
-                throw new ParseException(RegisteredNotes.MESSAGE_CONSTRAINTS);
-            }
-            return noteIdNumber;
-        } catch (NumberFormatException e) {
+    public static Index parseNoteIndex(String noteIndexStr) throws ParseException {
+        requireNonNull(noteIndexStr);
+        Index noteIndex = ParserUtil.parseIndex(noteIndexStr);
+        if (!RegisteredNotes.isValidNoteIndex(noteIndex)) {
             throw new ParseException(RegisteredNotes.MESSAGE_CONSTRAINTS);
         }
+        return noteIndex;
     }
 
     /**
