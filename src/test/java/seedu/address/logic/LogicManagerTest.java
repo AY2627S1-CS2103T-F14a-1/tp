@@ -7,6 +7,7 @@ import static seedu.address.logic.commands.CommandTestUtil.EMAIL_DESC_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.NAME_DESC_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.PHONE_DESC_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.STUDIO_GROUP_DESC_AMY;
+import static seedu.address.logic.parser.MasteryCheckParser.MESSAGE_INVALID_MASTERY_CHECK_DATETIME;
 import static seedu.address.logic.parser.ParserUtil.MESSAGE_INVALID_EFFORT;
 import static seedu.address.logic.parser.ParserUtil.MESSAGE_INVALID_WEEK;
 import static seedu.address.testutil.Assert.assertThrows;
@@ -40,7 +41,6 @@ import seedu.address.logic.commands.MarkMasteryCheckCommand;
 import seedu.address.logic.commands.MarkMissionCommand;
 import seedu.address.logic.commands.UnmarkMissionCommand;
 import seedu.address.logic.commands.exceptions.CommandException;
-import seedu.address.logic.parser.ParserUtil;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
@@ -382,7 +382,7 @@ public class LogicManagerTest {
         String saved = Files.readString(storage.getAddressBookFilePath());
         for (String invalid : List.of("addmc id/1 num/2 dt/31-04|14:30", "addmc id/1 num/2 dt/18-08|24:00")) {
             assertThrows(ParseException.class,
-                ParserUtil.MESSAGE_INVALID_MASTERY_CHECK_DATETIME + "\n\n" + AddMasteryCheckCommand.MESSAGE_USAGE, () ->
+                MESSAGE_INVALID_MASTERY_CHECK_DATETIME + "\n\n" + AddMasteryCheckCommand.MESSAGE_USAGE, () ->
                     logic.execute(invalid));
             assertEquals(saved, Files.readString(storage.getAddressBookFilePath()));
             assertStudioState(model, storage, expected);

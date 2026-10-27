@@ -3,6 +3,7 @@ package seedu.address.logic.parser;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
+import static seedu.address.logic.parser.MasteryCheckParser.MESSAGE_INVALID_MASTERY_CHECK_DATETIME;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_STUDENT;
 
 import java.time.LocalDate;
@@ -77,7 +78,7 @@ public class AddMasteryCheckCommandParserTest {
     public void parse_invalidDateTime_reportsDateTimeConstraint() {
         for (String time : List.of("", "31-04|14:30", "18-08|24:00", "18-08|14:60", "18-08||14:30")) {
             assertParseFailure(parser, "id/1 num/1 dt/" + time,
-                ParserUtil.MESSAGE_INVALID_MASTERY_CHECK_DATETIME + USAGE_SUFFIX);
+                MESSAGE_INVALID_MASTERY_CHECK_DATETIME + USAGE_SUFFIX);
         }
     }
 
