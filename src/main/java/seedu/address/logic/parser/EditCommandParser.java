@@ -64,18 +64,18 @@ public class EditCommandParser implements Parser<EditCommand> {
         EditStudentDescriptor editStudentDescriptor = new EditStudentDescriptor();
 
         if (argMultimap.getValue(PREFIX_NAME).isPresent()) {
-            editStudentDescriptor.setName(ParserUtil.parseName(argMultimap.getValue(PREFIX_NAME).get()));
+            editStudentDescriptor.setName(StudentParserUtil.parseName(argMultimap.getValue(PREFIX_NAME).get()));
         }
         if (argMultimap.getValue(PREFIX_PHONE).isPresent()) {
-            editStudentDescriptor.setPhone(ParserUtil.parsePhone(argMultimap.getValue(PREFIX_PHONE).get()));
+            editStudentDescriptor.setPhone(StudentParserUtil.parsePhone(argMultimap.getValue(PREFIX_PHONE).get()));
         }
         if (argMultimap.getValue(PREFIX_EMAIL).isPresent()) {
-            editStudentDescriptor.setEmail(ParserUtil.parseEmail(argMultimap.getValue(PREFIX_EMAIL).get()));
+            editStudentDescriptor.setEmail(StudentParserUtil.parseEmail(argMultimap.getValue(PREFIX_EMAIL).get()));
         }
         parseTagsForEdit(argMultimap.getAllValues(PREFIX_TAG)).ifPresent(editStudentDescriptor::setTags);
         if (argMultimap.getValue(PREFIX_STUDIO_GROUP).isPresent()) {
             editStudentDescriptor.setStudioGroup(
-                    ParserUtil.parseStudioGroup(argMultimap.getValue(PREFIX_STUDIO_GROUP).get()));
+                    StudentParserUtil.parseStudioGroup(argMultimap.getValue(PREFIX_STUDIO_GROUP).get()));
         }
         return editStudentDescriptor;
     }
@@ -92,7 +92,7 @@ public class EditCommandParser implements Parser<EditCommand> {
             return Optional.empty();
         }
         Collection<String> tagSet = tags.size() == 1 && tags.contains("") ? Collections.emptySet() : tags;
-        return Optional.of(ParserUtil.parseTags(tagSet));
+        return Optional.of(StudentParserUtil.parseTags(tagSet));
     }
 
 }

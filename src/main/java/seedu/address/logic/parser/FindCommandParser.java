@@ -44,7 +44,7 @@ public class FindCommandParser implements Parser<FindCommand> {
 
         for (String groupKeyword : groupKeywords) {
             try {
-                studioGroups.add(ParserUtil.parseStudioGroup(groupKeyword));
+                studioGroups.add(StudentParserUtil.parseStudioGroup(groupKeyword));
             } catch (ParseException e) {
                 throw new ParseException(e.getMessage() + "\n\n" + FindCommand.MESSAGE_USAGE);
             }
