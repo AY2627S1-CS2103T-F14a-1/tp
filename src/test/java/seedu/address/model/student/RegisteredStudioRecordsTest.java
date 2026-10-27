@@ -195,44 +195,44 @@ public class RegisteredStudioRecordsTest {
     }
 
     @Test
-    public void studioRecordMatches_matchingRecord_returnsTrue() {
+    public void hasMatchingStudioRecord_matchingRecord_returnsTrue() {
         RegisteredStudioRecords registeredStudioRecords = new RegisteredStudioRecords(
                 Map.of(RegisteredStudioRecords.MIN_WEEK, ZERO_EFFORT_RECORD));
 
-        assertTrue(registeredStudioRecords.studioRecordMatches(
+        assertTrue(registeredStudioRecords.hasMatchingStudioRecord(
                 RegisteredStudioRecords.MIN_WEEK, new StudioRecord(0)));
     }
 
     @Test
-    public void studioRecordMatches_differentRecord_returnsFalse() {
+    public void hasMatchingStudioRecord_differentRecord_returnsFalse() {
         RegisteredStudioRecords registeredStudioRecords = new RegisteredStudioRecords(
                 Map.of(RegisteredStudioRecords.MIN_WEEK, ZERO_EFFORT_RECORD));
 
-        assertFalse(registeredStudioRecords.studioRecordMatches(
+        assertFalse(registeredStudioRecords.hasMatchingStudioRecord(
                 RegisteredStudioRecords.MIN_WEEK, FULL_EFFORT_RECORD));
     }
 
     @Test
-    public void studioRecordMatches_missingWeek_returnsFalse() {
+    public void hasMatchingStudioRecord_missingWeek_returnsFalse() {
         RegisteredStudioRecords registeredStudioRecords = new RegisteredStudioRecords(
                 Map.of(RegisteredStudioRecords.MIN_WEEK, ZERO_EFFORT_RECORD));
 
-        assertFalse(registeredStudioRecords.studioRecordMatches(
+        assertFalse(registeredStudioRecords.hasMatchingStudioRecord(
                 RegisteredStudioRecords.MAX_WEEK, ZERO_EFFORT_RECORD));
     }
 
     @Test
-    public void studioRecordMatches_nullRecordOrInvalidWeek_throwsException() {
+    public void hasMatchingStudioRecord_nullRecordOrInvalidWeek_throwsException() {
         RegisteredStudioRecords registeredStudioRecords = new RegisteredStudioRecords(
                 Map.of(RegisteredStudioRecords.MIN_WEEK, ZERO_EFFORT_RECORD));
 
         assertThrows(NullPointerException.class, () ->
-                registeredStudioRecords.studioRecordMatches(RegisteredStudioRecords.MIN_WEEK, null));
+                registeredStudioRecords.hasMatchingStudioRecord(RegisteredStudioRecords.MIN_WEEK, null));
         assertThrows(IllegalArgumentException.class, () ->
-                registeredStudioRecords.studioRecordMatches(
+                registeredStudioRecords.hasMatchingStudioRecord(
                         RegisteredStudioRecords.MIN_WEEK - 1, ZERO_EFFORT_RECORD));
         assertThrows(IllegalArgumentException.class, () ->
-                registeredStudioRecords.studioRecordMatches(
+                registeredStudioRecords.hasMatchingStudioRecord(
                         RegisteredStudioRecords.MAX_WEEK + 1, ZERO_EFFORT_RECORD));
     }
 
