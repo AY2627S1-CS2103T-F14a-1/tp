@@ -28,7 +28,7 @@ public class DeleteStudioRecordCommandParser implements Parser<DeleteStudioRecor
                     args, PREFIX_INDEX, PREFIX_WEEK);
 
             Index index = ParserUtil.parseIndex(argMultimap.getValue(PREFIX_INDEX).get());
-            int week = StudioRecordCommandParserUtil.parseWeek(argMultimap.getValue(PREFIX_WEEK).get());
+            int week = StudioRecordParserUtil.parseWeek(argMultimap.getValue(PREFIX_WEEK).get());
             return new DeleteStudioRecordCommand(index, week);
         } catch (ParseException e) {
             throw new ParseException(e.getMessage() + "\n\n" + DeleteStudioRecordCommand.MESSAGE_USAGE);

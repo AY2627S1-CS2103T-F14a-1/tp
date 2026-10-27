@@ -1,19 +1,19 @@
 package seedu.address.logic.parser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static seedu.address.logic.parser.StudioRecordCommandParserUtil.MESSAGE_INVALID_EFFORT;
-import static seedu.address.logic.parser.StudioRecordCommandParserUtil.MESSAGE_INVALID_WEEK;
+import static seedu.address.logic.parser.StudioRecordParserUtil.MESSAGE_INVALID_EFFORT;
+import static seedu.address.logic.parser.StudioRecordParserUtil.MESSAGE_INVALID_WEEK;
 import static seedu.address.testutil.Assert.assertThrows;
 
 import org.junit.jupiter.api.Test;
 
 import seedu.address.logic.parser.exceptions.ParseException;
 
-public class StudioRecordCommandParserUtilTest {
+public class StudioRecordParserUtilTest {
 
     @Test
     public void parseWeek_nullInput_throwsNullPointerException() {
-        assertThrows(NullPointerException.class, () -> StudioRecordCommandParserUtil.parseWeek(null));
+        assertThrows(NullPointerException.class, () -> StudioRecordParserUtil.parseWeek(null));
     }
 
     @Test
@@ -22,21 +22,21 @@ public class StudioRecordCommandParserUtilTest {
 
         for (String invalidWeek : invalidWeeks) {
             assertThrows(ParseException.class, MESSAGE_INVALID_WEEK, () ->
-                    StudioRecordCommandParserUtil.parseWeek(invalidWeek));
+                    StudioRecordParserUtil.parseWeek(invalidWeek));
         }
     }
 
     @Test
     public void parseWeek_validInput_returnsWeek() throws Exception {
-        assertEquals(0, StudioRecordCommandParserUtil.parseWeek("0"));
-        assertEquals(3, StudioRecordCommandParserUtil.parseWeek("3"));
-        assertEquals(13, StudioRecordCommandParserUtil.parseWeek("13"));
-        assertEquals(3, StudioRecordCommandParserUtil.parseWeek(" \t3 "));
+        assertEquals(0, StudioRecordParserUtil.parseWeek("0"));
+        assertEquals(3, StudioRecordParserUtil.parseWeek("3"));
+        assertEquals(13, StudioRecordParserUtil.parseWeek("13"));
+        assertEquals(3, StudioRecordParserUtil.parseWeek(" \t3 "));
     }
 
     @Test
     public void parseEffortScore_nullInput_throwsNullPointerException() {
-        assertThrows(NullPointerException.class, () -> StudioRecordCommandParserUtil.parseEffortScore(null));
+        assertThrows(NullPointerException.class, () -> StudioRecordParserUtil.parseEffortScore(null));
     }
 
     @Test
@@ -45,16 +45,16 @@ public class StudioRecordCommandParserUtilTest {
 
         for (String invalidEffortScore : invalidEffortScores) {
             assertThrows(ParseException.class, MESSAGE_INVALID_EFFORT, () ->
-                    StudioRecordCommandParserUtil.parseEffortScore(invalidEffortScore));
+                    StudioRecordParserUtil.parseEffortScore(invalidEffortScore));
         }
     }
 
     @Test
     public void parseEffortScore_validInput_returnsEffortScore() throws Exception {
-        assertEquals(0, StudioRecordCommandParserUtil.parseEffortScore("0"));
-        assertEquals(50, StudioRecordCommandParserUtil.parseEffortScore("50"));
-        assertEquals(Integer.MAX_VALUE, StudioRecordCommandParserUtil.parseEffortScore(
+        assertEquals(0, StudioRecordParserUtil.parseEffortScore("0"));
+        assertEquals(50, StudioRecordParserUtil.parseEffortScore("50"));
+        assertEquals(Integer.MAX_VALUE, StudioRecordParserUtil.parseEffortScore(
                 String.valueOf(Integer.MAX_VALUE)));
-        assertEquals(50, StudioRecordCommandParserUtil.parseEffortScore(" \t50 "));
+        assertEquals(50, StudioRecordParserUtil.parseEffortScore(" \t50 "));
     }
 }
