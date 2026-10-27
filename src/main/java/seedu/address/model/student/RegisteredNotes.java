@@ -2,64 +2,65 @@ package seedu.address.model.student;
 
 import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.AppUtil.checkArgument;
+import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 import static seedu.address.model.student.Note.isValidNoteText;
 
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
+
+import seedu.address.commons.core.index.Index;
 
 /**
  * Represents an immutable collection of a student's notes.
- * Each note ID is between {@value MIN_NOTE_ID} and {@value MAX_NOTE_ID}, inclusive.
+ * Each note index is a positive integer less than or equal to {@value MAX_NOTE_INDEX}.
  */
 public final class RegisteredNotes {
 
-    public static final int MIN_NOTE_ID = 1;
-    public static final int MAX_NOTE_ID = 10;
-
+    public static final int MAX_NOTE_INDEX = 10;
     public static final String MESSAGE_CONSTRAINTS =
-            "Note ID must be between " + MIN_NOTE_ID + " and " + MAX_NOTE_ID + " inclusive";
+            "There must be " + MAX_NOTE_INDEX + " notes or fewer, with indexes between 1 and " + MAX_NOTE_INDEX;
 
-    private final Map<Integer, Note> notesById;
+    private final List<Note> registeredNotes;
 
     /**
      * Constructs a {@code RegisteredNotes} collection with no registered notes.
      */
     public RegisteredNotes() {
-        this.notesById = Collections.emptyMap();
+        this.registeredNotes = Collections.emptyList();
     }
 
     /**
      * Creates {@code RegisteredNotes} from the given notes.
      *
-     * @param notesById Notes and their ID.
-     * @throws NullPointerException If the map, any ID, or any note is {@code null}.
-     * @throws IllegalArgumentException If any note ID is outside the valid range.
+     * @param registeredNotes Registered notes.
+     * @throws NullPointerException If the list or any note is {@code null}.
+     * @throws IllegalArgumentException If there are too many notes or any note text is invalid.
      */
-    public RegisteredNotes(Map<Integer, Note> notesById) {
-        requireNonNull(notesById);
+    public RegisteredNotes(List<Note> registeredNotes) {
+        requireAllNonNull(registeredNotes);
 
-        Map<Integer, Note> copiedNotes = new HashMap<>(notesById);
+        List<Note> copiedNotes = new ArrayList<>(registeredNotes);
 
-        for (Map.Entry<Integer, Note> entry : notesById.entrySet()) {
-            requireNonNull(entry.getKey());
-            requireNonNull(entry.getValue());
-            checkArgument(isValidNoteText(entry.getValue().getNoteText()), Note.MESSAGE_CONSTRAINTS);
-            checkArgument(isValidNoteId(entry.getKey()), MESSAGE_CONSTRAINTS);
+        checkArgument(registeredNotes.size() <= MAX_NOTE_INDEX, RegisteredNotes.MESSAGE_CONSTRAINTS);
+        for (Note note : copiedNotes) {
+            checkArgument(isValidNoteText(note.getNoteText()), Note.MESSAGE_CONSTRAINTS);
         }
-        this.notesById = Collections.unmodifiableMap(copiedNotes);
+        this.registeredNotes = Collections.unmodifiableList(copiedNotes);
     }
 
     /**
-     * Returns whether a note with the same ID has been registered.
+     * Returns whether a note with the same index has been registered.
      *
-     * @param id Note ID to check.
-     * @return True if note ID has been registered.
-     * @throws IllegalArgumentException If the note ID is outside the valid range.
+     * @param targetIndex Note index to check.
+     * @return True if note index has been registered.
+     * @throws NullPointerException If the note index is {@code null}.
+     * @throws IllegalArgumentException If the note index is outside the valid range.
      */
-    public boolean hasNoteId(int id) {
-        checkArgument(isValidNoteId(id), MESSAGE_CONSTRAINTS);
-        return notesById.containsKey(id);
+    public boolean hasNote(Index targetIndex) {
+        requireNonNull(targetIndex);
+        checkArgument(isValidNoteIndex(targetIndex), MESSAGE_CONSTRAINTS);
+        return targetIndex.getOneBased() <= registeredNotes.size();
     }
 
     /**
@@ -71,27 +72,43 @@ public final class RegisteredNotes {
      */
     public boolean hasNoteText(String text) {
         requireNonNull(text);
-        return notesById.containsValue(new Note(text));
+        return registeredNotes.contains(new Note(text));
+    }
+
+    /**
+     * Returns whether the same note has been recorded with the given ID.
+     *
+     * @param index Index to check.
+     * @param note Note to check.
+     * @return True if the same note has been recorded with the given ID.
+     * @throws IllegalArgumentException If {@code id} is outside the valid ID range.
+     * @throws NullPointerException If {@code note} is {@code null}.
+     */
+    public boolean hasMatchingNote(Index index, Note note) {
+        requireNonNull(index);
+        requireNonNull(note);
+        checkArgument(isValidNoteIndex(index), MESSAGE_CONSTRAINTS);
+        return registeredNotes.contains(note) && registeredNotes.get(index.getZeroBased()).equals(note);
     }
 
     /**
      * Returns {@code RegisteredNotes} including the given note
-     * without changing this object. Returns this object if a note with
-     * the same ID is already registered.
+     * without changing this object. Returns the same object if
+     * the number of notes has reached capacity.
      *
-     * @param id Note ID to use.
      * @param note Note to include.
      * @return {@code RegisteredNotes} containing the existing notes and given note.
      * @throws NullPointerException If the note is {@code null}.
+     * @throws IllegalStateException If the list of notes has reached capacity.
      */
-    public RegisteredNotes withNote(int id, Note note) {
+    public RegisteredNotes withNote(Note note) {
         requireNonNull(note);
-        if (hasNoteId(id)) {
-            return this;
+        if (registeredNotes.size() >= MAX_NOTE_INDEX) {
+            throw new IllegalStateException(MESSAGE_CONSTRAINTS);
         }
 
-        Map<Integer, Note> updatedNotes = new HashMap<>(notesById);
-        updatedNotes.put(id, note);
+        List<Note> updatedNotes = new ArrayList<>(registeredNotes);
+        updatedNotes.add(note);
 
         return new RegisteredNotes(updatedNotes);
     }
@@ -99,65 +116,67 @@ public final class RegisteredNotes {
     /**
      * Returns {@code RegisteredNotes} not including the given note
      * without changing this object. Returns this object if a note with
-     * the same ID was already not registered.
+     * the same index was already not registered.
      *
-     * @param id Note ID to remove.
+     * @param targetIndex Note index to remove.
      * @return {@code RegisteredNotes} containing the existing notes without
-     *      the note with the given ID.
+     *     the note with the given index.
+     * @throws NullPointerException If the note index is {@code null}.
+     * @throws IllegalArgumentException If the note index is outside the valid range.
      */
-    public RegisteredNotes withoutNote(int id) {
-        if (!hasNoteId(id)) {
+    public RegisteredNotes withoutNote(Index targetIndex) {
+        if (!hasNote(targetIndex)) {
             return this;
         }
 
-        Map<Integer, Note> updatedNotes = new HashMap<>(notesById);
-        updatedNotes.remove(id);
+        List<Note> updatedNotes = new ArrayList<>(registeredNotes);
+        updatedNotes.remove(targetIndex.getZeroBased());
         return new RegisteredNotes(updatedNotes);
     }
 
     /**
-     * Returns {@code RegisteredNotes} with the note for the given ID replaced by the given note.
-     * Returns this instance when no note is registered for the given ID or the registered note is unchanged.
+     * Returns {@code RegisteredNotes} with the note for the given index replaced by the given note.
+     * Returns this instance when no note is registered for the given index or the registered note is unchanged.
      *
-     * @param noteId Note ID to edit.
+     * @param noteIndex Note index to edit.
      * @param note Replacement note.
-     * @return {@code RegisteredNotes} containing the existing notes and the replacement note for the given ID.
+     * @return {@code RegisteredNotes} containing the existing notes and the replacement note for the given index.
      * @throws NullPointerException If the note is {@code null}.
-     * @throws IllegalArgumentException If the note ID is outside the valid range.
+     * @throws IllegalArgumentException If the note index is outside the valid range.
      */
-    public RegisteredNotes editNote(int noteId, Note note) {
+    public RegisteredNotes editNote(Index noteIndex, Note note) {
         requireNonNull(note);
-        if (!hasNoteId(noteId)) {
+        if (!hasNote(noteIndex)) {
             return this;
         }
 
-        if (getNotesById().get(noteId).equals(note)) {
+        if (getRegisteredNotes().get(noteIndex.getZeroBased()).equals(note)) {
             return this;
         }
 
-        Map<Integer, Note> updatedNotes = new HashMap<>(notesById);
-        updatedNotes.put(noteId, note);
+        List<Note> updatedNotes = new ArrayList<>(registeredNotes);
+        updatedNotes.set(noteIndex.getZeroBased(), note);
 
         return new RegisteredNotes(updatedNotes);
     }
 
     /**
-     * Returns an unmodifiable map of registered notes.
+     * Returns an unmodifiable list of registered notes.
      *
-     * @return Registered notes, with no guaranteed iteration order.
+     * @return List of registered notes.
      */
-    public Map<Integer, Note> getNotesById() {
-        return notesById;
+    public List<Note> getRegisteredNotes() {
+        return registeredNotes;
     }
 
     /**
-     * Returns whether the given note ID is within the valid range.
+     * Returns whether the given note index is within the valid range.
      *
-     * @param noteId Note ID to check.
-     * @return True if the ID is between {@value #MIN_NOTE_ID} and {@value #MAX_NOTE_ID}, inclusive.
+     * @param noteIndex Note index to check.
+     * @return True if the index is a positive integer less than or equal to {@value #MAX_NOTE_INDEX}.
      */
-    public static boolean isValidNoteId(int noteId) {
-        return noteId >= MIN_NOTE_ID && noteId <= MAX_NOTE_ID;
+    public static boolean isValidNoteIndex(Index noteIndex) {
+        return noteIndex.getOneBased() <= MAX_NOTE_INDEX;
     }
 
     @Override
@@ -170,24 +189,24 @@ public final class RegisteredNotes {
             return false;
         }
 
-        return notesById.equals(otherRegisteredNotes.notesById);
+        return registeredNotes.equals(otherRegisteredNotes.registeredNotes);
     }
 
     @Override
     public int hashCode() {
-        return notesById.hashCode();
+        return registeredNotes.hashCode();
     }
 
     @Override
     public String toString() {
         StringBuilder summary = new StringBuilder();
-        for (int id = MIN_NOTE_ID; id <= MAX_NOTE_ID; id++) {
-            Note note = notesById.get(id);
+        for (int i = 0; i < registeredNotes.size(); i++) {
+            Note note = registeredNotes.get(i);
             if (note == null) {
                 continue;
             }
             String noteText = note.getNoteText();
-            summary.append(id)
+            summary.append(Index.fromZeroBased(i).getOneBased())
                     .append(": ").append(noteText).append('\n');
         }
         return summary.toString();

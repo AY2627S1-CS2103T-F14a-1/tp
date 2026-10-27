@@ -24,12 +24,6 @@ public class ParserUtil {
     public static final String MESSAGE_INVALID_INDEX =
             "Index must be a positive integer without a sign, decimal point, or leading zero.";
 
-    public static final String MESSAGE_INVALID_EFFORT = "Effort score must be a positive integer.";
-    public static final String MESSAGE_INVALID_WEEK = "Week must be a positive integer.";
-
-
-
-
     /**
      * Parses {@code oneBasedIndex} into an {@code Index} and returns it. Leading and trailing whitespaces will be
      * trimmed.
@@ -131,54 +125,17 @@ public class ParserUtil {
     }
 
     /**
-     * Parses a {@code String} into a {@code int} week value.
-     * @throws ParseException if the specified index is invalid (not a non-negative unsigned integer).
-     */
-    public static int parseWeek(String week) throws ParseException {
-        requireNonNull(week);
-        String trimmedWeek = week.trim();
-
-        if (!StringUtil.isNonNegativeUnsignedInteger(trimmedWeek)) {
-            throw new ParseException(MESSAGE_INVALID_WEEK);
-        }
-        int weekNumber = Integer.parseInt(trimmedWeek);
-        if (weekNumber < 0 || weekNumber > 13) {
-            throw new ParseException(MESSAGE_INVALID_WEEK);
-        }
-        return weekNumber;
-
-    }
-
-    /**
-     * Parses a {@code String} into a {@code int} effort score.
-     * @throws ParseException if the specified effort is invalid (not a non-negative unsigned integer).
-     */
-    public static int parseEffortScore(String effort) throws ParseException {
-        requireNonNull(effort);
-        String trimmedEffort = effort.trim();
-        if (!StringUtil.isNonNegativeUnsignedInteger(trimmedEffort)) {
-            throw new ParseException(MESSAGE_INVALID_EFFORT);
-        }
-        return Integer.parseInt(trimmedEffort);
-    }
-
-    /**
-     * Parses a {@code String note ID} into a {@code int} note ID.
+     * Parses a {@code String note index} into a {@code Index} and returns it.
      *
-     * @throws ParseException if the given {@code noteId} is invalid.
+     * @throws ParseException if the given {@code noteIndex} is invalid.
      */
-    public static int parseNoteId(String noteId) throws ParseException {
-        requireNonNull(noteId);
-        String trimmedNoteId = noteId.trim();
-        try {
-            int noteIdNumber = Integer.parseInt(trimmedNoteId);
-            if (!RegisteredNotes.isValidNoteId(noteIdNumber)) {
-                throw new ParseException(RegisteredNotes.MESSAGE_CONSTRAINTS);
-            }
-            return noteIdNumber;
-        } catch (NumberFormatException e) {
+    public static Index parseNoteIndex(String noteIndexStr) throws ParseException {
+        requireNonNull(noteIndexStr);
+        Index noteIndex = ParserUtil.parseIndex(noteIndexStr);
+        if (!RegisteredNotes.isValidNoteIndex(noteIndex)) {
             throw new ParseException(RegisteredNotes.MESSAGE_CONSTRAINTS);
         }
+        return noteIndex;
     }
 
     /**
