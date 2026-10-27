@@ -180,12 +180,11 @@ public class RegisteredNotesTest {
         assertTrue(registeredNotes.noteMatches(RegisteredNotes.MIN_NOTE_ID, new Note("Review lecture")));
         assertFalse(registeredNotes.noteMatches(RegisteredNotes.MIN_NOTE_ID, SECOND_NOTE));
         assertFalse(registeredNotes.noteMatches(RegisteredNotes.MAX_NOTE_ID, SECOND_NOTE));
-        assertThrows(NullPointerException.class,
-                () -> registeredNotes.noteMatches(RegisteredNotes.MIN_NOTE_ID, null));
-        assertThrows(IllegalArgumentException.class,
-                () -> registeredNotes.noteMatches(RegisteredNotes.MIN_NOTE_ID - 1, FIRST_NOTE));
-        assertThrows(IllegalArgumentException.class,
-                () -> registeredNotes.noteMatches(RegisteredNotes.MAX_NOTE_ID + 1, FIRST_NOTE));
+        assertThrows(NullPointerException.class, () -> registeredNotes.noteMatches(RegisteredNotes.MIN_NOTE_ID, null));
+        assertThrows(IllegalArgumentException.class, () -> registeredNotes.noteMatches(
+                RegisteredNotes.MIN_NOTE_ID - 1, FIRST_NOTE));
+        assertThrows(IllegalArgumentException.class, () -> registeredNotes.noteMatches(
+                RegisteredNotes.MAX_NOTE_ID + 1, FIRST_NOTE));
     }
 
     @Test
