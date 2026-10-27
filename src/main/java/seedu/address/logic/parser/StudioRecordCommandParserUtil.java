@@ -8,7 +8,7 @@ import seedu.address.logic.parser.exceptions.ParseException;
 /**
  * Validates the shared arguments used for studio records.
  */
-public class StudioRecordCommandParser {
+public class StudioRecordCommandParserUtil {
 
     public static final String MESSAGE_INVALID_EFFORT = "Effort score must be a positive integer.";
     public static final String MESSAGE_INVALID_WEEK = "Week must be a positive integer.";
