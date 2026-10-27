@@ -74,7 +74,7 @@ public class RegisteredNotesTest {
     }
 
     @Test
-    public void withNote_maximumNotesReached_throwsIllegalArgumentException() {
+    public void withNote_maximumNotesReached_throwsIllegalStateException() {
         RegisteredNotes registeredNotes = new RegisteredNotes(
                 Collections.nCopies(RegisteredNotes.MAX_NOTE_INDEX, FIRST_NOTE));
 
@@ -151,6 +151,29 @@ public class RegisteredNotesTest {
         assertThrows(NullPointerException.class, () -> registeredNotes.hasNote(null));
         assertThrows(IllegalArgumentException.class, () ->
                 registeredNotes.hasNote(Index.fromOneBased(RegisteredNotes.MAX_NOTE_INDEX + 1)));
+    }
+
+    @Test
+    public void hasNoteText_matchingAbsentOrNullText_returnsExpectedResult() {
+        RegisteredNotes registeredNotes = new RegisteredNotes(List.of(FIRST_NOTE));
+
+        assertTrue(registeredNotes.hasNoteText(FIRST_NOTE.getNoteText()));
+        assertFalse(registeredNotes.hasNoteText(SECOND_NOTE.getNoteText()));
+        assertThrows(NullPointerException.class, () -> registeredNotes.hasNoteText(null));
+    }
+
+    @Test
+    public void hasMatchingNote_matchingDifferentMissingOrInvalidNote_returnsExpectedResult() {
+        RegisteredNotes registeredNotes = new RegisteredNotes(List.of(FIRST_NOTE));
+
+        assertTrue(registeredNotes.hasMatchingNote(Index.fromOneBased(1), new Note("Review lecture")));
+        assertFalse(registeredNotes.hasMatchingNote(Index.fromOneBased(1), SECOND_NOTE));
+        assertFalse(registeredNotes.hasMatchingNote(Index.fromOneBased(2), SECOND_NOTE));
+        assertThrows(NullPointerException.class, () ->
+                registeredNotes.hasMatchingNote(Index.fromOneBased(1), null));
+        assertThrows(NullPointerException.class, () -> registeredNotes.hasMatchingNote(null, FIRST_NOTE));
+        assertThrows(IllegalArgumentException.class, () -> registeredNotes.hasMatchingNote(
+                Index.fromOneBased(RegisteredNotes.MAX_NOTE_INDEX + 1), FIRST_NOTE));
     }
 
     @Test

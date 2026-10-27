@@ -76,6 +76,22 @@ public final class RegisteredNotes {
     }
 
     /**
+     * Returns whether the same note has been recorded with the given ID.
+     *
+     * @param index Index to check.
+     * @param note Note to check.
+     * @return True if the same note has been recorded with the given ID.
+     * @throws IllegalArgumentException If {@code id} is outside the valid ID range.
+     * @throws NullPointerException If {@code note} is {@code null}.
+     */
+    public boolean hasMatchingNote(Index index, Note note) {
+        requireNonNull(index);
+        requireNonNull(note);
+        checkArgument(isValidNoteIndex(index), MESSAGE_CONSTRAINTS);
+        return registeredNotes.contains(note) && registeredNotes.get(index.getZeroBased()).equals(note);
+    }
+
+    /**
      * Returns {@code RegisteredNotes} including the given note
      * without changing this object. Returns the same object if
      * the number of notes has reached capacity.
