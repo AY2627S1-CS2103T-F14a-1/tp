@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.Messages.MESSAGE_UNKNOWN_COMMAND;
-import static seedu.address.logic.parser.MasteryCheckParserUtil.MESSAGE_INVALID_MASTERY_CHECK_DATETIME;
 import static seedu.address.testutil.Assert.assertThrows;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_STUDENT;
 
@@ -248,7 +247,8 @@ public class AddressBookParserTest {
     @Test
     public void parseCommand_masteryCheckInvalidDate_throwsParseException() {
         assertThrows(ParseException.class,
-                MESSAGE_INVALID_MASTERY_CHECK_DATETIME + "\n\n" + AddMasteryCheckCommand.MESSAGE_USAGE, () ->
+                MasteryCheckParserUtil.MESSAGE_INVALID_MASTERY_CHECK_DATETIME
+                        + "\n\n" + AddMasteryCheckCommand.MESSAGE_USAGE, () ->
                 parser.parseCommand("addmc id/1 num/1 dt/31-04|14:30"));
     }
 

@@ -2,8 +2,6 @@ package seedu.address.logic.parser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static seedu.address.logic.parser.MasteryCheckParserUtil.MESSAGE_INVALID_MASTERY_CHECK_DATETIME;
-import static seedu.address.logic.parser.MasteryCheckParserUtil.parseMasteryCheckDateTime;
-import static seedu.address.logic.parser.MasteryCheckParserUtil.parseMasteryCheckNumber;
 import static seedu.address.logic.parser.ParserUtilTest.WHITESPACE;
 import static seedu.address.testutil.Assert.assertThrows;
 
@@ -19,24 +17,23 @@ import seedu.address.model.student.RegisteredMasteryChecks;
 
 public class MasteryCheckParserUtilTest {
 
-
     @Test
     public void parseMasteryCheckNumber_null_throwsNullPointerException() {
-        assertThrows(NullPointerException.class, () -> parseMasteryCheckNumber(null));
+        assertThrows(NullPointerException.class, () -> MasteryCheckParserUtil.parseMasteryCheckNumber(null));
     }
 
     @Test
     public void parseMasteryCheckNumber_validBoundaries_returnsTrimmedNumber() throws Exception {
-        assertEquals(1, parseMasteryCheckNumber("1"));
-        assertEquals(1, parseMasteryCheckNumber(WHITESPACE + "1" + WHITESPACE));
-        assertEquals(Integer.MAX_VALUE, parseMasteryCheckNumber("2147483647"));
+        assertEquals(1, MasteryCheckParserUtil.parseMasteryCheckNumber("1"));
+        assertEquals(1, MasteryCheckParserUtil.parseMasteryCheckNumber(WHITESPACE + "1" + WHITESPACE));
+        assertEquals(Integer.MAX_VALUE, MasteryCheckParserUtil.parseMasteryCheckNumber("2147483647"));
     }
 
     @Test
     public void parseMasteryCheckNumber_nonPositiveValues_reportsNumberConstraint() {
         for (String number : List.of("0", "-1", "-2147483648")) {
             assertThrows(ParseException.class, RegisteredMasteryChecks.MESSAGE_CONSTRAINTS, () ->
-                    parseMasteryCheckNumber(number));
+                    MasteryCheckParserUtil.parseMasteryCheckNumber(number));
         }
     }
 
@@ -44,33 +41,37 @@ public class MasteryCheckParserUtilTest {
     public void parseMasteryCheckNumber_nonIntegerOrOverflowingValues_reportsNonNumberMessage() {
         for (String number : List.of("", WHITESPACE, "1.5", "1e2", "abc", "1 2", "2147483648")) {
             assertThrows(ParseException.class, RegisteredMasteryChecks.MESSAGE_NON_NUMBER, () ->
-                    parseMasteryCheckNumber(number));
+                    MasteryCheckParserUtil.parseMasteryCheckNumber(number));
         }
     }
 
     @Test
     public void parseMasteryCheckDateTime_null_throwsNullPointerException() {
-        assertThrows(NullPointerException.class, () -> parseMasteryCheckDateTime(null));
+        assertThrows(NullPointerException.class, () -> MasteryCheckParserUtil.parseMasteryCheckDateTime(null));
     }
 
     @Test
     public void parseMasteryCheckDateTime_validBoundaries_returnsCurrentYearAppointment() throws Exception {
         int year = LocalDate.now().getYear();
-        assertEquals(LocalDateTime.of(year, 1, 1, 0, 0), parseMasteryCheckDateTime("01-01|00:00"));
-        assertEquals(LocalDateTime.of(year, 12, 31, 23, 59), parseMasteryCheckDateTime("31-12|23:59"));
-        assertEquals(LocalDateTime.of(year, 2, 28, 12, 30), parseMasteryCheckDateTime("28-02|12:30"));
+        assertEquals(LocalDateTime.of(year, 1, 1, 0, 0),
+                MasteryCheckParserUtil.parseMasteryCheckDateTime("01-01|00:00"));
+        assertEquals(LocalDateTime.of(year, 12, 31, 23, 59),
+                MasteryCheckParserUtil.parseMasteryCheckDateTime("31-12|23:59"));
+        assertEquals(LocalDateTime.of(year, 2, 28, 12, 30),
+                MasteryCheckParserUtil.parseMasteryCheckDateTime("28-02|12:30"));
         if (Year.isLeap(year)) {
-            assertEquals(LocalDateTime.of(year, 2, 29, 12, 30), parseMasteryCheckDateTime("29-02|12:30"));
+            assertEquals(LocalDateTime.of(year, 2, 29, 12, 30),
+                    MasteryCheckParserUtil.parseMasteryCheckDateTime("29-02|12:30"));
         } else {
             assertThrows(ParseException.class, MESSAGE_INVALID_MASTERY_CHECK_DATETIME, () ->
-                    parseMasteryCheckDateTime("29-02|12:30"));
+                    MasteryCheckParserUtil.parseMasteryCheckDateTime("29-02|12:30"));
         }
     }
 
     @Test
     public void parseMasteryCheckDateTime_surroundingWhitespace_returnsTrimmedAppointment() throws Exception {
         assertEquals(LocalDateTime.of(LocalDate.now().getYear(), 8, 18, 14, 30),
-                parseMasteryCheckDateTime(WHITESPACE + "18-08|14:30" + WHITESPACE));
+                MasteryCheckParserUtil.parseMasteryCheckDateTime(WHITESPACE + "18-08|14:30" + WHITESPACE));
     }
 
     @Test
@@ -79,7 +80,7 @@ public class MasteryCheckParserUtilTest {
                 "18-00|14:30", "18-13|14:30", "18-08|24:00", "18-08|25:00", "18-08|14:60",
                 "18-08|-1:30", "18-08|14:-1")) {
             assertThrows(ParseException.class, MESSAGE_INVALID_MASTERY_CHECK_DATETIME, () ->
-                    parseMasteryCheckDateTime(value));
+                    MasteryCheckParserUtil.parseMasteryCheckDateTime(value));
         }
     }
 
@@ -90,7 +91,7 @@ public class MasteryCheckParserUtilTest {
                 "18-08 |14:30", "18-08| 14:30", "18-08|14:30:00", "18-08|14:30Z", "18-08|14:30extra",
                 "2026-08-18|14:30")) {
             assertThrows(ParseException.class, MESSAGE_INVALID_MASTERY_CHECK_DATETIME, () ->
-                    parseMasteryCheckDateTime(value));
+                    MasteryCheckParserUtil.parseMasteryCheckDateTime(value));
         }
     }
 
