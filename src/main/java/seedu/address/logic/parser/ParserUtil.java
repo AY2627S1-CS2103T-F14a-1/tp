@@ -18,7 +18,7 @@ import seedu.address.model.student.StudioGroup;
 import seedu.address.model.tag.Tag;
 
 /**
- * Contains utility methods used for parsing strings in the various *Parser classes.
+ * Contains utility methods used for parsing common strings in the various *Parser classes.
  */
 public class ParserUtil {
     public static final String MESSAGE_INVALID_INDEX =
