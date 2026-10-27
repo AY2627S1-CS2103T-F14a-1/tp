@@ -83,7 +83,7 @@ public final class RegisteredNotes {
      * @throws IllegalArgumentException If {@code id} is outside the valid ID range.
      * @throws NullPointerException If {@code note} is {@code null}.
      */
-    public boolean noteMatches(int id, Note note) {
+    public boolean hasMatchingNote(int id, Note note) {
         requireNonNull(note);
         checkArgument(isValidNoteId(id), MESSAGE_CONSTRAINTS);
         return notesById.containsKey(id) && notesById.get(id).equals(note);
