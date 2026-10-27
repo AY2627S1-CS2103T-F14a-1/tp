@@ -66,7 +66,7 @@ public final class RegisteredStudioRecords {
      * @throws IllegalArgumentException If {@code week} is outside the valid studio-week range.
      * @throws NullPointerException If {@code studioRecord} is {@code null}.
      */
-    public boolean hasEqualStudioRecord(int week, StudioRecord studioRecord) {
+    public boolean studioRecordMatches(int week, StudioRecord studioRecord) {
         requireNonNull(studioRecord);
         checkArgument(isValidWeek(week), MESSAGE_CONSTRAINTS);
 
@@ -128,7 +128,7 @@ public final class RegisteredStudioRecords {
             return this;
         }
 
-        if (hasEqualStudioRecord(week, studioRecord)) {
+        if (studioRecordMatches(week, studioRecord)) {
             return this;
         }
 
