@@ -3,6 +3,7 @@ package seedu.address.logic.parser;
 import static java.util.Objects.requireNonNull;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_INDEX;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NUMBER;
+import static seedu.address.logic.parser.MasteryCheckParser.parseMasteryCheckNumber;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.DeleteMasteryCheckCommand;
@@ -31,7 +32,7 @@ public class DeleteMasteryCheckCommandParser implements Parser<DeleteMasteryChec
                     args, PREFIX_INDEX, PREFIX_NUMBER);
 
             Index index = ParserUtil.parseIndex(argMultimap.getValue(PREFIX_INDEX).get());
-            int number = ParserUtil.parseMasteryCheckNumber(argMultimap.getValue(PREFIX_NUMBER).get());
+            int number = parseMasteryCheckNumber(argMultimap.getValue(PREFIX_NUMBER).get());
             return new DeleteMasteryCheckCommand(index, number);
         } catch (ParseException e) {
             throw new ParseException(e.getMessage() + "\n\n" + DeleteMasteryCheckCommand.MESSAGE_USAGE);
