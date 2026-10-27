@@ -3,8 +3,6 @@ package seedu.address.logic.parser;
 import static java.util.Objects.requireNonNull;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_MISSION;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_STATUS;
-import static seedu.address.logic.parser.MissionParserUtil.parseMissionId;
-import static seedu.address.logic.parser.MissionParserUtil.parseMissionOverdueFilter;
 
 import seedu.address.logic.commands.ViewMissionCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
@@ -37,9 +35,9 @@ public class ViewMissionCommandParser implements Parser<ViewMissionCommand> {
                     new Prefix[]{PREFIX_MISSION, PREFIX_STATUS},
                     PREFIX_MISSION, PREFIX_STATUS);
             MissionId missionId =
-                    parseMissionId(arguments.getValue(PREFIX_MISSION).orElseThrow());
+                    MissionParserUtil.parseMissionId(arguments.getValue(PREFIX_MISSION).orElseThrow());
             boolean overdueOnly =
-                    parseMissionOverdueFilter(arguments.getValue(PREFIX_STATUS));
+                    MissionParserUtil.parseMissionOverdueFilter(arguments.getValue(PREFIX_STATUS));
             return new ViewMissionCommand(missionId, overdueOnly);
         } catch (ParseException e) {
             throw new ParseException(e.getMessage() + "\n\n" + ViewMissionCommand.MESSAGE_USAGE);

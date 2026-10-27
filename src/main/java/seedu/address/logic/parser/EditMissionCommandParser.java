@@ -4,9 +4,6 @@ import static java.util.Objects.requireNonNull;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_DATE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_MISSION;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
-import static seedu.address.logic.parser.MissionParserUtil.parseMissionDeadline;
-import static seedu.address.logic.parser.MissionParserUtil.parseMissionId;
-import static seedu.address.logic.parser.MissionParserUtil.parseMissionName;
 
 import seedu.address.logic.commands.EditMissionCommand;
 import seedu.address.logic.commands.EditMissionCommand.EditMissionDescriptor;
@@ -38,17 +35,17 @@ public class EditMissionCommandParser implements Parser<EditMissionCommand> {
                     PREFIX_MISSION, PREFIX_NAME, PREFIX_DATE);
             EditMissionDescriptor editMissionDescriptor = new EditMissionDescriptor();
             if (argMultimap.getValue(PREFIX_NAME).isPresent()) {
-                editMissionDescriptor.setName(parseMissionName(
+                editMissionDescriptor.setName(MissionParserUtil.parseMissionName(
                         argMultimap.getValue(PREFIX_NAME).orElseThrow())); // orElseThrow() should never happen normally
             }
             if (argMultimap.getValue(PREFIX_DATE).isPresent()) {
-                editMissionDescriptor.setDeadline(parseMissionDeadline(
+                editMissionDescriptor.setDeadline(MissionParserUtil.parseMissionDeadline(
                         argMultimap.getValue(PREFIX_DATE).orElseThrow()));
             }
             if (!editMissionDescriptor.isAnyFieldEdited()) {
                 throw new ParseException(EditMissionCommand.MESSAGE_NOT_EDITED);
             }
-            MissionId missionId = parseMissionId(argMultimap.getValue(PREFIX_MISSION).orElseThrow());
+            MissionId missionId = MissionParserUtil.parseMissionId(argMultimap.getValue(PREFIX_MISSION).orElseThrow());
             return new EditMissionCommand(missionId, editMissionDescriptor);
         } catch (ParseException e) {
             throw new ParseException(e.getMessage() + "\n\n" + EditMissionCommand.MESSAGE_USAGE);
