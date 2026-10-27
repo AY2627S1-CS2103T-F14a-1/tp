@@ -9,6 +9,7 @@ import static seedu.address.testutil.Assert.assertThrows;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -530,24 +531,34 @@ public class JsonAdaptedStudentTest {
     }
 
     @Test
-    public void toModelRegisteredNotes_malformedRecords_throwsIllegalValueException() {
-        for (Object record : Arrays.asList(null, 1, "note", Map.of(), List.of(), List.of(1),
-                List.of(1, "Valid note", "extra"))) {
-            JsonAdaptedStudent adapted = withSavedNotes(Arrays.asList(record));
+    public void toModelRegisteredNotes_validNotes_restoresOriginalOrder() throws Exception {
+        RegisteredNotes expected = new RegisteredNotes(List.of(
+                new Note("Review lecture"), new Note("Submit assignment")));
 
-            assertThrows(IllegalValueException.class, RegisteredNotes.MESSAGE_CONSTRAINTS,
-                    adapted::toModelRegisteredNotes);
-        }
+        assertEquals(expected, withSavedNotes(List.of("Review lecture", "Submit assignment"))
+                .toModelRegisteredNotes());
     }
 
     @Test
-    public void toModelRegisteredNotes_invalidNoteIds_throwsIllegalValueException() {
-        for (Object noteId : Arrays.asList(null, 0, -1, 11, Integer.MAX_VALUE, 1L, 1.0, "1", true)) {
-            JsonAdaptedStudent adapted = withSavedNotes(List.of(Arrays.asList(noteId, "Valid note")));
+    public void toModelRegisteredNotes_emptyOrNullNotes_returnsEmptyNotes() throws Exception {
+        assertEquals(new RegisteredNotes(), withSavedNotes(List.of()).toModelRegisteredNotes());
+        assertEquals(new RegisteredNotes(), withSavedNotes(null).toModelRegisteredNotes());
+    }
 
-            assertThrows(IllegalValueException.class, RegisteredNotes.MESSAGE_CONSTRAINTS,
-                    adapted::toModelRegisteredNotes);
-        }
+    @Test
+    public void toModelType_missingRegisteredNotesInJson_returnsEmptyNotes() throws Exception {
+        String json = JsonUtil.toJsonString(new JsonAdaptedStudent(VALID_STUDENT))
+                .replaceFirst(",?\\s*\"registeredNotes\"\\s*:\\s*\\[\\s*]", "");
+
+        assertEquals(VALID_STUDENT, JsonUtil.fromJsonString(json, JsonAdaptedStudent.class).toModelType());
+    }
+
+    @Test
+    public void toModelRegisteredNotes_tooManyNotes_throwsIllegalValueException() {
+        List<String> notes = Collections.nCopies(RegisteredNotes.MAX_NOTE_INDEX + 1, "Valid note");
+
+        assertThrows(IllegalValueException.class, RegisteredNotes.MESSAGE_CONSTRAINTS,
+                withSavedNotes(notes)::toModelRegisteredNotes);
     }
 
     @Test
@@ -555,11 +566,38 @@ public class JsonAdaptedStudentTest {
         String overlongNote = "a".repeat(Note.MAX_NOTE_LENGTH + 1);
         for (Object noteText : Arrays.asList(null, "", " ", "Invalid note!", overlongNote,
                 1, true, List.of(), Map.of())) {
-            JsonAdaptedStudent adapted = withSavedNotes(List.of(Arrays.asList(1, noteText)));
+            JsonAdaptedStudent adapted = withSavedNotes(Arrays.asList(noteText));
 
             assertThrows(IllegalValueException.class, Note.MESSAGE_CONSTRAINTS,
                     adapted::toModelRegisteredNotes);
         }
+    }
+
+    @Test
+    public void jsonConversion_registeredNotes_preservesOrderAndText() throws Exception {
+        RegisteredNotes notes = new RegisteredNotes(List.of(
+                new Note("Review lecture"), new Note("Submit assignment")));
+        Student expected = withRegisteredNotes(VALID_STUDENT, notes);
+
+        String json = JsonUtil.toJsonString(new JsonAdaptedStudent(expected));
+        Map<?, ?> document = JsonUtil.fromJsonString(json, Map.class);
+        JsonAdaptedStudent restored = JsonUtil.fromJsonString(json, JsonAdaptedStudent.class);
+
+        assertEquals(List.of("Review lecture", "Submit assignment"), document.get("registeredNotes"));
+        assertEquals(expected, restored.toModelType());
+    }
+
+    /**
+     * Returns a copy of the given student with the specified registered notes.
+     *
+     * @param student Student whose other fields should be retained.
+     * @param registeredNotes Registered notes to use in the copy.
+     * @return A student containing the specified registered notes.
+     */
+    private static Student withRegisteredNotes(Student student, RegisteredNotes registeredNotes) {
+        return new Student(student.getName(), student.getPhone(), student.getEmail(), student.getTags(),
+                student.getStudioGroup(), student.getMissionSubmissions(), student.getRegisteredStudioRecords(),
+                student.getRegisteredMasteryChecks(), registeredNotes);
     }
 
     /**

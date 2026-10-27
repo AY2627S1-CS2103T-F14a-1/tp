@@ -14,6 +14,7 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
+import seedu.address.commons.core.index.Index;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.mission.MissionId;
 import seedu.address.model.student.Email;
@@ -200,22 +201,25 @@ public class ParserUtilTest {
     }
 
     @Test
-    public void parseNoteId_null_throwsNullPointerException() {
-        assertThrows(NullPointerException.class, () -> ParserUtil.parseNoteId(null));
+    public void parseNoteIndex_null_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> ParserUtil.parseNoteIndex(null));
     }
 
     @Test
-    public void parseNoteId_validBoundaries_returnsTrimmedNumber() throws Exception {
-        assertEquals(RegisteredNotes.MIN_NOTE_ID, ParserUtil.parseNoteId("1"));
-        assertEquals(RegisteredNotes.MAX_NOTE_ID, ParserUtil.parseNoteId(" " + RegisteredNotes.MAX_NOTE_ID + " "));
+    public void parseNoteIndex_validBoundaries_returnsIndex() throws Exception {
+        assertEquals(Index.fromOneBased(1), ParserUtil.parseNoteIndex("1"));
+        assertEquals(Index.fromOneBased(RegisteredNotes.MAX_NOTE_INDEX),
+                ParserUtil.parseNoteIndex(" " + RegisteredNotes.MAX_NOTE_INDEX + " "));
     }
 
     @Test
-    public void parseNoteId_invalidValues_throwsParseException() {
-        for (String noteId : List.of("", WHITESPACE, "0", "11", "-1", "1.5", "abc", "1 2", "2147483648")) {
-            assertThrows(ParseException.class,
-                    RegisteredNotes.MESSAGE_CONSTRAINTS, () -> ParserUtil.parseNoteId(noteId));
+    public void parseNoteIndex_invalidValues_throwsParseException() {
+        for (String noteIndex : List.of("", WHITESPACE, "0", "-1", "1.5", "abc", "1 2", "2147483648")) {
+            assertThrows(ParseException.class, ParserUtil.MESSAGE_INVALID_INDEX, () ->
+                    ParserUtil.parseNoteIndex(noteIndex));
         }
+        assertThrows(ParseException.class, RegisteredNotes.MESSAGE_CONSTRAINTS, () ->
+                ParserUtil.parseNoteIndex("11"));
     }
 
     @Test
