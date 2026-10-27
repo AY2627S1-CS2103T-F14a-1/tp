@@ -3,7 +3,7 @@ package seedu.address.logic.parser;
 import static java.util.Objects.requireNonNull;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_INDEX;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NUMBER;
-import static seedu.address.logic.parser.MasteryCheckParser.parseMasteryCheckNumber;
+import static seedu.address.logic.parser.MasteryCheckParserUtil.parseMasteryCheckNumber;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.DeleteMasteryCheckCommand;

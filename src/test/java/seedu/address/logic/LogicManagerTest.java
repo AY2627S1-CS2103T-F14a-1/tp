@@ -7,7 +7,7 @@ import static seedu.address.logic.commands.CommandTestUtil.EMAIL_DESC_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.NAME_DESC_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.PHONE_DESC_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.STUDIO_GROUP_DESC_AMY;
-import static seedu.address.logic.parser.MasteryCheckParser.MESSAGE_INVALID_MASTERY_CHECK_DATETIME;
+import static seedu.address.logic.parser.MasteryCheckParserUtil.MESSAGE_INVALID_MASTERY_CHECK_DATETIME;
 import static seedu.address.logic.parser.ParserUtil.MESSAGE_INVALID_EFFORT;
 import static seedu.address.logic.parser.ParserUtil.MESSAGE_INVALID_WEEK;
 import static seedu.address.testutil.Assert.assertThrows;

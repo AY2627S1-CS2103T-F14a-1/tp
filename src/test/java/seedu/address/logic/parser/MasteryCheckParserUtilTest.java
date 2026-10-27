@@ -1,9 +1,9 @@
 package seedu.address.logic.parser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static seedu.address.logic.parser.MasteryCheckParser.MESSAGE_INVALID_MASTERY_CHECK_DATETIME;
-import static seedu.address.logic.parser.MasteryCheckParser.parseMasteryCheckDateTime;
-import static seedu.address.logic.parser.MasteryCheckParser.parseMasteryCheckNumber;
+import static seedu.address.logic.parser.MasteryCheckParserUtil.MESSAGE_INVALID_MASTERY_CHECK_DATETIME;
+import static seedu.address.logic.parser.MasteryCheckParserUtil.parseMasteryCheckDateTime;
+import static seedu.address.logic.parser.MasteryCheckParserUtil.parseMasteryCheckNumber;
 import static seedu.address.logic.parser.ParserUtilTest.WHITESPACE;
 import static seedu.address.testutil.Assert.assertThrows;
 
@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.student.RegisteredMasteryChecks;
 
-public class MasteryCheckParserTest {
+public class MasteryCheckParserUtilTest {
 
 
     @Test
