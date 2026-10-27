@@ -174,6 +174,21 @@ public class RegisteredNotesTest {
     }
 
     @Test
+    public void noteMatches_matchingDifferentMissingOrInvalidNote_returnsExpectedResult() {
+        RegisteredNotes registeredNotes = new RegisteredNotes(Map.of(RegisteredNotes.MIN_NOTE_ID, FIRST_NOTE));
+
+        assertTrue(registeredNotes.noteMatches(RegisteredNotes.MIN_NOTE_ID, new Note("Review lecture")));
+        assertFalse(registeredNotes.noteMatches(RegisteredNotes.MIN_NOTE_ID, SECOND_NOTE));
+        assertFalse(registeredNotes.noteMatches(RegisteredNotes.MAX_NOTE_ID, SECOND_NOTE));
+        assertThrows(NullPointerException.class,
+                () -> registeredNotes.noteMatches(RegisteredNotes.MIN_NOTE_ID, null));
+        assertThrows(IllegalArgumentException.class,
+                () -> registeredNotes.noteMatches(RegisteredNotes.MIN_NOTE_ID - 1, FIRST_NOTE));
+        assertThrows(IllegalArgumentException.class,
+                () -> registeredNotes.noteMatches(RegisteredNotes.MAX_NOTE_ID + 1, FIRST_NOTE));
+    }
+
+    @Test
     public void getNotesById_modifyMap_throwsUnsupportedOperationException() {
         RegisteredNotes registeredNotes = new RegisteredNotes(Map.of(RegisteredNotes.MIN_NOTE_ID, FIRST_NOTE));
         Map<Integer, Note> notes = registeredNotes.getNotesById();
