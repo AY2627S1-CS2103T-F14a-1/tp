@@ -27,6 +27,9 @@ import seedu.address.model.student.StudioGroup;
 import seedu.address.model.tag.Tag;
 
 public class ParserUtilTest {
+
+    protected static final String WHITESPACE = " \t\r\n";
+
     private static final String INVALID_NAME = "R@chel";
     private static final String INVALID_PHONE = "+651234";
     private static final String INVALID_EMAIL = "example.com";
@@ -39,8 +42,6 @@ public class ParserUtilTest {
     private static final String VALID_TAG_1 = "friend";
     private static final String VALID_TAG_2 = "neighbour";
     private static final String VALID_STUDIO_GROUP = "3A";
-
-    protected static final String WHITESPACE = " \t\r\n";
 
     @Test
     public void parseIndex_invalidInput_throwsParseException() {
