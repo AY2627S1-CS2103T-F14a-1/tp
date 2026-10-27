@@ -2,6 +2,7 @@ package seedu.address.logic.parser;
 
 import static java.util.Objects.requireNonNull;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_MISSION;
+import static seedu.address.logic.parser.MissionParserUtil.parseMissionId;
 
 import seedu.address.logic.commands.DeleteMissionCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
@@ -24,7 +25,7 @@ public class DeleteMissionCommandParser implements Parser<DeleteMissionCommand> 
             ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
                     args, PREFIX_MISSION);
 
-            MissionId missionId = ParserUtil.parseMissionId(argMultimap.getValue(PREFIX_MISSION).get());
+            MissionId missionId = parseMissionId(argMultimap.getValue(PREFIX_MISSION).get());
             return new DeleteMissionCommand(missionId);
         } catch (ParseException e) {
             throw new ParseException(e.getMessage() + "\n\n" + DeleteMissionCommand.MESSAGE_USAGE);
