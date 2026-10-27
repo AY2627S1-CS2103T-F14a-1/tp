@@ -23,12 +23,16 @@ RegisteredStudioRecords *--> "*" StudioRecord
 Student *--> "1" MissionSubmissions
 Student *--> "1" RegisteredMasteryChecks
 RegisteredMasteryChecks *-down-> "*" MasteryCheck
+Student *--> "1" RegisteredNotes
+RegisteredNotes *-down-> "*" Note
 
 Name -[hidden]right-> Phone
 Phone -[hidden]right-> Email
 Email -[hidden]right-> StudioGroup
 StudioGroup -[hidden]right-> RegisteredStudioRecords
 RegisteredStudioRecords -[hidden]right-> RegisteredMasteryChecks
+RegisteredMasteryChecks -[hidden]right-> RegisteredNotes
 MissionSubmissions -[hidden]right-> Name
 StudioRecord -[hidden]right-> MasteryCheck
+MasteryCheck -[hidden]right-> Note
 @enduml

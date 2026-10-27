@@ -158,10 +158,34 @@ public class RegisteredNotesTest {
     public void hasNote_presentAbsentAndInvalidIds_returnsExpectedResult() {
         RegisteredNotes registeredNotes = new RegisteredNotes(Map.of(RegisteredNotes.MIN_NOTE_ID, FIRST_NOTE));
 
-        assertTrue(registeredNotes.hasNote(RegisteredNotes.MIN_NOTE_ID));
-        assertFalse(registeredNotes.hasNote(RegisteredNotes.MAX_NOTE_ID));
-        assertThrows(IllegalArgumentException.class, () -> registeredNotes.hasNote(0));
-        assertThrows(IllegalArgumentException.class, () -> registeredNotes.hasNote(11));
+        assertTrue(registeredNotes.hasNoteId(RegisteredNotes.MIN_NOTE_ID));
+        assertFalse(registeredNotes.hasNoteId(RegisteredNotes.MAX_NOTE_ID));
+        assertThrows(IllegalArgumentException.class, () -> registeredNotes.hasNoteId(0));
+        assertThrows(IllegalArgumentException.class, () -> registeredNotes.hasNoteId(11));
+    }
+
+    @Test
+    public void hasNoteText_matchingAbsentOrNullText_returnsExpectedResult() {
+        RegisteredNotes registeredNotes = new RegisteredNotes(Map.of(RegisteredNotes.MIN_NOTE_ID, FIRST_NOTE));
+
+        assertTrue(registeredNotes.hasNoteText(FIRST_NOTE.getNoteText()));
+        assertFalse(registeredNotes.hasNoteText(SECOND_NOTE.getNoteText()));
+        assertThrows(NullPointerException.class, () -> registeredNotes.hasNoteText(null));
+    }
+
+    @Test
+    public void hasMatchingNote_matchingDifferentMissingOrInvalidNote_returnsExpectedResult() {
+        RegisteredNotes registeredNotes = new RegisteredNotes(Map.of(RegisteredNotes.MIN_NOTE_ID, FIRST_NOTE));
+
+        assertTrue(registeredNotes.hasMatchingNote(RegisteredNotes.MIN_NOTE_ID, new Note("Review lecture")));
+        assertFalse(registeredNotes.hasMatchingNote(RegisteredNotes.MIN_NOTE_ID, SECOND_NOTE));
+        assertFalse(registeredNotes.hasMatchingNote(RegisteredNotes.MAX_NOTE_ID, SECOND_NOTE));
+        assertThrows(NullPointerException.class, () -> registeredNotes.hasMatchingNote(
+                RegisteredNotes.MIN_NOTE_ID, null));
+        assertThrows(IllegalArgumentException.class, () -> registeredNotes.hasMatchingNote(
+                RegisteredNotes.MIN_NOTE_ID - 1, FIRST_NOTE));
+        assertThrows(IllegalArgumentException.class, () -> registeredNotes.hasMatchingNote(
+                RegisteredNotes.MAX_NOTE_ID + 1, FIRST_NOTE));
     }
 
     @Test
