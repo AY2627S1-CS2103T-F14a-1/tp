@@ -73,7 +73,7 @@ public final class RegisteredStudioRecords {
         if (!recordsByWeek.containsKey(week)) {
             return false;
         }
-        return recordsByWeek.get(week).equals(studioRecord);
+        return recordsByWeek.containsKey(week) && recordsByWeek.get(week).equals(studioRecord);
     }
 
     /**
