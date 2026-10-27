@@ -69,7 +69,7 @@ public class EditNoteCommand extends Command {
             return new CommandResult(String.format(MESSAGE_ID_NOT_RECORDED, studentToUpdate.getName(), noteId));
         }
 
-        if (registeredNotes.getNotesById().get(noteId).equals(updatedNote)) {
+        if (registeredNotes.hasMatchingNote(noteId, updatedNote)) {
             return new CommandResult(String.format(MESSAGE_SAME_NOTE, studentToUpdate.getName(), noteId));
         }
 

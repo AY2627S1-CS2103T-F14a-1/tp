@@ -77,7 +77,7 @@ public class AddMasteryCheckCommandParserTest {
     public void parse_invalidDateTime_reportsDateTimeConstraint() {
         for (String time : List.of("", "31-04|14:30", "18-08|24:00", "18-08|14:60", "18-08||14:30")) {
             assertParseFailure(parser, "id/1 num/1 dt/" + time,
-                ParserUtil.MESSAGE_INVALID_MASTERY_CHECK_DATETIME + USAGE_SUFFIX);
+                MasteryCheckParserUtil.MESSAGE_INVALID_MASTERY_CHECK_DATETIME + USAGE_SUFFIX);
         }
     }
 
