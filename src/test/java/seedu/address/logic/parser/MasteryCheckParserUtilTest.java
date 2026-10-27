@@ -1,7 +1,6 @@
 package seedu.address.logic.parser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static seedu.address.logic.parser.MasteryCheckParserUtil.MESSAGE_INVALID_MASTERY_CHECK_DATETIME;
 import static seedu.address.logic.parser.ParserUtilTest.WHITESPACE;
 import static seedu.address.testutil.Assert.assertThrows;
 
@@ -63,7 +62,7 @@ public class MasteryCheckParserUtilTest {
             assertEquals(LocalDateTime.of(year, 2, 29, 12, 30),
                     MasteryCheckParserUtil.parseMasteryCheckDateTime("29-02|12:30"));
         } else {
-            assertThrows(ParseException.class, MESSAGE_INVALID_MASTERY_CHECK_DATETIME, () ->
+            assertThrows(ParseException.class, MasteryCheckParserUtil.MESSAGE_INVALID_MASTERY_CHECK_DATETIME, () ->
                     MasteryCheckParserUtil.parseMasteryCheckDateTime("29-02|12:30"));
         }
     }
@@ -79,7 +78,7 @@ public class MasteryCheckParserUtilTest {
         for (String value : List.of("30-02|14:30", "31-04|14:30", "00-08|14:30", "32-08|14:30",
                 "18-00|14:30", "18-13|14:30", "18-08|24:00", "18-08|25:00", "18-08|14:60",
                 "18-08|-1:30", "18-08|14:-1")) {
-            assertThrows(ParseException.class, MESSAGE_INVALID_MASTERY_CHECK_DATETIME, () ->
+            assertThrows(ParseException.class, MasteryCheckParserUtil.MESSAGE_INVALID_MASTERY_CHECK_DATETIME, () ->
                     MasteryCheckParserUtil.parseMasteryCheckDateTime(value));
         }
     }
@@ -90,7 +89,7 @@ public class MasteryCheckParserUtilTest {
                 "18-08T14:30", "18-08 14:30", "8-08|14:30", "18-8|14:30", "18-08|4:30", "18-08|14:3",
                 "18-08 |14:30", "18-08| 14:30", "18-08|14:30:00", "18-08|14:30Z", "18-08|14:30extra",
                 "2026-08-18|14:30")) {
-            assertThrows(ParseException.class, MESSAGE_INVALID_MASTERY_CHECK_DATETIME, () ->
+            assertThrows(ParseException.class, MasteryCheckParserUtil.MESSAGE_INVALID_MASTERY_CHECK_DATETIME, () ->
                     MasteryCheckParserUtil.parseMasteryCheckDateTime(value));
         }
     }
