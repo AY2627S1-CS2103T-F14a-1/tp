@@ -2,7 +2,8 @@ package seedu.address.logic.parser;
 
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
-import static seedu.address.logic.parser.ParserUtil.MESSAGE_INVALID_EFFORT;
+import static seedu.address.logic.parser.StudioRecordParserUtil.MESSAGE_INVALID_EFFORT;
+import static seedu.address.logic.parser.StudioRecordParserUtil.MESSAGE_INVALID_WEEK;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_STUDENT;
 
 import org.junit.jupiter.api.Test;
@@ -50,6 +51,6 @@ public class EditStudioRecordCommandParserTest {
         assertParseFailure(parser, "id/ w/3 ef/50",
                 ParserUtil.MESSAGE_INVALID_INDEX + USAGE_SUFFIX);
         assertParseFailure(parser, "id/1 w/ ef/50",
-                ParserUtil.MESSAGE_INVALID_WEEK + USAGE_SUFFIX);
+                MESSAGE_INVALID_WEEK + USAGE_SUFFIX);
     }
 }
