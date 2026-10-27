@@ -195,29 +195,29 @@ public class RegisteredStudioRecordsTest {
     }
 
     @Test
-    public void hasEqualStudioRecord_matchingRecord_returnsTrue() {
+    public void studioRecordMatches_matchingRecord_returnsTrue() {
         RegisteredStudioRecords registeredStudioRecords = new RegisteredStudioRecords(
                 Map.of(RegisteredStudioRecords.MIN_WEEK, ZERO_EFFORT_RECORD));
 
-        assertTrue(registeredStudioRecords.hasEqualStudioRecord(
+        assertTrue(registeredStudioRecords.studioRecordMatches(
                 RegisteredStudioRecords.MIN_WEEK, new StudioRecord(0)));
     }
 
     @Test
-    public void hasEqualStudioRecord_differentRecord_returnsFalse() {
+    public void studioRecordMatches_differentRecord_returnsFalse() {
         RegisteredStudioRecords registeredStudioRecords = new RegisteredStudioRecords(
                 Map.of(RegisteredStudioRecords.MIN_WEEK, ZERO_EFFORT_RECORD));
 
-        assertFalse(registeredStudioRecords.hasEqualStudioRecord(
+        assertFalse(registeredStudioRecords.studioRecordMatches(
                 RegisteredStudioRecords.MIN_WEEK, FULL_EFFORT_RECORD));
     }
 
     @Test
-    public void hasEqualStudioRecord_missingWeek_returnsFalse() {
+    public void studioRecordMatches_missingWeek_returnsFalse() {
         RegisteredStudioRecords registeredStudioRecords = new RegisteredStudioRecords(
                 Map.of(RegisteredStudioRecords.MIN_WEEK, ZERO_EFFORT_RECORD));
 
-        assertFalse(registeredStudioRecords.hasEqualStudioRecord(
+        assertFalse(registeredStudioRecords.studioRecordMatches(
                 RegisteredStudioRecords.MAX_WEEK, ZERO_EFFORT_RECORD));
     }
 
