@@ -9,12 +9,15 @@ import static seedu.address.logic.commands.CommandTestUtil.assertCommandSuccess;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import seedu.address.commons.core.index.Index;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.UserPrefs;
@@ -302,6 +305,71 @@ public class ListMissionsCommandTest {
         assertThrows(NullPointerException.class, () -> ListMissionsCommand.withStatus(null));
         assertThrows(NullPointerException.class, () ->
                 ListMissionsCommand.withStatus(MissionSubmissionStatus.SUBMITTED, null));
+    }
+
+    @Test
+    public void execute_overdueAcrossTimeZones_usesClockLocalDate() {
+        Instant instant = Instant.parse("2026-10-20T17:00:00Z");
+        Clock utcClock = Clock.fixed(instant, ZoneOffset.UTC);
+        Clock localClock = Clock.fixed(instant, ZoneId.of("Asia/Makassar"));
+        Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
+
+        assertCommandSuccess(
+                ListMissionsCommand.withStatus(MissionSubmissionStatus.OVERDUE, utcClock), model,
+                "Submission statuses for all missions (current student list):\n"
+                        + "No submissions match the selected status.",
+                expectedModel);
+
+        assertCommandSuccess(
+                ListMissionsCommand.withStatus(MissionSubmissionStatus.OVERDUE, localClock), model,
+                "Submission statuses for all missions (current student list):\n"
+                        + "1. John Doe | Studio group: 1A"
+                        + " | M01 · Rune Reading (Due: 2026-10-20) | Overdue",
+                expectedModel);
+    }
+
+    @Test
+    public void execute_multipleOverduePairs_ordersByMissionThenStudent() {
+        model.addMission(new MissionId("M02"), "Curves", LocalDate.of(2026, 10, 19));
+        Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
+
+        assertCommandSuccess(
+                ListMissionsCommand.withStatus(MissionSubmissionStatus.OVERDUE, CLOCK), model,
+                "Submission statuses for all missions (current student list):\n"
+                        + "1. John Doe | Studio group: 1A"
+                        + " | M01 · Rune Reading (Due: 2026-10-20) | Overdue\n"
+                        + "1. John Doe | Studio group: 1A"
+                        + " | M02 · Curves (Due: 2026-10-19) | Overdue\n"
+                        + "2. Betsy Crowe | Studio group: 1A"
+                        + " | M02 · Curves (Due: 2026-10-19) | Overdue",
+                expectedModel);
+    }
+
+    @Test
+    public void execute_afterMarkAndUnmark_refreshesStatusesWithoutChangingIndexes() throws Exception {
+        ListMissionsCommand command = ListMissionsCommand.withStatus(
+                MissionSubmissionStatus.OVERDUE, CLOCK);
+        Index johnIndex = Index.fromOneBased(1);
+
+        command.execute(model);
+        new MarkMissionCommand(johnIndex, MISSION_ID).execute(model);
+        Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
+
+        assertCommandSuccess(command, model,
+                "Submission statuses for all missions (current student list):\n"
+                        + "No submissions match the selected status.",
+                expectedModel);
+        assertEquals("John Doe", model.getFilteredStudentList().get(0).getName().toString());
+
+        new UnmarkMissionCommand(johnIndex, MISSION_ID).execute(model);
+        Model restoredModel = new ModelManager(model.getAddressBook(), new UserPrefs());
+
+        assertCommandSuccess(command, model,
+                "Submission statuses for all missions (current student list):\n"
+                        + "1. John Doe | Studio group: 1A"
+                        + " | M01 · Rune Reading (Due: 2026-10-20) | Overdue",
+                restoredModel);
+        assertEquals(List.of(john, betsy), model.getFilteredStudentList());
     }
 
     @Test

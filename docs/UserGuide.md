@@ -517,43 +517,6 @@ Examples:
 * `editmission m/M01 d/2026-10-22`
 * `editmission m/M01 n/Rune Reading d/2026-10-22`
 
-### Listing overdue submissions: `listoverdue`
-
-Shows missing mission submissions for students in the currently displayed
-student list, where the mission deadline has passed.
-
-Format: `listoverdue`
-
-* Only students in the currently displayed student list are included.
-  Students hidden by `find` are excluded.
-* A submission is overdue when no submission is recorded for the student
-  and today's date is after the mission's deadline.
-* A mission due today or in the future is not overdue.
-* Today's date follows your computer's local date and time zone.
-* Each result row identifies a student and a missing mission, including
-  the mission's name and deadline.
-* A student can appear more than once if they have multiple overdue submissions.
-* Student numbers match the indexes in the displayed student list.
-  Use `view id/INDEX` to inspect a student's profile.
-* Results are ordered by displayed student index, then numeric mission ID.
-* Recording a submission removes it from subsequent overdue results.
-  Submission timestamps are not recorded, so this report does not identify
-  submissions that were completed late.
-* If no overdue submissions exist within the current student list, the command
-  displays `No overdue submissions in the current student list.`
-* Student records, mission definitions, submission records, and the current
-  student filter remain unchanged.
-* Run `list` first to include all students.
-* Like `list`, this command ignores extra arguments.
-
-Examples:
-
-* `list`, followed by `listoverdue`, shows overdue submissions for all students.
-* `find g/1A`, followed by `listoverdue`, shows overdue submissions only for
-  students in studio group 1A.
-* `find Betsy Crowe`, followed by `listoverdue`, shows overdue submissions
-  for students matching that name.
-
 ### Listing missions and submission statuses: `listmissions`
 
 Lists mission summaries or student submission statuses, optionally filtered
@@ -634,34 +597,6 @@ Examples:
 * `listmissions s/overdue` shows missing submissions whose deadlines have
   passed across all missions for currently displayed students.
 
-### Viewing mission submission statuses: `viewmission`
-
-Shows every student's recorded submission status for one mission and replaces
-the displayed student list.
-
-Format: `viewmission m/MISSION_ID [s/overdue]`
-
-* Searches all students, including students hidden by an earlier filter.
-* Displays the mission ID, description, deadline, and result count.
-* Displays Submitted when a submission is recorded.
-* Displays Overdue when no submission is recorded and the deadline has passed.
-* A mission due today is not overdue.
-* Subsequent `view`, `markmission`, and `unmarkmission` commands use the
-  indexes in the displayed list.
-* Results reflect manually maintained AvengerHub records. A missing record
-  does not confirm that no submission was made.
-* An invalid or nonexistent mission leaves records and the displayed list
-  unchanged.
-* With `s/overdue`, displays only students without a recorded submission
-  whose mission deadline is before today's local date.
-* Submitted students never appear in overdue results.
-* An empty result clears the displayed student list and reports count 0.
-* Marking a displayed overdue student removes them from the filtered list.
-  Remaining displayed indexes change accordingly.
-* Rerun `viewmission` to refresh results after the date or mission deadline changes.
-* Use `viewmission m/MISSION_ID` to restore all students before selecting a
-  student who disappeared after marking.
-
 ### Clearing all entries: `clear`
 
 Clears all student records and the shared mission catalogue, including the students' associated
@@ -738,10 +673,8 @@ Action     | Format, Examples
 **Delete mission** | `delmission m/MISSIONID`<br> e.g., `delmission m/M03`                                                                                                              
 **Record mission submission** | `markmission id/INDEX m/MISSION_ID`<br> e.g., `markmission id/1 m/M01`                                                                                                
 **Remove mission submission** | `unmarkmission id/INDEX m/MISSION_ID`<br> e.g., `unmarkmission id/1 m/M01`                                                                                            
-**Edit mission** | `editmission m/MISSION_ID [n/NAME] [d/DEADLINE]`<br> e.g., `editmission m/M01 n/Rune Reading d/2026-10-22`                                                         
-**List overdue submissions** | `listoverdue`                                                                                                                                                      
-**List mission submissions** | `listmissions [m/MISSION_ID]`<br> e.g., `listmissions` or `listmissions m/M01`  
-**View mission statuses** | `viewmission m/MISSION_ID [s/overdue]`
+**Edit mission** | `editmission m/MISSION_ID [n/NAME] [d/DEADLINE]`<br> e.g., `editmission m/M01 n/Rune Reading d/2026-10-22`                                                          
+**List missions and statuses** | `listmissions [m/MISSION_ID] [s/STATUS]`<br> `STATUS`: `submitted` or `overdue`<br> e.g., `listmissions`, `listmissions m/M01`, `listmissions s/overdue`
 **Clear**  | `clear`                                                                                                                                                            
 **Find**   | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find James Jake`                                                                                                         
 **List**   | `list`                                                                                                                                                             

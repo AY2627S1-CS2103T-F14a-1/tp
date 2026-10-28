@@ -74,12 +74,26 @@ Inspect the saved file before running that verification command to ensure reject
 | MISSION-012 | Attempt `addmission m/M01 n/Curves d/2026-10-21`, then `addmission m/M1 n/Curves d/2026-10-21` and `addmission m/M00 n/Curves d/2026-10-21`. | Duplicate ID feedback for M01; malformed IDs are rejected with the ID format constraint. Catalogue and saved data remain unchanged. |
 | MISSION-013 | Add `addmission m/M10 n/Curves d/2026-10-21`, restart, and inspect the catalogue. | M10 is stored and restored unchanged. |
 | MISSION-005 | Run `markmission 1 m/m01`, repeat it, then `unmarkmission 1 m/M99`. | First marks M01, repeat reports no change, unknown ID reports `Mission M99 does not exist.`; student 2 remains unchanged. |
-| MISSION-006 | Filter to student 1; run `listmissions m/M01` and `listoverdue`. | Submitted list uses displayed index 1. Overdue excludes M01 and includes only missing missions due before the local date. Hidden students are excluded. |
+| MISSION-006 | Filter to student 1; run `listmissions m/M01` and `listmissions s/overdue`. | The mission-specific report retains displayed index 1. Overdue results include only missing submissions whose deadlines have passed. Hidden students are excluded, and the student filter remains unchanged. |
 | MISSION-007 | Run `editmission m/M01 n/New Runes d/2026-10-22`, then restart and view student 1. | ID and submission survive; name and deadline are updated and persisted. |
 | MISSION-008 | Run `unmarkmission 1 m/M01`, then an invalid date edit `editmission m/M01 d/2026-02-30`; restart. | M01 stays not submitted; invalid edit leaves its name/deadline unchanged. |
 | MISSION-009 | Mark M01 for both students; add M10; filter to one student; delete M01. Restart, run `list`, and inspect both profiles. | M10 retains its ID, and M01 plus its submissions are removed from both students. |
 | MISSION-010 | Back up data. In an isolated fixture, give two missions different IDs but equal names ignoring case/spaces. Start the app, inspect file, then run `list`. | Empty-address-book fallback; startup preserves invalid file, successful list saves the empty book. |
 | MISSION-011 | Add M10, delete it, then add `addmission m/M10 n/Limit d/2026-10-20`. | The deleted ID can be explicitly reused; the supplied ID is persisted unchanged. |
+
+## Consolidated mission command regression
+
+Use John Doe and Betsy Crowe, in that order.
+Configure M01 due yesterday. Only Betsy has a recorded M01 submission.
+
+| ID | Steps | Expected result |
+| --- | --- | --- |
+| MISSION-CONSOLIDATE-001 | Run `list`, then `listmissions m/M01`. | John appears as Overdue and Betsy as Submitted, retaining indexes 1 and 2. |
+| MISSION-CONSOLIDATE-002 | Run `viewmission m/M01`, then repeat the valid query. | The old command reports an unknown command. The valid query reproduces its results; records and the student filter remain unchanged. |
+| MISSION-CONSOLIDATE-003 | Run `listmissions s/overdue`. | Only John/M01 appears, at displayed student index 1. Both students remain in the left list. |
+| MISSION-CONSOLIDATE-004 | Run `listoverdue`, then repeat the valid overdue query. | The old command reports an unknown command. The valid query reproduces its results without changing records or the student filter. |
+| MISSION-CONSOLIDATE-005 | Run `markmission id/1 m/M01`, then `listmissions s/overdue`. | No matching overdue submissions remain. Both students remain displayed with their original indexes. |
+| MISSION-CONSOLIDATE-006 | Run `unmarkmission id/1 m/M01`, then `listmissions s/overdue`. | John/M01 returns at index 1. Betsy's recorded submission remains unchanged. |
 
 ## Studio parsing regression
 
