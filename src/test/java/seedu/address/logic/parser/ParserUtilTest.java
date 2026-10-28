@@ -12,8 +12,6 @@ import seedu.address.logic.parser.util.ParserUtil;
 
 public class ParserUtilTest {
 
-    protected static final String WHITESPACE = " \t\r\n";
-
     @Test
     public void parseIndex_invalidInput_throwsParseException() {
         assertThrows(ParseException.class, () -> ParserUtil.parseIndex("10 a"));
