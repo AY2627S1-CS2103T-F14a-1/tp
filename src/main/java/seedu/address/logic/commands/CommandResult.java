@@ -68,6 +68,34 @@ public class CommandResult {
     }
 
     /**
+     * Creates a command result without a mission-list update.
+     *
+     * @param feedbackToUser feedback message displayed to the user
+     * @param showHelp whether the help window should be shown
+     * @param exit whether the application should exit
+     * @param studentToView student to display, or null
+     * @param warnings warnings associated with the command
+     * @param missions missions to display
+     */
+    public CommandResult(
+            String feedbackToUser,
+            boolean showHelp,
+            boolean exit,
+            Student studentToView,
+            List<String> warnings,
+            List<Mission> missions) {
+
+        this(
+                feedbackToUser,
+                showHelp,
+                exit,
+                studentToView,
+                warnings,
+                missions,
+                false);
+    }
+
+    /**
      * Creates a {@code CommandResult} without a student profile target.
      *
      * @param feedbackToUser feedback message displayed to the user
@@ -178,7 +206,7 @@ public class CommandResult {
         List<String> updatedWarnings = new ArrayList<>(warnings);
         updatedWarnings.add(warning);
         return new CommandResult(
-                feedbackToUser, showHelp, exit, studentToView, updatedWarnings, missions, false);
+                feedbackToUser, showHelp, exit, studentToView, updatedWarnings, missions);
     }
 
     /**

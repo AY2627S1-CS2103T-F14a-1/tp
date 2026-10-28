@@ -137,4 +137,73 @@ public class CommandResultTest {
         assertEquals(List.of(mission), result.getMissions());
         assertThrows(UnsupportedOperationException.class, () -> result.getMissions().clear());
     }
+
+    @Test
+    public void missionUpdatedFlag_isStoredCorrectly() {
+        CommandResult updatedResult = new CommandResult(
+                "Mission updated",
+                null,
+                List.of(),
+                true);
+
+        CommandResult nonUpdatedResult = new CommandResult(
+                "Mission not updated",
+                null,
+                List.of(),
+                false);
+
+        assertTrue(updatedResult.isMissionUpdated());
+        assertFalse(nonUpdatedResult.isMissionUpdated());
+    }
+
+    @Test
+    public void equals_differentMissionUpdatedFlag_returnsFalse() {
+        CommandResult updatedResult = new CommandResult(
+                "feedback",
+                null,
+                List.of(),
+                true);
+
+        CommandResult nonUpdatedResult = new CommandResult(
+                "feedback",
+                null,
+                List.of(),
+                false);
+
+        assertNotEquals(updatedResult, nonUpdatedResult);
+    }
+
+    @Test
+    public void hashCode_sameMissionUpdatedFlag_returnsSameHashCode() {
+        CommandResult first = new CommandResult(
+                "feedback",
+                null,
+                List.of(),
+                true);
+
+        CommandResult second = new CommandResult(
+                "feedback",
+                null,
+                List.of(),
+                true);
+
+        assertEquals(first.hashCode(), second.hashCode());
+    }
+
+    @Test
+    public void missionUpdatedConstructor_storesMissions() {
+        Mission mission = new Mission(
+                new MissionId("M01"),
+                "Runes",
+                java.time.LocalDate.of(2026, 10, 20));
+
+        CommandResult result = new CommandResult(
+                "Mission updated",
+                null,
+                List.of(mission),
+                true);
+
+        assertEquals(List.of(mission), result.getMissions());
+        assertTrue(result.isMissionUpdated());
+    }
 }
