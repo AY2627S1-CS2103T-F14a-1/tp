@@ -559,7 +559,7 @@ Examples:
 Lists all missions with submission counts, or shows submission statuses
 for a specific mission within the currently displayed student list.
 
-Format: `listmissions [m/MISSION_ID]`
+Format: `listmissions [m/MISSION_ID [s/STATUS]]`
 
 * The command word, `m/` prefix, and mission ID are case-insensitive.
 * Student records, submission records, mission definitions, and the current
@@ -594,6 +594,11 @@ With `m/MISSION_ID`:
 * An empty student list produces `No students in the current student list.`
 * Statuses reflect recorded submissions; an absent record does not confirm
   that a student has not actually submitted.
+* Optionally supply `s/submitted` or `s/overdue` to show only that status.
+  Status values are case-insensitive, and `m/` and `s/` may appear in either order.
+* Supply each prefix at most once. Empty or unsupported status values are rejected.
+* If students are displayed but none match the status filter, reports
+  `No submissions match the selected status.`
 
 Run `list` first to include all students in counts and status results.
 Rerun `listmissions` with the desired arguments to refresh its output.
@@ -604,6 +609,10 @@ Examples:
   the currently displayed students.
 * `find g/1A`, followed by `listmissions m/M01`, shows M01 statuses for
   the currently displayed students in studio group 1A.
+* `listmissions m/M01 s/submitted` lists recorded M01 submissions among
+  currently displayed students.
+* `listmissions m/M01 s/overdue` lists currently displayed students missing
+  M01 after its deadline.
 
 ### Viewing mission submission statuses: `viewmission`
 

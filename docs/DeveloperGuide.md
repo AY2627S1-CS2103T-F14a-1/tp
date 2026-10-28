@@ -263,6 +263,15 @@ An empty student list produces an explicit explanation.
 Normal execution uses the computer's local time zone. Tests inject a
 fixed clock to verify deadline boundaries deterministically.
 
+The parser recognizes an optional, nonrepeatable `s/` prefix alongside
+the required mission ID. It accepts submitted and overdue, ignoring case,
+and rejects unsupported values before command execution.
+
+The command stores an optional `MissionSubmissionStatus` filter and
+applies it while constructing report rows. The model's student filter
+is preserved, so matching rows retain their original displayed indexes.
+Command equality includes the selected status filter.
+
 ### Listing the mission catalogue
 
 For `listmissions`, `AddressBookParser` delegates to

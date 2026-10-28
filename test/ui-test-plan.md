@@ -291,6 +291,22 @@ Dates are relative to the computer's local date.
 | MISSION-STATUS-006 | Run `find NobodyMatchesThisName`, then `listmissions m/M01`. | Mission details appear followed by `No students in the current student list.` The student list remains empty. |
 | MISSION-STATUS-007 | Run `list`, then `listmissions m/M01`. | Both original students and their statuses return. Records remain unchanged. |
 
+## Specific mission status-filter regression
+
+Use John Doe (1A) and Betsy Crowe (1A), in that order.
+Configure M01 due yesterday and M02 due today.
+Only Betsy has recorded submissions for both missions.
+
+| ID | Steps | Expected result |
+| --- | --- | --- |
+| MISSION-FILTER-001 | Run `list`, then `listmissions m/M01 s/submitted`. | Only Betsy appears as Submitted, retaining displayed index 2. Both students remain in the left list. |
+| MISSION-FILTER-002 | Run `listmissions m/M01 s/unknown`, then repeat MISSION-FILTER-001. | Invalid-status feedback appears. Repeating the valid query reproduces its results; records and the student filter remain unchanged. |
+| MISSION-FILTER-003 | Run `listmissions s/OVERDUE m/m01`. | Only John appears as Overdue, retaining index 1. Prefix order and status case are accepted. |
+| MISSION-FILTER-004 | Run `listmissions m/M01 s/submitted s/overdue`, then repeat MISSION-FILTER-003. | Duplicate-status-prefix feedback appears. The valid query still returns John unchanged. |
+| MISSION-FILTER-005 | Run `listmissions m/M02 s/overdue`. | Reports `No submissions match the selected status.` A deadline today is not overdue. |
+| MISSION-FILTER-006 | Run `find John`, then `listmissions m/M01 s/submitted`. | Reports no matching submissions. Betsy's hidden submission is excluded and the John-only student filter remains active. |
+| MISSION-FILTER-007 | Run `list`, then `listmissions m/M01`. | Both students appear with their respective statuses, confirming that omitting s/ includes every status. |
+
 ## Missing-prefix usage suffix regression
 
 Missing-prefix feedback now ends with one newline followed by the calling command's
