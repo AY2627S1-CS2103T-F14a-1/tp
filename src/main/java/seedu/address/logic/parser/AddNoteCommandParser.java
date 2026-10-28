@@ -27,7 +27,7 @@ public class AddNoteCommandParser implements Parser<AddNoteCommand> {
                     args, PREFIX_INDEX, PREFIX_NOTE_TEXT);
 
             Index index = ParserUtil.parseIndex(argMultimap.getValue(PREFIX_INDEX).get());
-            Note note = ParserUtil.parseNoteText(argMultimap.getValue(PREFIX_NOTE_TEXT).get());
+            Note note = NoteParserUtil.parseNoteText(argMultimap.getValue(PREFIX_NOTE_TEXT).get());
             return new AddNoteCommand(index, note);
         } catch (ParseException pe) {
             throw new ParseException(pe.getMessage() + "\n\n" + AddNoteCommand.MESSAGE_USAGE);

@@ -28,8 +28,8 @@ public class EditNoteCommandParser implements Parser<EditNoteCommand> {
                     args, PREFIX_INDEX, PREFIX_NOTE_INDEX, PREFIX_NOTE_TEXT);
 
             Index index = ParserUtil.parseIndex(argMultimap.getValue(PREFIX_INDEX).get());
-            Index noteIndex = ParserUtil.parseNoteIndex(argMultimap.getValue(PREFIX_NOTE_INDEX).get());
-            Note note = ParserUtil.parseNoteText(argMultimap.getValue(PREFIX_NOTE_TEXT).get());
+            Index noteIndex = NoteParserUtil.parseNoteIndex(argMultimap.getValue(PREFIX_NOTE_INDEX).get());
+            Note note = NoteParserUtil.parseNoteText(argMultimap.getValue(PREFIX_NOTE_TEXT).get());
             return new EditNoteCommand(index, noteIndex, note);
         } catch (ParseException pe) {
             throw new ParseException(pe.getMessage() + "\n\n" + EditNoteCommand.MESSAGE_USAGE);
