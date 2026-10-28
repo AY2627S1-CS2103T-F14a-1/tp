@@ -382,9 +382,10 @@ public class StudentDetailsPanel extends UiPart<Region> {
             int row) {
 
         VBox missionDetails = new VBox(2);
-
         missionDetails.getStyleClass().add("grid-cell");
+
         missionDetails.setMaxWidth(Double.MAX_VALUE);
+        missionDetails.setFillWidth(true);
 
         Label missionName = new Label(
                 mission.getId()
@@ -400,6 +401,9 @@ public class StudentDetailsPanel extends UiPart<Region> {
         missionName.setWrapText(true);
         deadline.setWrapText(true);
 
+        missionName.setMinHeight(Region.USE_PREF_SIZE);
+        deadline.setMinHeight(Region.USE_PREF_SIZE);
+
         missionName.setMaxWidth(Double.MAX_VALUE);
         deadline.setMaxWidth(Double.MAX_VALUE);
 
@@ -409,7 +413,7 @@ public class StudentDetailsPanel extends UiPart<Region> {
 
         GridPane.setHgrow(
                 missionDetails,
-                javafx.scene.layout.Priority.ALWAYS);
+                Priority.ALWAYS);
 
         GridPane.setFillWidth(
                 missionDetails,
