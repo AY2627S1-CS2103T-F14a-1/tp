@@ -6,7 +6,7 @@ import seedu.address.commons.util.StringUtil;
 import seedu.address.logic.parser.exceptions.ParseException;
 
 /**
- * Validates the shared arguments used for studio records.
+ * Contains utility methods used for parsing strings in the various Studio Record Parser classes.
  */
 public class StudioRecordParserUtil {
 

@@ -11,7 +11,7 @@ import seedu.address.model.mission.Mission;
 import seedu.address.model.mission.MissionId;
 
 /**
- * Contains utility methods used for parsing strings in the various Mission classes.
+ * Contains utility methods used for parsing strings in the various Mission Parser classes.
  */
 public class MissionParserUtil {
 

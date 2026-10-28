@@ -1,26 +1,15 @@
 package seedu.address.logic.parser;
 
-import static java.util.Objects.requireNonNull;
-
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.StringUtil;
 import seedu.address.logic.parser.exceptions.ParseException;
-import seedu.address.model.student.Email;
-import seedu.address.model.student.Name;
-import seedu.address.model.student.Note;
-import seedu.address.model.student.Phone;
-import seedu.address.model.student.RegisteredNotes;
-import seedu.address.model.student.StudioGroup;
-import seedu.address.model.tag.Tag;
 
 /**
- * Contains utility methods used for parsing common strings in the various *Parser classes.
+ * Contains utility method used for parsing common string in the various *Parser classes.
  */
 public class ParserUtil {
+
     public static final String MESSAGE_INVALID_INDEX =
             "Index must be a positive integer without a sign, decimal point, or leading zero.";
 
@@ -35,120 +24,5 @@ public class ParserUtil {
             throw new ParseException(MESSAGE_INVALID_INDEX);
         }
         return Index.fromOneBased(Integer.parseInt(trimmedIndex));
-    }
-
-    /**
-     * Parses a {@code String name} into a {@code Name}.
-     * Leading and trailing whitespaces will be trimmed.
-     *
-     * @throws ParseException if the given {@code name} is invalid.
-     */
-    public static Name parseName(String name) throws ParseException {
-        requireNonNull(name);
-        String trimmedName = name.trim();
-        if (!Name.isValidName(trimmedName)) {
-            throw new ParseException(Name.MESSAGE_CONSTRAINTS);
-        }
-        return new Name(trimmedName);
-    }
-
-    /**
-     * Parses a {@code String phone} into a {@code Phone}.
-     * Leading and trailing whitespaces will be trimmed.
-     *
-     * @throws ParseException if the given {@code phone} is invalid.
-     */
-    public static Phone parsePhone(String phone) throws ParseException {
-        requireNonNull(phone);
-        String trimmedPhone = phone.trim();
-        if (!Phone.isValidPhone(trimmedPhone)) {
-            throw new ParseException(Phone.MESSAGE_CONSTRAINTS);
-        }
-        return new Phone(trimmedPhone);
-    }
-
-    /**
-     * Parses a {@code String email} into an {@code Email}.
-     * Leading and trailing whitespaces will be trimmed.
-     *
-     * @throws ParseException if the given {@code email} is invalid.
-     */
-    public static Email parseEmail(String email) throws ParseException {
-        requireNonNull(email);
-        String trimmedEmail = email.trim();
-        if (!Email.isValidEmail(trimmedEmail)) {
-            throw new ParseException(Email.MESSAGE_CONSTRAINTS);
-        }
-        return new Email(trimmedEmail);
-    }
-
-    /**
-     * Parses a {@code String tag} into a {@code Tag}.
-     * Leading and trailing whitespaces will be trimmed.
-     *
-     * @throws ParseException if the given {@code tag} is invalid.
-     */
-    public static Tag parseTag(String tag) throws ParseException {
-        requireNonNull(tag);
-        String trimmedTag = tag.trim();
-        if (!Tag.isValidTagName(trimmedTag)) {
-            throw new ParseException(Tag.MESSAGE_CONSTRAINTS);
-        }
-        return new Tag(trimmedTag);
-    }
-
-    /**
-     * Parses {@code Collection<String> tags} into a {@code Set<Tag>}.
-     */
-    public static Set<Tag> parseTags(Collection<String> tags) throws ParseException {
-        requireNonNull(tags);
-        final Set<Tag> tagSet = new HashSet<>();
-        for (String tagName : tags) {
-            tagSet.add(parseTag(tagName));
-        }
-        return tagSet;
-    }
-
-    /**
-     * Parses a {@code String studioGroup} into a {@code StudioGroup}.
-     * Leading and trailing whitespaces will be trimmed.
-     *
-     * @throws ParseException if the given {@code studioGroup} is invalid.
-     */
-    public static StudioGroup parseStudioGroup(String studioGroup) throws ParseException {
-        requireNonNull(studioGroup);
-        String trimmedStudioGroup = studioGroup.trim();
-        if (!StudioGroup.isValidStudioGroup(trimmedStudioGroup)) {
-            throw new ParseException(StudioGroup.MESSAGE_CONSTRAINTS);
-        }
-        return new StudioGroup(trimmedStudioGroup);
-    }
-
-    /**
-     * Parses a {@code String note index} into a {@code Index} and returns it.
-     *
-     * @throws ParseException if the given {@code noteIndex} is invalid.
-     */
-    public static Index parseNoteIndex(String noteIndexStr) throws ParseException {
-        requireNonNull(noteIndexStr);
-        Index noteIndex = ParserUtil.parseIndex(noteIndexStr);
-        if (!RegisteredNotes.isValidNoteIndex(noteIndex)) {
-            throw new ParseException(RegisteredNotes.MESSAGE_CONSTRAINTS);
-        }
-        return noteIndex;
-    }
-
-    /**
-     * Parses a {@code noteText} into a {@code Note}.
-     *
-     * @throws ParseException if the given {@code noteText} is invalid.
-     */
-    public static Note parseNoteText(String noteText) throws ParseException {
-        requireNonNull(noteText);
-        String trimmedNoteText = noteText.trim();
-        if (!Note.isValidNoteText(trimmedNoteText)) {
-            throw new ParseException(Note.MESSAGE_CONSTRAINTS);
-        }
-        return new Note(trimmedNoteText);
     }
 }

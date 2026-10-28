@@ -26,7 +26,7 @@ public class DeleteNoteCommandParser implements Parser<DeleteNoteCommand> {
                     args, PREFIX_INDEX, PREFIX_NOTE_INDEX);
 
             Index index = ParserUtil.parseIndex(argMultimap.getValue(PREFIX_INDEX).get());
-            Index noteIndex = ParserUtil.parseNoteIndex(argMultimap.getValue(PREFIX_NOTE_INDEX).get());
+            Index noteIndex = NoteParserUtil.parseNoteIndex(argMultimap.getValue(PREFIX_NOTE_INDEX).get());
             return new DeleteNoteCommand(index, noteIndex);
         } catch (ParseException pe) {
             throw new ParseException(pe.getMessage() + "\n\n" + DeleteNoteCommand.MESSAGE_USAGE);
