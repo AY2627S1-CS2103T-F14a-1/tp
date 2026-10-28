@@ -3,6 +3,8 @@ package seedu.address.ui;
 import java.nio.file.Path;
 import java.util.logging.Logger;
 
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
@@ -21,6 +23,7 @@ import seedu.address.logic.Logic;
 import seedu.address.logic.commands.CommandResult;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.model.student.Student;
 
 /**
  * The Main Window. Provides the basic application layout containing
@@ -174,6 +177,31 @@ public class MainWindow extends UiPart<Stage> {
                 studentDetailsRoot,
                 Pos.TOP_LEFT);
 
+        ObservableList<Student> displayedStudents =
+                logic.getFilteredStudentList();
+
+        displayedStudents.addListener(
+                (ListChangeListener<Student>) change -> {
+                    Student displayedStudent =
+                            studentDetailsPanel.getDisplayedStudent();
+
+                    if (displayedStudent == null) {
+                        return;
+                    }
+
+                    displayedStudents.stream()
+                            .filter(student ->
+                                    student.getName().equals(
+                                            displayedStudent.getName()))
+                            .findFirst()
+                            .ifPresentOrElse(
+                                    updatedStudent ->
+                                            studentDetailsPanel.showStudent(
+                                                    updatedStudent,
+                                                    logic.getMissions()),
+                                    studentDetailsPanel::clearStudent);
+                });
+
         studentDetailsPanelPlaceholder.getChildren()
                 .add(studentDetailsRoot);
 
@@ -181,9 +209,7 @@ public class MainWindow extends UiPart<Stage> {
                 .getSelectionModel()
                 .selectedItemProperty()
                 .addListener((observable, oldStudent, newStudent) -> {
-                    if (newStudent == null) {
-                        studentDetailsPanel.clearStudent();
-                    } else {
+                    if (newStudent != null) {
                         studentDetailsPanel.showStudent(
                                 newStudent,
                                 logic.getMissions());
@@ -268,21 +294,22 @@ public class MainWindow extends UiPart<Stage> {
 
             logger.info("Result: " + commandResult.getFeedbackToUser());
 
-            studentDetailsPanel.clearStudent();
-
-            studentListPanel.getStudentListView()
-                    .getSelectionModel()
-                    .clearSelection();
-
             resultDisplay.setFeedbackToUser(
                     commandResult.getFeedbackToUser());
 
-            commandResult.getStudentToView().ifPresent(student -> {
-                studentDetailsPanel.showStudent(student,
+            if (commandResult.isMissionUpdated()) {
+                studentDetailsPanel.updateMissions(
                         commandResult.getMissions());
+            }
+
+            commandResult.getStudentToView().ifPresent(student -> {
                 studentListPanel.getStudentListView()
                         .getSelectionModel()
                         .select(student);
+
+                studentDetailsPanel.showStudent(
+                        student,
+                        logic.getMissions());
             });
 
             if (commandResult.isShowHelp()) {

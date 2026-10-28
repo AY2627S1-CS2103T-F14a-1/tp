@@ -68,13 +68,13 @@ public class DeleteMasteryCheckCommand extends Command {
         RegisteredMasteryChecks registeredMasteryChecks = studentToUpdate.getRegisteredMasteryChecks();
 
         if (!registeredMasteryChecks.hasMasteryCheck(number)) {
-            return new CommandResult(String.format(MESSAGE_NOT_FOUND, studentToUpdate.getName(), number));
+            return new CommandResult(String.format(MESSAGE_NOT_FOUND, studentToUpdate.getName(), number), studentToUpdate);
         }
 
         Student updatedStudent = studentToUpdate.withRegisteredMasteryChecks(
                 registeredMasteryChecks.withoutMasteryCheck(number));
         model.setStudent(studentToUpdate, updatedStudent);
-        return new CommandResult(String.format(MESSAGE_SUCCESS, studentToUpdate.getName(), number));
+        return new CommandResult(String.format(MESSAGE_SUCCESS, studentToUpdate.getName(), number), updatedStudent);
     }
 
     /**

@@ -66,13 +66,13 @@ public class AddNoteCommand extends Command {
         RegisteredNotes registeredNotes = studentToUpdate.getRegisteredNotes();
 
         if (registeredNotes.hasNote(noteId)) {
-            return new CommandResult(String.format(MESSAGE_ALREADY_RECORDED, studentToUpdate.getName()));
+            return new CommandResult(String.format(MESSAGE_ALREADY_RECORDED, studentToUpdate.getName()), studentToUpdate);
         }
 
         Student updatedStudent = studentToUpdate.withRegisteredNotes(
                 registeredNotes.withNote(noteId, note));
         model.setStudent(studentToUpdate, updatedStudent);
-        return new CommandResult(String.format(MESSAGE_SUCCESS, studentToUpdate.getName(), noteId));
+        return new CommandResult(String.format(MESSAGE_SUCCESS, studentToUpdate.getName(), noteId), updatedStudent);
     }
 
     @Override

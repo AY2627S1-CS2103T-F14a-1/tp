@@ -64,7 +64,7 @@ public class DeleteNoteCommand extends Command {
         Student updatedStudent = studentToUpdate.withRegisteredNotes(
                 registeredNotes.withoutNote(noteId));
         model.setStudent(studentToUpdate, updatedStudent);
-        return new CommandResult(String.format(MESSAGE_SUCCESS, studentToUpdate.getName(), noteId));
+        return new CommandResult(String.format(MESSAGE_SUCCESS, studentToUpdate.getName(), noteId), updatedStudent);
     }
 
     @Override

@@ -66,17 +66,17 @@ public class EditNoteCommand extends Command {
         RegisteredNotes registeredNotes = studentToUpdate.getRegisteredNotes();
 
         if (!registeredNotes.hasNote(noteId)) {
-            return new CommandResult(String.format(MESSAGE_ID_NOT_RECORDED, studentToUpdate.getName(), noteId));
+            return new CommandResult(String.format(MESSAGE_ID_NOT_RECORDED, studentToUpdate.getName(), noteId), studentToUpdate);
         }
 
         if (registeredNotes.getNotesById().get(noteId).equals(updatedNote)) {
-            return new CommandResult(String.format(MESSAGE_SAME_NOTE, studentToUpdate.getName(), noteId));
+            return new CommandResult(String.format(MESSAGE_SAME_NOTE, studentToUpdate.getName(), noteId), studentToUpdate);
         }
 
         Student updatedStudent = studentToUpdate.withRegisteredNotes(
                 registeredNotes.editNote(noteId, updatedNote));
         model.setStudent(studentToUpdate, updatedStudent);
-        return new CommandResult(String.format(MESSAGE_SUCCESS, studentToUpdate.getName(), noteId));
+        return new CommandResult(String.format(MESSAGE_SUCCESS, studentToUpdate.getName(), noteId), updatedStudent);
     }
 
     @Override

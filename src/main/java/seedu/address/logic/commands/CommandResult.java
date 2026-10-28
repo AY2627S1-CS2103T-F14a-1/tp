@@ -35,6 +35,8 @@ public class CommandResult {
     private final Student studentToView;
     private final List<Mission> missions;
 
+    private final boolean missionsUpdated;
+
     /**
      * Creates a {@code CommandResult} with the specified fields.
      *
@@ -44,17 +46,22 @@ public class CommandResult {
      * @param studentToView student to display in the profile panel,
      *                      or {@code null} if no profile should be displayed
      * @param missions missions to display in the profile panel
+     * @param missionsUpdated whether the missions have been updated
      */
-    public CommandResult(String feedbackToUser,
-                         boolean showHelp,
-                         boolean exit,
-                         Student studentToView,
-                         List<Mission> missions) {
+    public CommandResult(
+            String feedbackToUser,
+            boolean showHelp,
+            boolean exit,
+            Student studentToView,
+            List<Mission> missions,
+            boolean missionsUpdated) {
+
         this.feedbackToUser = requireNonNull(feedbackToUser);
         this.showHelp = showHelp;
         this.exit = exit;
         this.studentToView = studentToView;
-        this.missions = requireNonNull(missions);
+        this.missions = List.copyOf(missions);
+        this.missionsUpdated = missionsUpdated;
     }
 
     /**
@@ -69,7 +76,13 @@ public class CommandResult {
             Student studentToView,
             List<Mission> missions) {
 
-        this(feedbackToUser, false, false, studentToView, missions);
+        this(
+                feedbackToUser,
+                false,
+                false,
+                studentToView,
+                missions,
+                false);
     }
 
     /**
@@ -79,7 +92,13 @@ public class CommandResult {
      * @param feedbackToUser feedback message displayed to the user
      */
     public CommandResult(String feedbackToUser) {
-        this(feedbackToUser, false, false, null, List.of());
+        this(
+                feedbackToUser,
+                false,
+                false,
+                null,
+                List.of(),
+                false);
     }
 
     /**
@@ -90,7 +109,13 @@ public class CommandResult {
      * @param studentToView student to display in the profile panel
      */
     public CommandResult(String feedbackToUser, Student studentToView) {
-        this(feedbackToUser, false, false, studentToView, List.of());
+        this(
+                feedbackToUser,
+                false,
+                false,
+                studentToView,
+                List.of(),
+                false);
     }
 
     /**
@@ -101,7 +126,36 @@ public class CommandResult {
      * @param exit whether the application should exit
      */
     public CommandResult(String feedbackToUser, boolean showHelp, boolean exit) {
-        this(feedbackToUser, showHelp, exit, null, List.of());
+        this(
+                feedbackToUser,
+                showHelp,
+                exit,
+                null,
+                List.of(),
+                false);
+    }
+
+    /**
+     * Creates a command result that may refresh the mission display.
+     *
+     * @param feedbackToUser feedback message displayed to the user
+     * @param studentToView student to display, or null
+     * @param missions mission list
+     * @param missionsUpdated whether the mission display should be refreshed
+     */
+    public CommandResult(
+            String feedbackToUser,
+            Student studentToView,
+            List<Mission> missions,
+            boolean missionsUpdated) {
+
+        this(
+                feedbackToUser,
+                false,
+                false,
+                studentToView,
+                missions,
+                missionsUpdated);
     }
 
     /**
@@ -149,6 +203,15 @@ public class CommandResult {
         return exit;
     }
 
+    /**
+     * Returns whether the missions have been updated.
+     *
+     * @return {@code true} if the missions have been updated
+     */
+    public boolean isMissionUpdated() {
+        return missionsUpdated;
+    }
+
     @Override
     public boolean equals(Object other) {
         if (other == this) {
@@ -164,12 +227,13 @@ public class CommandResult {
                 && showHelp == otherCommandResult.showHelp
                 && exit == otherCommandResult.exit
                 && Objects.equals(studentToView, otherCommandResult.studentToView)
-                && Objects.equals(missions, otherCommandResult.missions);
+                && Objects.equals(missions, otherCommandResult.missions)
+                && missionsUpdated == otherCommandResult.missionsUpdated;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(feedbackToUser, showHelp, exit, studentToView, missions);
+        return Objects.hash(feedbackToUser, showHelp, exit, studentToView, missions, missionsUpdated);
     }
 
     @Override

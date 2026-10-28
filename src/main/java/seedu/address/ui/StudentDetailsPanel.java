@@ -33,6 +33,9 @@ public class StudentDetailsPanel extends UiPart<Region> {
     private static final DateTimeFormatter APPOINTMENT_TIME_FORMATTER =
             DateTimeFormatter.ofPattern("MMM d, HH:mm", Locale.ENGLISH);
 
+    private Student displayedStudent;
+    private List<Mission> displayedMissions = List.of();
+
     @FXML
     private Label studentName;
 
@@ -91,9 +94,11 @@ public class StudentDetailsPanel extends UiPart<Region> {
             List<Mission> missions) {
 
         if (student == null) {
-            clearStudent();
             return;
         }
+
+        displayedStudent = student;
+        displayedMissions = List.copyOf(missions);
 
         emptyMessage.setVisible(false);
         emptyMessage.setManaged(false);
@@ -148,6 +153,9 @@ public class StudentDetailsPanel extends UiPart<Region> {
      * Resets the panel to its default state where no student is selected.
      */
     public void clearStudent() {
+        displayedStudent = null;
+        displayedMissions = List.of();
+
         emptyMessage.setVisible(true);
         emptyMessage.setManaged(true);
 
@@ -402,5 +410,18 @@ public class StudentDetailsPanel extends UiPart<Region> {
                 true);
 
         grid.add(missionDetails, 0, row);
+    }
+
+    public void updateMissions(List<Mission> missions) {
+        if (displayedStudent == null) {
+            return;
+        }
+
+        displayedMissions = List.copyOf(missions);
+        populateMissionSubmissions(displayedStudent, displayedMissions);
+    }
+
+    public Student getDisplayedStudent() {
+        return displayedStudent;
     }
 }
