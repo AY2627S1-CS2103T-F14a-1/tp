@@ -8,7 +8,7 @@ import seedu.address.logic.parser.exceptions.ParseException;
 /**
  * Contains utility method used for parsing common string in the various *Parser classes.
  */
-public class ParserUtil {
+public final class ParserUtil {
 
     public static final String MESSAGE_INVALID_INDEX =
             "Index must be a positive integer without a sign, decimal point, or leading zero.";
