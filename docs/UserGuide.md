@@ -553,12 +553,19 @@ Examples:
   students in studio group 1A.
 * `find Betsy Crowe`, followed by `listoverdue`, shows overdue submissions
   for students matching that name.
+
 ### Listing mission submissions: `listmissions`
 
-Shows which students in the currently displayed student list submitted a mission.
+Lists all configured missions, or shows which students in the currently
+displayed student list submitted a specified mission.
 
-Format: `listmissions m/MISSION_ID`
+Format: `listmissions [m/MISSION_ID]`
 
+* Without arguments, lists every configured mission's ID, name, and deadline
+  in ascending numeric ID order, regardless of the current student filter.
+* If no missions are configured, displays `No missions configured.`
+* To list submissions, supply exactly one `m/` prefix and an existing mission
+  ID; prefix matching ignores letter case.
 * Supply exactly one `m/` prefix and an existing mission ID; prefix matching ignores letter case.
 * The command word and mission ID are case-insensitive.
 * Students hidden by `find` are excluded.
@@ -567,10 +574,12 @@ Format: `listmissions m/MISSION_ID`
 * The student filter, submission records, and mission catalogue are unchanged.
 * If no displayed students submitted the mission, the command reports that no
   submissions are recorded within the current student list.
-* Run `list` first to include all students.
+* When listing submissions, run `list` first to include all students.
 
-Example: `find g/1A`, followed by `listmissions m/M01`, lists students in
-studio group 1A with a recorded submission for M01.
+Examples: 
+
+* `listmissions` displays the complete mission catalogue.
+* `find g/1A`, followed by `listmissions m/M01`, lists students in studio group 1A with a recorded submission for M01.
 
 ### Viewing mission submission statuses: `viewmission`
 
@@ -678,7 +687,7 @@ Action     | Format, Examples
 **Remove mission submission** | `unmarkmission id/INDEX m/MISSION_ID`<br> e.g., `unmarkmission id/1 m/M01`                                                                                            
 **Edit mission** | `editmission m/MISSION_ID [n/NAME] [d/DEADLINE]`<br> e.g., `editmission m/M01 n/Rune Reading d/2026-10-22`                                                         
 **List overdue submissions** | `listoverdue`                                                                                                                                                      
-**List mission submissions** | `listmissions m/MISSION_ID`<br> e.g., `listmissions m/M01`  
+**List mission submissions** | `listmissions [m/MISSION_ID]`<br> e.g., `listmissions` or `listmissions m/M01`  
 **View mission statuses** | `viewmission m/MISSION_ID [s/overdue]`
 **Clear**  | `clear`                                                                                                                                                            
 **Find**   | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find James Jake`                                                                                                         
