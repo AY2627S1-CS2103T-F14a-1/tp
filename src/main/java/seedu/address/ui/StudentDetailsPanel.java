@@ -4,6 +4,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javafx.fxml.FXML;
 import javafx.geometry.VPos;
@@ -22,6 +23,7 @@ import seedu.address.model.student.Note;
 import seedu.address.model.student.RegisteredStudioRecords;
 import seedu.address.model.student.Student;
 import seedu.address.model.student.StudioRecord;
+import seedu.address.model.tag.Tag;
 
 /**
  * UI panel that displays the selected student's profile, attendance,
@@ -104,12 +106,16 @@ public class StudentDetailsPanel extends UiPart<Region> {
         studentDetails.setVisible(true);
         studentDetails.setManaged(true);
 
+        String studentTags = student.getTags().stream()
+                .map(Tag::toString)
+                .collect(Collectors.joining(", "));
+
         studentName.setText(student.getName().fullName);
         studioGroup.setText(
                 "Studio group: " + student.getStudioGroup().studioGroup);
         phone.setText("Phone: " + student.getPhone().value);
         email.setText("Email: " + student.getEmail().value);
-        tags.setText("Tags: " + student.getTags());
+        tags.setText("Tags: " + (studentTags.isEmpty() ? "-" : studentTags));
 
         populateNotes(student);
         populateMissionSubmissions(student, missions);
