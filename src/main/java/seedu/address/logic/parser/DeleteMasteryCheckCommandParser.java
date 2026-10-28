@@ -7,6 +7,8 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_NUMBER;
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.DeleteMasteryCheckCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.logic.parser.util.MasteryCheckParserUtil;
+import seedu.address.logic.parser.util.ParserUtil;
 
 /**
  * Parses a displayed student index and mastery check number into a deletion command.

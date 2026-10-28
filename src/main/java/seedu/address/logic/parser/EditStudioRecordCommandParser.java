@@ -8,6 +8,8 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_WEEK;
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.EditStudioRecordCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.logic.parser.util.ParserUtil;
+import seedu.address.logic.parser.util.StudioRecordParserUtil;
 import seedu.address.model.student.StudioRecord;
 
 /**

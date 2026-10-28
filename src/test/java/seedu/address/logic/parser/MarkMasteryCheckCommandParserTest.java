@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import seedu.address.logic.commands.MarkMasteryCheckCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.logic.parser.util.ParserUtil;
 import seedu.address.model.student.RegisteredMasteryChecks;
 
 /** Tests completion-command syntax, caller-specific feedback, and shared parser validation. */

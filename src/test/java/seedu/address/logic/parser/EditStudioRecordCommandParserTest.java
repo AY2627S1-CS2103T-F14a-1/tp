@@ -2,13 +2,14 @@ package seedu.address.logic.parser;
 
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
-import static seedu.address.logic.parser.StudioRecordParserUtil.MESSAGE_INVALID_EFFORT;
-import static seedu.address.logic.parser.StudioRecordParserUtil.MESSAGE_INVALID_WEEK;
+import static seedu.address.logic.parser.util.StudioRecordParserUtil.MESSAGE_INVALID_EFFORT;
+import static seedu.address.logic.parser.util.StudioRecordParserUtil.MESSAGE_INVALID_WEEK;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_STUDENT;
 
 import org.junit.jupiter.api.Test;
 
 import seedu.address.logic.commands.EditStudioRecordCommand;
+import seedu.address.logic.parser.util.ParserUtil;
 import seedu.address.model.student.StudioRecord;
 
 /**

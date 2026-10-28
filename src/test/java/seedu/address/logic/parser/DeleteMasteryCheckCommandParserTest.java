@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import seedu.address.logic.commands.DeleteMasteryCheckCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.logic.parser.util.ParserUtil;
 import seedu.address.model.student.RegisteredMasteryChecks;
 
 /** Tests deletion argument structure, number validation, and delete-specific usage feedback. */

@@ -38,6 +38,7 @@ import seedu.address.logic.commands.UnmarkMasteryCheckCommand;
 import seedu.address.logic.commands.UnmarkMissionCommand;
 import seedu.address.logic.commands.ViewCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.logic.parser.util.MasteryCheckParserUtil;
 import seedu.address.model.masterycheck.MasteryCheck;
 import seedu.address.model.mission.MissionId;
 import seedu.address.model.student.NameContainsKeywordsPredicate;
