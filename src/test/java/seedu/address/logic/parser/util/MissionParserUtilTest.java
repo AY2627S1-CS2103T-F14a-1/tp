@@ -1,9 +1,9 @@
-package seedu.address.logic.parser;
+package seedu.address.logic.parser.util;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static seedu.address.logic.parser.ParserUtilTest.WHITESPACE;
+import static seedu.address.logic.parser.util.ParserUtilTest.WHITESPACE;
 import static seedu.address.testutil.Assert.assertThrows;
 
 import java.time.LocalDate;
@@ -13,7 +13,6 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
 import seedu.address.logic.parser.exceptions.ParseException;
-import seedu.address.logic.parser.util.MissionParserUtil;
 import seedu.address.model.mission.MissionId;
 
 public class MissionParserUtilTest {
