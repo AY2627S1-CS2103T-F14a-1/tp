@@ -6,7 +6,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandFailure;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandSuccess;
 
+import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneOffset;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,6 +27,8 @@ import seedu.address.testutil.StudentBuilder;
 public class ListMissionsCommandTest {
 
     private static final MissionId MISSION_ID = new MissionId("M01");
+    private static final Clock CLOCK = Clock.fixed(
+            Instant.parse("2026-10-21T12:00:00Z"), ZoneOffset.UTC);
 
     private Model model;
     private Student john;
@@ -45,9 +50,11 @@ public class ListMissionsCommandTest {
     public void execute_submittedStudent_preservesDisplayedIndexAndRecords() {
         Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
 
-        assertCommandSuccess(new ListMissionsCommand(MISSION_ID), model,
-                "Submissions for M01 · Rune Reading (Due: 2026-10-20)"
-                        + " (current student list):\n2. Betsy Crowe | Studio group: 1A",
+        assertCommandSuccess(new ListMissionsCommand(MISSION_ID, CLOCK), model,
+                "Submission statuses for M01 · Rune Reading (Due: 2026-10-20)"
+                        + " (current student list):\n"
+                        + "1. John Doe | Studio group: 1A | Overdue\n"
+                        + "2. Betsy Crowe | Studio group: 1A | Submitted",
                 expectedModel);
     }
 
@@ -57,9 +64,10 @@ public class ListMissionsCommandTest {
         Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
         expectedModel.updateFilteredStudentList(student -> student.equals(betsy));
 
-        assertCommandSuccess(new ListMissionsCommand(MISSION_ID), model,
-                "Submissions for M01 · Rune Reading (Due: 2026-10-20)"
-                        + " (current student list):\n1. Betsy Crowe | Studio group: 1A",
+        assertCommandSuccess(new ListMissionsCommand(MISSION_ID, CLOCK), model,
+                "Submission statuses for M01 · Rune Reading (Due: 2026-10-20)"
+                        + " (current student list):\n"
+                        + "1. Betsy Crowe | Studio group: 1A | Submitted",
                 expectedModel);
     }
 
@@ -71,33 +79,38 @@ public class ListMissionsCommandTest {
         model.addStudent(brian);
         Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
 
-        assertCommandSuccess(new ListMissionsCommand(MISSION_ID), model,
-                "Submissions for M01 · Rune Reading (Due: 2026-10-20)"
+        assertCommandSuccess(new ListMissionsCommand(MISSION_ID, CLOCK), model,
+                "Submission statuses for M01 · Rune Reading (Due: 2026-10-20)"
                         + " (current student list):\n"
-                        + "2. Betsy Crowe | Studio group: 1A\n"
-                        + "3. Brian Lim | Studio group: 1B",
+                        + "1. John Doe | Studio group: 1A | Overdue\n"
+                        + "2. Betsy Crowe | Studio group: 1A | Submitted\n"
+                        + "3. Brian Lim | Studio group: 1B | Submitted",
                 expectedModel);
     }
 
     @Test
-    public void execute_hiddenSubmittedStudent_reportsNoSubmissions() {
+    public void execute_hiddenSubmittedStudent_listsOnlyDisplayedStudents() {
         model.updateFilteredStudentList(student -> student.equals(john));
         Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
         expectedModel.updateFilteredStudentList(student -> student.equals(john));
 
-        assertCommandSuccess(new ListMissionsCommand(MISSION_ID), model,
-                "No submissions recorded for M01 in the current student list.",
+        assertCommandSuccess(new ListMissionsCommand(MISSION_ID, CLOCK), model,
+                "Submission statuses for M01 · Rune Reading (Due: 2026-10-20)"
+                        + " (current student list):\n"
+                        + "1. John Doe | Studio group: 1A | Overdue",
                 expectedModel);
     }
 
     @Test
-    public void execute_emptyFilteredList_reportsNoSubmissions() {
+    public void execute_emptyFilteredList_reportsNoStudents() {
         model.updateFilteredStudentList(student -> false);
         Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
         expectedModel.updateFilteredStudentList(student -> false);
 
-        assertCommandSuccess(new ListMissionsCommand(MISSION_ID), model,
-                "No submissions recorded for M01 in the current student list.",
+        assertCommandSuccess(new ListMissionsCommand(MISSION_ID, CLOCK), model,
+                "Submission statuses for M01 · Rune Reading (Due: 2026-10-20)"
+                        + " (current student list):\n"
+                        + "No students in the current student list.",
                 expectedModel);
     }
 
@@ -112,12 +125,45 @@ public class ListMissionsCommandTest {
     @Test
     public void constructorAndExecute_nullArguments_throwNullPointerException() {
         assertThrows(NullPointerException.class, () -> new ListMissionsCommand(null));
-        assertThrows(NullPointerException.class, () -> new ListMissionsCommand(MISSION_ID).execute(null));
+        assertThrows(NullPointerException.class, () -> new ListMissionsCommand(MISSION_ID, CLOCK).execute(null));
+    }
+
+    @Test
+    public void execute_deadlineToday_reportsMissingSubmissionAsNotSubmitted() {
+        Clock todayClock = Clock.fixed(
+                Instant.parse("2026-10-20T12:00:00Z"), ZoneOffset.UTC);
+        Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
+
+        assertCommandSuccess(new ListMissionsCommand(MISSION_ID, todayClock), model,
+                "Submission statuses for M01 · Rune Reading (Due: 2026-10-20)"
+                        + " (current student list):\n"
+                        + "1. John Doe | Studio group: 1A | Not submitted\n"
+                        + "2. Betsy Crowe | Studio group: 1A | Submitted",
+                expectedModel);
+    }
+
+    @Test
+    public void execute_futureDeadline_reportsMissingSubmissionAsNotSubmitted() {
+        Clock earlierClock = Clock.fixed(
+                Instant.parse("2026-10-19T12:00:00Z"), ZoneOffset.UTC);
+        Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
+
+        assertCommandSuccess(new ListMissionsCommand(MISSION_ID, earlierClock), model,
+                "Submission statuses for M01 · Rune Reading (Due: 2026-10-20)"
+                        + " (current student list):\n"
+                        + "1. John Doe | Studio group: 1A | Not submitted\n"
+                        + "2. Betsy Crowe | Studio group: 1A | Submitted",
+                expectedModel);
+    }
+
+    @Test
+    public void constructor_nullClock_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> new ListMissionsCommand(MISSION_ID, null));
     }
 
     @Test
     public void equals_sameAndDifferentMissionIds_comparesMissionIds() {
-        ListMissionsCommand command = new ListMissionsCommand(MISSION_ID);
+        ListMissionsCommand command = new ListMissionsCommand(MISSION_ID, CLOCK);
         ListMissionsCommand equalCommand = new ListMissionsCommand(new MissionId("M01"));
 
         assertEquals(command, command);

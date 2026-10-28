@@ -554,45 +554,56 @@ Examples:
 * `find Betsy Crowe`, followed by `listoverdue`, shows overdue submissions
   for students matching that name.
 
-### Listing mission submissions: `listmissions`
+### Listing missions and submission statuses: `listmissions`
 
-Lists all configured missions, or shows which students in the currently
-displayed student list submitted a specified mission.
+Lists all missions with submission counts, or shows submission statuses
+for a specific mission within the currently displayed student list.
 
 Format: `listmissions [m/MISSION_ID]`
 
-* Without arguments, lists all missions in ascending numeric ID order,
-  showing each mission's ID, name, deadline, and submitted/total student count.
+* The command word, `m/` prefix, and mission ID are case-insensitive.
+* Student records, submission records, mission definitions, and the current
+  student filter remain unchanged.
+
+Without a mission ID:
+
+* Lists all missions in ascending numeric ID order, showing each mission's
+  ID, name, deadline, and submitted/total student count.
 * `Submitted: X/Y` means X of the Y currently displayed students have a
   recorded submission for that mission.
-* All missions remain visible regardless of the student filter. Submission
-  counts include only currently displayed students. Run `list` first to
-  count all students.
+* All missions remain visible regardless of the student filter, but counts
+  include only currently displayed students.
 * An empty student list produces `Submitted: 0/0`.
-* Missions whose deadline is before the computer's current local date show
-  `Deadline passed` beside the due date, even if every student has submitted.
+* Deadlines before the computer's current local date are labelled
+  `Deadline passed`, even if every student has submitted.
   Missions due today are not labelled.
 * If no missions exist, displays `No missions configured.`
-* Listing missions does not modify records or the student filter.
-  Rerun the command to refresh counts and deadline labels.
-* To list submissions, supply exactly one `m/` prefix and an existing mission
-  ID; prefix matching ignores letter case.
-* Supply exactly one `m/` prefix and an existing mission ID; prefix matching ignores letter case.
-* The command word and mission ID are case-insensitive.
+
+With `m/MISSION_ID`:
+
+* Supply exactly one `m/` prefix and an existing mission ID.
+* Lists every currently displayed student's status for that mission,
+  including their displayed index, name, and studio group.
+* A recorded submission is `Submitted`, regardless of the deadline.
+* A missing submission is `Overdue` when the deadline is before the
+  computer's current local date; otherwise it is `Not submitted`.
+  Missions due today are not overdue.
 * Students hidden by `find` are excluded.
-* Submission results include each student's name and studio group.
-  For example, `2. Betsy Crowe | Studio group: 1A`.
-* Result numbers retain the indexes in the displayed student list.
-  A result numbered `3` can therefore be inspected using `view id/3`.
-* The student filter, submission records, and mission catalogue are unchanged.
-* If no displayed students submitted the mission, the command reports that no
-  submissions are recorded within the current student list.
-* When listing submissions, run `list` first to include all students.
+* Result numbers retain displayed student indexes. A result numbered `3`
+  can therefore be inspected using `view id/3`.
+* An empty student list produces `No students in the current student list.`
+* Statuses reflect recorded submissions; an absent record does not confirm
+  that a student has not actually submitted.
 
-Examples: 
+Run `list` first to include all students in counts and status results.
+Rerun `listmissions` with the desired arguments to refresh its output.
 
-* `listmissions` displays the complete mission catalogue, alongside the number of total submissions for each mission.
-* `find g/1A`, followed by `listmissions m/M01`, lists students in studio group 1A with a recorded submission for M01.
+Examples:
+
+* `listmissions` displays all missions with submitted/total counts for
+  the currently displayed students.
+* `find g/1A`, followed by `listmissions m/M01`, shows M01 statuses for
+  the currently displayed students in studio group 1A.
 
 ### Viewing mission submission statuses: `viewmission`
 

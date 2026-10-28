@@ -274,6 +274,23 @@ Today's and tomorrow's missions have no deadline label.
 | MISSION-SUMMARY-007 | Run `list`, then `listmissions`. | All three counts return to 1/2. Deadline labels and underlying records remain unchanged. |
 | MISSION-SUMMARY-008 | In a separate isolated dataset with students but no missions, run `listmissions`. | Displays `No missions configured.` Student records and the current filter remain unchanged. |
 
+## Specific mission status regression
+
+Use John Doe (1A) and Betsy Crowe (1A), in that order.
+Configure M01, Runes, due yesterday; M02, Curves, due today; and
+M03, Lists, due tomorrow. Record all three submissions for Betsy only.
+Dates are relative to the computer's local date.
+
+| ID | Steps | Expected result |
+| --- | --- | --- |
+| MISSION-STATUS-001 | Run `list`, then `listmissions m/M01`. | John appears as Overdue and Betsy as Submitted, with indexes 1 and 2 and their studio groups. |
+| MISSION-STATUS-002 | Run `listmissions m/M99`, then `listmissions m/M01`. | The unknown mission is rejected. The second command reproduces the previous results with unchanged records and filter. |
+| MISSION-STATUS-003 | Run `listmissions m/M02`, then `listmissions m/M03`. | Both reports show John as Not submitted and Betsy as Submitted. Today's deadline is not overdue. |
+| MISSION-STATUS-004 | Run `find John`, then `listmissions m/M01`. | Only John appears, at index 1, as Overdue. The John-only filter remains active. |
+| MISSION-STATUS-005 | Run `listmissions m/M01 m/M02`, then `listmissions m/M01`. | Duplicate-prefix feedback appears. The second command still shows only John, as Overdue. |
+| MISSION-STATUS-006 | Run `find NobodyMatchesThisName`, then `listmissions m/M01`. | Mission details appear followed by `No students in the current student list.` The student list remains empty. |
+| MISSION-STATUS-007 | Run `list`, then `listmissions m/M01`. | Both original students and their statuses return. Records remain unchanged. |
+
 ## Missing-prefix usage suffix regression
 
 Missing-prefix feedback now ends with one newline followed by the calling command's

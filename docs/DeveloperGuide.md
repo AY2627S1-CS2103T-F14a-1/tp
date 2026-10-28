@@ -247,11 +247,21 @@ Parsing and command-validation failures exit before the saving step. If saving i
 
 ### Listing mission submissions
 
-`ListMissionsCommand` checks recorded submissions within
-`Model#getFilteredStudentList()`. Each matching row includes the student's
-displayed index, name, and studio group, obtained from
-`Student#getStudioGroup()`. Hidden students are excluded, and the command
-does not modify student records or the current filter.
+`ListMissionsCommand` resolves the requested mission before evaluating
+submission statuses. It evaluates the deadline once using an injected
+`Clock`, then lists every student in `Model#getFilteredStudentList()`.
+
+`MissionSubmissionStatus#from(...)` determines Submitted, Not submitted,
+or Overdue from the recorded submission and evaluated deadline. Recorded
+submissions are always Submitted; absent submissions become Overdue only
+after the deadline. The existing `ViewMissionCommand` shares this rule.
+
+Rows retain displayed student indexes and include names and studio groups.
+The command does not replace the student filter or modify records.
+An empty student list produces an explicit explanation.
+
+Normal execution uses the computer's local time zone. Tests inject a
+fixed clock to verify deadline boundaries deterministically.
 
 ### Listing the mission catalogue
 

@@ -3,6 +3,8 @@ package seedu.address.logic.commands;
 import static java.util.Objects.requireNonNull;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_MISSION;
 
+import java.time.Clock;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -13,44 +15,58 @@ import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 import seedu.address.model.mission.Mission;
 import seedu.address.model.mission.MissionId;
+import seedu.address.model.mission.MissionSubmissionStatus;
 import seedu.address.model.student.Student;
 
 /**
- * Lists students in the currently displayed list who submitted a mission.
+ * Lists mission submission statuses for the currently displayed students.
  */
 public class ListMissionsCommand extends Command {
 
     public static final String COMMAND_WORD = "listmissions";
 
     public static final String MESSAGE_USAGE = COMMAND_WORD
-            + ": Lists configured missions, or submitted students for a mission.\n"
+            + ": Lists mission summaries or student submission statuses.\n"
             + "Parameters: [" + PREFIX_MISSION + "MISSION_ID]\n"
-            + "Without parameters: lists all configured missions.\n"
-            + "With a mission ID: lists submitted students within the current student list.\n"
+            + "Without parameters: lists all missions with submission counts.\n"
+            + "With a mission ID: lists statuses within the current student list.\n"
             + "Examples: " + COMMAND_WORD + "; " + COMMAND_WORD + " " + PREFIX_MISSION + "M01";
 
     public static final String MESSAGE_SUCCESS =
-            "Submissions for %1$s (current student list):\n%2$s";
-    public static final String MESSAGE_NO_SUBMISSIONS =
-            "No submissions recorded for %1$s in the current student list.";
+            "Submission statuses for %1$s (current student list):\n%2$s";
+    public static final String MESSAGE_NO_STUDENTS =
+            "No students in the current student list.";
 
     private final MissionId missionId;
+    private final Clock clock;
 
     /**
-     * Creates a command to list submissions for a mission.
+     * Creates a command using the computer's local calendar date.
      *
-     * @param missionId Mission whose submitted students should be listed.
+     * @param missionId Mission whose statuses should be listed.
      * @throws NullPointerException If the mission ID is null.
      */
     public ListMissionsCommand(MissionId missionId) {
-        this.missionId = requireNonNull(missionId);
+        this(missionId, Clock.systemDefaultZone());
     }
 
     /**
-     * Lists submitted students without modifying records or the student filter.
+     * Creates a command using a supplied date source.
+     *
+     * @param missionId Mission whose statuses should be listed.
+     * @param clock Clock supplying the current date and time zone.
+     * @throws NullPointerException If either argument is null.
+     */
+    ListMissionsCommand(MissionId missionId, Clock clock) {
+        this.missionId = requireNonNull(missionId);
+        this.clock = requireNonNull(clock);
+    }
+
+    /**
+     * Lists displayed students' statuses without changing records or filters.
      *
      * @param model Model containing the mission and displayed students.
-     * @return Feedback listing student names and studio groups with their displayed indexes.
+     * @return Mission details and numbered student submission statuses.
      * @throws CommandException If the mission does not exist.
      * @throws NullPointerException If the model is null.
      */
@@ -60,23 +76,36 @@ public class ListMissionsCommand extends Command {
 
         Mission mission = model.findMission(missionId).orElseThrow(() ->
                 new CommandException(String.format(Messages.MESSAGE_MISSION_NOT_FOUND, missionId)));
-        List<Student> lastShownList = model.getFilteredStudentList();
-        List<String> submissionRows = new ArrayList<>();
+        boolean isPastDeadline = mission.isPastDeadline(LocalDate.now(clock));
+        String rows = formatStudentStatuses(model.getFilteredStudentList(), isPastDeadline);
 
-        for (int index = 0; index < lastShownList.size(); index++) {
-            Student student = lastShownList.get(index);
-            if (student.getMissionSubmissions().hasSubmission(missionId)) {
-                submissionRows.add((index + 1) + ". " + student.getName()
-                        + " | Studio group: " + student.getStudioGroup());
-            }
+        return new CommandResult(String.format(MESSAGE_SUCCESS, Messages.format(mission), rows));
+    }
+
+    /**
+     * Formats each student's status while preserving displayed indexes.
+     *
+     * @param students Students in their displayed order.
+     * @param isPastDeadline Whether the selected mission's deadline has passed.
+     * @return Numbered status rows, or an explanation for an empty student list.
+     */
+    private String formatStudentStatuses(List<Student> students, boolean isPastDeadline) {
+        assert students != null;
+
+        if (students.isEmpty()) {
+            return MESSAGE_NO_STUDENTS;
         }
 
-        if (submissionRows.isEmpty()) {
-            return new CommandResult(String.format(MESSAGE_NO_SUBMISSIONS, missionId));
+        List<String> rows = new ArrayList<>();
+        for (int index = 0; index < students.size(); index++) {
+            Student student = students.get(index);
+            MissionSubmissionStatus status = MissionSubmissionStatus.from(
+                    student.getMissionSubmissions().hasSubmission(missionId), isPastDeadline);
+            rows.add((index + 1) + ". " + student.getName()
+                    + " | Studio group: " + student.getStudioGroup()
+                    + " | " + status);
         }
-
-        return new CommandResult(String.format(MESSAGE_SUCCESS,
-                Messages.format(mission), String.join("\n", submissionRows)));
+        return String.join("\n", rows);
     }
 
     @Override

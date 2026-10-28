@@ -17,6 +17,7 @@ import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 import seedu.address.model.mission.Mission;
 import seedu.address.model.mission.MissionId;
+import seedu.address.model.mission.MissionSubmissionStatus;
 import seedu.address.model.student.Student;
 
 /**
@@ -41,10 +42,6 @@ public class ViewMissionCommand extends Command {
     public static final String MESSAGE_MANUAL_RECORDS =
             "Results reflect manually maintained AvengerHub records.\n"
                     + "No recorded submission does not confirm that no submission was made.";
-
-    private static final String STATUS_SUBMITTED = "Submitted";
-    private static final String STATUS_NOT_SUBMITTED = "Not submitted";
-    private static final String STATUS_OVERDUE = "Overdue";
 
     private final MissionId missionId;
     private final boolean overdueOnly;
@@ -148,10 +145,8 @@ public class ViewMissionCommand extends Command {
     private String getStatus(Student student, boolean isPastDeadline) {
         assert student != null;
 
-        if (student.getMissionSubmissions().hasSubmission(missionId)) {
-            return STATUS_SUBMITTED;
-        }
-        return isPastDeadline ? STATUS_OVERDUE : STATUS_NOT_SUBMITTED;
+        return MissionSubmissionStatus.from(
+                student.getMissionSubmissions().hasSubmission(missionId), isPastDeadline).toString();
     }
 
     @Override
