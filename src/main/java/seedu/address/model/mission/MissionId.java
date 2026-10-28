@@ -13,7 +13,8 @@ public final class MissionId {
     public static final String MESSAGE_CONSTRAINTS =
             "Mission IDs must start with 'M' followed by a "
                     + "positive integer of at least two digits, with no unnecessary "
-                    + "leading zeros (e.g., M01, M02, M105).";
+                    + "leading zeros (e.g., M01, M02, M105). The number must not exceed "
+                    + "9223372036854775807.";
 
     private static final String VALIDATION_REGEX = "(?i)M(?:0[1-9]|[1-9][0-9]+)";
 

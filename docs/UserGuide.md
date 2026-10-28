@@ -398,7 +398,9 @@ Format: `addmission m/MISSION_ID n/NAME d/DEADLINE`
   before the first prefix. The command word is case-insensitive.
 * `MISSION_ID` must start with `M` followed by a positive integer of at least two digits,
   without unnecessary leading zeros. For example, `M01`, `M02`, and `M105` are valid;
-  `M1` and `M00` are not. IDs must be unique among configured missions.
+  `M1` and `M00` are not. The number must not exceed `9223372036854775807` (the
+  largest supported value, with up to 19 digits). IDs must be unique among configured
+  missions. Exceeding the limit reports the same mission-ID constraint message.
 * `NAME` must not be blank. Multiple words and ordinary punctuation are allowed.
   Leading and trailing whitespace is removed, and internal whitespace becomes a single space.
   Letter case and punctuation are preserved for display and saving.
