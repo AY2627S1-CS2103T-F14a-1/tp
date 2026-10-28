@@ -69,7 +69,8 @@ public class ListMissionsCommandTest {
         expectedModel.updateFilteredStudentList(student -> student.equals(john));
 
         assertCommandSuccess(new ListMissionsCommand(MISSION_ID), model,
-                "No submissions recorded for M01 in the current student list.",
+                "No submissions recorded for M01 · Rune Reading (Due: 2026-10-20)"
+                        + " in the current student list.",
                 expectedModel);
     }
 
@@ -80,7 +81,20 @@ public class ListMissionsCommandTest {
         expectedModel.updateFilteredStudentList(student -> false);
 
         assertCommandSuccess(new ListMissionsCommand(MISSION_ID), model,
-                "No submissions recorded for M01 in the current student list.",
+                "No submissions recorded for M01 · Rune Reading (Due: 2026-10-20)"
+                        + " in the current student list.",
+                expectedModel);
+    }
+
+    @Test
+    public void execute_missionWithoutSubmissions_reportsFullMissionDetails() {
+        MissionId missionId = new MissionId("M02");
+        model.addMission(missionId, "Curves", LocalDate.of(2026, 10, 21));
+        Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
+
+        assertCommandSuccess(new ListMissionsCommand(missionId), model,
+                "No submissions recorded for M02 · Curves (Due: 2026-10-21)"
+                        + " in the current student list.",
                 expectedModel);
     }
 

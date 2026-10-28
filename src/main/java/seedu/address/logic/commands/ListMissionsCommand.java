@@ -69,7 +69,7 @@ public class ListMissionsCommand extends Command {
         }
 
         if (submissionRows.isEmpty()) {
-            return new CommandResult(String.format(MESSAGE_NO_SUBMISSIONS, missionId));
+            return new CommandResult(String.format(MESSAGE_NO_SUBMISSIONS, Messages.format(mission)));
         }
 
         return new CommandResult(String.format(MESSAGE_SUCCESS,
