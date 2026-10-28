@@ -192,7 +192,7 @@ This section describes some noteworthy details on how certain features are imple
 
 ### Adding a mission
 
-For `addmission m/MISSION_ID n/NAME d/DEADLINE`, `AddressBookParser` delegates to `AddMissionCommandParser`, which validates exactly one mission ID, name, and deadline and creates an `AddMissionCommand`. `ParserUtil#parseMissionId(...)` validates the ID with `MissionId`, preserving the required `M` plus positive integer format. `ParserUtil#parseMissionName(...)` removes surrounding whitespace and collapses repeated whitespace in the name, while preserving case and punctuation. The deadline must be a real date in `YYYY-MM-DD` format; past dates are accepted. Missing, repeated, blank, or invalid fields and unexpected preamble text cause a `ParseException`.
+For `addmission m/MISSION_ID n/NAME d/DEADLINE`, `AddressBookParser` delegates to `AddMissionCommandParser`, which validates exactly one mission ID, name, and deadline and creates an `AddMissionCommand`. `MissionParserUtil#parseMissionId(...)` validates the ID with `MissionId`, preserving the required `M` plus positive integer format. `MissionParserUtil#parseMissionName(...)` removes surrounding whitespace and collapses repeated whitespace in the name, while preserving case and punctuation. The deadline must be a real date in `YYYY-MM-DD` format; past dates are accepted. Missing, repeated, blank, or invalid fields and unexpected preamble text cause a `ParseException`.
 
 When executed, `AddMissionCommand` checks for an existing ID and calls `Model#hasMissionName(...)` to reject duplicate names, ignoring case and whitespace differences. It then calls `Model#addMission(...)`, which delegates through `ModelManager` and `AddressBook` to `MissionCatalogue`. The catalogue validates uniqueness and stores the supplied ID; it never renumbers missions. The command returns a `CommandResult` containing the added mission.
 
@@ -203,8 +203,8 @@ stored with each mission; there is no allocation counter. Deletion leaves all re
 and removes the deleted ID from every student's submissions.
 
 Mission names share `Mission.normalizeName(...)` for whitespace normalization. Delete and submission-list
-parsers share `MissionParser.parseMissionIdArgument(...)`, while mark, unmark, and mission deletion use
-`Student.withMissionSubmissions(...)` to preserve all other student fields. Common command feedback is
+parsers both use `MissionParserUtil#parseMissionId(...)`. Marking, unmarking, and mission deletion use
+`Student#withMissionSubmissions(...)` to preserve all other student fields. Common command feedback is
 defined in `Messages`.
 
 The sequence diagram below illustrates the successful interaction flow using `execute("addmission m/M01 n/Rune Reading d/2026-10-20")`. Here, `missionId` is the parsed `MissionId`, `deadline` is the parsed `LocalDate` value for `2026-10-20`, and `feedback` is the formatted success message.
@@ -213,7 +213,7 @@ The sequence diagram below illustrates the successful interaction flow using `ex
 
 ### Deleting a mission
 
-For `delmission m/M03`, `AddressBookParser` delegates to `DeleteMissionCommandParser`. The parser requires exactly one nonblank `m/` value and rejects unexpected preamble text. `ParserUtil#parseMissionId(...)` trims and validates the ID, and `MissionId` normalizes it to uppercase. Thus, `m/m03` and `m/M03` identify the same mission; the ID is not a displayed list position.
+For `delmission m/M03`, `AddressBookParser` delegates to `DeleteMissionCommandParser`. The parser requires exactly one nonblank `m/` value and rejects unexpected preamble text. `MissionParserUtil#parseMissionId(...)` trims and validates the ID, and `MissionId` normalizes it to uppercase. Thus, `m/m03` and `m/M03` identify the same mission; the ID is not a displayed list position.
 
 When executed, `DeleteMissionCommand` calls `Model#findMission(...)` and rejects a nonexistent mission before making changes. It then calls `Model#deleteMission(...)`. Within the model, `AddressBook` prepares replacement student records without the deleted mission's submission ID and removes the mission from the catalogue. This includes students hidden by the current filter and preserves their other details and submissions. Remaining IDs do not change; a deleted ID may later be explicitly reused. The command returns a `CommandResult` identifying the deleted mission.
 
@@ -225,7 +225,7 @@ The sequence diagram below illustrates the successful interaction flow using `ex
 
 ### Marking and unmarking mission submissions
 
-For `markmission id/INDEX m/MISSION_ID` or `unmarkmission id/INDEX m/MISSION_ID`, `AddressBookParser` delegates to `MarkMissionCommandParser` or `UnmarkMissionCommandParser`. Both reuse `MissionParserUtil` to validate a positive student index and exactly one case-insensitive mission ID, then create the corresponding command. Invalid or extra arguments cause a `ParseException`; whether the mission and displayed student exist is checked during execution.
+For `markmission id/INDEX m/MISSION_ID` or `unmarkmission id/INDEX m/MISSION_ID`, `AddressBookParser` delegates to `MarkMissionCommandParser` or `UnmarkMissionCommandParser`. Both use `ArgumentStructureValidator` to require exactly one `id/` and `m/` value, `ParserUtil#parseIndex(...)` to validate a positive student index, and `MissionParserUtil#parseMissionId(...)` to validate the case-insensitive mission ID. They then create the corresponding command. Invalid or extra arguments cause a `ParseException` that includes command usage. A positive index that does not identify a student in the current displayed list is rejected during execution with a `CommandException`; this error also includes the corresponding command usage. A well-formed ID for a mission that does not exist is rejected during execution without changing records.
 
 When executed, the command calls `Model#findMission(...)` and retrieves the selected student from `Model#getFilteredStudentList()`. Marking uses `MissionSubmissions#withSubmission(...)`; unmarking uses `MissionSubmissions#withoutSubmission(...)`. Each produces updated immutable submission data, which the command places in a replacement `Student` before calling `Model#setStudent(...)`. Other student details and the current filter are preserved, and the observable student list notifies the UI of the replacement.
 
@@ -248,7 +248,7 @@ Parsing and command-validation failures exit before the saving step. If saving i
 ### Viewing mission submission statuses
 
 For `viewmission m/MISSION_ID [s/overdue]`, `AddressBookParser` delegates to `ViewMissionCommandParser`. The parser reuses `ArgumentStructureValidator#validateStructureWithOptionals(...)` to require exactly one mission prefix and allow at most one status prefix.
-`ParserUtil#parseMissionId(...)` validates the mission ID. When supplied, the status value must be `overdue`, ignoring case. Missing required prefixes, duplicate prefixes, unexpected preamble text, invalid mission IDs, and invalid status values cause a `ParseException`.
+`MissionParserUtil#parseMissionId(...)` validates the mission ID. When supplied, the status value must be `overdue`, ignoring case. Missing required prefixes, duplicate prefixes, unexpected preamble text, invalid mission IDs, and invalid status values cause a `ParseException`.
 
 When executed, `ViewMissionCommand` first calls `Model#findMission(...)`. A nonexistent mission causes a `CommandException` before the displayed student list changes. The command then obtains the current local date using `LocalDate.now(clock)` and calls `Mission#isPastDeadline(...)`.
 
@@ -544,8 +544,6 @@ submission records, or the current student filter.
 
 **MSS**
 
-**MSS**
-
 1. Tutor requests to edit a shared mission and provides the required details.
 2. AvengerHub updates the mission, saves the changes, and confirms success.
 
@@ -639,8 +637,9 @@ submission records, or the current student filter.
 
       Use case ends.
       
-Student records, mission definitions, submission records, and the current
-student filter remain unchanged throughout this use case.
+Only the selected student's submission record changes. Other student data and
+mission definitions remain unchanged. The current student filter remains
+active, so its displayed results may change if they depend on that submission.
 
 **Use case: List mission submissions**
 
@@ -724,8 +723,6 @@ are excluded, regardless of when they were recorded.
 
 **Use case: View mission submission statuses**
 
-**Actor:** Tutor
-
 **MSS**
 
 1. Tutor requests submission statuses for a mission, optionally
@@ -764,8 +761,6 @@ Without a status filter, all students are included. With the overdue
 filter, only students without a recorded submission whose mission deadline
 is before today's local date are included. Submitted students are never
 included in overdue results.
-
-*{More to be added}*
 
 ### Non-Functional Requirements
 

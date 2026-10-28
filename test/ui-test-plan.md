@@ -244,6 +244,20 @@ direct UI equivalent.
 | MISSION-PARSE-005 | Parse lowercase `m/m03` with surrounding whitespace. | The parser trims the input and returns canonical ID `M03`; `MissionId` owns case normalization. |
 | MISSION-DELETE-RECREATE-001 | With mission `M03` submitted by a student, delete `M03`, then recreate it using `m/M03` with a new name and deadline. | The recreated mission uses ID `M03` and has no previous submissions. |
 
+## Mission submission index error usage
+
+Start with at least two students and a configured mission. Record a submission
+for one student before testing unmarking. After each rejected command, inspect
+the student profile and confirm the submission state is unchanged.
+
+| ID | Steps | Expected result |
+| --- | --- | --- |
+| MISSION-INDEX-USAGE-001 | Run `markmission id/1 m/M03`, then `view id/1`. | The first displayed student's M03 status is Submitted. |
+| MISSION-INDEX-USAGE-002 | Run `markmission id/3 m/M03`, then `view id/1`. | Invalid displayed-index feedback is followed by a blank line and complete `markmission` usage; M03 remains Submitted for student 1 and no other student changes. |
+| MISSION-INDEX-USAGE-003 | Run `unmarkmission id/1 m/M03`, then `view id/1`. | The first displayed student's M03 status is Not submitted. |
+| MISSION-INDEX-USAGE-004 | Run `unmarkmission id/3 m/M03`, then `view id/1`. | Invalid displayed-index feedback is followed by a blank line and complete `unmarkmission` usage; M03 remains Not submitted for student 1 and no other student changes. |
+| MISSION-INDEX-USAGE-005 | Run `find` so only one student is displayed, then run `markmission id/2 m/M03` and `unmarkmission id/2 m/M03`, inspecting the displayed student afterward. | Each execution-time index error includes the corresponding command usage; neither submission state nor the active student filter changes. |
+
 ## Missing-prefix usage suffix regression
 
 Missing-prefix feedback now ends with one newline followed by the calling command's
