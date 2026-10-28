@@ -68,8 +68,11 @@ public class MarkMissionCommandTest {
 
         String feedback = String.format(MarkMissionCommand.MESSAGE_SUCCESS, student.getName(), "M03");
 
-        assertCommandSuccess(new MarkMissionCommand(INDEX_FIRST_STUDENT, new MissionId("M03")),
-                model, feedback, expectedModel);
+        assertCommandSuccess(
+                new MarkMissionCommand(INDEX_FIRST_STUDENT, new MissionId("M03")),
+                model,
+                new CommandResult(feedback, updated),
+                expectedModel);
         assertFalse(student.getMissionSubmissions().hasSubmission(new MissionId("M03")));
     }
 
@@ -100,8 +103,11 @@ public class MarkMissionCommandTest {
         Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
         String feedback = String.format(MarkMissionCommand.MESSAGE_ALREADY_RECORDED, student.getName(), "M03");
 
-        assertCommandSuccess(new MarkMissionCommand(INDEX_FIRST_STUDENT, new MissionId("M03")),
-                model, feedback, expectedModel);
+        assertCommandSuccess(
+                new MarkMissionCommand(INDEX_FIRST_STUDENT, new MissionId("M03")),
+                model,
+                new CommandResult(feedback, student),
+                expectedModel);
     }
 
     @Test
@@ -127,8 +133,11 @@ public class MarkMissionCommandTest {
 
         String feedback = String.format(MarkMissionCommand.MESSAGE_SUCCESS, student.getName(), "M03");
 
-        assertCommandSuccess(new MarkMissionCommand(INDEX_FIRST_STUDENT, new MissionId("M03")),
-                model, feedback, expectedModel);
+        assertCommandSuccess(
+                new MarkMissionCommand(INDEX_FIRST_STUDENT, new MissionId("M03")),
+                model,
+                new CommandResult(feedback, updated),
+                expectedModel);
         assertEquals(1, model.getFilteredStudentList().size());
         assertEquals(updated, model.getFilteredStudentList().get(0));
     }

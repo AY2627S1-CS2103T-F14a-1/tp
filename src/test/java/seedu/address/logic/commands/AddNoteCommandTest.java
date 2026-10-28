@@ -46,7 +46,9 @@ public class AddNoteCommandTest {
         expectedModel.setStudent(studentToUpdate, updatedStudent);
 
         assertCommandSuccess(command, model,
-                String.format(AddNoteCommand.MESSAGE_SUCCESS, studentToUpdate.getName()), expectedModel);
+                new CommandResult(
+                        String.format(AddNoteCommand.MESSAGE_SUCCESS, studentToUpdate.getName()),
+                        updatedStudent), expectedModel);
     }
 
     @Test
@@ -58,11 +60,18 @@ public class AddNoteCommandTest {
         model.setStudent(studentToUpdate, studentWithNote);
         AddNoteCommand command = new AddNoteCommand(INDEX_FIRST_STUDENT, NOTE);
         Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
-        expectedModel.setStudent(studentWithNote,
-                studentWithNote.withRegisteredNotes(existingNotes.withNote(NOTE)));
+        Student updatedStudent =
+                studentWithNote.withRegisteredNotes(existingNotes.withNote(NOTE));
 
-        assertCommandSuccess(command, model,
-                String.format(AddNoteCommand.MESSAGE_SUCCESS, studentToUpdate.getName()), expectedModel);
+        expectedModel.setStudent(studentWithNote, updatedStudent);
+
+        assertCommandSuccess(
+                command,
+                model,
+                new CommandResult(
+                        String.format(AddNoteCommand.MESSAGE_SUCCESS, studentToUpdate.getName()),
+                        updatedStudent),
+                expectedModel);
     }
 
     @Test
@@ -94,9 +103,19 @@ public class AddNoteCommandTest {
         Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
         AddNoteCommand command = new AddNoteCommand(INDEX_FIRST_STUDENT, NOTE);
 
-        assertCommandSuccess(command, model,
-                String.format(AddNoteCommand.MESSAGE_MAXIMUM_NOTES_REACHED,
-                        studentToUpdate.getName(), RegisteredNotes.MAX_NOTE_INDEX), expectedModel);
+        String expectedMessage = String.format(
+                AddNoteCommand.MESSAGE_MAXIMUM_NOTES_REACHED,
+                studentToUpdate.getName(),
+                RegisteredNotes.MAX_NOTE_INDEX);
+
+        Student expectedStudent =
+                model.getFilteredStudentList().get(INDEX_FIRST_STUDENT.getZeroBased());
+
+        assertCommandSuccess(
+                command,
+                model,
+                new CommandResult(expectedMessage, expectedStudent),
+                expectedModel);
     }
 
     @Test

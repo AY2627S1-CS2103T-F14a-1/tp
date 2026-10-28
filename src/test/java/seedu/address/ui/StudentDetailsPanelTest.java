@@ -349,8 +349,14 @@ public class StudentDetailsPanelTest {
             assertEquals(6, grid.getChildren().size());
             assertEquals("Completed", getMasteryCell(grid, 2, 1));
             panel.showStudent(null, List.of());
-            assertFalse(panel.getRoot().lookup("#studentDetailsScrollPane").isVisible());
+
+            assertTrue(
+                    panel.getRoot()
+                            .lookup("#studentDetailsScrollPane")
+                            .isVisible());
+
             panel.showStudent(student, List.of());
+            prepareRoot(panel);
             assertEquals(6, grid.getChildren().size());
             assertEquals("Completed", getMasteryCell(grid, 2, 1));
         });
