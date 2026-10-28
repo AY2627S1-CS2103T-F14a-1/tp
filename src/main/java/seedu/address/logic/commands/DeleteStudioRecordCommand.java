@@ -62,7 +62,8 @@ public class DeleteStudioRecordCommand extends Command {
         RegisteredStudioRecords registeredStudioRecords = studentToUpdate.getRegisteredStudioRecords();
 
         if (!registeredStudioRecords.hasStudioRecord(week)) {
-            return new CommandResult(String.format(MESSAGE_ALREADY_NOT_RECORDED, studentToUpdate.getName(), week), studentToUpdate);
+            return new CommandResult(String.format(MESSAGE_ALREADY_NOT_RECORDED, studentToUpdate.getName(), week),
+                    studentToUpdate);
         }
 
         Student updatedStudent = studentToUpdate.withRegisteredStudioRecords(

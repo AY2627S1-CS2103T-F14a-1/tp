@@ -76,7 +76,10 @@ public class EditNoteCommand extends Command {
         Student updatedStudent = studentToUpdate.withRegisteredNotes(
                 registeredNotes.editNote(noteIndex, updatedNote));
         model.setStudent(studentToUpdate, updatedStudent);
-        return new CommandResult(String.format(MESSAGE_SUCCESS, studentToUpdate.getName(), noteIndex.getOneBased()), updatedStudent);
+        return new CommandResult(String.format(MESSAGE_SUCCESS,
+                studentToUpdate.getName(),
+                noteIndex.getOneBased()),
+                updatedStudent);
     }
 
     @Override

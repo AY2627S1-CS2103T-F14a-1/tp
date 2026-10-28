@@ -63,7 +63,8 @@ public class AddNoteCommand extends Command {
             updatedNotes = registeredNotes.withNote(note);
         } catch (IllegalStateException exception) {
             return new CommandResult(String.format(
-                    MESSAGE_MAXIMUM_NOTES_REACHED, studentToUpdate.getName(), RegisteredNotes.MAX_NOTE_INDEX), studentToUpdate);
+                    MESSAGE_MAXIMUM_NOTES_REACHED, studentToUpdate.getName(), RegisteredNotes.MAX_NOTE_INDEX),
+                    studentToUpdate);
         }
         Student updatedStudent = studentToUpdate.withRegisteredNotes(updatedNotes);
         model.setStudent(studentToUpdate, updatedStudent);

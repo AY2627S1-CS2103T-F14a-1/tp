@@ -87,7 +87,8 @@ public class MarkMasteryCheckCommand extends Command {
             logger.fine("MarkMasteryCheckCommand made no changes for mastery check " + number
                     + " for student " + studentToUpdate.getName()
                     + " at displayed student index " + targetIndex.getOneBased() + ".");
-            return new CommandResult(String.format(MESSAGE_ALREADY_MARKED, studentToUpdate.getName(), number), studentToUpdate);
+            return new CommandResult(String.format(MESSAGE_ALREADY_MARKED, studentToUpdate.getName(), number),
+                    studentToUpdate);
         }
 
         Student updatedStudent = studentToUpdate.withRegisteredMasteryChecks(

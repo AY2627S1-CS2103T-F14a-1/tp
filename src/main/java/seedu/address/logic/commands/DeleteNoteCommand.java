@@ -57,13 +57,15 @@ public class DeleteNoteCommand extends Command {
         RegisteredNotes registeredNotes = studentToUpdate.getRegisteredNotes();
 
         if (!registeredNotes.hasNote(noteIndex)) {
-            return new CommandResult(String.format(MESSAGE_ALREADY_NOT_RECORDED, studentToUpdate.getName()), studentToUpdate);
+            return new CommandResult(String.format(MESSAGE_ALREADY_NOT_RECORDED, studentToUpdate.getName()),
+                    studentToUpdate);
         }
 
         Student updatedStudent = studentToUpdate.withRegisteredNotes(
                 registeredNotes.withoutNote(noteIndex));
         model.setStudent(studentToUpdate, updatedStudent);
-        return new CommandResult(String.format(MESSAGE_SUCCESS, studentToUpdate.getName(), noteIndex.getOneBased()), updatedStudent);
+        return new CommandResult(String.format(MESSAGE_SUCCESS, studentToUpdate.getName(), noteIndex.getOneBased()),
+                updatedStudent);
     }
 
     @Override

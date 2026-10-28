@@ -426,6 +426,13 @@ public class StudentDetailsPanel extends UiPart<Region> {
         grid.add(missionDetails, 0, row);
     }
 
+    /**
+     * Updates the mission-submission display for the currently displayed student.
+     *
+     * <p>If no student is currently displayed, this method does nothing.</p>
+     *
+     * @param missions updated missions to display
+     */
     public void updateMissions(List<Mission> missions) {
         if (displayedStudent == null) {
             return;
@@ -435,6 +442,11 @@ public class StudentDetailsPanel extends UiPart<Region> {
         populateMissionSubmissions(displayedStudent, displayedMissions);
     }
 
+    /**
+     * Returns the student currently displayed in the details panel.
+     *
+     * @return the displayed student, or {@code null} if no student is displayed
+     */
     public Student getDisplayedStudent() {
         return displayedStudent;
     }
