@@ -34,7 +34,7 @@ public class EditNoteCommand extends Command {
             + "INDEX must be a positive integer identifying a displayed student.\n"
             + "NOTE_INDEX must be a positive integer less than or equal to "
             + RegisteredNotes.MAX_NOTE_INDEX + " inclusive.\n"
-            + "TEXT must only contain alphanumeric characters and spaces, should not be blank, and "
+            + "TEXT must only contain alphanumeric characters, punctuation, and spaces, should not be blank, and "
             + "be less than or equal to " + Note.MAX_NOTE_LENGTH + " characters.\n"
             + "Example: " + COMMAND_WORD + " " + PREFIX_INDEX + "1 "
             + PREFIX_NOTE_INDEX + "3 " + PREFIX_NOTE_TEXT + "hello";

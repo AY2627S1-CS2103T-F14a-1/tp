@@ -198,7 +198,7 @@ Format: `addstudiorecord id/INDEX w/WEEK ef/EFFORT`
 * The week must be an integer from **0 to 13**, inclusive.
 * The effort score must be a whole number from **0 to 2147483647**, inclusive.
 * Weeks without a record shown are considered absent with an effort score of `0`.
-* Adding an existing record leaves both attendance and the effort score unchanged, even if a different score is supplied.
+* If the studio record was already recorded, the records remain unchanged.
 * The current list filter stays active.
 
 Examples:
@@ -242,14 +242,13 @@ Edit a student's studio effort for a studio week.
 
 Format: `editstudiorecord id/INDEX w/WEEK ef/EFFORT`
 
-* `INDEX` identifies a student in the **currently displayed list**, including results from `find`. It must be a positive integer that corresponds to a displayed student.
-* `WEEK` must be an integer from **0 to 13**, inclusive. AvengerHub uses these week numbers to allow tutors to flexibly mark studio records across the semester's 13 weeks. Use the actual week number as defined in the NUS student calendar.
-* Weeks outside this range, such as `-1` or `14`, are rejected with an error message. The existing studio records remain unchanged.
-* `EFFORT` is the student's effort score for that studio week. It must be a whole number from **0 to 2147483647**, inclusive. Negative numbers, decimals, non-numeric values, and values above this range are rejected without changing existing records.
-* All three arguments are required. Specify prefixes `id/`, `w/`, and `ef/` exactly once each. Extra arguments are rejected.
-* Enter `INDEX` and `WEEK` as integers without signs, decimal points, or leading zeros. For example, use `3`, not `+3`, `3.0`, or `03`.
-* The command word and the `w/` and `ef/` prefixes are case-insensitive: `EDITSTUDIORECORD id/1 W/3 EF/30` is also accepted.
-* If the studio record was initially not recorded, the records remain unchanged and a message explains that no changes were made.
+* Edits a studio record for the student at the specified `INDEX` for the specified `WEEK`, with the specified `EFFORT` score.
+* The index refers to the index number shown in the displayed student list.
+* The index **must be a positive integer** 1, 2, 3, ...
+* The week must be an integer from **0 to 13**, inclusive.
+* The effort score must be a whole number from **0 to 2147483647**, inclusive.
+* If the studio record was already not recorded, the records remain unchanged.
+* If the studio record's existing effort score is the same as the specified effort score, the records remain unchanged.
 * The current list filter stays active.
 
 Examples:

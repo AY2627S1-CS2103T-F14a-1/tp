@@ -23,7 +23,7 @@ notes and the saved data are unchanged.
 | NOTE-EDIT-001 | Run `editnote id/1 ni/1 nt/Updated lecture notes`, then view both students. | Success feedback identifies student 1 and note index 1. Index 1 has the new text, index 2 is unchanged, and student 2 is unchanged. |
 | NOTE-EDIT-002 | Run `editnote id/1 ni/1 nt/Updated lecture notes` again, then view student 1. | Same-note feedback appears. Both note texts remain unchanged. |
 | NOTE-EDIT-003 | Run `editnote id/1 ni/3 nt/Unexpected`, then view student 1. | Missing-note feedback appears. Indexes 1 and 2 remain unchanged. |
-| NOTE-EDIT-004 | Run `editnote id/1 ni/0 nt/Invalid`, `editnote id/1 ni/1 nt/Invalid!`, and `editnote id/1 ni/1`, viewing student 1 after each command. | The invalid-index, invalid-text, and missing-`nt/` messages appear respectively. No note changes. |
+| NOTE-EDIT-004 | Run `editnote id/1 ni/0 nt/Invalid`, `editnote id/1 ni/1 nt/Invalid!`, and `editnote id/1 ni/1`, viewing student 1 after each command. | The invalid-index and missing-`nt/` messages appear for the first and last commands; the middle command succeeds and stores `Invalid!`. |
 | NOTE-EDIT-005 | Run `editnote id/3 ni/1 nt/Unexpected`, then view both students. | Invalid-student-index feedback appears; neither student changes. |
 | NOTE-EDIT-006 | Run `editnote id/1 ni/1 ni/2 nt/Unexpected`, then view student 1. | Duplicate-`ni/` feedback appears. Both note texts and saved data remain unchanged. |
 | NOTE-EDIT-007 | Run `editnote id/1 ni/1 nt/Persisted update`, restart, and view student 1. | Index 1 retains `Persisted update`; index 2 and student 2 remain unchanged. |
@@ -39,7 +39,7 @@ unchanged.
 | --- | --- | --- |
 | NOTE-ADD-001 | Run `addnote id/1 nt/Review lecture notes`, then view student 1. | Success feedback names student 1. The note list contains `1: Review lecture notes`; student 2 is unchanged. |
 | NOTE-ADD-002 | Run `addnote id/1 nt/Prepare consultation`, then view student 1. | The second note is appended at index 2; index 1 remains unchanged. |
-| NOTE-ADD-003 | Run `addnote id/1 nt/Invalid!`, then view student 1. | Invalid-text feedback appears. The two existing notes remain unchanged. |
+| NOTE-ADD-003 | Run `addnote id/1 nt/Don't forget: chapter 2!`, then view student 1. | The note is accepted with its punctuation unchanged and is appended after the existing notes. |
 | NOTE-ADD-004 | Run `addnote id/1`, then `addnote id/1 nt/Valid nt/Other`, viewing student 1 after each command. | The missing-`nt/` and duplicate-`nt/` messages appear respectively. No note is added. |
 | NOTE-ADD-005 | Run `addnote id/3 nt/Invalid index`, then view both students. | Invalid-student-index feedback appears; neither student changes. |
 | NOTE-ADD-006 | Restart after NOTE-ADD-002 and view student 1. | Both notes and their insertion order are restored unchanged. |

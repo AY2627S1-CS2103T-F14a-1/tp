@@ -10,7 +10,7 @@ import seedu.address.model.student.RegisteredNotes;
 /**
  * Contains utility methods used for parsing common strings in the various Note Parser classes.
  */
-public class NoteParserUtil {
+public final class NoteParserUtil {
 
     /**
      * Parses a {@code String note index} into a {@code Index} and returns it.

@@ -34,7 +34,7 @@ public class NoteParserUtilTest {
                     NoteParserUtil.parseNoteIndex(noteIndex));
         }
         assertThrows(ParseException.class, RegisteredNotes.MESSAGE_CONSTRAINTS, () ->
-                NoteParserUtil.parseNoteIndex("11"));
+                NoteParserUtil.parseNoteIndex("1001"));
     }
 
     @Test
@@ -50,7 +50,7 @@ public class NoteParserUtilTest {
 
     @Test
     public void parseNoteText_invalidValues_throwsParseException() {
-        for (String noteText : List.of("", WHITESPACE, "Review!", "a".repeat(Note.MAX_NOTE_LENGTH + 1))) {
+        for (String noteText : List.of("", WHITESPACE, "a".repeat(Note.MAX_NOTE_LENGTH + 1))) {
             assertThrows(ParseException.class, Note.MESSAGE_CONSTRAINTS, () -> NoteParserUtil.parseNoteText(noteText));
         }
     }

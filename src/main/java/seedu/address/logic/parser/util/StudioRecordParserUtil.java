@@ -8,10 +8,11 @@ import seedu.address.logic.parser.exceptions.ParseException;
 /**
  * Contains utility methods used for parsing strings in the various Studio Record Parser classes.
  */
-public class StudioRecordParserUtil {
+public final class StudioRecordParserUtil {
 
-    public static final String MESSAGE_INVALID_EFFORT = "Effort score must be a positive integer.";
-    public static final String MESSAGE_INVALID_WEEK = "Week must be a positive integer.";
+    public static final String MESSAGE_INVALID_EFFORT = "Effort score must be a non-negative unsigned integer "
+            + "up to 2147483647.";
+    public static final String MESSAGE_INVALID_WEEK = "Week must be a value between 0 and 13.";
 
     /**
      * Parses a {@code String} into a {@code int} week value.
