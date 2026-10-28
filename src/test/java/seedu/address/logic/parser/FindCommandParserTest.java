@@ -243,4 +243,33 @@ public class FindCommandParserTest {
 
         assertEquals(previousResults, model.getFilteredStudentList());
     }
+
+    @Test
+    public void execute_repeatedWordsAndAlternatives_filtersWithoutChangingRecords() throws ParseException {
+        Student alex = new StudentBuilder().withName("Alex Yeoh").withStudioGroup("1A").build();
+        Student repeatedAlex = new StudentBuilder().withName("Alex Alexander").withStudioGroup("1A").build();
+        Student repeatedAlexOtherGroup =
+                new StudentBuilder().withName("Alex Alex").withStudioGroup("1B").build();
+        Student betsy = new StudentBuilder().withName("Betsy Crowe").withStudioGroup("1A").build();
+        AddressBook addressBook = new AddressBook();
+        addressBook.addStudent(alex);
+        addressBook.addStudent(repeatedAlex);
+        addressBook.addStudent(repeatedAlexOtherGroup);
+        addressBook.addStudent(betsy);
+        Model model = new ModelManager(addressBook, new UserPrefs());
+
+        CommandResult repeatedResult = parser.parse("  ALEX \t alex  ").execute(model);
+        assertEquals("2 student(s) listed!", repeatedResult.getFeedbackToUser());
+        assertEquals(List.of(repeatedAlex, repeatedAlexOtherGroup), model.getFilteredStudentList());
+
+        parser.parse("alex, alex").execute(model);
+        assertEquals(List.of(alex, repeatedAlex, repeatedAlexOtherGroup), model.getFilteredStudentList());
+
+        CommandResult groupedResult = parser.parse("alex alex, betsy g/1A").execute(model);
+        assertEquals("2 student(s) listed!", groupedResult.getFeedbackToUser());
+        assertEquals(List.of(repeatedAlex, betsy), model.getFilteredStudentList());
+
+        assertEquals(List.of(alex, repeatedAlex, repeatedAlexOtherGroup, betsy),
+                model.getAddressBook().getStudentList());
+    }
 }
