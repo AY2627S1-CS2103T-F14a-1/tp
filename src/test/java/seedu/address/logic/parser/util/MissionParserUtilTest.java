@@ -3,8 +3,8 @@ package seedu.address.logic.parser.util;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static seedu.address.logic.parser.util.ParserUtilTest.WHITESPACE;
 import static seedu.address.testutil.Assert.assertThrows;
+import static seedu.address.testutil.TestUtil.WHITESPACE;
 
 import java.time.LocalDate;
 import java.util.List;
