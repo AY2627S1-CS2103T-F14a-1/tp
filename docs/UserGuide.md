@@ -130,11 +130,11 @@ For example, viewing Amy Lee displays the feedback:
 Showing profile of Amy Lee
 ```
 
-### Editing a student: `edit`
+### Editing a student: `editstudent`
 
 Edits an existing student in the address book.
 
-Format: `edit id/INDEX [n/NAME] [p/PHONE] [e/EMAIL] [t/TAG]... [g/STUDIO_GROUP]`
+Format: `editstudent id/INDEX [n/NAME] [p/PHONE] [e/EMAIL] [t/TAG]... [g/STUDIO_GROUP]`
 
 * Edits the student at the specified `INDEX`. The index refers to the index number shown in the displayed student list. The index **must be a positive integer** 1, 2, 3, ...
 * At least one of the optional fields must be provided.
@@ -143,8 +143,8 @@ Format: `edit id/INDEX [n/NAME] [p/PHONE] [e/EMAIL] [t/TAG]... [g/STUDIO_GROUP]`
 * To remove all of a student's tags, enter `t/` without a tag after it.
 
 Examples:
-*  `edit id/1 p/91234567 e/johndoe@example.com` Edits the phone number and email address of the 1st student to be `91234567` and `johndoe@example.com` respectively.
-*  `edit id/2 n/Betsy Crower t/` Edits the name of the 2nd student to be `Betsy Crower` and clears all existing tags.
+*  `editstudent id/1 p/91234567 e/johndoe@example.com` Edits the phone number and email address of the 1st student to be `91234567` and `johndoe@example.com` respectively.
+*  `editstudent id/2 n/Betsy Crower t/` Edits the name of the 2nd student to be `Betsy Crower` and clears all existing tags.
 
 ### Locating students by name: `find`
 
@@ -661,7 +661,7 @@ Action     | Format, Examples
 **Add student**    | `addstudent n/NAME p/PHONE_NUMBER e/EMAIL [t/TAG]... g/STUDIO_GROUP` <br> e.g., `addstudent n/James Ho p/22224444 e/jamesho@example.com  t/smart t/talkative g/1A` 
 **Delete student** | `delstudent id/INDEX`<br> e.g., `delstudent id/3`                                                                                                                     
 **View student** | `view id/INDEX`<br> e.g., `view id/1`                                                                                                                                 
-**Edit student**   | `edit id/INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [t/TAG]... [g/STUDIO_GROUP]`<br> e.g.,`edit id/2 n/James Lee e/jameslee@example.com g/1A`                       
+**Edit student**   | `editstudent id/INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [t/TAG]... [g/STUDIO_GROUP]`<br> e.g.,`editstudent id/2 n/James Lee e/jameslee@example.com g/1A`                       
 **Add studio record** | `addstudiorecord id/INDEX w/WEEK ef/EFFORT`<br> e.g., `addstudiorecord id/1 w/3 ef/30`                                                                             
 **Delete studio record** | `delstudiorecord id/INDEX w/WEEK`<br> e.g., `delstudiorecord id/1 w/3`                                                                                             
 **Edit studio record** | `editstudiorecord id/INDEX w/WEEK ef/EFFORT`<br> e.g., `editstudiorecord id/1 w/3 ef/30`                                                                           

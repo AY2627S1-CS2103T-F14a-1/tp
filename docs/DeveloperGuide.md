@@ -859,9 +859,9 @@ testers are expected to do more *exploratory* testing.
    Expected: The student is added. Enter
    `addstudent n/Casey Test p/98765432 e/casey@example.com g/2B`.
    Expected: The duplicate student is rejected. Enter
-   `edit id/1 p/91234567 g/2B t/updated`, then `view id/1`.
+   `editstudent id/1 p/91234567 g/2B t/updated`, then `view id/1`.
    Expected: The selected student's phone, group, and tags are updated.
-   Enter `edit id/0 p/91234567`.
+   Enter `editstudent id/0 p/91234567`.
    Expected: An error is shown and no student is changed.
 
 1. With multiple students shown, enter `delstudent id/1`, then `delstudent id/0`.
