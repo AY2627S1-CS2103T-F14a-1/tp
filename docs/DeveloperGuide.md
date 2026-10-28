@@ -245,6 +245,26 @@ After any of these commands returns successfully, `LogicManager` calls `Storage.
 
 Parsing and command-validation failures exit before the saving step. If saving itself fails, `LogicManager` reports a `CommandException`; the in-memory change has already occurred and is not rolled back. On loading, storage validates the catalogue and requires saved submission IDs to refer to existing missions.
 
+### Listing the mission catalogue
+
+For `listmissions`, `AddressBookParser` delegates to
+`ListMissionsCommandParser`. Blank arguments produce a
+`ListMissionCatalogueCommand`; nonblank arguments must specify a valid
+mission ID and produce the existing `ListMissionsCommand`.
+
+`ListMissionCatalogueCommand` reads `Model#getMissionList()`, sorts the
+displayed missions by numeric mission ID, and formats each mission using
+`Messages#format(...)`. Sorting does not change the stored catalogue order.
+
+The command returns catalogue details through `CommandResult`, or
+`No missions configured.` when the catalogue is empty. The catalogue is
+independent of the current student filter. Student records, submission
+records, mission definitions, and the filter remain unchanged.
+
+Separate command classes keep catalogue listing independent from
+student-submission listing and preserve the requirement that
+`ListMissionsCommand` always has a non-null mission ID.
+
 ### Viewing mission submission statuses
 
 For `viewmission m/MISSION_ID [s/overdue]`, `AddressBookParser` delegates to `ViewMissionCommandParser`. The parser reuses `ArgumentStructureValidator#validateStructureWithOptionals(...)` to require exactly one mission prefix and allow at most one status prefix.
@@ -642,7 +662,29 @@ submission records, or the current student filter.
 Student records, mission definitions, submission records, and the current
 student filter remain unchanged throughout this use case.
 
-**Use case: List mission submissions**
+**Use case: List all configured missions**
+
+**MSS**
+
+1. Tutor requests the mission catalogue.
+2. AvengerHub displays every configured mission's ID, name, and deadline
+   in ascending numeric ID order.
+
+   Use case ends.
+
+**Extensions**
+
+* 2a. No missions are configured.
+
+    * 2a1. AvengerHub informs the tutor that no missions are configured.
+
+      Use case ends.
+
+The catalogue includes all configured missions regardless of the current
+student filter. Student records, mission definitions, submission records,
+and the current student filter remain unchanged.
+
+**Use case: List specific mission submissions**
 
 **MSS**
 
@@ -912,6 +954,18 @@ testers are expected to do more *exploratory* testing.
    Expected: The appointment is removed.
 
 ### Mission catalogue and submission reports
+
+1. Enter `listmissions`.
+   Expected: All configured missions appear with their IDs, names, and
+   deadlines in ascending numeric ID order.
+   Enter `find g/1A`, followed by `listmissions`.
+   Expected: The same complete catalogue appears; the student filter
+   remains restricted to group 1A.
+
+1. Enter `listmissions m/`.
+   Expected: Mission ID constraint feedback appears.
+   Enter `listmissions` again.
+   Expected: The catalogue and student filter remain unchanged.
 
 1. Enter `addmission m/M10 n/Manual Test d/2026-11-30`, followed by
    `addmission m/M11 n/manual   test d/2026-11-30`.
