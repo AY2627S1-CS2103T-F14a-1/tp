@@ -311,8 +311,9 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 | `* * *`  | TA                             | search for a student by name                                             | quickly find them without scrolling through the whole list                           |
 | `* * *`  | TA                             | edit a student's information                                             | keep my records accurate when their information changes                              |
 | `* * *`  | TA with multiple studio groups | see a combined view of all students across my groups                     | get a holistic view of my overall workload                                           |
-| `* * *`  | TA                             | mark a student as present or absent for a studio                  | maintain an accurate studio record                                               |
-| `* * *`  | TA                             | mark whether a student submitted a given mission                         | track completion without cross-checking another system                               |
+| `* * *`  | TA                             | mark a student as present or absent for a studio                  | maintain an accurate studio record                                                   |
+| `* * *`  | TA                             | add or delete shared missions                                           | manage the missions students need to complete                                        |
+| `* * *`  | TA                             | mark or unmark a student's mission submission                            | see who has submitted each mission                                                   |
 | `* * *`  | TA                             | record a student's mark for a given assessment                           | keep their performance data alongside other student records                          |
 | `* * *`  | TA with multiple studio groups | see which studio group a student belongs to                              | avoid mixing up students across studio groups                                        |
 | `* *`    | TA                             | view a summary of a student's studio records, participation, and submissions | understand their overall engagement without checking multiple records                |
