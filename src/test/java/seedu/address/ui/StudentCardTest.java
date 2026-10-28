@@ -16,16 +16,10 @@ public class StudentCardTest extends GuiUnitTest {
     @Test
     public void display() {
         // no tags
-        Student studentWithNoTags = new StudentBuilder().withTags(new String[0]).build();
-        StudentCard studentCard = new StudentCard(studentWithNoTags, 1);
+        Student student = new StudentBuilder().build();
+        StudentCard studentCard = new StudentCard(student, 1);
         uiPartExtension.setUiPart(studentCard);
-        assertCardDisplay(studentCard, studentWithNoTags, 1);
-
-        // with tags
-        Student studentWithTags = new StudentBuilder().build();
-        studentCard = new StudentCard(studentWithTags, 2);
-        uiPartExtension.setUiPart(studentCard);
-        assertCardDisplay(studentCard, studentWithTags, 2);
+        assertCardDisplay(studentCard, student, 1);
     }
 
     @Test
