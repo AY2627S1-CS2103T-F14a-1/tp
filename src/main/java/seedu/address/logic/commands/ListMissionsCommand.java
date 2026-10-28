@@ -50,7 +50,7 @@ public class ListMissionsCommand extends Command {
      * Lists submitted students without modifying records or the student filter.
      *
      * @param model Model containing the mission and displayed students.
-     * @return Feedback retaining the displayed student indexes.
+     * @return Feedback listing student names and studio groups with their displayed indexes.
      * @throws CommandException If the mission does not exist.
      * @throws NullPointerException If the model is null.
      */
@@ -66,7 +66,8 @@ public class ListMissionsCommand extends Command {
         for (int index = 0; index < lastShownList.size(); index++) {
             Student student = lastShownList.get(index);
             if (student.getMissionSubmissions().hasSubmission(missionId)) {
-                submissionRows.add((index + 1) + ". " + student.getName());
+                submissionRows.add((index + 1) + ". " + student.getName()
+                        + " | Studio group: " + student.getStudioGroup());
             }
         }
 

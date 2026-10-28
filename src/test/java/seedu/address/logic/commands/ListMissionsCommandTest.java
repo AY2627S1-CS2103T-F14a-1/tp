@@ -35,6 +35,7 @@ public class ListMissionsCommandTest {
         model.addMission(MISSION_ID, "Rune Reading", LocalDate.of(2026, 10, 20));
         john = new StudentBuilder().withName("John Doe").build();
         betsy = new StudentBuilder().withName("Betsy Crowe")
+                .withStudioGroup("1A")
                 .withMissionSubmissions("M01").build();
         model.addStudent(john);
         model.addStudent(betsy);
@@ -46,7 +47,7 @@ public class ListMissionsCommandTest {
 
         assertCommandSuccess(new ListMissionsCommand(MISSION_ID), model,
                 "Submissions for M01 · Rune Reading (Due: 2026-10-20)"
-                        + " (current student list):\n2. Betsy Crowe",
+                        + " (current student list):\n2. Betsy Crowe | Studio group: 1A",
                 expectedModel);
     }
 
@@ -58,7 +59,23 @@ public class ListMissionsCommandTest {
 
         assertCommandSuccess(new ListMissionsCommand(MISSION_ID), model,
                 "Submissions for M01 · Rune Reading (Due: 2026-10-20)"
-                        + " (current student list):\n1. Betsy Crowe",
+                        + " (current student list):\n1. Betsy Crowe | Studio group: 1A",
+                expectedModel);
+    }
+
+    @Test
+    public void execute_submittedStudentsInDifferentGroups_showsEachStudentsGroup() {
+        Student brian = new StudentBuilder().withName("Brian Lim")
+                .withStudioGroup("1B")
+                .withMissionSubmissions("M01").build();
+        model.addStudent(brian);
+        Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
+
+        assertCommandSuccess(new ListMissionsCommand(MISSION_ID), model,
+                "Submissions for M01 · Rune Reading (Due: 2026-10-20)"
+                        + " (current student list):\n"
+                        + "2. Betsy Crowe | Studio group: 1A\n"
+                        + "3. Brian Lim | Studio group: 1B",
                 expectedModel);
     }
 

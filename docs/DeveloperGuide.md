@@ -245,6 +245,14 @@ After any of these commands returns successfully, `LogicManager` calls `Storage.
 
 Parsing and command-validation failures exit before the saving step. If saving itself fails, `LogicManager` reports a `CommandException`; the in-memory change has already occurred and is not rolled back. On loading, storage validates the catalogue and requires saved submission IDs to refer to existing missions.
 
+### Listing mission submissions
+
+`ListMissionsCommand` checks recorded submissions within
+`Model#getFilteredStudentList()`. Each matching row includes the student's
+displayed index, name, and studio group, obtained from
+`Student#getStudioGroup()`. Hidden students are excluded, and the command
+does not modify student records or the current filter.
+
 ### Listing the mission catalogue
 
 For `listmissions`, `AddressBookParser` delegates to
@@ -692,7 +700,8 @@ and the current student filter remain unchanged.
 2. AvengerHub displays the requested student list.
 3. Tutor requests to list submissions for a specified mission ID.
 4. AvengerHub displays the students in the current list who have a recorded
-   submission for that mission, retaining their displayed student indexes.
+   submission for that mission, including each student's name and studio
+   group and their displayed student indexes.
 
    Use case ends.
 

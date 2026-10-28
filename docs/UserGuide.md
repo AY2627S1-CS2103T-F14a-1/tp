@@ -569,6 +569,8 @@ Format: `listmissions [m/MISSION_ID]`
 * Supply exactly one `m/` prefix and an existing mission ID; prefix matching ignores letter case.
 * The command word and mission ID are case-insensitive.
 * Students hidden by `find` are excluded.
+* Submission results include each student's name and studio group.
+  For example, `2. Betsy Crowe | Studio group: 1A`.
 * Result numbers retain the indexes in the displayed student list.
   A result numbered `3` can therefore be inspected using `view id/3`.
 * The student filter, submission records, and mission catalogue are unchanged.
