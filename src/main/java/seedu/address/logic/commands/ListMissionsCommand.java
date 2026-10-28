@@ -23,9 +23,11 @@ public class ListMissionsCommand extends Command {
     public static final String COMMAND_WORD = "listmissions";
 
     public static final String MESSAGE_USAGE = COMMAND_WORD
-            + ": Lists submitted students within the current student list.\n"
-            + "Parameters: " + PREFIX_MISSION + "MISSION_ID\n"
-            + "Example: " + COMMAND_WORD + " " + PREFIX_MISSION + "M01";
+            + ": Lists configured missions, or submitted students for a mission.\n"
+            + "Parameters: [" + PREFIX_MISSION + "MISSION_ID]\n"
+            + "Without parameters: lists all configured missions.\n"
+            + "With a mission ID: lists submitted students within the current student list.\n"
+            + "Examples: " + COMMAND_WORD + "; " + COMMAND_WORD + " " + PREFIX_MISSION + "M01";
 
     public static final String MESSAGE_SUCCESS =
             "Submissions for %1$s (current student list):\n%2$s";

@@ -28,7 +28,6 @@ import seedu.address.logic.commands.DeleteStudentCommand;
 import seedu.address.logic.commands.DeleteStudioRecordCommand;
 import seedu.address.logic.commands.EditNoteCommand;
 import seedu.address.logic.commands.EditStudioRecordCommand;
-import seedu.address.logic.commands.ListMissionsCommand;
 import seedu.address.logic.commands.MarkMasteryCheckCommand;
 import seedu.address.logic.commands.MarkMissionCommand;
 import seedu.address.logic.commands.UnmarkMasteryCheckCommand;
@@ -63,8 +62,6 @@ public class RequiredPrefixCommandParserTest {
                 List.of(PREFIX_INDEX), List.of("1"));
         verifyRequiredPrefixes(new ViewCommandParser(), ViewCommand.MESSAGE_USAGE, List.of(PREFIX_INDEX), List.of("1"));
         verifyRequiredPrefixes(new DeleteMissionCommandParser(), DeleteMissionCommand.MESSAGE_USAGE,
-                List.of(PREFIX_MISSION), List.of("M01"));
-        verifyRequiredPrefixes(new ListMissionsCommandParser(), ListMissionsCommand.MESSAGE_USAGE,
                 List.of(PREFIX_MISSION), List.of("M01"));
         verifyRequiredPrefixes(new AddMissionCommandParser(), AddMissionCommand.MESSAGE_USAGE,
                 List.of(PREFIX_MISSION, CliSyntax.PREFIX_NAME, CliSyntax.PREFIX_DATE),

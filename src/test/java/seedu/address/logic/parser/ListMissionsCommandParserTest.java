@@ -1,6 +1,7 @@
 package seedu.address.logic.parser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
@@ -9,11 +10,12 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import seedu.address.logic.commands.ListMissionCatalogueCommand;
 import seedu.address.logic.commands.ListMissionsCommand;
 import seedu.address.model.mission.MissionId;
 
 /**
- * Tests mission ID parsing and submission-list command routing.
+ * Tests catalogue routing and mission ID parsing for submission listing.
  */
 public class ListMissionsCommandParserTest {
 
@@ -33,11 +35,15 @@ public class ListMissionsCommandParserTest {
     }
 
     @Test
-    public void parse_missingMissionId_reportsMissingMission() {
-        for (String input : List.of("", " ")) {
-            assertParseFailure(parser, input,
-                CliSyntax.PREFIX_MISSION.getMissingMessage() + USAGE_SUFFIX);
+    public void parse_blankArguments_returnsCatalogueCommand() throws Exception {
+        for (String input : List.of("", " ", "\t")) {
+            assertInstanceOf(ListMissionCatalogueCommand.class, parser.parse(input));
         }
+
+        assertInstanceOf(ListMissionCatalogueCommand.class,
+                new AddressBookParser().parseCommand("listmissions"));
+        assertInstanceOf(ListMissionCatalogueCommand.class,
+                new AddressBookParser().parseCommand("  LISTMISSIONS \t "));
     }
 
     @Test
