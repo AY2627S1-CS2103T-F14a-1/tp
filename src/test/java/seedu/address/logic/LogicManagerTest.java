@@ -419,7 +419,8 @@ public class LogicManagerTest {
         model.addStudent(BOB);
         JsonAddressBookStorage storage = new JsonAddressBookStorage(temporaryFolder.resolve("addressBook.json"));
         List<String> commands = List.of("addstudiorecord id/1 w/3 ef/50", "delstudiorecord id/1 w/3",
-                "markmission id/1 m/M01", "unmarkmission id/1 m/M01", "editstudent id/1 p/91234567", "delmission m/M01");
+                "markmission id/1 m/M01", "unmarkmission id/1 m/M01",
+                "editstudent id/1 p/91234567", "delmission m/M01");
         List<Student> expectedStudents = List.of(
                 new StudentBuilder(original).withStudioRecords(new StudioRecordSet(3, new StudioRecord(50))).build(),
                 original, new StudentBuilder(original).withMissionSubmissions("M01").build(), original,
