@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import seedu.address.logic.Messages;
 import seedu.address.logic.commands.ViewMissionCommand;
+import seedu.address.logic.parser.util.MissionParserUtil;
 import seedu.address.model.mission.MissionId;
 
 /**

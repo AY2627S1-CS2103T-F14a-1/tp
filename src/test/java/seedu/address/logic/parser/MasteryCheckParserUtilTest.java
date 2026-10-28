@@ -12,6 +12,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.logic.parser.util.MasteryCheckParserUtil;
 import seedu.address.model.student.RegisteredMasteryChecks;
 
 public class MasteryCheckParserUtilTest {

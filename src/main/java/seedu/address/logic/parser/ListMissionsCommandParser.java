@@ -5,6 +5,7 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_MISSION;
 
 import seedu.address.logic.commands.ListMissionsCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.logic.parser.util.MissionParserUtil;
 import seedu.address.model.mission.MissionId;
 
 /**

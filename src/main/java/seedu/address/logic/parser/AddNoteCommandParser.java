@@ -7,6 +7,8 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_NOTE_TEXT;
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.AddNoteCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.logic.parser.util.NoteParserUtil;
+import seedu.address.logic.parser.util.ParserUtil;
 import seedu.address.model.student.Note;
 
 /**

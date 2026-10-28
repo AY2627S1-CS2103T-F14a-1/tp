@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Test;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.logic.parser.util.NoteParserUtil;
+import seedu.address.logic.parser.util.ParserUtil;
 import seedu.address.model.student.Note;
 import seedu.address.model.student.RegisteredNotes;
 

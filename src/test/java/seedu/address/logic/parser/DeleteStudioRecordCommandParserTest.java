@@ -4,12 +4,13 @@ import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_WEEK;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
-import static seedu.address.logic.parser.StudioRecordParserUtil.MESSAGE_INVALID_WEEK;
+import static seedu.address.logic.parser.util.StudioRecordParserUtil.MESSAGE_INVALID_WEEK;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_STUDENT;
 
 import org.junit.jupiter.api.Test;
 
 import seedu.address.logic.commands.DeleteStudioRecordCommand;
+import seedu.address.logic.parser.util.ParserUtil;
 
 /**
  * Tests argument structure and value-parser integration for delstudiorecord.

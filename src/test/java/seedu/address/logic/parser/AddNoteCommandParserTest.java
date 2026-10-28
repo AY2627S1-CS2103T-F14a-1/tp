@@ -11,6 +11,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import seedu.address.logic.commands.AddNoteCommand;
+import seedu.address.logic.parser.util.ParserUtil;
 import seedu.address.model.student.Note;
 
 /** Tests parsing arguments for {@link AddNoteCommand}. */
