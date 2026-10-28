@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import seedu.address.logic.commands.ListMissionCatalogueCommand;
 import seedu.address.logic.commands.ListMissionsCommand;
 import seedu.address.model.mission.MissionId;
+import seedu.address.model.mission.MissionSubmissionStatus;
 
 /**
  * Tests catalogue routing and mission ID parsing for submission listing.
@@ -66,5 +67,31 @@ public class ListMissionsCommandParserTest {
     public void parse_duplicateMissionPrefix_reportsDuplicateField() {
         assertParseFailure(parser, "m/M01 m/M02",
                 CliSyntax.PREFIX_MISSION.getDuplicateMessage() + USAGE_SUFFIX);
+    }
+
+    @Test
+    public void parse_validStatusFilter_returnsFilteredCommand() {
+        MissionId missionId = new MissionId("M01");
+
+        assertParseSuccess(parser, "m/M01 s/submitted",
+                ListMissionsCommand.withStatus(missionId, MissionSubmissionStatus.SUBMITTED));
+        assertParseSuccess(parser, "S/OVERDUE M/m01",
+                ListMissionsCommand.withStatus(missionId, MissionSubmissionStatus.OVERDUE));
+    }
+
+    @Test
+    public void parse_invalidStatusFilter_reportsStatusConstraint() {
+        String expectedMessage = ListMissionsCommandParser.MESSAGE_INVALID_STATUS + USAGE_SUFFIX;
+
+        for (String input : List.of("m/M01 s/", "m/M01 s/unknown",
+                "m/M01 s/not_submitted", "m/M01 s/submitted extra")) {
+            assertParseFailure(parser, input, expectedMessage);
+        }
+    }
+
+    @Test
+    public void parse_duplicateStatusPrefix_reportsDuplicateField() {
+        assertParseFailure(parser, "m/M01 s/submitted s/overdue",
+                CliSyntax.PREFIX_STATUS.getDuplicateMessage() + USAGE_SUFFIX);
     }
 }

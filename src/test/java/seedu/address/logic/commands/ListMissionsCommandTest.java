@@ -10,6 +10,7 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,6 +19,7 @@ import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.UserPrefs;
 import seedu.address.model.mission.MissionId;
+import seedu.address.model.mission.MissionSubmissionStatus;
 import seedu.address.model.student.Student;
 import seedu.address.testutil.StudentBuilder;
 
@@ -159,6 +161,73 @@ public class ListMissionsCommandTest {
     @Test
     public void constructor_nullClock_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> new ListMissionsCommand(MISSION_ID, null));
+    }
+
+    @Test
+    public void execute_submittedFilter_preservesDisplayedIndexAndRecords() {
+        Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
+
+        assertCommandSuccess(new ListMissionsCommand(
+                        MISSION_ID, CLOCK, Optional.of(MissionSubmissionStatus.SUBMITTED)), model,
+                "Submission statuses for M01 · Rune Reading (Due: 2026-10-20)"
+                        + " (current student list):\n"
+                        + "2. Betsy Crowe | Studio group: 1A | Submitted",
+                expectedModel);
+    }
+
+    @Test
+    public void execute_overdueFilter_excludesRecordedSubmissions() {
+        Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
+
+        assertCommandSuccess(new ListMissionsCommand(
+                        MISSION_ID, CLOCK, Optional.of(MissionSubmissionStatus.OVERDUE)), model,
+                "Submission statuses for M01 · Rune Reading (Due: 2026-10-20)"
+                        + " (current student list):\n"
+                        + "1. John Doe | Studio group: 1A | Overdue",
+                expectedModel);
+    }
+
+    @Test
+    public void execute_overdueFilterOnDeadline_reportsNoMatches() {
+        Clock todayClock = Clock.fixed(
+                Instant.parse("2026-10-20T12:00:00Z"), ZoneOffset.UTC);
+        Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
+
+        assertCommandSuccess(new ListMissionsCommand(
+                        MISSION_ID, todayClock, Optional.of(MissionSubmissionStatus.OVERDUE)), model,
+                "Submission statuses for M01 · Rune Reading (Due: 2026-10-20)"
+                        + " (current student list):\n"
+                        + "No submissions match the selected status.",
+                expectedModel);
+    }
+
+    @Test
+    public void execute_submittedFilterWithHiddenSubmitter_preservesStudentFilter() {
+        model.updateFilteredStudentList(student -> student.equals(john));
+        Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
+        expectedModel.updateFilteredStudentList(student -> student.equals(john));
+
+        assertCommandSuccess(new ListMissionsCommand(
+                        MISSION_ID, CLOCK, Optional.of(MissionSubmissionStatus.SUBMITTED)), model,
+                "Submission statuses for M01 · Rune Reading (Due: 2026-10-20)"
+                        + " (current student list):\n"
+                        + "No submissions match the selected status.",
+                expectedModel);
+    }
+
+    @Test
+    public void equals_differentStatusFilters_returnsFalse() {
+        ListMissionsCommand submitted = ListMissionsCommand.withStatus(
+                MISSION_ID, MissionSubmissionStatus.SUBMITTED);
+        ListMissionsCommand same = ListMissionsCommand.withStatus(
+                MISSION_ID, MissionSubmissionStatus.SUBMITTED);
+        ListMissionsCommand overdue = ListMissionsCommand.withStatus(
+                MISSION_ID, MissionSubmissionStatus.OVERDUE);
+
+        assertEquals(submitted, same);
+        assertEquals(submitted.hashCode(), same.hashCode());
+        assertNotEquals(submitted, overdue);
+        assertNotEquals(submitted, new ListMissionsCommand(MISSION_ID));
     }
 
     @Test
