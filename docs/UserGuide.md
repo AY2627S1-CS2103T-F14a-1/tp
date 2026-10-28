@@ -155,6 +155,11 @@ Format: `find [NAME_WORDS [, MORE_NAME_WORDS]...] [g/STUDIO_GROUP]...`
 * Provide at least one name alternative or studio group.
 * Name matching is case-insensitive and allows partial matches.
 * Spaces mean AND: `alex lee` requires both words, in any order.
+* Repeating a word within an alternative requires separate, non-overlapping
+  occurrences, ignoring case. For example, `alex alex` matches `Alex Alex`
+  and `Alex Alexander`, but not `Alex Yeoh`.
+* Comma-separated alternatives are independent: `alex, alex` has the same
+  effect as `alex`.
 * Commas mean OR: `alex lee, brian` matches both `alex` and `lee`,
   or matches `brian`.
 * Spaces around commas are optional.
