@@ -172,6 +172,77 @@ public class MainWindowTest {
         });
     }
 
+    @Test
+    public void filteredStudentList_updatedStudentStillVisible_refreshesDetails()
+            throws Exception {
+        runOnJavaFxThread(() -> {
+            TestContext context = createTestContext();
+            Logic logic = context.logic;
+            Model model = context.model;
+
+            MainWindow mainWindow = createMainWindow(logic);
+            mainWindow.fillInnerParts();
+
+            Student original = model.getFilteredStudentList().getFirst();
+
+            mainWindow.getStudentListPanel()
+                    .getStudentListView()
+                    .getSelectionModel()
+                    .select(original);
+
+            Student updated = new StudentBuilder(original)
+                    .withPhone("99999999")
+                    .build();
+
+            model.setStudent(original, updated);
+
+            try {
+                assertEquals(
+                        updated,
+                        getStudentDetailsPanel(mainWindow)
+                                .getDisplayedStudent());
+            } catch (Exception exception) {
+                throw new RuntimeException(exception);
+            }
+        });
+    }
+
+    @Test
+    public void selectingDifferentStudent_updatesDetailsPanel()
+            throws Exception {
+        runOnJavaFxThread(() -> {
+            TestContext context = createTestContext();
+            Logic logic = context.logic;
+
+            MainWindow mainWindow = createMainWindow(logic);
+            mainWindow.fillInnerParts();
+
+            Student firstStudent =
+                    logic.getFilteredStudentList().get(0);
+            Student secondStudent =
+                    logic.getFilteredStudentList().get(1);
+
+            mainWindow.getStudentListPanel()
+                    .getStudentListView()
+                    .getSelectionModel()
+                    .select(firstStudent);
+
+            mainWindow.getStudentListPanel()
+                    .getStudentListView()
+                    .getSelectionModel()
+                    .select(secondStudent);
+
+            try {
+                assertEquals(
+                        secondStudent,
+                        getStudentDetailsPanel(mainWindow)
+                                .getDisplayedStudent());
+            } catch (Exception exception) {
+                throw new RuntimeException(exception);
+            }
+        });
+    }
+
     /**
      * Creates a logic component using the same typical students used by the
      * existing command tests.

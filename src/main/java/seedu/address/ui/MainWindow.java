@@ -4,6 +4,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.logging.Logger;
 
+import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -190,17 +191,24 @@ public class MainWindow extends UiPart<Stage> {
                         return;
                     }
 
-                    displayedStudents.stream()
+                    Student updatedStudent = displayedStudents.stream()
                             .filter(student ->
                                     student.getName().equals(
                                             displayedStudent.getName()))
                             .findFirst()
-                            .ifPresentOrElse(
-                                    updatedStudent ->
-                                            studentDetailsPanel.showStudent(
-                                                    updatedStudent,
-                                                    logic.getMissions()),
-                                    studentDetailsPanel::clearStudent);
+                            .orElse(null);
+
+                    if (updatedStudent == null) {
+                        studentDetailsPanel.clearStudent();
+                        Platform.runLater(() ->
+                                studentListPanel.getStudentListView()
+                                        .getSelectionModel()
+                                        .clearSelection());
+                    } else if (updatedStudent != displayedStudent) {
+                        studentDetailsPanel.showStudent(
+                                updatedStudent,
+                                logic.getMissions());
+                    }
                 });
 
         studentDetailsPanelPlaceholder.getChildren()
@@ -304,13 +312,27 @@ public class MainWindow extends UiPart<Stage> {
             }
 
             commandResult.getStudentToView().ifPresent(student -> {
-                studentListPanel.getStudentListView()
-                        .getSelectionModel()
-                        .select(student);
+                boolean studentStillVisible = logic.getFilteredStudentList()
+                        .stream()
+                        .anyMatch(filteredStudent ->
+                                filteredStudent.getName().equals(
+                                        student.getName()));
 
-                studentDetailsPanel.showStudent(
-                        student,
-                        logic.getMissions());
+                if (studentStillVisible) {
+                    studentListPanel.getStudentListView()
+                            .getSelectionModel()
+                            .select(student);
+
+                    studentDetailsPanel.showStudent(
+                            student,
+                            logic.getMissions());
+                } else {
+                    studentDetailsPanel.clearStudent();
+
+                    studentListPanel.getStudentListView()
+                            .getSelectionModel()
+                            .clearSelection();
+                }
             });
 
             if (commandResult.isShowHelp()) {

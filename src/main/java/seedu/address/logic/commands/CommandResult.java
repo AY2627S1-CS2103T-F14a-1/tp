@@ -206,7 +206,7 @@ public class CommandResult {
         List<String> updatedWarnings = new ArrayList<>(warnings);
         updatedWarnings.add(warning);
         return new CommandResult(
-                feedbackToUser, showHelp, exit, studentToView, updatedWarnings, missions);
+                feedbackToUser, showHelp, exit, studentToView, updatedWarnings, missions, missionsUpdated);
     }
 
     /**

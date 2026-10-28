@@ -206,4 +206,64 @@ public class CommandResultTest {
         assertEquals(List.of(mission), result.getMissions());
         assertTrue(result.isMissionUpdated());
     }
+
+    @Test
+    public void withWarning_preservesMissionUpdatedFlag() {
+        CommandResult original = new CommandResult(
+                "Mission updated",
+                null,
+                List.of(),
+                true);
+
+        CommandResult result =
+                original.withWarning("A warning");
+
+        assertTrue(result.isMissionUpdated());
+        assertEquals(
+                List.of("A warning"),
+                result.getWarnings());
+    }
+
+    @Test
+    public void withWarning_preservesMissionNotUpdatedFlag() {
+        CommandResult original = new CommandResult(
+                "No mission update",
+                null,
+                List.of(),
+                false);
+
+        CommandResult result =
+                original.withWarning("A warning");
+
+        assertFalse(result.isMissionUpdated());
+    }
+
+    @Test
+    public void missionUpdatedResult_setsMissionUpdatedFlag() {
+        CommandResult result = new CommandResult(
+                "Mission updated",
+                null,
+                List.of(),
+                true);
+
+        assertTrue(result.isMissionUpdated());
+    }
+
+    @Test
+    public void normalResult_doesNotSetMissionUpdatedFlag() {
+        CommandResult result =
+                new CommandResult("No update");
+
+        assertFalse(result.isMissionUpdated());
+    }
+
+    @Test
+    public void withWarning_addsWarningToResult() {
+        CommandResult result = new CommandResult("Command completed")
+                .withWarning("This is a warning.");
+
+        assertEquals(
+                List.of("This is a warning."),
+                result.getWarnings());
+    }
 }

@@ -435,6 +435,7 @@ public class StudentDetailsPanel extends UiPart<Region> {
      */
     public void updateMissions(List<Mission> missions) {
         if (displayedStudent == null) {
+            clearStudent();
             return;
         }
 
