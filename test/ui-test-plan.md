@@ -224,10 +224,10 @@ collections are never null; this internal invariant has no UI input equivalent.
 
 | ID | Steps | Expected result |
 | --- | --- | --- |
-| EDIT-PREFIX-001 | Run `edit id/1 n/Updated Name`, then `view id/1`. | The first student has the new name. |
-| EDIT-PREFIX-002 | Run `edit unexpected id/1 n/Rejected Name`, then `view id/1`. | Invalid-format feedback; the first student retains Updated Name. |
-| EDIT-PREFIX-003 | Run `edit id/1 t/`, then `view id/1`. | Tags are cleared; other fields are unchanged. |
-| EDIT-PREFIX-004 | Run `edit id/1 id/2 n/Rejected Name`, then view both students. | Duplicate-index feedback; both students remain unchanged. |
+| EDIT-PREFIX-001 | Run `editstudent id/1 n/Updated Name`, then `view id/1`. | The first student has the new name. |
+| EDIT-PREFIX-002 | Run `editstudent unexpected id/1 n/Rejected Name`, then `view id/1`. | Invalid-format feedback; the first student retains Updated Name. |
+| EDIT-PREFIX-003 | Run `editstudent id/1 t/`, then `view id/1`. | Tags are cleared; other fields are unchanged. |
+| EDIT-PREFIX-004 | Run `editstudent id/1 id/2 n/Rejected Name`, then view both students. | Duplicate-index feedback; both students remain unchanged. |
 | MISSION-EDIT-001 | Create a mission with `addmission m/M01 n/Runes d/2026-10-20`, then edit it using `editmission m/M01 n/New Runes`. | Editing succeeds; the mission keeps its ID and deadline. |
 
 ## Mission parser value regression
@@ -264,11 +264,11 @@ The shared validator returns problem-only messages; command parsers append usage
 
 | ID | Steps | Expected result |
 | --- | --- | --- |
-| OPTIONAL-001 | Run `edit id/1 n/Updated Name`, then `view id/1`. | Name changes; omitted phone, email, studio group, and tags remain unchanged. |
-| OPTIONAL-002 | Run `edit n/Rejected Name`, then `view id/1`. | Missing-index feedback with edit usage; student state is unchanged. |
-| OPTIONAL-003 | Run `edit id/1 t/first t/second`, then `view id/1`. | Both tags are retained. |
-| OPTIONAL-004 | Run `edit id/1 p/91234567 p/98765432`, then `view id/1`. | Duplicate-phone feedback with edit usage; phone and other fields remain unchanged. |
-| OPTIONAL-005 | Run `edit id/1 t/`, then `view id/1`. | Tags are cleared; other fields remain unchanged. |
+| OPTIONAL-001 | Run `editstudent id/1 n/Updated Name`, then `view id/1`. | Name changes; omitted phone, email, studio group, and tags remain unchanged. |
+| OPTIONAL-002 | Run `editstudent n/Rejected Name`, then `view id/1`. | Missing-index feedback with editstudent usage; student state is unchanged. |
+| OPTIONAL-003 | Run `editstudent id/1 t/first t/second`, then `view id/1`. | Both tags are retained. |
+| OPTIONAL-004 | Run `editstudent id/1 p/91234567 p/98765432`, then `view id/1`. | Duplicate-phone feedback with editstudent usage; phone and other fields remain unchanged. |
+| OPTIONAL-005 | Run `editstudent id/1 t/`, then `view id/1`. | Tags are cleared; other fields are unchanged. |
 
 ## Command parser error usage regression
 
@@ -279,9 +279,9 @@ problem message.
 
 | ID | Steps | Expected result |
 | --- | --- | --- |
-| ERROR-USAGE-001 | Run `edit id/1 p/invalid`, then `view id/1`. | Phone validation feedback is followed by a blank line and edit usage exactly once; student fields are unchanged. |
-| ERROR-USAGE-002 | Run `edit id/1 p/91234567`, then `view id/1`. | Phone updates successfully; other fields remain unchanged. |
-| ERROR-USAGE-003 | Run `edit id/1 p/91234567 p/98765432`, then `view id/1`. | Duplicate-phone feedback is followed by a blank line and edit usage exactly once; the phone remains 91234567. |
+| ERROR-USAGE-001 | Run `editstudent id/1 p/invalid`, then `view id/1`. | Phone validation feedback is followed by a blank line and editstudent usage exactly once; student fields are unchanged. |
+| ERROR-USAGE-002 | Run `editstudent id/1 p/91234567`, then `view id/1`. | Phone updates successfully; other fields remain unchanged. |
+| ERROR-USAGE-003 | Run `editstudent id/1 p/91234567 p/98765432`, then `view id/1`. | Duplicate-phone feedback is followed by a blank line and editstudent usage exactly once; the phone remains 91234567. |
 | ERROR-USAGE-004 | Run `addmission m/M01 n/Runes d/2026-02-30`. | Date validation feedback is followed by a blank line and AddMission usage; no mission is added. |
 
 Preamble-error regression: commands using the shared structure validator must
