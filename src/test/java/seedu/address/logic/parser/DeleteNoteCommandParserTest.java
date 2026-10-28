@@ -47,7 +47,7 @@ public class DeleteNoteCommandParserTest {
             assertParseFailure(parser, "id/1 ni/" + noteIndex,
                     ParserUtil.MESSAGE_INVALID_INDEX + "\n\n" + DeleteNoteCommand.MESSAGE_USAGE);
         }
-        assertParseFailure(parser, "id/1 ni/11",
+        assertParseFailure(parser, "id/1 ni/1001",
                 RegisteredNotes.MESSAGE_CONSTRAINTS + "\n\n" + DeleteNoteCommand.MESSAGE_USAGE);
     }
 

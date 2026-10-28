@@ -564,7 +564,7 @@ public class JsonAdaptedStudentTest {
     @Test
     public void toModelRegisteredNotes_invalidNoteTexts_throwsIllegalValueException() {
         String overlongNote = "a".repeat(Note.MAX_NOTE_LENGTH + 1);
-        for (Object noteText : Arrays.asList(null, "", " ", "Invalid note!", overlongNote,
+        for (Object noteText : Arrays.asList(null, "", " ", overlongNote,
                 1, true, List.of(), Map.of())) {
             JsonAdaptedStudent adapted = withSavedNotes(Arrays.asList(noteText));
 

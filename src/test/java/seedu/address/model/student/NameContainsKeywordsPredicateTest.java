@@ -113,7 +113,7 @@ public class NameContainsKeywordsPredicateTest {
     }
 
     @Test
-    public void test_repeatedKeywords_returnsTrue() {
+    public void test_repeatedAlternatives_returnsTrue() {
         Student student = new StudentBuilder().withName("Alex Tan").build();
 
         assertTrue(new NameContainsKeywordsPredicate(List.of("ale", "ale")).test(student));
@@ -154,6 +154,77 @@ public class NameContainsKeywordsPredicateTest {
         Student student = new StudentBuilder().withName("Alex Tan").build();
 
         assertFalse(new NameContainsKeywordsPredicate(List.of(" ")).test(student));
+    }
+
+    @Test
+    public void test_repeatedWordsWithOneOccurrence_returnsFalse() {
+        NameContainsKeywordsPredicate predicate =
+                new NameContainsKeywordsPredicate(List.of("alex alex"));
+
+        assertFalse(predicate.test(new StudentBuilder().withName("Alex Yeoh").build()));
+    }
+
+    @Test
+    public void test_repeatedWordsWithEnoughOccurrences_returnsTrue() {
+        NameContainsKeywordsPredicate predicate =
+                new NameContainsKeywordsPredicate(List.of("alex alex"));
+
+        assertTrue(predicate.test(new StudentBuilder().withName("Alex Alex").build()));
+        assertTrue(predicate.test(new StudentBuilder().withName("Alex Alexander").build()));
+    }
+
+    @Test
+    public void test_repeatedWordsWithMixedCaseAndWhitespace_countsOccurrencesTogether() {
+        NameContainsKeywordsPredicate predicate =
+                new NameContainsKeywordsPredicate(List.of("  ALEX \t alex  "));
+
+        assertTrue(predicate.test(new StudentBuilder().withName("Alex Alexander").build()));
+        assertFalse(predicate.test(new StudentBuilder().withName("Alex Yeoh").build()));
+    }
+
+    @Test
+    public void test_repeatedWordsWithOverlappingOccurrences_returnsFalse() {
+        NameContainsKeywordsPredicate predicate =
+                new NameContainsKeywordsPredicate(List.of("ana ana"));
+
+        assertFalse(predicate.test(new StudentBuilder().withName("Anana").build()));
+        assertTrue(predicate.test(new StudentBuilder().withName("Ana Ana").build()));
+    }
+
+    @Test
+    public void test_threeRepeatedWords_requiresThreeOccurrences() {
+        NameContainsKeywordsPredicate predicate =
+                new NameContainsKeywordsPredicate(List.of("alex alex alex"));
+
+        assertFalse(predicate.test(new StudentBuilder().withName("Alex Alexander").build()));
+        assertTrue(predicate.test(new StudentBuilder().withName("Alex Alexander Alex").build()));
+    }
+
+    @Test
+    public void test_repeatedWordsAndOtherWords_matchesRegardlessOfOrder() {
+        Student student = new StudentBuilder().withName("Alex Lee Alexander").build();
+
+        assertTrue(new NameContainsKeywordsPredicate(List.of("alex lee alex")).test(student));
+        assertTrue(new NameContainsKeywordsPredicate(List.of("lee alex alex")).test(student));
+        assertFalse(new NameContainsKeywordsPredicate(List.of("alex lim alex")).test(student));
+    }
+
+    @Test
+    public void test_repeatedWordsInAlternative_allowsAnotherAlternativeToMatch() {
+        NameContainsKeywordsPredicate predicate =
+                new NameContainsKeywordsPredicate(List.of("alex alex", "betsy"));
+
+        assertFalse(predicate.test(new StudentBuilder().withName("Alex Yeoh").build()));
+        assertTrue(predicate.test(new StudentBuilder().withName("Alex Alexander").build()));
+        assertTrue(predicate.test(new StudentBuilder().withName("Betsy Crowe").build()));
+    }
+
+    @Test
+    public void test_differentPartialWords_preservesIndependentMatching() {
+        NameContainsKeywordsPredicate predicate =
+                new NameContainsKeywordsPredicate(List.of("alex ale"));
+
+        assertTrue(predicate.test(new StudentBuilder().withName("Alex Yeoh").build()));
     }
 
     @Test

@@ -155,6 +155,11 @@ Format: `find [NAME_WORDS [, MORE_NAME_WORDS]...] [g/STUDIO_GROUP]...`
 * Provide at least one name alternative or studio group.
 * Name matching is case-insensitive and allows partial matches.
 * Spaces mean AND: `alex lee` requires both words, in any order.
+* Repeating a word within an alternative requires separate, non-overlapping
+  occurrences, ignoring case. For example, `alex alex` matches `Alex Alex`
+  and `Alex Alexander`, but not `Alex Yeoh`.
+* Comma-separated alternatives are independent: `alex, alex` has the same
+  effect as `alex`.
 * Commas mean OR: `alex lee, brian` matches both `alex` and `lee`,
   or matches `brian`.
 * Spaces around commas are optional.
@@ -198,7 +203,7 @@ Format: `addstudiorecord id/INDEX w/WEEK ef/EFFORT`
 * The week must be an integer from **0 to 13**, inclusive.
 * The effort score must be a whole number from **0 to 2147483647**, inclusive.
 * Weeks without a record shown are considered absent with an effort score of `0`.
-* Adding an existing record leaves both attendance and the effort score unchanged, even if a different score is supplied.
+* If the studio record was already recorded, the records remain unchanged.
 * The current list filter stays active.
 
 Examples:
@@ -242,14 +247,13 @@ Edit a student's studio effort for a studio week.
 
 Format: `editstudiorecord id/INDEX w/WEEK ef/EFFORT`
 
-* `INDEX` identifies a student in the **currently displayed list**, including results from `find`. It must be a positive integer that corresponds to a displayed student.
-* `WEEK` must be an integer from **0 to 13**, inclusive. AvengerHub uses these week numbers to allow tutors to flexibly mark studio records across the semester's 13 weeks. Use the actual week number as defined in the NUS student calendar.
-* Weeks outside this range, such as `-1` or `14`, are rejected with an error message. The existing studio records remain unchanged.
-* `EFFORT` is the student's effort score for that studio week. It must be a whole number from **0 to 2147483647**, inclusive. Negative numbers, decimals, non-numeric values, and values above this range are rejected without changing existing records.
-* All three arguments are required. Specify prefixes `id/`, `w/`, and `ef/` exactly once each. Extra arguments are rejected.
-* Enter `INDEX` and `WEEK` as integers without signs, decimal points, or leading zeros. For example, use `3`, not `+3`, `3.0`, or `03`.
-* The command word and the `w/` and `ef/` prefixes are case-insensitive: `EDITSTUDIORECORD id/1 W/3 EF/30` is also accepted.
-* If the studio record was initially not recorded, the records remain unchanged and a message explains that no changes were made.
+* Edits a studio record for the student at the specified `INDEX` for the specified `WEEK`, with the specified `EFFORT` score.
+* The index refers to the index number shown in the displayed student list.
+* The index **must be a positive integer** 1, 2, 3, ...
+* The week must be an integer from **0 to 13**, inclusive.
+* The effort score must be a whole number from **0 to 2147483647**, inclusive.
+* If the studio record was already not recorded, the records remain unchanged.
+* If the studio record's existing effort score is the same as the specified effort score, the records remain unchanged.
 * The current list filter stays active.
 
 Examples:
@@ -398,7 +402,9 @@ Format: `addmission m/MISSION_ID n/NAME d/DEADLINE`
   before the first prefix. The command word is case-insensitive.
 * `MISSION_ID` must start with `M` followed by a positive integer of at least two digits,
   without unnecessary leading zeros. For example, `M01`, `M02`, and `M105` are valid;
-  `M1` and `M00` are not. IDs must be unique among configured missions.
+  `M1` and `M00` are not. The number must not exceed `9223372036854775807` (the
+  largest supported value, with up to 19 digits). IDs must be unique among configured
+  missions. Exceeding the limit reports the same mission-ID constraint message.
 * `NAME` must not be blank. Multiple words and ordinary punctuation are allowed.
   Leading and trailing whitespace is removed, and internal whitespace becomes a single space.
   Letter case and punctuation are preserved for display and saving.
@@ -439,7 +445,7 @@ produce their respective constraint messages. An existing name produces
 
 ### Deleting a mission: `delmission`
 
-Format: `delmission m/MISSIONID`
+Format: `delmission m/MISSION_ID`
 
 Example: `delmission m/M03`
 
@@ -470,7 +476,7 @@ Format: `markmission id/INDEX m/MISSION_ID`
 * Records are maintained manually. Not submitted means no submission is recorded in AvengerHub.
 
 Example: `markmission id/1 m/M01`, followed by `view id/1`, displays M01 as Submitted.
-An unknown mission ID or invalid command leaves existing records unchanged.
+An unknown mission ID or invalid command leaves existing records unchanged. Malformed arguments display an error with command usage. A positive index that does not identify a student in the currently displayed list is rejected during execution with an index error followed by the command's usage; check the current list and use an index shown there. The same applies to `unmarkmission`.
 
 ![result for marking a mission](images/markMissionResult.png)
 
@@ -670,13 +676,13 @@ Action     | Format, Examples
 **Mark mastery check** | `markmc id/INDEX num/NUMBER`<br> e.g. `markmc id/1 num/2`                                                                                                             
 **Unmark mastery check** | `unmarkmc id/INDEX num/NUMBER`<br> e.g. `unmarkmc id/1 num/2`                                                                                                         
 **Add mission** | `addmission m/MISSION_ID n/NAME d/DEADLINE`<br> e.g., `addmission m/M01 n/Rune Reading d/2026-10-20`
-**Delete mission** | `delmission m/MISSIONID`<br> e.g., `delmission m/M03`                                                                                                              
+**Delete mission** | `delmission m/MISSION_ID`<br> e.g., `delmission m/M03`
 **Record mission submission** | `markmission id/INDEX m/MISSION_ID`<br> e.g., `markmission id/1 m/M01`                                                                                                
 **Remove mission submission** | `unmarkmission id/INDEX m/MISSION_ID`<br> e.g., `unmarkmission id/1 m/M01`                                                                                            
 **Edit mission** | `editmission m/MISSION_ID [n/NAME] [d/DEADLINE]`<br> e.g., `editmission m/M01 n/Rune Reading d/2026-10-22`                                                          
 **List missions and statuses** | `listmissions [m/MISSION_ID] [s/STATUS]`<br> `STATUS`: `submitted` or `overdue`<br> e.g., `listmissions`, `listmissions m/M01`, `listmissions s/overdue`
 **Clear**  | `clear`                                                                                                                                                            
-**Find**   | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find James Jake`                                                                                                         
+**Find**   | `find [NAME_WORDS [, MORE_NAME_WORDS]...] [g/STUDIO_GROUP]...`<br> e.g., `find James Jake`
 **List**   | `list`                                                                                                                                                             
 **Help**   | `help`                                                                                                                                                             
 **Exit**   | `exit`

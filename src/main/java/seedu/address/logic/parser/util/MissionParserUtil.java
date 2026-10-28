@@ -12,7 +12,7 @@ import seedu.address.model.mission.MissionId;
 /**
  * Contains utility methods used for parsing strings in the various Mission Parser classes.
  */
-public class MissionParserUtil {
+public final class MissionParserUtil {
 
     public static final String MESSAGE_INVALID_MISSION_NAME = "Provide a mission name using n/NAME.";
     public static final String MESSAGE_INVALID_MISSION_ID = MissionId.MESSAGE_CONSTRAINTS;

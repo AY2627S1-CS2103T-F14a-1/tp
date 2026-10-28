@@ -17,7 +17,7 @@ import seedu.address.commons.core.index.Index;
  */
 public final class RegisteredNotes {
 
-    public static final int MAX_NOTE_INDEX = 10;
+    public static final int MAX_NOTE_INDEX = 1000;
     public static final String MESSAGE_CONSTRAINTS =
             "There must be " + MAX_NOTE_INDEX + " notes or fewer, with indexes between 1 and " + MAX_NOTE_INDEX;
 

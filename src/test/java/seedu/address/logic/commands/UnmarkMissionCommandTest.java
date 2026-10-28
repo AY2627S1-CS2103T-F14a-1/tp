@@ -107,9 +107,11 @@ public class UnmarkMissionCommandTest {
     @Test
     public void execute_invalidIndex_leavesModelUnchanged() {
         Index invalidIndex = Index.fromOneBased(model.getFilteredStudentList().size() + 1);
+        String expectedMessage = Messages.MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX
+                + "\n\n" + UnmarkMissionCommand.MESSAGE_USAGE;
 
         assertCommandFailure(new UnmarkMissionCommand(invalidIndex, new MissionId("M03")),
-                model, Messages.MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX);
+                model, expectedMessage);
     }
 
     @Test
@@ -136,9 +138,11 @@ public class UnmarkMissionCommandTest {
     @Test
     public void execute_indexOutsideFilteredList_leavesModelUnchanged() {
         showStudentAtIndex(model, INDEX_FIRST_STUDENT);
+        String expectedMessage = Messages.MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX
+                + "\n\n" + UnmarkMissionCommand.MESSAGE_USAGE;
 
         assertCommandFailure(new UnmarkMissionCommand(INDEX_SECOND_STUDENT, new MissionId("M03")),
-                model, Messages.MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX);
+                model, expectedMessage);
     }
 
     @Test

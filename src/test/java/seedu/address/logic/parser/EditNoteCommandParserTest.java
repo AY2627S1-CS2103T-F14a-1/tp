@@ -30,9 +30,12 @@ public class EditNoteCommandParserTest {
     public void parse_validArguments_returnsExpectedCommand() {
         EditNoteCommand expected = new EditNoteCommand(
                 INDEX_FIRST_STUDENT, INDEX_THIRD_NOTE, new Note("Review lecture notes"));
+        EditNoteCommand punctuationExpected = new EditNoteCommand(
+                INDEX_FIRST_STUDENT, INDEX_THIRD_NOTE, new Note("Don't forget: chapter 2!"));
 
         assertParseSuccess(parser, "id/1 ni/3 nt/Review lecture notes", expected);
         assertParseSuccess(parser, " ni/ 3 nt/ Review lecture notes id/ 1 ", expected);
+        assertParseSuccess(parser, "id/1 ni/3 nt/Don't forget: chapter 2!", punctuationExpected);
     }
 
     @Test
@@ -49,13 +52,13 @@ public class EditNoteCommandParserTest {
             assertParseFailure(parser, "id/1 ni/" + noteIndex + " nt/Valid note",
                     ParserUtil.MESSAGE_INVALID_INDEX + "\n\n" + EditNoteCommand.MESSAGE_USAGE);
         }
-        assertParseFailure(parser, "id/1 ni/11 nt/Valid note",
+        assertParseFailure(parser, "id/1 ni/1001 nt/Valid note",
                 RegisteredNotes.MESSAGE_CONSTRAINTS + "\n\n" + EditNoteCommand.MESSAGE_USAGE);
     }
 
     @Test
     public void parse_invalidNoteText_reportsNoteTextConstraint() {
-        for (String noteText : List.of("", "   ", "Invalid!", "a".repeat(Note.MAX_NOTE_LENGTH + 1))) {
+        for (String noteText : List.of("", "   ", "\t", "a".repeat(Note.MAX_NOTE_LENGTH + 1))) {
             assertParseFailure(parser, "id/1 ni/3 nt/" + noteText,
                     Note.MESSAGE_CONSTRAINTS + "\n\n" + EditNoteCommand.MESSAGE_USAGE);
         }

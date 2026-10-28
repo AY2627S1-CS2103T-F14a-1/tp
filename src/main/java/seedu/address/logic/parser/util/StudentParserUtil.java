@@ -16,7 +16,7 @@ import seedu.address.model.tag.Tag;
 /**
  * Contains utility methods used for parsing strings in the various Student-related Parser classes.
  */
-public class StudentParserUtil {
+public final class StudentParserUtil {
 
     /**
      * Parses a {@code String name} into a {@code Name}.
