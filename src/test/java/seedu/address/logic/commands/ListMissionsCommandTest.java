@@ -216,6 +216,95 @@ public class ListMissionsCommandTest {
     }
 
     @Test
+    public void execute_allSubmittedMissions_ordersByMissionAndPreservesIndexes() {
+        model.addMission(new MissionId("M10"), "Curves", LocalDate.of(2026, 10, 22));
+        model.addMission(new MissionId("M02"), "Lists", LocalDate.of(2026, 10, 21));
+        model.setStudent(john, new StudentBuilder(john).withMissionSubmissions("M02", "M10").build());
+        Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
+
+        assertCommandSuccess(
+                ListMissionsCommand.withStatus(MissionSubmissionStatus.SUBMITTED, CLOCK), model,
+                "Submission statuses for all missions (current student list):\n"
+                        + "2. Betsy Crowe | Studio group: 1A"
+                        + " | M01 · Rune Reading (Due: 2026-10-20) | Submitted\n"
+                        + "1. John Doe | Studio group: 1A"
+                        + " | M02 · Lists (Due: 2026-10-21) | Submitted\n"
+                        + "1. John Doe | Studio group: 1A"
+                        + " | M10 · Curves (Due: 2026-10-22) | Submitted",
+                expectedModel);
+    }
+
+    @Test
+    public void execute_allOverdueMissions_excludesSubmittedTodayAndFuture() {
+        model.addMission(new MissionId("M02"), "Today", LocalDate.of(2026, 10, 21));
+        model.addMission(new MissionId("M03"), "Future", LocalDate.of(2026, 10, 22));
+        Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
+
+        assertCommandSuccess(
+                ListMissionsCommand.withStatus(MissionSubmissionStatus.OVERDUE, CLOCK), model,
+                "Submission statuses for all missions (current student list):\n"
+                        + "1. John Doe | Studio group: 1A"
+                        + " | M01 · Rune Reading (Due: 2026-10-20) | Overdue",
+                expectedModel);
+    }
+
+    @Test
+    public void execute_allSubmittedMissionsWithHiddenSubmitter_reportsNoMatches() {
+        model.updateFilteredStudentList(student -> student.equals(john));
+        Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
+        expectedModel.updateFilteredStudentList(student -> student.equals(john));
+
+        assertCommandSuccess(
+                ListMissionsCommand.withStatus(MissionSubmissionStatus.SUBMITTED, CLOCK), model,
+                "Submission statuses for all missions (current student list):\n"
+                        + "No submissions match the selected status.",
+                expectedModel);
+    }
+
+    @Test
+    public void execute_allMissionsWithEmptyStudentList_reportsNoStudents() {
+        model.updateFilteredStudentList(student -> false);
+        Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
+        expectedModel.updateFilteredStudentList(student -> false);
+
+        assertCommandSuccess(
+                ListMissionsCommand.withStatus(MissionSubmissionStatus.OVERDUE, CLOCK), model,
+                "Submission statuses for all missions (current student list):\n"
+                        + "No students in the current student list.",
+                expectedModel);
+    }
+
+    @Test
+    public void execute_allMissionsWithEmptyCatalogue_reportsNoMissions() {
+        Model emptyModel = new ModelManager();
+        emptyModel.addStudent(new StudentBuilder().build());
+        Model expectedModel = new ModelManager(emptyModel.getAddressBook(), new UserPrefs());
+
+        assertCommandSuccess(
+                ListMissionsCommand.withStatus(MissionSubmissionStatus.SUBMITTED, CLOCK), emptyModel,
+                "No missions configured.",
+                expectedModel);
+    }
+
+    @Test
+    public void equals_allMissionAndSpecificMissionQueries_returnsFalse() {
+        ListMissionsCommand all = ListMissionsCommand.withStatus(MissionSubmissionStatus.SUBMITTED);
+        ListMissionsCommand same = ListMissionsCommand.withStatus(MissionSubmissionStatus.SUBMITTED);
+
+        assertEquals(all, same);
+        assertEquals(all.hashCode(), same.hashCode());
+        assertNotEquals(all, ListMissionsCommand.withStatus(MISSION_ID, MissionSubmissionStatus.SUBMITTED));
+        assertNotEquals(all, ListMissionsCommand.withStatus(MissionSubmissionStatus.OVERDUE));
+    }
+
+    @Test
+    public void withStatus_nullStatusOrClock_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> ListMissionsCommand.withStatus(null));
+        assertThrows(NullPointerException.class, () ->
+                ListMissionsCommand.withStatus(MissionSubmissionStatus.SUBMITTED, null));
+    }
+
+    @Test
     public void equals_differentStatusFilters_returnsFalse() {
         ListMissionsCommand submitted = ListMissionsCommand.withStatus(
                 MISSION_ID, MissionSubmissionStatus.SUBMITTED);

@@ -24,7 +24,7 @@ public class ListMissionsCommandParser implements Parser<Command> {
             "Invalid status filter. Use s/submitted or s/overdue.";
 
     /**
-     * Creates a catalogue command for blank arguments or parses a mission ID.
+     * Parses mission summaries, mission-specific queries, or status-only queries.
      *
      * @param args Arguments following the command word.
      * @return Catalogue-listing command or submission-listing command.
@@ -42,13 +42,18 @@ public class ListMissionsCommandParser implements Parser<Command> {
         try {
             ArgumentMultimap arguments = ArgumentStructureValidator.validateStructureWithOptionals(
                     args,
-                    new Prefix[]{PREFIX_MISSION},
+                    new Prefix[]{},
                     new Prefix[]{PREFIX_MISSION, PREFIX_STATUS},
                     PREFIX_MISSION, PREFIX_STATUS);
 
-            MissionId missionId = MissionParserUtil.parseMissionId(
-                    arguments.getValue(PREFIX_MISSION).orElseThrow());
             Optional<MissionSubmissionStatus> status = parseStatus(arguments.getValue(PREFIX_STATUS));
+            Optional<String> missionValue = arguments.getValue(PREFIX_MISSION);
+            if (missionValue.isEmpty()) {
+                return ListMissionsCommand.withStatus(status.orElseThrow(() ->
+                        new ParseException(MESSAGE_INVALID_STATUS)));
+            }
+
+            MissionId missionId = MissionParserUtil.parseMissionId(missionValue.orElseThrow());
             if (status.isEmpty()) {
                 return new ListMissionsCommand(missionId);
             }
