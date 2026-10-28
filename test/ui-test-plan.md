@@ -307,6 +307,23 @@ Only Betsy has recorded submissions for both missions.
 | MISSION-FILTER-006 | Run `find John`, then `listmissions m/M01 s/submitted`. | Reports no matching submissions. Betsy's hidden submission is excluded and the John-only student filter remains active. |
 | MISSION-FILTER-007 | Run `list`, then `listmissions m/M01`. | Both students appear with their respective statuses, confirming that omitting s/ includes every status. |
 
+## All-mission status-filter regression
+
+Use John Doe (1A) and Betsy Crowe (1A), in that order.
+Create M01 due yesterday, M02 due today, and M10 due tomorrow.
+Record M01 for Betsy and M02 plus M10 for John.
+
+| ID | Steps | Expected result |
+| --- | --- | --- |
+| MISSION-ALL-001 | Run `list`, then `listmissions s/submitted`. | Rows show Betsy/M01, John/M02, and John/M10, in that order. Each includes mission details and Submitted. Betsy retains index 2; both John rows retain index 1. |
+| MISSION-ALL-002 | Run `listmissions s/unknown`, then repeat MISSION-ALL-001. | Invalid-status feedback appears. The valid query reproduces its results with unchanged records and student filter. |
+| MISSION-ALL-003 | Run `listmissions s/overdue`. | Only John/M01 appears as Overdue. Recorded submissions and missions due today or tomorrow are excluded. |
+| MISSION-ALL-004 | Run `listmissions s/submitted m/`, then repeat MISSION-ALL-003. | Empty-mission-ID feedback appears. The valid query still shows John/M01. |
+| MISSION-ALL-005 | Run `find Betsy`, then `listmissions s/submitted` and `listmissions s/overdue`. | Submitted results contain only Betsy/M01 at index 1. Overdue reports no matching submissions. The Betsy-only filter remains active. |
+| MISSION-ALL-006 | Run `find NobodyMatchesThisName`, then `listmissions s/submitted`. | Reports no students in the current student list. The list remains empty. |
+| MISSION-ALL-007 | Run `list`, then `listmissions`. | Catalogue summaries still appear with the original counts. All records remain unchanged. |
+| MISSION-ALL-008 | In a separate isolated dataset with students but no missions, run `listmissions s/overdue`. | Displays `No missions configured.` |
+
 ## Missing-prefix usage suffix regression
 
 Missing-prefix feedback now ends with one newline followed by the calling command's

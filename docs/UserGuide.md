@@ -556,14 +556,19 @@ Examples:
 
 ### Listing missions and submission statuses: `listmissions`
 
-Lists all missions with submission counts, or shows submission statuses
-for a specific mission within the currently displayed student list.
+Lists mission summaries or student submission statuses, optionally filtered
+by mission ID and status.
 
-Format: `listmissions [m/MISSION_ID [s/STATUS]]`
+Format: `listmissions [m/MISSION_ID] [s/STATUS]`
 
 * The command word, `m/` prefix, and mission ID are case-insensitive.
 * Student records, submission records, mission definitions, and the current
   student filter remain unchanged.
+* Without either argument, displays all mission summaries with submission counts.
+* With `m/MISSION_ID`, displays statuses for that mission.
+* With `s/submitted` or `s/overdue` but no mission ID, displays matching
+  submissions across all missions.
+* When both prefixes are supplied, applies the status filter to the selected mission.
 
 Without a mission ID:
 
@@ -600,6 +605,17 @@ With `m/MISSION_ID`:
 * If students are displayed but none match the status filter, reports
   `No submissions match the selected status.`
 
+With `s/STATUS` only:
+
+* Each row represents one student–mission pair and includes the mission's
+  ID, name, and deadline.
+* Rows are ordered by numeric mission ID, then displayed student order.
+* A student may appear more than once when multiple missions match.
+  Their index always refers to the left student list.
+* Only currently displayed students are included. Records and the student
+  filter remain unchanged.
+* If no missions exist, displays `No missions configured.`
+
 Run `list` first to include all students in counts and status results.
 Rerun `listmissions` with the desired arguments to refresh its output.
 
@@ -613,6 +629,10 @@ Examples:
   currently displayed students.
 * `listmissions m/M01 s/overdue` lists currently displayed students missing
   M01 after its deadline.
+* `listmissions s/submitted` shows recorded submissions across all missions
+  for currently displayed students.
+* `listmissions s/overdue` shows missing submissions whose deadlines have
+  passed across all missions for currently displayed students.
 
 ### Viewing mission submission statuses: `viewmission`
 

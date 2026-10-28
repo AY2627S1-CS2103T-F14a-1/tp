@@ -247,66 +247,70 @@ Parsing and command-validation failures exit before the saving step. If saving i
 
 ### Listing mission submissions
 
-`ListMissionsCommand` resolves the requested mission before evaluating
-submission statuses. It evaluates the deadline once using an injected
-`Clock`, then lists every student in `Model#getFilteredStudentList()`.
+`ListMissionsCommandParser` accepts optional, nonrepeatable `m/` and `s/`
+prefixes. Blank arguments produce `ListMissionCatalogueCommand`. Otherwise,
+a mission ID selects one mission, and an optional status restricts results
+to Submitted or Overdue. A status without a mission ID queries all missions.
+Malformed mission IDs, unsupported statuses, duplicate prefixes, and
+unexpected preamble text cause a `ParseException`.
 
-`MissionSubmissionStatus#from(...)` determines Submitted, Not submitted,
-or Overdue from the recorded submission and evaluated deadline. Recorded
-submissions are always Submitted; absent submissions become Overdue only
-after the deadline. The existing `ViewMissionCommand` shares this rule.
+`ListMissionsCommand` stores optional mission and status selections.
+A specified mission is resolved before generating results; a nonexistent
+mission causes a `CommandException`. Without a mission selection, the
+command obtains all missions in ascending numeric ID order.
 
-Rows retain displayed student indexes and include names and studio groups.
-The command does not replace the student filter or modify records.
-An empty student list produces an explicit explanation.
+The command obtains the current local date once using an injected `Clock`.
+`MissionSubmissionStatus#from(...)` determines each student's status:
 
-Normal execution uses the computer's local time zone. Tests inject a
-fixed clock to verify deadline boundaries deterministically.
+* A recorded submission is Submitted, regardless of the deadline.
+* A missing submission is Overdue when the deadline is before the local date.
+* Otherwise, a missing submission is Not submitted.
 
-The parser recognizes an optional, nonrepeatable `s/` prefix alongside
-the required mission ID. It accepts submitted and overdue, ignoring case,
-and rejects unsupported values before command execution.
+Missions due today are not overdue. Normal execution uses the computer's
+local time zone; tests inject a fixed clock for deterministic boundary checks.
 
-The command stores an optional `MissionSubmissionStatus` filter and
-applies it while constructing report rows. The model's student filter
-is preserved, so matching rows retain their original displayed indexes.
-Command equality includes the selected status filter.
+Both query forms share the same row-building logic and inspect only
+`Model#getFilteredStudentList()`. The optional status filter selects
+matching rows without changing the model's student filter.
 
-### Listing the mission catalogue
+Rows include displayed student indexes, names, studio groups, and statuses.
+All-mission queries also include mission details and order rows by mission
+ID, then displayed student order. A student may appear in multiple rows
+while retaining the same displayed index.
 
-For `listmissions`, `AddressBookParser` delegates to
-`ListMissionsCommandParser`. Blank arguments produce a
-`ListMissionCatalogueCommand`; nonblank arguments currently require a
-mission ID and produce `ListMissionsCommand`.
+Separate messages distinguish an empty mission catalogue, an empty student
+list, and no matching statuses. Student records, mission definitions,
+submission records, and the current student filter remain unchanged.
+Command equality includes both the mission and status selections.
 
-`ListMissionCatalogueCommand` reads `Model#getMissionList()` and sorts
-the output by numeric mission ID without changing stored catalogue order.
-Every mission appears regardless of the current student filter.
+### Listing mission summaries
 
-For each mission, the command counts recorded submissions within
+For bare `listmissions`, `ListMissionsCommandParser` creates a
+`ListMissionCatalogueCommand`.
+
+The command reads `Model#getMissionList()` and sorts the output by numeric
+mission ID without changing stored catalogue order. Every mission appears
+regardless of the current student filter.
+
+For each mission, it counts recorded submissions within
 `Model#getFilteredStudentList()` using
 `MissionSubmissions#hasSubmission(...)`. It displays `Submitted: X/Y`,
-where X is the submitted count and Y is the number of filtered students.
+where X is the submitted count and Y is the filtered student count.
 Hidden students contribute to neither count. An empty filtered list
 produces `0/0`.
 
 The command obtains the local date once per execution from an injected
 `Clock` and evaluates deadlines using `Mission#isPastDeadline(...)`.
 `Messages#format(Mission, boolean)` adds `Deadline passed` inside the
-due-date parentheses when the deadline is strictly before that date.
-Missions due today are not labelled. The label describes the deadline
-and is independent of submission counts.
+due-date parentheses when the deadline is before that date. Missions due
+today are not labelled. The label is independent of submission counts.
 
-Normal execution uses `Clock.systemDefaultZone()`. Tests inject a fixed
-clock to verify past, current, and future deadlines deterministically.
+Normal execution uses `Clock.systemDefaultZone()`; tests inject a fixed
+clock for deterministic deadline checks.
 
-The result uses the heading
-`All missions | Submitted/total students (current list):`.
-An empty catalogue instead returns `No missions configured.`
-
-Student records, submission records, mission definitions, and the current
-student filter remain unchanged. Counts and deadline labels are calculated
-again whenever the command executes.
+An empty catalogue returns `No missions configured.` Student records,
+mission definitions, submission records, and the student filter remain
+unchanged. Rerunning the command recalculates counts and deadline labels.
 
 ### Viewing mission submission statuses
 
