@@ -248,9 +248,10 @@ direct UI equivalent.
 
 ## Mission submission index error usage
 
-Start with at least two students and a configured mission. Record a submission
-for one student before testing unmarking. After each rejected command, inspect
-the student profile and confirm the submission state is unchanged.
+Start with exactly two students displayed and mission `M03` configured. Record a
+submission for one student before testing unmarking. After each rejected
+command, inspect the student profile and confirm the submission state is
+unchanged. This ensures displayed index 3 is invalid for the index-error cases.
 
 | ID | Steps | Expected result |
 | --- | --- | --- |
