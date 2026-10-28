@@ -70,7 +70,12 @@ public class MarkMissionCommand extends Command {
             throw new CommandException(String.format(Messages.MESSAGE_MISSION_NOT_FOUND, missionId));
         }
 
-        Student studentToUpdate = getStudentAtDisplayedIndex(model, targetIndex);
+        Student studentToUpdate;
+        try {
+            studentToUpdate = getStudentAtDisplayedIndex(model, targetIndex);
+        } catch (CommandException e) {
+            throw new CommandException(e.getMessage() + "\n\n" + MESSAGE_USAGE);
+        }
         MissionSubmissions submissions = studentToUpdate.getMissionSubmissions();
 
         if (submissions.hasSubmission(missionId)) {

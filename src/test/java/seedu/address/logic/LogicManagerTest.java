@@ -314,7 +314,8 @@ public class LogicManagerTest {
         assertEquals("Added Amy Bee's mission submission for mission M04.",
                 reloadedLogic.execute("markmission id/1 m/M04").getFeedbackToUser());
         savedJson = Files.readString(filePath);
-        assertThrows(CommandException.class, MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX, () ->
+        assertThrows(CommandException.class,
+                MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX + "\n\n" + MarkMissionCommand.MESSAGE_USAGE, () ->
                 reloadedLogic.execute("markmission id/2 m/M05"));
         assertEquals(savedJson, Files.readString(filePath));
         assertEquals(Set.of(new MissionId("M05"), new MissionId("M03"), new MissionId("M04")),
@@ -355,7 +356,8 @@ public class LogicManagerTest {
         Student expected = new StudentBuilder(AMY).withMissionSubmissions().build();
         assertEquals(expected, storage.readAddressBook().orElseThrow().getStudentList().get(0));
         savedJson = Files.readString(filePath);
-        assertThrows(CommandException.class, MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX, () ->
+        assertThrows(CommandException.class,
+                MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX + "\n\n" + UnmarkMissionCommand.MESSAGE_USAGE, () ->
                 reloadedLogic.execute("unmarkmission id/2 m/M13"));
         assertEquals(savedJson, Files.readString(filePath));
         assertEquals(expected, reloadedModel.getFilteredStudentList().get(0));
