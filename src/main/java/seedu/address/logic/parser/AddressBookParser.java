@@ -21,9 +21,9 @@ import seedu.address.logic.commands.DeleteMissionCommand;
 import seedu.address.logic.commands.DeleteNoteCommand;
 import seedu.address.logic.commands.DeleteStudentCommand;
 import seedu.address.logic.commands.DeleteStudioRecordCommand;
-import seedu.address.logic.commands.EditCommand;
 import seedu.address.logic.commands.EditMissionCommand;
 import seedu.address.logic.commands.EditNoteCommand;
+import seedu.address.logic.commands.EditStudentCommand;
 import seedu.address.logic.commands.EditStudioRecordCommand;
 import seedu.address.logic.commands.ExitCommand;
 import seedu.address.logic.commands.FindCommand;
@@ -36,6 +36,7 @@ import seedu.address.logic.commands.MarkMissionCommand;
 import seedu.address.logic.commands.UnmarkMasteryCheckCommand;
 import seedu.address.logic.commands.UnmarkMissionCommand;
 import seedu.address.logic.commands.ViewCommand;
+import seedu.address.logic.commands.ViewMissionCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
 
 /**
@@ -74,7 +75,7 @@ public class AddressBookParser {
             case AddMissionCommand.COMMAND_WORD -> new AddMissionCommandParser().parse(arguments);
             case AddMasteryCheckCommand.COMMAND_WORD -> new AddMasteryCheckCommandParser().parse(arguments);
             case AddStudentCommand.COMMAND_WORD -> new AddStudentCommandParser().parse(arguments);
-            case EditCommand.COMMAND_WORD -> new EditCommandParser().parse(arguments);
+            case EditStudentCommand.COMMAND_WORD -> new EditStudentCommandParser().parse(arguments);
             case DeleteMasteryCheckCommand.COMMAND_WORD -> new DeleteMasteryCheckCommandParser().parse(arguments);
             case DeleteMissionCommand.COMMAND_WORD -> new DeleteMissionCommandParser().parse(arguments);
             case DeleteStudentCommand.COMMAND_WORD -> new DeleteStudentCommandParser().parse(arguments);
@@ -97,6 +98,7 @@ public class AddressBookParser {
             case ExitCommand.COMMAND_WORD -> new ExitCommand();
             case HelpCommand.COMMAND_WORD -> new HelpCommand();
             case ViewCommand.COMMAND_WORD -> new ViewCommandParser().parse(arguments);
+            case ViewMissionCommand.COMMAND_WORD -> new ViewMissionCommandParser().parse(arguments);
             default -> {
                 logger.finer("This user input caused a ParseException: " + userInput);
                 throw new ParseException(MESSAGE_UNKNOWN_COMMAND);

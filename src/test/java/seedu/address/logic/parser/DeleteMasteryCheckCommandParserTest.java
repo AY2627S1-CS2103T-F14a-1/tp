@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import seedu.address.logic.commands.DeleteMasteryCheckCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.logic.parser.util.ParserUtil;
 import seedu.address.model.student.RegisteredMasteryChecks;
 
 /** Tests deletion argument structure, number validation, and delete-specific usage feedback. */
@@ -57,10 +58,18 @@ public class DeleteMasteryCheckCommandParserTest {
     }
 
     @Test
-    public void parse_invalidNumber_reportsMasteryCheckConstraint() {
-        for (String number : List.of("", "0", "-1", "1.5", "abc", "2147483648")) {
-            assertParseFailure(parser, "id/1 num/" + number,
-                RegisteredMasteryChecks.MESSAGE_CONSTRAINTS + USAGE_SUFFIX);
+    public void parse_nonPositiveNumber_reportsNumberConstraint() {
+        for (String number : List.of("0", "-1", "-2147483648")) {
+            assertParseFailure(parser, "id/1 num/" + number + "",
+                    RegisteredMasteryChecks.MESSAGE_CONSTRAINTS + USAGE_SUFFIX);
+        }
+    }
+
+    @Test
+    public void parse_nonIntegerOrOverflowingNumber_reportsNonNumberMessage() {
+        for (String number : List.of("", "1.5", "abc", "2147483648")) {
+            assertParseFailure(parser, "id/1 num/" + number + "",
+                    RegisteredMasteryChecks.MESSAGE_NON_NUMBER + USAGE_SUFFIX);
         }
     }
 

@@ -2,6 +2,7 @@ package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -24,6 +25,7 @@ public class CommandResult {
      * Student to display in the profile panel, if any.
      */
     private final String feedbackToUser;
+    private final List<String> warnings;
 
     /** Help information should be shown to the user. */
     private final boolean showHelp;
@@ -53,15 +55,16 @@ public class CommandResult {
             boolean showHelp,
             boolean exit,
             Student studentToView,
+            List<String> warnings,
             List<Mission> missions,
             boolean missionsUpdated) {
-
         this.feedbackToUser = requireNonNull(feedbackToUser);
         this.showHelp = showHelp;
         this.exit = exit;
         this.studentToView = studentToView;
-        this.missions = List.copyOf(missions);
         this.missionsUpdated = missionsUpdated;
+        this.warnings = List.copyOf(requireNonNull(warnings));
+        this.missions = List.copyOf(requireNonNull(missions));
     }
 
     /**
@@ -81,6 +84,7 @@ public class CommandResult {
                 false,
                 false,
                 studentToView,
+                List.of(),
                 missions,
                 false);
     }
@@ -97,6 +101,7 @@ public class CommandResult {
                 false,
                 false,
                 null,
+                List.of(),
                 List.of(),
                 false);
     }
@@ -115,6 +120,7 @@ public class CommandResult {
                 false,
                 studentToView,
                 List.of(),
+                List.of(),
                 false);
     }
 
@@ -131,6 +137,7 @@ public class CommandResult {
                 showHelp,
                 exit,
                 null,
+                List.of(),
                 List.of(),
                 false);
     }
@@ -154,8 +161,24 @@ public class CommandResult {
                 false,
                 false,
                 studentToView,
+                List.of(),
                 missions,
                 missionsUpdated);
+    }
+
+    /**
+     * Returns a new {@code CommandResult} containing the given warning in addition to existing warnings.
+     *
+     * @param warning warning to add
+     * @return a new command result containing the warning
+     */
+    public CommandResult withWarning(String warning) {
+        requireNonNull(warning);
+
+        List<String> updatedWarnings = new ArrayList<>(warnings);
+        updatedWarnings.add(warning);
+        return new CommandResult(
+                feedbackToUser, showHelp, exit, studentToView, updatedWarnings, missions, false);
     }
 
     /**
@@ -174,6 +197,15 @@ public class CommandResult {
      */
     public String getFeedbackToUser() {
         return feedbackToUser;
+    }
+
+    /**
+     * Returns the warnings for the user.
+     *
+     * @return warnings to display
+     */
+    public List<String> getWarnings() {
+        return warnings;
     }
 
     /**
@@ -227,13 +259,14 @@ public class CommandResult {
                 && showHelp == otherCommandResult.showHelp
                 && exit == otherCommandResult.exit
                 && Objects.equals(studentToView, otherCommandResult.studentToView)
-                && Objects.equals(missions, otherCommandResult.missions)
-                && missionsUpdated == otherCommandResult.missionsUpdated;
+                && missionsUpdated == otherCommandResult.missionsUpdated
+                && Objects.equals(warnings, otherCommandResult.warnings)
+                && Objects.equals(missions, otherCommandResult.missions);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(feedbackToUser, showHelp, exit, studentToView, missions, missionsUpdated);
+        return Objects.hash(feedbackToUser, showHelp, exit, studentToView, warnings, missions, missionsUpdated);
     }
 
     @Override
@@ -243,6 +276,7 @@ public class CommandResult {
                 .add("showHelp", showHelp)
                 .add("exit", exit)
                 .add("studentToView", studentToView)
+                .add("warnings", warnings)
                 .add("missions", missions)
                 .toString();
     }

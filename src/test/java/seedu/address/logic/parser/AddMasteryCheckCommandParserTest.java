@@ -13,6 +13,8 @@ import org.junit.jupiter.api.Test;
 
 import seedu.address.logic.commands.AddMasteryCheckCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.logic.parser.util.MasteryCheckParserUtil;
+import seedu.address.logic.parser.util.ParserUtil;
 import seedu.address.model.masterycheck.MasteryCheck;
 import seedu.address.model.student.RegisteredMasteryChecks;
 
@@ -58,10 +60,18 @@ public class AddMasteryCheckCommandParserTest {
     }
 
     @Test
-    public void parse_invalidNumber_reportsNumberConstraint() {
-        for (String number : List.of("", "0", "-1", "1.5", "abc", "2147483648")) {
+    public void parse_nonPositiveNumber_reportsNumberConstraint() {
+        for (String number : List.of("0", "-1", "-2147483648")) {
             assertParseFailure(parser, "id/1 num/" + number + " dt/18-08|14:30",
-                RegisteredMasteryChecks.MESSAGE_CONSTRAINTS + USAGE_SUFFIX);
+                    RegisteredMasteryChecks.MESSAGE_CONSTRAINTS + USAGE_SUFFIX);
+        }
+    }
+
+    @Test
+    public void parse_nonIntegerOrOverflowingNumber_reportsNonNumberMessage() {
+        for (String number : List.of("", "1.5", "abc", "2147483648")) {
+            assertParseFailure(parser, "id/1 num/" + number + " dt/18-08|14:30",
+                    RegisteredMasteryChecks.MESSAGE_NON_NUMBER + USAGE_SUFFIX);
         }
     }
 
@@ -69,7 +79,7 @@ public class AddMasteryCheckCommandParserTest {
     public void parse_invalidDateTime_reportsDateTimeConstraint() {
         for (String time : List.of("", "31-04|14:30", "18-08|24:00", "18-08|14:60", "18-08||14:30")) {
             assertParseFailure(parser, "id/1 num/1 dt/" + time,
-                ParserUtil.MESSAGE_INVALID_MASTERY_CHECK_DATETIME + USAGE_SUFFIX);
+                MasteryCheckParserUtil.MESSAGE_INVALID_MASTERY_CHECK_DATETIME + USAGE_SUFFIX);
         }
     }
 

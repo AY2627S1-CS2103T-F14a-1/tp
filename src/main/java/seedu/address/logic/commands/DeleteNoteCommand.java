@@ -4,7 +4,7 @@ import static java.util.Objects.hash;
 import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.AppUtil.checkArgument;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_INDEX;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_NOTE_ID;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_NOTE_INDEX;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.ToStringBuilder;
@@ -22,32 +22,31 @@ public class DeleteNoteCommand extends Command {
 
     public static final String MESSAGE_USAGE = COMMAND_WORD
             + ": Deletes a note for the selected student.\n"
-            + "Parameters: " + PREFIX_INDEX + "INDEX " + PREFIX_NOTE_ID + "ID\n"
+            + "Parameters: " + PREFIX_INDEX + "INDEX " + PREFIX_NOTE_INDEX + "NOTE_INDEX\n"
             + "INDEX must be a positive integer identifying a displayed student.\n"
-            + "ID must be between " + RegisteredNotes.MIN_NOTE_ID
-            + " and " + RegisteredNotes.MAX_NOTE_ID + " inclusive.\n"
+            + "NOTE_INDEX must be a positive integer less than or equal to "
+            + RegisteredNotes.MAX_NOTE_INDEX + " inclusive.\n"
             + "Example: " + COMMAND_WORD + " " + PREFIX_INDEX + "1 "
-            + PREFIX_NOTE_ID + "3";
+            + PREFIX_NOTE_INDEX + "3";
 
     public static final String MESSAGE_SUCCESS =
-            "Deleted %1$s's note at ID %2$d.";
+            "Deleted %1$s's note at index %2$d.";
     public static final String MESSAGE_ALREADY_NOT_RECORDED =
-            "%1$s’s note ID does not exist. No changes made.";
+            "%1$s’s note index does not exist. No changes made.";
 
     private final Index targetIndex;
-    private final int noteId;
+    private final Index noteIndex;
 
     /**
      * @param targetIndex Index of the student in the filtered student list to delete a note from.
-     * @param noteId ID of note to delete.
+     * @param noteIndex Index of note to delete.
      */
-    public DeleteNoteCommand(Index targetIndex, int noteId) {
+    public DeleteNoteCommand(Index targetIndex, Index noteIndex) {
         requireNonNull(targetIndex);
-
-        checkArgument(RegisteredNotes.isValidNoteId(noteId), RegisteredNotes.MESSAGE_CONSTRAINTS);
+        checkArgument(RegisteredNotes.isValidNoteIndex(noteIndex), RegisteredNotes.MESSAGE_CONSTRAINTS);
 
         this.targetIndex = targetIndex;
-        this.noteId = noteId;
+        this.noteIndex = noteIndex;
     }
 
     @Override
@@ -57,14 +56,14 @@ public class DeleteNoteCommand extends Command {
         Student studentToUpdate = getStudentAtDisplayedIndex(model, targetIndex);
         RegisteredNotes registeredNotes = studentToUpdate.getRegisteredNotes();
 
-        if (!registeredNotes.hasNote(noteId)) {
-            return new CommandResult(String.format(MESSAGE_ALREADY_NOT_RECORDED, studentToUpdate.getName()));
+        if (!registeredNotes.hasNote(noteIndex)) {
+            return new CommandResult(String.format(MESSAGE_ALREADY_NOT_RECORDED, studentToUpdate.getName()), studentToUpdate);
         }
 
         Student updatedStudent = studentToUpdate.withRegisteredNotes(
-                registeredNotes.withoutNote(noteId));
+                registeredNotes.withoutNote(noteIndex));
         model.setStudent(studentToUpdate, updatedStudent);
-        return new CommandResult(String.format(MESSAGE_SUCCESS, studentToUpdate.getName(), noteId), updatedStudent);
+        return new CommandResult(String.format(MESSAGE_SUCCESS, studentToUpdate.getName(), noteIndex.getOneBased()), updatedStudent);
     }
 
     @Override
@@ -78,19 +77,19 @@ public class DeleteNoteCommand extends Command {
         }
 
         return targetIndex.equals(otherDeleteNoteCommand.targetIndex)
-                && noteId == otherDeleteNoteCommand.noteId;
+                && noteIndex.equals(otherDeleteNoteCommand.noteIndex);
     }
 
     @Override
     public int hashCode() {
-        return hash(targetIndex, noteId);
+        return hash(targetIndex, noteIndex);
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
                 .add("targetIndex", targetIndex)
-                .add("noteId", noteId)
+                .add("noteIndex", noteIndex)
                 .toString();
     }
 }

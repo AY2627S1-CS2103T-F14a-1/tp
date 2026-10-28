@@ -14,22 +14,24 @@ import java.util.Optional;
 import java.util.Set;
 
 import seedu.address.commons.core.index.Index;
-import seedu.address.logic.commands.EditCommand;
-import seedu.address.logic.commands.EditCommand.EditStudentDescriptor;
+import seedu.address.logic.commands.EditStudentCommand;
+import seedu.address.logic.commands.EditStudentCommand.EditStudentDescriptor;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.logic.parser.util.ParserUtil;
+import seedu.address.logic.parser.util.StudentParserUtil;
 import seedu.address.model.tag.Tag;
 
 /**
- * Parses input arguments and creates a new EditCommand object
+ * Parses input arguments and creates a new EditStudentCommand object
  */
-public class EditCommandParser implements Parser<EditCommand> {
+public class EditStudentCommandParser implements Parser<EditStudentCommand> {
 
     /**
-     * Parses the given {@code String} of arguments in the context of the EditCommand
-     * and returns an EditCommand object for execution.
+     * Parses the given {@code String} of arguments in the context of the EditStudentCommand
+     * and returns an EditStudentCommand object for execution.
      * @throws ParseException if the user input does not conform to the expected format
      */
-    public EditCommand parse(String args) throws ParseException {
+    public EditStudentCommand parse(String args) throws ParseException {
         requireNonNull(args);
 
         try {
@@ -41,13 +43,13 @@ public class EditCommandParser implements Parser<EditCommand> {
 
             EditStudentDescriptor editStudentDescriptor = buildEditStudentDescriptor(argMultimap);
             if (!editStudentDescriptor.isAnyFieldEdited()) {
-                throw new ParseException(EditCommand.MESSAGE_NOT_EDITED);
+                throw new ParseException(EditStudentCommand.MESSAGE_NOT_EDITED);
             }
 
             Index index = ParserUtil.parseIndex(argMultimap.getValue(PREFIX_INDEX).get());
-            return new EditCommand(index, editStudentDescriptor);
+            return new EditStudentCommand(index, editStudentDescriptor);
         } catch (ParseException e) {
-            throw new ParseException(e.getMessage() + "\n\n" + EditCommand.MESSAGE_USAGE);
+            throw new ParseException(e.getMessage() + "\n\n" + EditStudentCommand.MESSAGE_USAGE);
         }
     }
 
@@ -64,18 +66,18 @@ public class EditCommandParser implements Parser<EditCommand> {
         EditStudentDescriptor editStudentDescriptor = new EditStudentDescriptor();
 
         if (argMultimap.getValue(PREFIX_NAME).isPresent()) {
-            editStudentDescriptor.setName(ParserUtil.parseName(argMultimap.getValue(PREFIX_NAME).get()));
+            editStudentDescriptor.setName(StudentParserUtil.parseName(argMultimap.getValue(PREFIX_NAME).get()));
         }
         if (argMultimap.getValue(PREFIX_PHONE).isPresent()) {
-            editStudentDescriptor.setPhone(ParserUtil.parsePhone(argMultimap.getValue(PREFIX_PHONE).get()));
+            editStudentDescriptor.setPhone(StudentParserUtil.parsePhone(argMultimap.getValue(PREFIX_PHONE).get()));
         }
         if (argMultimap.getValue(PREFIX_EMAIL).isPresent()) {
-            editStudentDescriptor.setEmail(ParserUtil.parseEmail(argMultimap.getValue(PREFIX_EMAIL).get()));
+            editStudentDescriptor.setEmail(StudentParserUtil.parseEmail(argMultimap.getValue(PREFIX_EMAIL).get()));
         }
         parseTagsForEdit(argMultimap.getAllValues(PREFIX_TAG)).ifPresent(editStudentDescriptor::setTags);
         if (argMultimap.getValue(PREFIX_STUDIO_GROUP).isPresent()) {
             editStudentDescriptor.setStudioGroup(
-                    ParserUtil.parseStudioGroup(argMultimap.getValue(PREFIX_STUDIO_GROUP).get()));
+                    StudentParserUtil.parseStudioGroup(argMultimap.getValue(PREFIX_STUDIO_GROUP).get()));
         }
         return editStudentDescriptor;
     }
@@ -92,7 +94,7 @@ public class EditCommandParser implements Parser<EditCommand> {
             return Optional.empty();
         }
         Collection<String> tagSet = tags.size() == 1 && tags.contains("") ? Collections.emptySet() : tags;
-        return Optional.of(ParserUtil.parseTags(tagSet));
+        return Optional.of(StudentParserUtil.parseTags(tagSet));
     }
 
 }

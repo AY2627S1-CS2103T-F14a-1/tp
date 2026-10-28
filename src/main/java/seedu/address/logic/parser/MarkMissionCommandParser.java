@@ -7,6 +7,8 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_MISSION;
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.MarkMissionCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.logic.parser.util.MissionParserUtil;
+import seedu.address.logic.parser.util.ParserUtil;
 import seedu.address.model.mission.MissionId;
 
 /**
@@ -30,7 +32,7 @@ public class MarkMissionCommandParser implements Parser<MarkMissionCommand> {
                     args, PREFIX_INDEX, PREFIX_MISSION);
 
             Index index = ParserUtil.parseIndex(argMultimap.getValue(PREFIX_INDEX).get());
-            MissionId missionId = ParserUtil.parseMissionId(argMultimap.getValue(PREFIX_MISSION).get());
+            MissionId missionId = MissionParserUtil.parseMissionId(argMultimap.getValue(PREFIX_MISSION).get());
             return new MarkMissionCommand(index, missionId);
         } catch (ParseException e) {
             throw new ParseException(e.getMessage() + "\n\n" + MarkMissionCommand.MESSAGE_USAGE);

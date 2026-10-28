@@ -61,7 +61,8 @@ public class MarkMasteryCheckCommandTest {
     public void execute_unregisteredNumber_reportsStudentAndLeavesModelUnchanged() {
         Student student = model.getFilteredStudentList().getFirst();
         assertCommandFailure(new MarkMasteryCheckCommand(INDEX_FIRST_STUDENT, Integer.MAX_VALUE), model,
-                "Mastery check " + Integer.MAX_VALUE + " does not exist for " + student.getName() + ".");
+                "Mastery check " + Integer.MAX_VALUE + " does not exist for " + student.getName()
+                        + ". You can add one using the addmc command.");
     }
 
     @Test

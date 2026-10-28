@@ -123,17 +123,17 @@ public class StudentDetailsPanel extends UiPart<Region> {
     }
 
     /**
-     * Populates the notes grid with notes in ascending note-ID order.
+     * Populates the notes grid with notes in ascending note index order.
      * Displays an empty-state message when the student has no notes.
      *
      * @param student Student whose notes are displayed.
      */
     private void populateNotes(Student student) {
         notesGrid.getChildren().clear();
-        addGridLabel(notesGrid, "ID", 0, 0, true);
+        addGridLabel(notesGrid, "Index", 0, 0, true);
         addGridLabel(notesGrid, "Note", 1, 0, true);
 
-        Map<Integer, Note> notes = student.getRegisteredNotes().getNotesById();
+        List<Note> notes = student.getRegisteredNotes().getRegisteredNotes();
         if (notes.isEmpty()) {
             addGridLabel(notesGrid, "No notes recorded.", 0, 1, false);
             GridPane.setColumnSpan(notesGrid.getChildren().getLast(), 2);
@@ -141,10 +141,9 @@ public class StudentDetailsPanel extends UiPart<Region> {
         }
 
         int row = 1;
-        for (Map.Entry<Integer, Note> entry : notes.entrySet().stream()
-                .sorted(Map.Entry.comparingByKey()).toList()) {
-            addGridLabel(notesGrid, String.valueOf(entry.getKey()), 0, row, false);
-            addGridLabel(notesGrid, entry.getValue().getNoteText(), 1, row, false);
+        for (int i = 1; i <= notes.size(); i++) {
+            addGridLabel(notesGrid, String.valueOf(i), 0, row, false);
+            addGridLabel(notesGrid, notes.get(i - 1).getNoteText(), 1, row, false);
             row++;
         }
     }
@@ -236,8 +235,9 @@ public class StudentDetailsPanel extends UiPart<Region> {
     /**
      * Populates the studio-record grid for the specified student.
      *
-     * <p>Each supported week is displayed with its corresponding effort
-     * score. A score of zero is displayed when no record exists.</p>
+     * <p>Each supported week is displayed with its attendance and corresponding
+     * effort score. A week is attended when a record exists. Otherwise, it is
+     * not attended and has a displayed score of zero.</p>
      *
      * @param student student whose studio records are displayed
      */
@@ -257,8 +257,15 @@ public class StudentDetailsPanel extends UiPart<Region> {
 
         addGridLabel(
                 studioRecordGrid,
-                "Effort Score",
+                "Attendance",
                 1,
+                0,
+                true);
+
+        addGridLabel(
+                studioRecordGrid,
+                "Effort Score",
+                2,
                 0,
                 true);
 
@@ -278,8 +285,15 @@ public class StudentDetailsPanel extends UiPart<Region> {
 
             addGridLabel(
                     studioRecordGrid,
-                    String.valueOf(score),
+                    hasAttended ? "Attended" : "Not attended",
                     1,
+                    row,
+                    false);
+
+            addGridLabel(
+                    studioRecordGrid,
+                    String.valueOf(score),
+                    2,
                     row,
                     false);
 

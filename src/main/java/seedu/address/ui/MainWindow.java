@@ -1,6 +1,7 @@
 package seedu.address.ui;
 
 import java.nio.file.Path;
+import java.util.List;
 import java.util.logging.Logger;
 
 import javafx.collections.ListChangeListener;
@@ -294,8 +295,8 @@ public class MainWindow extends UiPart<Stage> {
 
             logger.info("Result: " + commandResult.getFeedbackToUser());
 
-            resultDisplay.setFeedbackToUser(
-                    commandResult.getFeedbackToUser());
+            List<String> warnings = commandResult.getWarnings();
+            resultDisplay.setFeedbackToUser(commandResult.getFeedbackToUser(), warnings);
 
             if (commandResult.isMissionUpdated()) {
                 studentDetailsPanel.updateMissions(

@@ -10,6 +10,8 @@ import java.time.LocalDateTime;
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.AddMasteryCheckCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.logic.parser.util.MasteryCheckParserUtil;
+import seedu.address.logic.parser.util.ParserUtil;
 import seedu.address.model.masterycheck.MasteryCheck;
 
 /**
@@ -34,8 +36,9 @@ public class AddMasteryCheckCommandParser implements Parser<AddMasteryCheckComma
                     args, PREFIX_INDEX, PREFIX_NUMBER, PREFIX_DATETIME);
 
             Index index = ParserUtil.parseIndex(argMultimap.getValue(PREFIX_INDEX).get());
-            int number = ParserUtil.parseMasteryCheckNumber(argMultimap.getValue(PREFIX_NUMBER).get());
-            LocalDateTime dateTime = ParserUtil.parseMasteryCheckDateTime(argMultimap.getValue(PREFIX_DATETIME).get());
+            int number = MasteryCheckParserUtil.parseMasteryCheckNumber(argMultimap.getValue(PREFIX_NUMBER).get());
+            LocalDateTime dateTime = MasteryCheckParserUtil.parseMasteryCheckDateTime(argMultimap
+                    .getValue(PREFIX_DATETIME).get());
             return new AddMasteryCheckCommand(index, number, new MasteryCheck(dateTime));
         } catch (ParseException e) {
             throw new ParseException(e.getMessage() + "\n\n" + AddMasteryCheckCommand.MESSAGE_USAGE);

@@ -39,8 +39,9 @@ import java.util.Collection;
 import org.junit.jupiter.api.Test;
 
 import seedu.address.commons.core.index.Index;
-import seedu.address.logic.commands.EditCommand;
-import seedu.address.logic.commands.EditCommand.EditStudentDescriptor;
+import seedu.address.logic.commands.EditStudentCommand;
+import seedu.address.logic.commands.EditStudentCommand.EditStudentDescriptor;
+import seedu.address.logic.parser.util.ParserUtil;
 import seedu.address.model.student.Email;
 import seedu.address.model.student.Name;
 import seedu.address.model.student.Phone;
@@ -48,16 +49,16 @@ import seedu.address.model.student.StudioGroup;
 import seedu.address.model.tag.Tag;
 import seedu.address.testutil.EditStudentDescriptorBuilder;
 
-public class EditCommandParserTest {
+public class EditStudentCommandParserTest {
 
-    private static final String USAGE_SUFFIX = "\n\n" + EditCommand.MESSAGE_USAGE;
+    private static final String USAGE_SUFFIX = "\n\n" + EditStudentCommand.MESSAGE_USAGE;
 
     private static final String TAG_EMPTY = " " + PREFIX_TAG;
 
     private static final String MESSAGE_INVALID_FORMAT =
             MESSAGE_INVALID_COMMAND + USAGE_SUFFIX;
 
-    private EditCommandParser parser = new EditCommandParser();
+    private EditStudentCommandParser parser = new EditStudentCommandParser();
 
     @Test
     public void parse_missingParts_failure() {
@@ -66,7 +67,7 @@ public class EditCommandParserTest {
 
         // no field specified
         assertParseFailure(parser, "id/1",
-                EditCommand.MESSAGE_NOT_EDITED + USAGE_SUFFIX);
+                EditStudentCommand.MESSAGE_NOT_EDITED + USAGE_SUFFIX);
 
         // no index and no field specified
         assertParseFailure(parser, "", CliSyntax.PREFIX_INDEX.getMissingMessage() + USAGE_SUFFIX);
@@ -129,7 +130,7 @@ public class EditCommandParserTest {
                 .withPhone(VALID_PHONE_BOB).withEmail(VALID_EMAIL_AMY)
                 .withTags(VALID_TAG_HUSBAND, VALID_TAG_FRIEND).withStudioGroup(VALID_STUDIO_GROUP_AMY)
                 .build();
-        EditCommand expectedCommand = new EditCommand(targetIndex, descriptor);
+        EditStudentCommand expectedCommand = new EditStudentCommand(targetIndex, descriptor);
 
         assertParseSuccess(parser, userInput, expectedCommand);
     }
@@ -141,7 +142,7 @@ public class EditCommandParserTest {
 
         EditStudentDescriptor descriptor = new EditStudentDescriptorBuilder().withPhone(VALID_PHONE_BOB)
                 .withEmail(VALID_EMAIL_AMY).build();
-        EditCommand expectedCommand = new EditCommand(targetIndex, descriptor);
+        EditStudentCommand expectedCommand = new EditStudentCommand(targetIndex, descriptor);
 
         assertParseSuccess(parser, userInput, expectedCommand);
     }
@@ -152,31 +153,31 @@ public class EditCommandParserTest {
         Index targetIndex = INDEX_THIRD_STUDENT;
         String userInput = "id/" + targetIndex.getOneBased() + NAME_DESC_AMY;
         EditStudentDescriptor descriptor = new EditStudentDescriptorBuilder().withName(VALID_NAME_AMY).build();
-        EditCommand expectedCommand = new EditCommand(targetIndex, descriptor);
+        EditStudentCommand expectedCommand = new EditStudentCommand(targetIndex, descriptor);
         assertParseSuccess(parser, userInput, expectedCommand);
 
         // phone
         userInput = "id/" + targetIndex.getOneBased() + PHONE_DESC_AMY;
         descriptor = new EditStudentDescriptorBuilder().withPhone(VALID_PHONE_AMY).build();
-        expectedCommand = new EditCommand(targetIndex, descriptor);
+        expectedCommand = new EditStudentCommand(targetIndex, descriptor);
         assertParseSuccess(parser, userInput, expectedCommand);
 
         // email
         userInput = "id/" + targetIndex.getOneBased() + EMAIL_DESC_AMY;
         descriptor = new EditStudentDescriptorBuilder().withEmail(VALID_EMAIL_AMY).build();
-        expectedCommand = new EditCommand(targetIndex, descriptor);
+        expectedCommand = new EditStudentCommand(targetIndex, descriptor);
         assertParseSuccess(parser, userInput, expectedCommand);
 
         // tags
         userInput = "id/" + targetIndex.getOneBased() + TAG_DESC_FRIEND;
         descriptor = new EditStudentDescriptorBuilder().withTags(VALID_TAG_FRIEND).build();
-        expectedCommand = new EditCommand(targetIndex, descriptor);
+        expectedCommand = new EditStudentCommand(targetIndex, descriptor);
         assertParseSuccess(parser, userInput, expectedCommand);
 
         // studio group
         userInput = "id/" + targetIndex.getOneBased() + STUDIO_GROUP_DESC_AMY;
         descriptor = new EditStudentDescriptorBuilder().withStudioGroup(VALID_STUDIO_GROUP_AMY).build();
-        expectedCommand = new EditCommand(targetIndex, descriptor);
+        expectedCommand = new EditStudentCommand(targetIndex, descriptor);
         assertParseSuccess(parser, userInput, expectedCommand);
     }
 
@@ -222,7 +223,7 @@ public class EditCommandParserTest {
         String userInput = "id/" + targetIndex.getOneBased() + TAG_EMPTY;
 
         EditStudentDescriptor descriptor = new EditStudentDescriptorBuilder().withTags().build();
-        EditCommand expectedCommand = new EditCommand(targetIndex, descriptor);
+        EditStudentCommand expectedCommand = new EditStudentCommand(targetIndex, descriptor);
 
         assertParseSuccess(parser, userInput, expectedCommand);
     }
@@ -232,7 +233,7 @@ public class EditCommandParserTest {
         EditStudentDescriptor descriptor = new EditStudentDescriptor();
         descriptor.setStudioGroup(new StudioGroup("2A"));
 
-        EditCommand expectedCommand = new EditCommand(INDEX_FIRST_STUDENT, descriptor);
+        EditStudentCommand expectedCommand = new EditStudentCommand(INDEX_FIRST_STUDENT, descriptor);
 
         assertParseSuccess(parser, "id/1 g/2A", expectedCommand);
     }
@@ -275,8 +276,8 @@ public class EditCommandParserTest {
 
     @Test
     public void parseTagsForEdit_nullCollection_throwsAssertionError() throws ReflectiveOperationException {
-        assertTrue(EditCommandParser.class.desiredAssertionStatus(), "This test requires assertions enabled");
-        Method parseTags = EditCommandParser.class.getDeclaredMethod("parseTagsForEdit", Collection.class);
+        assertTrue(EditStudentCommandParser.class.desiredAssertionStatus(), "This test requires assertions enabled");
+        Method parseTags = EditStudentCommandParser.class.getDeclaredMethod("parseTagsForEdit", Collection.class);
         parseTags.setAccessible(true);
 
         // Normal parsing always supplies a non-null collection; invoke the helper to verify its internal contract.

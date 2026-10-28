@@ -7,6 +7,8 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_NUMBER;
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.DeleteMasteryCheckCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.logic.parser.util.MasteryCheckParserUtil;
+import seedu.address.logic.parser.util.ParserUtil;
 
 /**
  * Parses a displayed student index and mastery check number into a deletion command.
@@ -31,7 +33,7 @@ public class DeleteMasteryCheckCommandParser implements Parser<DeleteMasteryChec
                     args, PREFIX_INDEX, PREFIX_NUMBER);
 
             Index index = ParserUtil.parseIndex(argMultimap.getValue(PREFIX_INDEX).get());
-            int number = ParserUtil.parseMasteryCheckNumber(argMultimap.getValue(PREFIX_NUMBER).get());
+            int number = MasteryCheckParserUtil.parseMasteryCheckNumber(argMultimap.getValue(PREFIX_NUMBER).get());
             return new DeleteMasteryCheckCommand(index, number);
         } catch (ParseException e) {
             throw new ParseException(e.getMessage() + "\n\n" + DeleteMasteryCheckCommand.MESSAGE_USAGE);

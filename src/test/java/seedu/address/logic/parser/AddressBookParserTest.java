@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
+import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.AddMasteryCheckCommand;
 import seedu.address.logic.commands.AddNoteCommand;
 import seedu.address.logic.commands.AddStudentCommand;
@@ -23,9 +24,9 @@ import seedu.address.logic.commands.DeleteMasteryCheckCommand;
 import seedu.address.logic.commands.DeleteNoteCommand;
 import seedu.address.logic.commands.DeleteStudentCommand;
 import seedu.address.logic.commands.DeleteStudioRecordCommand;
-import seedu.address.logic.commands.EditCommand;
-import seedu.address.logic.commands.EditCommand.EditStudentDescriptor;
 import seedu.address.logic.commands.EditNoteCommand;
+import seedu.address.logic.commands.EditStudentCommand;
+import seedu.address.logic.commands.EditStudentCommand.EditStudentDescriptor;
 import seedu.address.logic.commands.EditStudioRecordCommand;
 import seedu.address.logic.commands.ExitCommand;
 import seedu.address.logic.commands.FindCommand;
@@ -37,6 +38,7 @@ import seedu.address.logic.commands.UnmarkMasteryCheckCommand;
 import seedu.address.logic.commands.UnmarkMissionCommand;
 import seedu.address.logic.commands.ViewCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.logic.parser.util.MasteryCheckParserUtil;
 import seedu.address.model.masterycheck.MasteryCheck;
 import seedu.address.model.mission.MissionId;
 import seedu.address.model.student.NameContainsKeywordsPredicate;
@@ -76,9 +78,9 @@ public class AddressBookParserTest {
     public void parseCommand_edit() throws Exception {
         Student student = new StudentBuilder().build();
         EditStudentDescriptor descriptor = new EditStudentDescriptorBuilder(student).build();
-        EditCommand command = (EditCommand) parser.parseCommand(EditCommand.COMMAND_WORD + " id/"
+        EditStudentCommand command = (EditStudentCommand) parser.parseCommand(EditStudentCommand.COMMAND_WORD + " id/"
                 + INDEX_FIRST_STUDENT.getOneBased() + " " + StudentUtil.getEditStudentDescriptorDetails(descriptor));
-        assertEquals(new EditCommand(INDEX_FIRST_STUDENT, descriptor), command);
+        assertEquals(new EditStudentCommand(INDEX_FIRST_STUDENT, descriptor), command);
     }
 
     @Test
@@ -247,7 +249,8 @@ public class AddressBookParserTest {
     @Test
     public void parseCommand_masteryCheckInvalidDate_throwsParseException() {
         assertThrows(ParseException.class,
-                ParserUtil.MESSAGE_INVALID_MASTERY_CHECK_DATETIME + "\n\n" + AddMasteryCheckCommand.MESSAGE_USAGE, () ->
+                MasteryCheckParserUtil.MESSAGE_INVALID_MASTERY_CHECK_DATETIME
+                        + "\n\n" + AddMasteryCheckCommand.MESSAGE_USAGE, () ->
                 parser.parseCommand("addmc id/1 num/1 dt/31-04|14:30"));
     }
 
@@ -284,16 +287,16 @@ public class AddressBookParserTest {
 
     @Test
     public void parseCommand_addNoteIgnoringCase_returnsCommand() throws Exception {
-        AddNoteCommand expected = new AddNoteCommand(INDEX_FIRST_STUDENT, 3, new Note("Review lecture notes"));
+        AddNoteCommand expected = new AddNoteCommand(INDEX_FIRST_STUDENT, new Note("Review lecture notes"));
 
-        assertEquals(expected, parser.parseCommand("addnote id/1 ni/3 nt/Review lecture notes"));
-        assertEquals(expected, parser.parseCommand("ADDNOTE id/1 ni/3 nt/Review lecture notes"));
-        assertEquals(expected, parser.parseCommand("  AddNote\tid/1\tni/3 nt/Review lecture notes  "));
+        assertEquals(expected, parser.parseCommand("addnote id/1 nt/Review lecture notes"));
+        assertEquals(expected, parser.parseCommand("ADDNOTE id/1 nt/Review lecture notes"));
+        assertEquals(expected, parser.parseCommand("  AddNote\tid/1\tnt/Review lecture notes  "));
     }
 
     @Test
     public void parseCommand_deleteNoteIgnoringCase_returnsCommand() throws Exception {
-        DeleteNoteCommand expected = new DeleteNoteCommand(INDEX_FIRST_STUDENT, 3);
+        DeleteNoteCommand expected = new DeleteNoteCommand(INDEX_FIRST_STUDENT, Index.fromOneBased(3));
 
         assertEquals(expected, parser.parseCommand("delnote id/1 ni/3"));
         assertEquals(expected, parser.parseCommand("DELNOTE id/1 ni/3"));
@@ -304,7 +307,7 @@ public class AddressBookParserTest {
     public void parseCommand_editNote() throws ParseException {
         EditNoteCommand command = (EditNoteCommand) parser.parseCommand(EditNoteCommand.COMMAND_WORD + " id/"
                 + INDEX_FIRST_STUDENT.getOneBased() + " ni/1 nt/hello");
-        assertEquals(new EditNoteCommand(INDEX_FIRST_STUDENT, 1, new Note("hello")), command);
+        assertEquals(new EditNoteCommand(INDEX_FIRST_STUDENT, Index.fromOneBased(1), new Note("hello")), command);
     }
 
 }

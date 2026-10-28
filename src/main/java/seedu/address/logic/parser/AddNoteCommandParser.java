@@ -2,12 +2,13 @@ package seedu.address.logic.parser;
 
 import static java.util.Objects.requireNonNull;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_INDEX;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_NOTE_ID;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NOTE_TEXT;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.AddNoteCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.logic.parser.util.NoteParserUtil;
+import seedu.address.logic.parser.util.ParserUtil;
 import seedu.address.model.student.Note;
 
 /**
@@ -25,12 +26,11 @@ public class AddNoteCommandParser implements Parser<AddNoteCommand> {
         requireNonNull(args);
         try {
             ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
-                    args, PREFIX_INDEX, PREFIX_NOTE_ID, PREFIX_NOTE_TEXT);
+                    args, PREFIX_INDEX, PREFIX_NOTE_TEXT);
 
             Index index = ParserUtil.parseIndex(argMultimap.getValue(PREFIX_INDEX).get());
-            int noteId = ParserUtil.parseNoteId(argMultimap.getValue(PREFIX_NOTE_ID).get());
-            Note note = ParserUtil.parseNoteText(argMultimap.getValue(PREFIX_NOTE_TEXT).get());
-            return new AddNoteCommand(index, noteId, note);
+            Note note = NoteParserUtil.parseNoteText(argMultimap.getValue(PREFIX_NOTE_TEXT).get());
+            return new AddNoteCommand(index, note);
         } catch (ParseException pe) {
             throw new ParseException(pe.getMessage() + "\n\n" + AddNoteCommand.MESSAGE_USAGE);
         }

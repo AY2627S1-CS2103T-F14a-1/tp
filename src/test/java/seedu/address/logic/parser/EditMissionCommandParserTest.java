@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import seedu.address.logic.commands.EditMissionCommand;
 import seedu.address.logic.commands.EditMissionCommand.EditMissionDescriptor;
+import seedu.address.logic.parser.util.MissionParserUtil;
 import seedu.address.model.mission.MissionId;
 
 /**
@@ -76,15 +77,15 @@ public class EditMissionCommandParserTest {
         assertParseFailure(parser, "m/ n/New",
                 MissionId.MESSAGE_CONSTRAINTS + USAGE_SUFFIX);
         assertParseFailure(parser, "m/M01 n/",
-                ParserUtil.MESSAGE_INVALID_MISSION_NAME + USAGE_SUFFIX);
+                MissionParserUtil.MESSAGE_INVALID_MISSION_NAME + USAGE_SUFFIX);
         assertParseFailure(parser, "m/M01 n/\u00a0",
-                ParserUtil.MESSAGE_INVALID_MISSION_NAME + USAGE_SUFFIX);
+                MissionParserUtil.MESSAGE_INVALID_MISSION_NAME + USAGE_SUFFIX);
         assertParseFailure(parser, "m/M01 d/",
-                ParserUtil.MESSAGE_INVALID_MISSION_DEADLINE + USAGE_SUFFIX);
+                MissionParserUtil.MESSAGE_INVALID_MISSION_DEADLINE + USAGE_SUFFIX);
         assertParseFailure(parser, "m/M01 d/2026-1-01",
-                ParserUtil.MESSAGE_INVALID_MISSION_DEADLINE + USAGE_SUFFIX);
+                MissionParserUtil.MESSAGE_INVALID_MISSION_DEADLINE + USAGE_SUFFIX);
         assertParseFailure(parser, "m/M01 d/2026-02-30",
-                ParserUtil.MESSAGE_INVALID_MISSION_CALENDAR_DATE + USAGE_SUFFIX);
+                MissionParserUtil.MESSAGE_INVALID_MISSION_CALENDAR_DATE + USAGE_SUFFIX);
     }
 
     @Test

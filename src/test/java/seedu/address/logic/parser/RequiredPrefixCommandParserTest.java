@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_DATETIME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_INDEX;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_MISSION;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_NOTE_ID;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_NOTE_INDEX;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NOTE_TEXT;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NUMBER;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_STUDIO_EFFORT;
@@ -70,11 +70,11 @@ public class RequiredPrefixCommandParserTest {
                 List.of(PREFIX_MISSION, CliSyntax.PREFIX_NAME, CliSyntax.PREFIX_DATE),
                 List.of("M01", "Runes", "2026-10-20"));
         verifyRequiredPrefixes(new AddNoteCommandParser(), AddNoteCommand.MESSAGE_USAGE,
-                List.of(PREFIX_INDEX, PREFIX_NOTE_ID, PREFIX_NOTE_TEXT), List.of("1", "3", "Review notes"));
+                List.of(PREFIX_INDEX, PREFIX_NOTE_TEXT), List.of("1", "3", "Review notes"));
         verifyRequiredPrefixes(new DeleteNoteCommandParser(), DeleteNoteCommand.MESSAGE_USAGE,
-                List.of(PREFIX_INDEX, PREFIX_NOTE_ID), List.of("1", "3"));
+                List.of(PREFIX_INDEX, PREFIX_NOTE_INDEX), List.of("1", "3"));
         verifyRequiredPrefixes(new EditNoteCommandParser(), EditNoteCommand.MESSAGE_USAGE,
-                List.of(PREFIX_INDEX, PREFIX_NOTE_ID, PREFIX_NOTE_TEXT), List.of("1", "3", "Review notes"));
+                List.of(PREFIX_INDEX, PREFIX_NOTE_INDEX, PREFIX_NOTE_TEXT), List.of("1", "3", "Review notes"));
     }
 
     /**

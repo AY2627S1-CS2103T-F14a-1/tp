@@ -7,6 +7,8 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_NUMBER;
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.MarkMasteryCheckCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.logic.parser.util.MasteryCheckParserUtil;
+import seedu.address.logic.parser.util.ParserUtil;
 
 /**
  * Parses a student index and mastery check number into a command that marks the check complete.
@@ -28,7 +30,7 @@ public class MarkMasteryCheckCommandParser implements Parser<MarkMasteryCheckCom
             ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
                     args, PREFIX_INDEX, PREFIX_NUMBER);
             Index index = ParserUtil.parseIndex(argMultimap.getValue(PREFIX_INDEX).get());
-            int number = ParserUtil.parseMasteryCheckNumber(argMultimap.getValue(PREFIX_NUMBER).get());
+            int number = MasteryCheckParserUtil.parseMasteryCheckNumber(argMultimap.getValue(PREFIX_NUMBER).get());
             return new MarkMasteryCheckCommand(index, number);
         } catch (ParseException e) {
             throw new ParseException(e.getMessage() + "\n\n" + MarkMasteryCheckCommand.MESSAGE_USAGE);

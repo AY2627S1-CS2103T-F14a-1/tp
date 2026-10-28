@@ -11,8 +11,8 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import seedu.address.logic.commands.AddNoteCommand;
+import seedu.address.logic.parser.util.ParserUtil;
 import seedu.address.model.student.Note;
-import seedu.address.model.student.RegisteredNotes;
 
 /** Tests parsing arguments for {@link AddNoteCommand}. */
 public class AddNoteCommandParserTest {
@@ -26,51 +26,41 @@ public class AddNoteCommandParserTest {
 
     @Test
     public void parse_validArguments_returnsExpectedCommand() {
-        AddNoteCommand expected = new AddNoteCommand(INDEX_FIRST_STUDENT, 3, new Note("Review lecture notes"));
+        AddNoteCommand expected = new AddNoteCommand(INDEX_FIRST_STUDENT, new Note("Review lecture notes"));
 
-        assertParseSuccess(parser, "id/1 ni/3 nt/Review lecture notes", expected);
-        assertParseSuccess(parser, " nt/ Review lecture notes  ni/ 3 id/ 1 ", expected);
+        assertParseSuccess(parser, "id/1 nt/Review lecture notes", expected);
+        assertParseSuccess(parser, " nt/ Review lecture notes id/ 1 ", expected);
     }
 
     @Test
     public void parse_invalidIndex_reportsIndexConstraint() {
         for (String index : List.of("", "0", "-1", "abc", "1 extra", "2147483648")) {
-            assertParseFailure(parser, "id/" + index + " ni/3 nt/Review lecture notes",
+            assertParseFailure(parser, "id/" + index + " nt/Review lecture notes",
                     ParserUtil.MESSAGE_INVALID_INDEX + "\n\n" + AddNoteCommand.MESSAGE_USAGE);
-        }
-    }
-
-    @Test
-    public void parse_invalidNoteId_reportsNoteIdConstraint() {
-        for (String noteId : List.of("", "0", "11", "-1", "1.5", "abc", "2147483648")) {
-            assertParseFailure(parser, "id/1 ni/" + noteId + " nt/Review lecture notes",
-                    RegisteredNotes.MESSAGE_CONSTRAINTS + "\n\n" + AddNoteCommand.MESSAGE_USAGE);
         }
     }
 
     @Test
     public void parse_invalidNoteText_reportsNoteTextConstraint() {
         for (String noteText : List.of("", " ", "Review!", "a".repeat(Note.MAX_NOTE_LENGTH + 1))) {
-            assertParseFailure(parser, "id/1 ni/3 nt/" + noteText,
+            assertParseFailure(parser, "id/1 nt/" + noteText,
                     Note.MESSAGE_CONSTRAINTS + "\n\n" + AddNoteCommand.MESSAGE_USAGE);
         }
     }
 
     @Test
     public void parse_missingAndDuplicatePrefixes_reportsPrefixSpecificMessages() {
-        assertParseFailure(parser, "id/1 ni/3",
+        assertParseFailure(parser, "id/1",
                 CliSyntax.PREFIX_NOTE_TEXT.getMissingMessage() + "\n\n" + AddNoteCommand.MESSAGE_USAGE);
-        assertParseFailure(parser, "id/1 nt/Review lecture notes",
-                CliSyntax.PREFIX_NOTE_ID.getMissingMessage() + "\n\n" + AddNoteCommand.MESSAGE_USAGE);
-        assertParseFailure(parser, "ni/3 nt/Review lecture notes",
+        assertParseFailure(parser, "nt/Review lecture notes",
                 CliSyntax.PREFIX_INDEX.getMissingMessage() + "\n\n" + AddNoteCommand.MESSAGE_USAGE);
-        assertParseFailure(parser, "id/1 ni/3 ni/4 nt/Review lecture notes",
-                CliSyntax.PREFIX_NOTE_ID.getDuplicateMessage() + "\n\n" + AddNoteCommand.MESSAGE_USAGE);
+        assertParseFailure(parser, "id/1 nt/Review lecture notes nt/Other note",
+                CliSyntax.PREFIX_NOTE_TEXT.getDuplicateMessage() + "\n\n" + AddNoteCommand.MESSAGE_USAGE);
     }
 
     @Test
     public void parse_preamble_throwsParseException() {
-        assertParseFailure(parser, "1 ni/3 nt/Review lecture notes",
+        assertParseFailure(parser, "1 nt/Review lecture notes",
                 String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddNoteCommand.MESSAGE_USAGE));
     }
 }

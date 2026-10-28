@@ -23,7 +23,8 @@ Class RegisteredStudioRecords
 Class StudioRecord
 Class RegisteredMasteryChecks
 Class MasteryCheck
-
+Class RegisteredNotes
+Class Note
 Class MissionSubmissions
 Class MissionCatalogue
 Class Mission
@@ -43,12 +44,14 @@ UserPrefs .up.|> ReadOnlyUserPrefs
 
 Student -[hidden]up--> I
 UniqueStudentList -[hidden]right-> I
+
 AddressBook *--> "1" UniqueStudentList
 AddressBook *--> "1" MissionCatalogue
 UniqueStudentList --> "~* all" Student
 ModelManager --> "~* filtered" Student
 MissionCatalogue --> "*" Mission
 Mission *-down-> "1" MissionId
+
 Student *--> "1" Name
 Student *--> "1" Phone
 Student *--> "1" Email
@@ -57,25 +60,32 @@ Student *--> "1" StudioGroup
 Student *--> "1" RegisteredStudioRecords
 Student *--> "1" MissionSubmissions
 Student *--> "1" RegisteredMasteryChecks
-RegisteredMasteryChecks *-down-> "*" MasteryCheck
-MissionSubmissions -down-> "*" MissionId
+Student *--> "1" RegisteredNotes
 
+RegisteredMasteryChecks *-down-> "*" MasteryCheck
+RegisteredNotes *-down-> "*" Note
+MissionSubmissions -down-> "*" MissionId
+RegisteredStudioRecords *--> "*" StudioRecord
+
+' Top-level layout
+ReadOnlyAddressBook -[hidden]right-> Model
+Model -[hidden]right-> ReadOnlyUserPrefs
+AddressBook -[hidden]right-> ModelManager
+ModelManager -[hidden]right-> UserPrefs
+
+' Student attributes ordering
+MissionSubmissions -[hidden]right-> Name
 Name -[hidden]right-> Phone
 Phone -[hidden]right-> Email
 Email -[hidden]right-> Tag
 Tag -[hidden]right-> StudioGroup
 StudioGroup -[hidden]right-> RegisteredStudioRecords
 RegisteredStudioRecords -[hidden]right-> RegisteredMasteryChecks
-MissionSubmissions -[hidden]right-> Name
+RegisteredMasteryChecks -[hidden]right-> RegisteredNotes
 
-'Keep the architecture and student values in the reference diagram's order.
-ReadOnlyAddressBook -[hidden]right-> Model
-Model -[hidden]right-> ReadOnlyUserPrefs
-AddressBook -[hidden]right-> ModelManager
-ModelManager -[hidden]right-> UserPrefs
-RegisteredStudioRecords *--> "*" StudioRecord
-'Keep each record type below its owning container without crossing relationships.
+' Bottom row ordering
 MissionId -[hidden]right-> StudioRecord
-Mission -[hidden]down-> MissionId
 StudioRecord -[hidden]right-> MasteryCheck
+MasteryCheck -[hidden]right-> Note
+
 @enduml

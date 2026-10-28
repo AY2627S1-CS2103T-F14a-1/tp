@@ -1,7 +1,9 @@
 package seedu.address.ui;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -18,6 +20,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
 import seedu.address.model.mission.Mission;
 import seedu.address.model.mission.MissionId;
 
@@ -52,6 +55,27 @@ public class ResultDisplayTest extends GuiUnitTest {
         guiRobot.interact(() -> resultDisplay.setFeedbackToUser("Dummy feedback to user"));
         guiRobot.pauseForHuman();
         assertEquals("Dummy feedback to user", resultDisplayHandle.getText());
+    }
+
+    @Test
+    public void setFeedbackToUser_withWarnings_displaysYellowWarningSeparately() {
+        guiRobot.interact(() -> resultDisplay.setFeedbackToUser(
+                "Note added successfully.", List.of("A matching note text exists.")));
+        guiRobot.pauseForHuman();
+
+        Label resultLabel = getChildNode(resultDisplay.getRoot(), "#resultDisplay");
+        Label warningLabel = getChildNode(resultDisplay.getRoot(), "#warningDisplay");
+        assertEquals("Note added successfully.", resultLabel.getText());
+        assertEquals("WARNING:\nA matching note text exists.", warningLabel.getText());
+        assertTrue(warningLabel.isVisible());
+        assertTrue(warningLabel.isManaged());
+        assertTrue(warningLabel.getStyleClass().contains("command-warning"));
+        assertEquals(Color.web("#ffd54f"), warningLabel.getTextFill());
+
+        guiRobot.interact(() -> resultDisplay.setFeedbackToUser("Next result."));
+        assertFalse(warningLabel.isVisible());
+        assertFalse(warningLabel.isManaged());
+        assertEquals("", warningLabel.getText());
     }
 
     private static GridPane getMissionTable(StudentDetailsPanel panel) {

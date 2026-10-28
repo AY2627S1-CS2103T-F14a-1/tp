@@ -7,6 +7,8 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_WEEK;
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.DeleteStudioRecordCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.logic.parser.util.ParserUtil;
+import seedu.address.logic.parser.util.StudioRecordParserUtil;
 
 /**
  * Parses input arguments and creates a new {@code DeleteStudioRecordCommand}.
@@ -28,7 +30,7 @@ public class DeleteStudioRecordCommandParser implements Parser<DeleteStudioRecor
                     args, PREFIX_INDEX, PREFIX_WEEK);
 
             Index index = ParserUtil.parseIndex(argMultimap.getValue(PREFIX_INDEX).get());
-            int week = ParserUtil.parseWeek(argMultimap.getValue(PREFIX_WEEK).get());
+            int week = StudioRecordParserUtil.parseWeek(argMultimap.getValue(PREFIX_WEEK).get());
             return new DeleteStudioRecordCommand(index, week);
         } catch (ParseException e) {
             throw new ParseException(e.getMessage() + "\n\n" + DeleteStudioRecordCommand.MESSAGE_USAGE);
