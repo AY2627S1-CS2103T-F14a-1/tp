@@ -27,9 +27,12 @@ public class AddNoteCommandParserTest {
     @Test
     public void parse_validArguments_returnsExpectedCommand() {
         AddNoteCommand expected = new AddNoteCommand(INDEX_FIRST_STUDENT, new Note("Review lecture notes"));
+        AddNoteCommand punctuationExpected = new AddNoteCommand(
+                INDEX_FIRST_STUDENT, new Note("Don't forget: chapter 2!"));
 
         assertParseSuccess(parser, "id/1 nt/Review lecture notes", expected);
         assertParseSuccess(parser, " nt/ Review lecture notes id/ 1 ", expected);
+        assertParseSuccess(parser, "id/1 nt/Don't forget: chapter 2!", punctuationExpected);
     }
 
     @Test
@@ -42,7 +45,7 @@ public class AddNoteCommandParserTest {
 
     @Test
     public void parse_invalidNoteText_reportsNoteTextConstraint() {
-        for (String noteText : List.of("", " ", "Review!", "a".repeat(Note.MAX_NOTE_LENGTH + 1))) {
+        for (String noteText : List.of("", " ", "\t", "a".repeat(Note.MAX_NOTE_LENGTH + 1))) {
             assertParseFailure(parser, "id/1 nt/" + noteText,
                     Note.MESSAGE_CONSTRAINTS + "\n\n" + AddNoteCommand.MESSAGE_USAGE);
         }

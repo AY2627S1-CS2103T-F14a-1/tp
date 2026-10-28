@@ -29,20 +29,21 @@ public class NoteTest {
     @Test
     public void constructor_invalidText_throwsIllegalArgumentException() {
         assertThrows(IllegalArgumentException.class, () -> new Note(""));
-        assertThrows(IllegalArgumentException.class, () -> new Note("has-a-hyphen"));
+        assertThrows(IllegalArgumentException.class, () -> new Note(" leading space"));
     }
 
     @Test
     public void isValidNoteText_boundaryAndCharacterCases_returnsExpectedValidity() {
         assertTrue(Note.isValidNoteText("A"));
         assertTrue(Note.isValidNoteText("123 notes"));
+        assertTrue(Note.isValidNoteText("Don't forget: chapter 2!"));
         assertTrue(Note.isValidNoteText("a".repeat(Note.MAX_NOTE_LENGTH)));
 
         assertFalse(Note.isValidNoteText(""));
         assertFalse(Note.isValidNoteText(" "));
         assertFalse(Note.isValidNoteText(" leading"));
         assertTrue(Note.isValidNoteText("trailing "));
-        assertFalse(Note.isValidNoteText("not-a-note"));
+        assertFalse(Note.isValidNoteText("note\twith tab"));
         assertFalse(Note.isValidNoteText("a".repeat(Note.MAX_NOTE_LENGTH + 1)));
         assertThrows(NullPointerException.class, () -> Note.isValidNoteText(null));
     }
