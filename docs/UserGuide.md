@@ -402,7 +402,9 @@ Format: `addmission m/MISSION_ID n/NAME d/DEADLINE`
   before the first prefix. The command word is case-insensitive.
 * `MISSION_ID` must start with `M` followed by a positive integer of at least two digits,
   without unnecessary leading zeros. For example, `M01`, `M02`, and `M105` are valid;
-  `M1` and `M00` are not. IDs must be unique among configured missions.
+  `M1` and `M00` are not. The number must not exceed `9223372036854775807` (the
+  largest supported value, with up to 19 digits). IDs must be unique among configured
+  missions. Exceeding the limit reports the same mission-ID constraint message.
 * `NAME` must not be blank. Multiple words and ordinary punctuation are allowed.
   Leading and trailing whitespace is removed, and internal whitespace becomes a single space.
   Letter case and punctuation are preserved for display and saving.
@@ -443,7 +445,7 @@ produce their respective constraint messages. An existing name produces
 
 ### Deleting a mission: `delmission`
 
-Format: `delmission m/MISSIONID`
+Format: `delmission m/MISSION_ID`
 
 Example: `delmission m/M03`
 
@@ -474,7 +476,7 @@ Format: `markmission id/INDEX m/MISSION_ID`
 * Records are maintained manually. Not submitted means no submission is recorded in AvengerHub.
 
 Example: `markmission id/1 m/M01`, followed by `view id/1`, displays M01 as Submitted.
-An unknown mission ID or invalid command leaves existing records unchanged.
+An unknown mission ID or invalid command leaves existing records unchanged. Malformed arguments display an error with command usage. A positive index that does not identify a student in the currently displayed list is rejected during execution with an index error followed by the command's usage; check the current list and use an index shown there. The same applies to `unmarkmission`.
 
 ![result for marking a mission](images/markMissionResult.png)
 
@@ -587,6 +589,7 @@ Format: `viewmission m/MISSION_ID [s/overdue]`
 * Displays the mission ID, description, deadline, and result count.
 * Displays Submitted when a submission is recorded.
 * Displays Overdue when no submission is recorded and the deadline has passed.
+* Displays Not submitted when no submission is recorded and the deadline is today or in the future.
 * A mission due today is not overdue.
 * Subsequent `view`, `markmission`, and `unmarkmission` commands use the
   indexes in the displayed list.
@@ -677,7 +680,7 @@ Action     | Format, Examples
 **Mark mastery check** | `markmc id/INDEX num/NUMBER`<br> e.g. `markmc id/1 num/2`                                                                                                             
 **Unmark mastery check** | `unmarkmc id/INDEX num/NUMBER`<br> e.g. `unmarkmc id/1 num/2`                                                                                                         
 **Add mission** | `addmission m/MISSION_ID n/NAME d/DEADLINE`<br> e.g., `addmission m/M01 n/Rune Reading d/2026-10-20`
-**Delete mission** | `delmission m/MISSIONID`<br> e.g., `delmission m/M03`                                                                                                              
+**Delete mission** | `delmission m/MISSION_ID`<br> e.g., `delmission m/M03`
 **Record mission submission** | `markmission id/INDEX m/MISSION_ID`<br> e.g., `markmission id/1 m/M01`                                                                                                
 **Remove mission submission** | `unmarkmission id/INDEX m/MISSION_ID`<br> e.g., `unmarkmission id/1 m/M01`                                                                                            
 **Edit mission** | `editmission m/MISSION_ID [n/NAME] [d/DEADLINE]`<br> e.g., `editmission m/M01 n/Rune Reading d/2026-10-22`                                                         
@@ -685,7 +688,7 @@ Action     | Format, Examples
 **List mission submissions** | `listmissions m/MISSION_ID`<br> e.g., `listmissions m/M01`  
 **View mission statuses** | `viewmission m/MISSION_ID [s/overdue]`
 **Clear**  | `clear`                                                                                                                                                            
-**Find**   | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find James Jake`                                                                                                         
+**Find**   | `find [NAME_WORDS [, MORE_NAME_WORDS]...] [g/STUDIO_GROUP]...`<br> e.g., `find James Jake`
 **List**   | `list`                                                                                                                                                             
 **Help**   | `help`                                                                                                                                                             
 **Exit**   | `exit`

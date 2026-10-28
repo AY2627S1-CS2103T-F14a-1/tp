@@ -25,11 +25,21 @@ public class MissionIdTest {
     public void constructor_invalidIds_reportsConstraint() {
         for (String text : List.of("", " ", "M", "01", "M0", "M00", "M1", "M001", "M010",
                 " M01", "M01 ", "M 01", "M+01", "M-01", "M1.0", "M1e2", "M０１",
-                "M9223372036854775808", "M999999999999999999999999999")) {
+                "M999999999999999999999999999")) {
             IllegalArgumentException error = assertThrows(IllegalArgumentException.class, () -> new MissionId(text));
             assertEquals(MissionId.MESSAGE_CONSTRAINTS, error.getMessage(), text);
         }
         assertThrows(NullPointerException.class, () -> new MissionId(null));
+    }
+
+    @Test
+    public void constructor_numericBoundary_acceptsMaximumAndRejectsOverflow() {
+        MissionId maximum = new MissionId("M9223372036854775807");
+        assertEquals(Long.MAX_VALUE, maximum.getNumber());
+
+        IllegalArgumentException error = assertThrows(IllegalArgumentException.class, () ->
+                new MissionId("M9223372036854775808"));
+        assertEquals(MissionId.MESSAGE_CONSTRAINTS, error.getMessage());
     }
 
     @Test

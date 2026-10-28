@@ -242,7 +242,24 @@ direct UI equivalent.
 | MISSION-PARSE-003 | Parse a leap-day deadline `2024-02-29`, a valid regular date, and a date with surrounding whitespace. | Valid dates parse to the expected `LocalDate`; surrounding whitespace is trimmed. |
 | MISSION-PARSE-004 | Parse malformed deadline formats and impossible calendar dates, then parse a valid date. | Invalid formats and impossible dates produce their respective `ParseException` messages; valid parsing still succeeds. |
 | MISSION-PARSE-005 | Parse lowercase `m/m03` with surrounding whitespace. | The parser trims the input and returns canonical ID `M03`; `MissionId` owns case normalization. |
+| MISSION-ID-BOUNDARY-001 | In an empty catalogue, run `addmission m/M9223372036854775807 n/Maximum ID d/2026-12-13`. | The mission is added successfully with ID `M9223372036854775807`. |
+| MISSION-ID-BOUNDARY-002 | After the successful addition above, run `addmission m/M9223372036854775808 n/Overflow ID d/2026-12-13`, then `listmissions m/M9223372036854775807`. | The error says the mission number must not exceed `9223372036854775807` and includes command usage; the existing maximum-ID mission remains unchanged. |
 | MISSION-DELETE-RECREATE-001 | With mission `M03` submitted by a student, delete `M03`, then recreate it using `m/M03` with a new name and deadline. | The recreated mission uses ID `M03` and has no previous submissions. |
+
+## Mission submission index error usage
+
+Start with exactly two students displayed and mission `M03` configured. Record a
+submission for one student before testing unmarking. After each rejected
+command, inspect the student profile and confirm the submission state is
+unchanged. This ensures displayed index 3 is invalid for the index-error cases.
+
+| ID | Steps | Expected result |
+| --- | --- | --- |
+| MISSION-INDEX-USAGE-001 | Run `markmission id/1 m/M03`, then `view id/1`. | The first displayed student's M03 status is Submitted. |
+| MISSION-INDEX-USAGE-002 | Run `markmission id/3 m/M03`, then `view id/1`. | Invalid displayed-index feedback is followed by a blank line and complete `markmission` usage; M03 remains Submitted for student 1 and no other student changes. |
+| MISSION-INDEX-USAGE-003 | Run `unmarkmission id/1 m/M03`, then `view id/1`. | The first displayed student's M03 status is Not submitted. |
+| MISSION-INDEX-USAGE-004 | Run `unmarkmission id/3 m/M03`, then `view id/1`. | Invalid displayed-index feedback is followed by a blank line and complete `unmarkmission` usage; M03 remains Not submitted for student 1 and no other student changes. |
+| MISSION-INDEX-USAGE-005 | Run `find` so only one student is displayed, then run `markmission id/2 m/M03` and `unmarkmission id/2 m/M03`, inspecting the displayed student afterward. | Each execution-time index error includes the corresponding command usage; neither submission state nor the active student filter changes. |
 
 ## Missing-prefix usage suffix regression
 
