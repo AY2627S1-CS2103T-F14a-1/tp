@@ -52,7 +52,7 @@ public class EditNoteCommandParserTest {
             assertParseFailure(parser, "id/1 ni/" + noteIndex + " nt/Valid note",
                     ParserUtil.MESSAGE_INVALID_INDEX + "\n\n" + EditNoteCommand.MESSAGE_USAGE);
         }
-        assertParseFailure(parser, "id/1 ni/11 nt/Valid note",
+        assertParseFailure(parser, "id/1 ni/1001 nt/Valid note",
                 RegisteredNotes.MESSAGE_CONSTRAINTS + "\n\n" + EditNoteCommand.MESSAGE_USAGE);
     }
 

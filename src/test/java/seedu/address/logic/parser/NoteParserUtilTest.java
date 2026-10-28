@@ -36,7 +36,7 @@ public class NoteParserUtilTest {
                     NoteParserUtil.parseNoteIndex(noteIndex));
         }
         assertThrows(ParseException.class, RegisteredNotes.MESSAGE_CONSTRAINTS, () ->
-                NoteParserUtil.parseNoteIndex("11"));
+                NoteParserUtil.parseNoteIndex("1001"));
     }
 
     @Test
