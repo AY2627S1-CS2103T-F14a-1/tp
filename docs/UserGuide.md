@@ -64,9 +64,10 @@ AvengerHub is a **desktop address book application for managing students, optimi
 * Prefixes are case-insensitive.<br>
   For example, `n/John Doe` and `N/John Doe` both specify the same name parameter.
 
-* Extraneous parameters for commands that take no parameters, such as `help`, `list`, `exit`, and `clear`, are ignored.<br>
-  For example, `help 123` is interpreted as `help`.
-  The `list` command also displays a warning when extra arguments are ignored.
+* Commands that take no parameters ignore extra arguments.<br>
+  The `list` command displays a warning when extra arguments are ignored.
+  The other commands ignore extra arguments without a warning.<br>
+  For example, `help 123` is interpreted as `help` without a warning.
 
 * If you are using a PDF version of this document, be careful when copying and pasting commands that span multiple lines as space characters surrounding line-breaks may be omitted when copied over to the application.
 </box>
