@@ -14,24 +14,24 @@ import java.util.Optional;
 import java.util.Set;
 
 import seedu.address.commons.core.index.Index;
-import seedu.address.logic.commands.EditCommand;
-import seedu.address.logic.commands.EditCommand.EditStudentDescriptor;
+import seedu.address.logic.commands.EditStudentCommand;
+import seedu.address.logic.commands.EditStudentCommand.EditStudentDescriptor;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.logic.parser.util.ParserUtil;
 import seedu.address.logic.parser.util.StudentParserUtil;
 import seedu.address.model.tag.Tag;
 
 /**
- * Parses input arguments and creates a new EditCommand object
+ * Parses input arguments and creates a new EditStudentCommand object
  */
-public class EditCommandParser implements Parser<EditCommand> {
+public class EditStudentCommandParser implements Parser<EditStudentCommand> {
 
     /**
-     * Parses the given {@code String} of arguments in the context of the EditCommand
-     * and returns an EditCommand object for execution.
+     * Parses the given {@code String} of arguments in the context of the EditStudentCommand
+     * and returns an EditStudentCommand object for execution.
      * @throws ParseException if the user input does not conform to the expected format
      */
-    public EditCommand parse(String args) throws ParseException {
+    public EditStudentCommand parse(String args) throws ParseException {
         requireNonNull(args);
 
         try {
@@ -43,13 +43,13 @@ public class EditCommandParser implements Parser<EditCommand> {
 
             EditStudentDescriptor editStudentDescriptor = buildEditStudentDescriptor(argMultimap);
             if (!editStudentDescriptor.isAnyFieldEdited()) {
-                throw new ParseException(EditCommand.MESSAGE_NOT_EDITED);
+                throw new ParseException(EditStudentCommand.MESSAGE_NOT_EDITED);
             }
 
             Index index = ParserUtil.parseIndex(argMultimap.getValue(PREFIX_INDEX).get());
-            return new EditCommand(index, editStudentDescriptor);
+            return new EditStudentCommand(index, editStudentDescriptor);
         } catch (ParseException e) {
-            throw new ParseException(e.getMessage() + "\n\n" + EditCommand.MESSAGE_USAGE);
+            throw new ParseException(e.getMessage() + "\n\n" + EditStudentCommand.MESSAGE_USAGE);
         }
     }
 
