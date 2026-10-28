@@ -561,9 +561,20 @@ displayed student list submitted a specified mission.
 
 Format: `listmissions [m/MISSION_ID]`
 
-* Without arguments, lists every configured mission's ID, name, and deadline
-  in ascending numeric ID order, regardless of the current student filter.
-* If no missions are configured, displays `No missions configured.`
+* Without arguments, lists all missions in ascending numeric ID order,
+  showing each mission's ID, name, deadline, and submitted/total student count.
+* `Submitted: X/Y` means X of the Y currently displayed students have a
+  recorded submission for that mission.
+* All missions remain visible regardless of the student filter. Submission
+  counts include only currently displayed students. Run `list` first to
+  count all students.
+* An empty student list produces `Submitted: 0/0`.
+* Missions whose deadline is before the computer's current local date show
+  `Deadline passed` beside the due date, even if every student has submitted.
+  Missions due today are not labelled.
+* If no missions exist, displays `No missions configured.`
+* Listing missions does not modify records or the student filter.
+  Rerun the command to refresh counts and deadline labels.
 * To list submissions, supply exactly one `m/` prefix and an existing mission
   ID; prefix matching ignores letter case.
 * Supply exactly one `m/` prefix and an existing mission ID; prefix matching ignores letter case.
@@ -580,7 +591,7 @@ Format: `listmissions [m/MISSION_ID]`
 
 Examples: 
 
-* `listmissions` displays the complete mission catalogue.
+* `listmissions` displays the complete mission catalogue, alongside the number of total submissions for each mission.
 * `find g/1A`, followed by `listmissions m/M01`, lists students in studio group 1A with a recorded submission for M01.
 
 ### Viewing mission submission statuses: `viewmission`

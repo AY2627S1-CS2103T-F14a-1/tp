@@ -257,21 +257,37 @@ does not modify student records or the current filter.
 
 For `listmissions`, `AddressBookParser` delegates to
 `ListMissionsCommandParser`. Blank arguments produce a
-`ListMissionCatalogueCommand`; nonblank arguments must specify a valid
-mission ID and produce the existing `ListMissionsCommand`.
+`ListMissionCatalogueCommand`; nonblank arguments currently require a
+mission ID and produce `ListMissionsCommand`.
 
-`ListMissionCatalogueCommand` reads `Model#getMissionList()`, sorts the
-displayed missions by numeric mission ID, and formats each mission using
-`Messages#format(...)`. Sorting does not change the stored catalogue order.
+`ListMissionCatalogueCommand` reads `Model#getMissionList()` and sorts
+the output by numeric mission ID without changing stored catalogue order.
+Every mission appears regardless of the current student filter.
 
-The command returns catalogue details through `CommandResult`, or
-`No missions configured.` when the catalogue is empty. The catalogue is
-independent of the current student filter. Student records, submission
-records, mission definitions, and the filter remain unchanged.
+For each mission, the command counts recorded submissions within
+`Model#getFilteredStudentList()` using
+`MissionSubmissions#hasSubmission(...)`. It displays `Submitted: X/Y`,
+where X is the submitted count and Y is the number of filtered students.
+Hidden students contribute to neither count. An empty filtered list
+produces `0/0`.
 
-Separate command classes keep catalogue listing independent from
-student-submission listing and preserve the requirement that
-`ListMissionsCommand` always has a non-null mission ID.
+The command obtains the local date once per execution from an injected
+`Clock` and evaluates deadlines using `Mission#isPastDeadline(...)`.
+`Messages#format(Mission, boolean)` adds `Deadline passed` inside the
+due-date parentheses when the deadline is strictly before that date.
+Missions due today are not labelled. The label describes the deadline
+and is independent of submission counts.
+
+Normal execution uses `Clock.systemDefaultZone()`. Tests inject a fixed
+clock to verify past, current, and future deadlines deterministically.
+
+The result uses the heading
+`All missions | Submitted/total students (current list):`.
+An empty catalogue instead returns `No missions configured.`
+
+Student records, submission records, mission definitions, and the current
+student filter remain unchanged. Counts and deadline labels are calculated
+again whenever the command executes.
 
 ### Viewing mission submission statuses
 
@@ -675,8 +691,10 @@ student filter remain unchanged throughout this use case.
 **MSS**
 
 1. Tutor requests the mission catalogue.
-2. AvengerHub displays every configured mission's ID, name, and deadline
-   in ascending numeric ID order.
+2. AvengerHub displays all missions in ascending numeric ID order,
+   including each mission's ID, name, deadline, and submitted/total count
+   for the currently displayed students. Past deadlines are labelled
+   `Deadline passed`.
 
    Use case ends.
 

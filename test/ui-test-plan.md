@@ -244,6 +244,36 @@ direct UI equivalent.
 | MISSION-PARSE-005 | Parse lowercase `m/m03` with surrounding whitespace. | The parser trims the input and returns canonical ID `M03`; `MissionId` owns case normalization. |
 | MISSION-DELETE-RECREATE-001 | With mission `M03` submitted by a student, delete `M03`, then recreate it using `m/M03` with a new name and deadline. | The recreated mission uses ID `M03` and has no previous submissions. |
 
+## Mission catalogue counts and deadline labels
+
+Use an isolated dataset containing John Doe and Betsy Crowe.
+Create these missions using the computer's local date:
+
+- M01, Runes, due yesterday.
+- M02, Curves, due today.
+- M03, Lists, due tomorrow.
+
+Record M01 and M02 submissions for John only.
+Record an M03 submission for Betsy only.
+
+All successful catalogue results use this heading:
+`All missions | Submitted/total students (current list):`
+
+Every mission row includes its ID, name, and actual deadline.
+Only M01 shows `— Deadline passed` inside its due-date parentheses.
+Today's and tomorrow's missions have no deadline label.
+
+| ID | Steps | Expected result |
+| --- | --- | --- |
+| MISSION-SUMMARY-001 | Run `list`, then `listmissions`. | All three missions appear in numeric ID order. Each shows `Submitted: 1/2`. Only M01 has the deadline label. |
+| MISSION-SUMMARY-002 | Run `listmissions m/`, then `listmissions`. | The malformed ID is rejected. All catalogue details, counts, labels, and student records remain unchanged. |
+| MISSION-SUMMARY-003 | Run `find John`, then `listmissions`. | All three missions remain visible. M01 and M02 show 1/1; M03 shows 0/1. M01 remains labelled despite its 1/1 count. Only John remains displayed. |
+| MISSION-SUMMARY-004 | Run `listmissions m/M99`, then `listmissions`. | Reports `Mission M99 does not exist.` Counts, labels, records, and the John-only filter remain unchanged. |
+| MISSION-SUMMARY-005 | Run `find Betsy`, then `listmissions`. | M01 and M02 show 0/1; M03 shows 1/1. John's hidden submissions are excluded. Only M01 has the deadline label. |
+| MISSION-SUMMARY-006 | Run `find NobodyMatchesThisName`, then `listmissions`. | All three missions remain visible with 0/0 counts. Only M01 has the deadline label. The displayed student list stays empty. |
+| MISSION-SUMMARY-007 | Run `list`, then `listmissions`. | All three counts return to 1/2. Deadline labels and underlying records remain unchanged. |
+| MISSION-SUMMARY-008 | In a separate isolated dataset with students but no missions, run `listmissions`. | Displays `No missions configured.` Student records and the current filter remain unchanged. |
+
 ## Missing-prefix usage suffix regression
 
 Missing-prefix feedback now ends with one newline followed by the calling command's
