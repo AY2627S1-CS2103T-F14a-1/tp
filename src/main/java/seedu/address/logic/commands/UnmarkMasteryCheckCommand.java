@@ -5,6 +5,7 @@ import static seedu.address.commons.util.AppUtil.checkArgument;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_INDEX;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NUMBER;
 
+import java.util.Objects;
 import java.util.logging.Logger;
 
 import seedu.address.commons.core.LogsCenter;
@@ -118,6 +119,11 @@ public class UnmarkMasteryCheckCommand extends Command {
 
         return targetIndex.equals(otherUnmarkMasteryCheckCommand.targetIndex)
                 && number == otherUnmarkMasteryCheckCommand.number;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(targetIndex, number);
     }
 
     /**

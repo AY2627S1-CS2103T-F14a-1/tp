@@ -3,6 +3,8 @@ package seedu.address.logic.commands;
 import static java.util.Objects.requireNonNull;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_INDEX;
 
+import java.util.Objects;
+
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.Messages;
@@ -51,6 +53,11 @@ public class DeleteStudentCommand extends Command {
         }
 
         return targetIndex.equals(otherDeleteStudentCommand.targetIndex);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(targetIndex);
     }
 
     @Override

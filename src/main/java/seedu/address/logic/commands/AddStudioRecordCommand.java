@@ -6,6 +6,8 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_INDEX;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_STUDIO_EFFORT;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_WEEK;
 
+import java.util.Objects;
+
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.commands.exceptions.CommandException;
@@ -94,6 +96,11 @@ public class AddStudioRecordCommand extends Command {
         return targetIndex.equals(otherAddStudioRecordCommand.targetIndex)
                 && week == otherAddStudioRecordCommand.week
                 && studioRecord.equals(otherAddStudioRecordCommand.studioRecord);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(targetIndex, week, studioRecord);
     }
 
     @Override

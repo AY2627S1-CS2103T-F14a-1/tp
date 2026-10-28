@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 import seedu.address.logic.Messages;
 import seedu.address.model.Model;
@@ -94,5 +95,23 @@ public class ListOverdueCommand extends Command {
             }
         }
         return overdueRows;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other == this) {
+            return true;
+        }
+
+        if (!(other instanceof ListOverdueCommand otherListOverdueCommand)) {
+            return false;
+        }
+
+        return clock.equals(otherListOverdueCommand.clock);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(clock);
     }
 }
