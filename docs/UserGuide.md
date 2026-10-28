@@ -66,6 +66,7 @@ AvengerHub is a **desktop address book application for managing students, optimi
 
 * Extraneous parameters for commands that take no parameters, such as `help`, `list`, `exit`, and `clear`, are ignored.<br>
   For example, `help 123` is interpreted as `help`.
+  The `list` command also displays a warning when extra arguments are ignored.
 
 * If you are using a PDF version of this document, be careful when copying and pasting commands that span multiple lines as space characters surrounding line-breaks may be omitted when copied over to the application.
 </box>
@@ -99,6 +100,20 @@ Examples:
 Shows a list of all students in the address book.
 
 Format: `list`
+
+* Resets the current student filter to show all students.
+* Extra arguments are ignored with a warning; the command still lists all students.
+* Surrounding whitespace does not trigger a warning.
+
+For example, `list missions m/01` lists all students and displays:
+
+```text
+Listed all students.
+WARNING:
+Extra arguments were ignored. The list command takes no arguments.
+```
+
+To list mission submissions, use `listmissions m/M01`.
 
 ### Viewing a student: `view`
 
@@ -544,7 +559,7 @@ Format: `listoverdue`
 * Student records, mission definitions, submission records, and the current
   student filter remain unchanged.
 * Run `list` first to include all students.
-* Like `list`, this command ignores extra arguments.
+* Extra arguments are ignored without a warning.
 
 Examples:
 

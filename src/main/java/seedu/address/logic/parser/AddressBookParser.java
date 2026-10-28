@@ -81,7 +81,7 @@ public class AddressBookParser {
             case DeleteStudentCommand.COMMAND_WORD -> new DeleteStudentCommandParser().parse(arguments);
             case ClearCommand.COMMAND_WORD -> new ClearCommand();
             case FindCommand.COMMAND_WORD -> new FindCommandParser().parse(arguments);
-            case ListCommand.COMMAND_WORD -> new ListCommand();
+            case ListCommand.COMMAND_WORD -> new ListCommandParser().parse(arguments);
             case ListMissionsCommand.COMMAND_WORD -> new ListMissionsCommandParser().parse(arguments);
             case AddStudioRecordCommand.COMMAND_WORD -> new AddStudioRecordCommandParser().parse(arguments);
             case DeleteStudioRecordCommand.COMMAND_WORD -> new DeleteStudioRecordCommandParser().parse(arguments);
