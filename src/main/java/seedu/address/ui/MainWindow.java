@@ -314,6 +314,15 @@ public class MainWindow extends UiPart<Stage> {
                     "Result: " + commandResult.getFeedbackToUser());
 
             handleCommandResult(commandResult);
+
+            if (commandResult.isShowHelp()) {
+                handleHelp();
+            }
+
+            if (commandResult.isExit()) {
+                handleExit();
+            }
+
             return commandResult;
         } catch (CommandException | ParseException e) {
             logger.info("An error occurred while executing command: " + commandText);
