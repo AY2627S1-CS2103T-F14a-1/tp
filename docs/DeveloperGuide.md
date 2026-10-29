@@ -148,9 +148,14 @@ The `Model` component,
 * stores each student's contact details, studio group, tags, studio records,
   notes, mastery check appointments, and mission submissions. Studio records
   track attendance and effort scores by week, while `MissionSubmissions`
-  records the IDs of submitted missions. A mission without a recorded
-  submission is treated as not submitted.
-* stores each mission's user-supplied ID, name, and deadline. The mission catalogue validates IDs and does not allocate them.
+  stores an immutable set of submitted mission IDs that reference the shared
+  catalogue. A mission without a recorded submission is treated as not
+  submitted; deleting a mission also removes its ID from every student's
+  submissions.
+* stores each mission's user-supplied ID, name, and deadline. `MissionId`
+  validates the ID format and normalizes its case; `MissionCatalogue` enforces
+  ID and name uniqueness and stores the supplied ID without allocating or
+  renumbering IDs.
 * maintains a _filtered_ view of the students, such as search results. It exposes this view as an unmodifiable `ObservableList<Student>` that the UI can observe and bind to, so the UI updates when the list changes.
 * stores a `UserPrefs` object that represents the user's preferences (currently, just the GUI settings). This is exposed to the outside as a `ReadOnlyUserPrefs` object.
 * does not depend on any of the other three components (as the `Model` represents data entities of the domain, they should make sense on their own without depending on other components).
@@ -160,13 +165,18 @@ map from studio weeks 0 through 13 to `StudioRecord` objects. Each recorded
 week has one record containing a non-negative effort score. The week is the map
 key; the presence of a record indicates attendance, even when its effort score
 is zero. Weeks without a record are displayed as absent with an effort score
-of zero. Each student also has one `RegisteredNotes` object containing notes
-keyed by IDs from 1 through 10, one `RegisteredMasteryChecks` object
-containing numbered mastery check appointments, and one `MissionSubmissions`
-object containing zero or more submitted mission IDs. The `1` multiplicities
-count these containers, not the records inside them.
+of zero. Each student also has one `RegisteredNotes` object containing at most
+1,000 notes, one `RegisteredMasteryChecks` object containing numbered
+appointments, and one `MissionSubmissions` object containing zero or more
+submitted mission IDs. The notes list and mastery-check registration map are
+unmodifiable; mastery-check appointment objects retain mutable completion
+status. The `1` multiplicities count the per-student containers, not the
+records inside them.
 
-Composition diamonds show conceptual ownership of the values that form a student record; immutable values may be reused internally when records are replaced. Submission IDs reference shared missions rather than owning them.
+Composition diamonds show conceptual ownership of student records and mission
+definitions; immutable values may be reused internally when records are
+replaced. Submission IDs reference shared mission definitions rather than
+owning them.
 
 <box type="info" seamless>
 
@@ -205,7 +215,7 @@ This section describes some noteworthy details on how certain features are imple
 
 ### Adding a mission
 
-For `addmission m/MISSION_ID n/NAME d/DEADLINE`, `AddressBookParser` delegates to `AddMissionCommandParser`, which validates exactly one mission ID, name, and deadline and creates an `AddMissionCommand`. `MissionParserUtil#parseMissionId(...)` validates the ID with `MissionId`: it must start with `M`, contain a positive integer of at least two digits with no unnecessary leading zeros, and its numeric value must not exceed `9223372036854775807` (`Long.MAX_VALUE`). IDs with larger numeric values receive the mission-ID constraint message. `MissionParserUtil#parseMissionName(...)` removes surrounding whitespace and collapses repeated whitespace in the name, while preserving case and punctuation. The deadline must be a real date in `YYYY-MM-DD` format; past dates are accepted. Missing, repeated, blank, or invalid fields and unexpected preamble text cause a `ParseException`.
+For `addmission m/MISSION_ID n/NAME d/DEADLINE`, `AddressBookParser` delegates to `AddMissionCommandParser`, which validates exactly one mission ID, name, and deadline and creates an `AddMissionCommand`. `MissionParserUtil#parseMissionId(...)` removes whitespace before validating the ID with `MissionId`: it must start with `M`, contain a positive integer of at least two digits with no unnecessary leading zeros, and its numeric value must not exceed `9223372036854775807` (`Long.MAX_VALUE`). IDs with larger numeric values receive the mission-ID constraint message. `MissionParserUtil#parseMissionName(...)` removes surrounding whitespace and collapses repeated whitespace in the name, while preserving case and punctuation. The deadline parser similarly removes whitespace before requiring a real `YYYY-MM-DD` date; past dates are accepted. Missing, repeated, blank, or invalid fields and unexpected preamble text cause a `ParseException`.
 
 When executed, `AddMissionCommand` checks for an existing ID and calls `Model#hasMissionName(...)` to reject duplicate names, ignoring case and whitespace differences. It then calls `Model#addMission(...)`, which delegates through `ModelManager` and `AddressBook` to `MissionCatalogue`. The catalogue validates uniqueness and stores the supplied ID; it never renumbers missions. The command returns a `CommandResult` containing the added mission.
 
@@ -226,7 +236,7 @@ The sequence diagram below illustrates the successful interaction flow using `ex
 
 ### Deleting a mission
 
-For `delmission m/M03`, `AddressBookParser` delegates to `DeleteMissionCommandParser`. The parser requires exactly one nonblank `m/` value and rejects unexpected preamble text. `MissionParserUtil#parseMissionId(...)` trims and validates the ID, and `MissionId` normalizes it to uppercase. Thus, `m/m03` and `m/M03` identify the same mission; the ID is not a displayed list position.
+For `delmission m/M03`, `AddressBookParser` delegates to `DeleteMissionCommandParser`. The parser requires exactly one nonblank `m/` value and rejects unexpected preamble text. `MissionParserUtil#parseMissionId(...)` removes whitespace and validates the ID, and `MissionId` normalizes it to uppercase. Thus, `m/m03` and `m/M03` identify the same mission; the ID is not a displayed list position.
 
 When executed, `DeleteMissionCommand` calls `Model#findMission(...)` and rejects a nonexistent mission before making changes. It then calls `Model#deleteMission(...)`. Within the model, `AddressBook` prepares replacement student records without the deleted mission's submission ID and removes the mission from the catalogue. This includes students hidden by the current filter and preserves their other details and submissions. Remaining IDs do not change; a deleted ID may later be explicitly reused. The command returns a `CommandResult` identifying the deleted mission.
 
@@ -238,7 +248,7 @@ The sequence diagram below illustrates the successful interaction flow using `ex
 
 ### Marking and unmarking mission submissions
 
-For `markmission id/INDEX m/MISSION_ID` or `unmarkmission id/INDEX m/MISSION_ID`, `AddressBookParser` delegates to `MarkMissionCommandParser` or `UnmarkMissionCommandParser`. Both use `ArgumentStructureValidator` to require exactly one `id/` and `m/` value, `ParserUtil#parseIndex(...)` to validate a positive student index, and `MissionParserUtil#parseMissionId(...)` to validate the case-insensitive mission ID. They then create the corresponding command. Invalid or extra arguments cause a `ParseException` that includes command usage. A positive index that does not identify a student in the current displayed list is rejected during execution with a `CommandException`; this error also includes the corresponding command usage. A well-formed ID for a mission that does not exist is rejected during execution without changing records.
+For `markmission id/INDEX m/MISSION_ID` or `unmarkmission id/INDEX m/MISSION_ID`, `AddressBookParser` delegates to `MarkMissionCommandParser` or `UnmarkMissionCommandParser`. Both use `ArgumentStructureValidator` to require exactly one `id/` and `m/` value, `ParserUtil#parseIndex(...)` to remove whitespace and validate a positive student index, and `MissionParserUtil#parseMissionId(...)` to remove whitespace and validate the case-insensitive mission ID. They then create the corresponding command. Invalid or extra arguments cause a `ParseException` that includes command usage. A positive index that does not identify a student in the current displayed list is rejected during execution with a `CommandException`; this error also includes the corresponding command usage. A well-formed ID for a mission that does not exist is rejected during execution without changing records.
 
 When executed, the command calls `Model#findMission(...)` and retrieves the selected student from `Model#getFilteredStudentList()`. Marking uses `MissionSubmissions#withSubmission(...)`; unmarking uses `MissionSubmissions#withoutSubmission(...)`. Each produces updated immutable submission data, which the command places in a replacement `Student` before calling `Model#setStudent(...)`. Other student details and the current filter are preserved, and the observable student list notifies the UI of the replacement.
 

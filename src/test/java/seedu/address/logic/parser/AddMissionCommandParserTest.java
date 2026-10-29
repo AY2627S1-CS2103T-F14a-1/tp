@@ -60,6 +60,14 @@ public class AddMissionCommandParserTest {
     }
 
     @Test
+    public void parse_internalWhitespaceInIdAndDeadline_compactsBeforeValidation() throws Exception {
+        AddMissionCommand expected = new AddMissionCommand(new MissionId("M07"), "Runes",
+                LocalDate.of(2026, 12, 12));
+
+        assertEquals(expected, parser.parse("m/m 0 7 n/Runes d/2026 -12 -12"));
+    }
+
+    @Test
     public void parse_invalidArguments_reportsFieldSpecificErrors() {
         String[][] cases = {
             {"", String.join("\n", CliSyntax.PREFIX_MISSION.getMissingMessage(),

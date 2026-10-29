@@ -431,6 +431,8 @@ Format: `addmission m/MISSION_ID n/NAME d/DEADLINE`
 * `DEADLINE` must be a real calendar date in `YYYY-MM-DD` format. For example, `2024-02-29`
   is valid but `2026-15-32` is not. Times and single-digit months or days are rejected.
   Past deadlines are accepted for recording existing assignments.
+* Whitespace inside any `MISSION_ID` is ignored before validation. For this command, whitespace
+  inside `DEADLINE` is also ignored.
 * Choose the ID yourself; the application does not assign IDs automatically. Existing mission
   IDs do not change when another mission is deleted. A deleted ID can be chosen again afterward,
   but its previous submission records are removed and are not restored.
@@ -483,7 +485,9 @@ records are not restored. Unknown or invalid IDs leave data unchanged.
 Format: `markmission id/INDEX m/MISSION_ID`
 
 * `INDEX` identifies a student in the **currently displayed list**, including `find` results.
-* The index must be a positive integer without a sign or leading zeros.
+* The index must be a positive integer without a sign. Whitespace within the index is ignored,
+  and leading zeros are accepted.
+* Whitespace inside `MISSION_ID` is ignored before validation.
 * `MISSION_ID` must identify a configured mission, for example `M01` or `M105`.
 * Use the `m/` prefix exactly once, in any letter case. Mission IDs are case-insensitive: `m/m01` and `m/M01` both identify `M01`. IDs are displayed and saved in uppercase.
 * Each mission ID identifies one configured assignment.
