@@ -43,8 +43,9 @@ public class RequiredPrefixCommandParserTest {
     @Test
     public void parse_eachRequiredPrefixMissing_reportsPrefixSpecificMessage() {
         verifyRequiredPrefixes(new AddStudentCommandParser(), AddStudentCommand.MESSAGE_USAGE,
-                List.of(CliSyntax.PREFIX_NAME, CliSyntax.PREFIX_PHONE, CliSyntax.PREFIX_EMAIL,
-                        CliSyntax.PREFIX_STUDIO_GROUP), List.of("Alice", "91234567", "alice@example.com", "1A"));
+                List.of(CliSyntax.PREFIX_NAME, CliSyntax.PREFIX_MATRIC_NUMBER, CliSyntax.PREFIX_PHONE,
+                        CliSyntax.PREFIX_EMAIL, CliSyntax.PREFIX_STUDIO_GROUP),
+                List.of("Alice", "A0123456B", "91234567", "alice@example.com", "1A"));
         verifyRequiredPrefixes(new AddMasteryCheckCommandParser(), AddMasteryCheckCommand.MESSAGE_USAGE,
                 List.of(PREFIX_INDEX, PREFIX_NUMBER, PREFIX_DATETIME), List.of("1", "1", "18-08|14:30"));
         verifyRequiredPrefixes(new DeleteMasteryCheckCommandParser(), DeleteMasteryCheckCommand.MESSAGE_USAGE,

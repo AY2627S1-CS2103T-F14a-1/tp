@@ -16,6 +16,8 @@ import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_STUDENT;
 import static seedu.address.testutil.TypicalIndexes.INDEX_SECOND_STUDENT;
 import static seedu.address.testutil.TypicalStudents.getTypicalAddressBook;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 
 import seedu.address.commons.core.index.Index;
@@ -25,6 +27,8 @@ import seedu.address.model.AddressBook;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.UserPrefs;
+import seedu.address.model.student.Note;
+import seedu.address.model.student.RegisteredNotes;
 import seedu.address.model.student.Student;
 import seedu.address.model.student.StudioGroup;
 import seedu.address.testutil.EditStudentDescriptorBuilder;
@@ -255,4 +259,44 @@ public class EditStudentCommandTest {
                 expectedModel);
     }
 
+
+    @Test
+    public void execute_onlyMatricNumberSpecified_preservesOtherDetails() {
+        Student original = model.getFilteredStudentList().get(0);
+        Student student = new StudentBuilder(original).withMissionSubmissions("M03")
+                .build().withRegisteredNotes(new RegisteredNotes(List.of(new Note("Keep this note"))));
+        model.setStudent(original, student);
+        Student editedStudent = new StudentBuilder(student).withMatricNumber("A9999999Z").build();
+        EditStudentDescriptor descriptor = new EditStudentDescriptorBuilder().withMatricNumber("A9999999Z").build();
+        Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
+        expectedModel.setStudent(student, editedStudent);
+
+        assertCommandSuccess(new EditStudentCommand(INDEX_FIRST_STUDENT, descriptor), model,
+                new CommandResult(String.format(EditStudentCommand.MESSAGE_EDIT_STUDENT_SUCCESS,
+                        Messages.format(editedStudent)), editedStudent), expectedModel);
+    }
+
+    @Test
+    public void execute_existingMatricNumber_rejectsWithoutChangingModel() {
+        Student existing = model.getFilteredStudentList().get(1);
+        EditStudentDescriptor descriptor = new EditStudentDescriptorBuilder()
+                .withMatricNumber(existing.getMatricNumber().toString()).build();
+
+        assertCommandFailure(new EditStudentCommand(INDEX_FIRST_STUDENT, descriptor), model,
+                EditStudentCommand.MESSAGE_DUPLICATE_STUDENT);
+    }
+
+    @Test
+    public void execute_existingNameWithOwnMatricNumber_succeeds() {
+        Student original = model.getFilteredStudentList().get(0);
+        String existingName = model.getFilteredStudentList().get(1).getName().toString();
+        Student editedStudent = new StudentBuilder(original).withName(existingName).build();
+        EditStudentDescriptor descriptor = new EditStudentDescriptorBuilder().withName(existingName).build();
+        Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
+        expectedModel.setStudent(original, editedStudent);
+
+        assertCommandSuccess(new EditStudentCommand(INDEX_FIRST_STUDENT, descriptor), model,
+                new CommandResult(String.format(EditStudentCommand.MESSAGE_EDIT_STUDENT_SUCCESS,
+                        Messages.format(editedStudent)), editedStudent), expectedModel);
+    }
 }

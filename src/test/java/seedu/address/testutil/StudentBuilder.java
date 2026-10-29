@@ -10,6 +10,7 @@ import java.util.Set;
 import seedu.address.model.masterycheck.MasteryCheck;
 import seedu.address.model.mission.MissionId;
 import seedu.address.model.student.Email;
+import seedu.address.model.student.MatriculationNumber;
 import seedu.address.model.student.MissionSubmissions;
 import seedu.address.model.student.Name;
 import seedu.address.model.student.Phone;
@@ -39,8 +40,10 @@ public class StudentBuilder {
     public static final String DEFAULT_PHONE = "85355255";
     public static final String DEFAULT_EMAIL = "amy@gmail.com";
     public static final String DEFAULT_STUDIO_GROUP = "1A";
+    public static final String DEFAULT_MATRIC_NUMBER = "A0000010A";
 
     private Name name;
+    private MatriculationNumber matricNumber;
     private Phone phone;
     private Email email;
     private Set<Tag> tags;
@@ -55,6 +58,7 @@ public class StudentBuilder {
      */
     public StudentBuilder() {
         name = new Name(DEFAULT_NAME);
+        matricNumber = new MatriculationNumber(DEFAULT_MATRIC_NUMBER);
         phone = new Phone(DEFAULT_PHONE);
         email = new Email(DEFAULT_EMAIL);
         tags = new HashSet<>();
@@ -70,6 +74,7 @@ public class StudentBuilder {
      */
     public StudentBuilder(Student studentToCopy) {
         name = studentToCopy.getName();
+        matricNumber = studentToCopy.getMatricNumber();
         phone = studentToCopy.getPhone();
         email = studentToCopy.getEmail();
         tags = new HashSet<>(studentToCopy.getTags());
@@ -85,6 +90,17 @@ public class StudentBuilder {
      */
     public StudentBuilder withName(String name) {
         this.name = new Name(name);
+        return this;
+    }
+
+    /**
+     * Sets the matriculation number of the student being built.
+     *
+     * @param matricNumber Valid matriculation number.
+     * @return This builder.
+     */
+    public StudentBuilder withMatricNumber(String matricNumber) {
+        this.matricNumber = new MatriculationNumber(matricNumber);
         return this;
     }
 
@@ -178,8 +194,8 @@ public class StudentBuilder {
      * @return A student with the configured details.
      */
     public Student build() {
-        return new Student(name, phone, email, tags, studioGroup, missionSubmissions, registeredStudioRecords,
-                registeredMasteryChecks, registeredNotes);
+        return new Student(name, matricNumber, phone, email, tags, studioGroup, missionSubmissions,
+                registeredStudioRecords, registeredMasteryChecks, registeredNotes);
     }
 
 }

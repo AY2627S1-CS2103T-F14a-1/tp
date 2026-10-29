@@ -14,6 +14,7 @@ import static seedu.address.testutil.TypicalStudents.ALICE;
 import static seedu.address.testutil.TypicalStudents.BOB;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -33,31 +34,34 @@ public class StudentTest {
     }
 
     @Test
-    public void isSameStudent() {
-        // same object -> returns true
+    public void isSameStudent_sameMatricNumber_returnsTrue() {
+        Student editedAlice = new StudentBuilder(ALICE).withName(VALID_NAME_BOB)
+                .withPhone(VALID_PHONE_BOB).withEmail(VALID_EMAIL_BOB)
+                .withTags(VALID_TAG_HUSBAND).withStudioGroup(VALID_STUDIO_GROUP_BOB).build();
+
         assertTrue(ALICE.isSameStudent(ALICE));
-
-        // null -> returns false
-        assertFalse(ALICE.isSameStudent(null));
-
-        // same name, all other attributes different -> returns true
-        Student editedAlice = new StudentBuilder(ALICE).withPhone(VALID_PHONE_BOB).withEmail(VALID_EMAIL_BOB)
-                .withTags(VALID_TAG_HUSBAND).withStudioGroup(VALID_STUDIO_GROUP_BOB)
-                .build();
         assertTrue(ALICE.isSameStudent(editedAlice));
+        assertTrue(editedAlice.isSameStudent(ALICE));
+    }
 
-        // different name, all other attributes same -> returns false
-        editedAlice = new StudentBuilder(ALICE).withName(VALID_NAME_BOB).build();
+    @Test
+    public void isSameStudent_differentMatricNumber_returnsFalse() {
+        Student editedAlice = new StudentBuilder(ALICE).withMatricNumber("A9999999Z").build();
+
+        assertFalse(ALICE.isSameStudent(null));
         assertFalse(ALICE.isSameStudent(editedAlice));
+        assertFalse(editedAlice.isSameStudent(ALICE));
+        assertFalse(ALICE.equals(editedAlice));
+    }
 
-        // name differs in case, all other attributes same -> returns false
-        Student editedBob = new StudentBuilder(BOB).withName(VALID_NAME_BOB.toLowerCase()).build();
-        assertFalse(BOB.isSameStudent(editedBob));
-
-        // name has trailing spaces, all other attributes same -> returns false
-        String nameWithTrailingSpaces = VALID_NAME_BOB + " ";
-        editedBob = new StudentBuilder(BOB).withName(nameWithTrailingSpaces).build();
-        assertFalse(BOB.isSameStudent(editedBob));
+    @Test
+    public void constructor_nullMatricNumber_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> new Student(ALICE.getName(), null,
+                ALICE.getPhone(), ALICE.getEmail(), ALICE.getTags(), ALICE.getStudioGroup()));
+        assertThrows(NullPointerException.class, () -> new Student(ALICE.getName(), null,
+                ALICE.getPhone(), ALICE.getEmail(), ALICE.getTags(), ALICE.getStudioGroup(),
+                ALICE.getMissionSubmissions(), ALICE.getRegisteredStudioRecords(),
+                ALICE.getRegisteredMasteryChecks(), ALICE.getRegisteredNotes()));
     }
 
     @Test
@@ -116,7 +120,7 @@ public class StudentTest {
 
     @Test
     public void constructor_defaultSubmissions_createsEmptySubmissions() {
-        Student student = new Student(ALICE.getName(), ALICE.getPhone(), ALICE.getEmail(),
+        Student student = new Student(ALICE.getName(), ALICE.getMatricNumber(), ALICE.getPhone(), ALICE.getEmail(),
                 ALICE.getTags(), ALICE.getStudioGroup());
 
         assertTrue(student.getMissionSubmissions().getSubmittedMissionIds().isEmpty());
@@ -125,7 +129,7 @@ public class StudentTest {
     @Test
     public void constructor_nullMissionSubmissions_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () ->
-                new Student(ALICE.getName(), ALICE.getPhone(), ALICE.getEmail(),
+                new Student(ALICE.getName(), ALICE.getMatricNumber(), ALICE.getPhone(), ALICE.getEmail(),
                         ALICE.getTags(), ALICE.getStudioGroup(), null, ALICE.getRegisteredStudioRecords(),
                         ALICE.getRegisteredMasteryChecks(), ALICE.getRegisteredNotes()));
     }
@@ -166,6 +170,7 @@ public class StudentTest {
         assertNotSame(original, updated);
         assertEquals(replacements, updated.getMissionSubmissions());
         assertEquals(original.getName(), updated.getName());
+        assertEquals(original.getMatricNumber(), updated.getMatricNumber());
         assertEquals(original.getPhone(), updated.getPhone());
         assertEquals(original.getEmail(), updated.getEmail());
         assertEquals(original.getTags(), updated.getTags());
@@ -215,6 +220,7 @@ public class StudentTest {
         assertNotSame(original, updated);
         assertEquals(replacements, updated.getRegisteredMasteryChecks());
         assertEquals(original.getName(), updated.getName());
+        assertEquals(original.getMatricNumber(), updated.getMatricNumber());
         assertEquals(original.getPhone(), updated.getPhone());
         assertEquals(original.getEmail(), updated.getEmail());
         assertEquals(original.getTags(), updated.getTags());
@@ -267,6 +273,7 @@ public class StudentTest {
 
         assertNotSame(original, updated);
         assertEquals(original.getName(), updated.getName());
+        assertEquals(original.getMatricNumber(), updated.getMatricNumber());
         assertEquals(original.getPhone(), updated.getPhone());
         assertEquals(original.getEmail(), updated.getEmail());
         assertEquals(original.getTags(), updated.getTags());
@@ -287,14 +294,15 @@ public class StudentTest {
 
     @Test
     public void constructor_defaultMasteryChecks_createsEmptyRegistrations() {
-        Student student = new Student(ALICE.getName(), ALICE.getPhone(), ALICE.getEmail(),
+        Student student = new Student(ALICE.getName(), ALICE.getMatricNumber(), ALICE.getPhone(), ALICE.getEmail(),
                 ALICE.getTags(), ALICE.getStudioGroup());
         assertTrue(student.getRegisteredMasteryChecks().getMasteryCheckAppointments().isEmpty());
     }
 
     @Test
     public void constructor_nullMasteryChecks_throwsNullPointerException() {
-        assertThrows(NullPointerException.class, () -> new Student(ALICE.getName(), ALICE.getPhone(), ALICE.getEmail(),
+        assertThrows(NullPointerException.class, () -> new Student(ALICE.getName(), ALICE.getMatricNumber(),
+                ALICE.getPhone(), ALICE.getEmail(),
                 ALICE.getTags(), ALICE.getStudioGroup(), ALICE.getMissionSubmissions(),
                 ALICE.getRegisteredStudioRecords(), null, ALICE.getRegisteredNotes()));
     }
@@ -327,7 +335,8 @@ public class StudentTest {
     public void toStringMethod() {
         Student student = new StudentBuilder(ALICE).withMissionSubmissions("M03").build();
         String expected = Student.class.getCanonicalName()
-                + "{name=" + student.getName() + ", phone=" + student.getPhone()
+                + "{name=" + student.getName() + ", matriculationNumber=" + student.getMatricNumber()
+                + ", phone=" + student.getPhone()
                 + ", email=" + student.getEmail() + ", tags=" + student.getTags()
                 + ", studioGroup=" + student.getStudioGroup()
                 + ", missionSubmissions=" + student.getMissionSubmissions()
@@ -335,5 +344,17 @@ public class StudentTest {
                 + ", registeredMasteryChecks=" + student.getRegisteredMasteryChecks()
                 + ", registeredNotes=" + student.getRegisteredNotes() + "}";
         assertEquals(expected, student.toString());
+    }
+
+    @Test
+    public void withRegisteredNotes_validNotes_preservesMatricNumber() {
+        Student original = new StudentBuilder(ALICE).withMatricNumber("A0000000Z").build();
+        RegisteredNotes notes = new RegisteredNotes(List.of(new Note("Review lecture")));
+        Student updated = original.withRegisteredNotes(notes);
+
+        assertEquals(original.getMatricNumber(), updated.getMatricNumber());
+        assertEquals(notes, updated.getRegisteredNotes());
+        assertTrue(original.isSameStudent(updated));
+        assertTrue(original.getRegisteredNotes().getRegisteredNotes().isEmpty());
     }
 }

@@ -2,6 +2,7 @@
   "students": [
     {
       "name": "Hans Muster",
+    "matricNumber": "A0000001A",
       "phone": "9482424",
       "email": "invalid@email!3e",
       "studioGroup": "1A"

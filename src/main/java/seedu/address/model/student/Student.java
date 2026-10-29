@@ -12,9 +12,8 @@ import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.model.tag.Tag;
 
 /**
- * Represents a student with profile details, mission submissions,
+ * Represents a student identified by matriculation number, with profile details, mission submissions,
  * studio records, mastery check registrations, and notes.
- * Mastery check completion status remains mutable through the registered appointment objects.
  */
 public class Student {
 
@@ -22,6 +21,7 @@ public class Student {
     private final Name name;
     private final Phone phone;
     private final Email email;
+    private final MatriculationNumber matricNumber;
 
     // Data fields
     private final Set<Tag> tags = new HashSet<>();
@@ -32,26 +32,28 @@ public class Student {
     private final RegisteredNotes registeredNotes;
 
     /**
-     * Creates a student with no mission submissions, studio records, or mastery check registrations.
+     * Creates a student with no mission submissions, studio records, mastery check registrations, or notes.
      *
      * @param name Student's name.
+     * @param matricNumber Student's matriculation number.
      * @param phone Student's phone number.
      * @param email Student's email address.
      * @param tags Student's tags.
      * @param studioGroup Student's studio group.
-     * @throws NullPointerException If the name, phone, email, or tag set is null.
+     * @throws NullPointerException If the name, matriculation number, phone, email, or tag set is null.
      */
     public Student(
-            Name name, Phone phone, Email email, Set<Tag> tags,
+            Name name, MatriculationNumber matricNumber, Phone phone, Email email, Set<Tag> tags,
             StudioGroup studioGroup) {
-        this(name, phone, email, tags, studioGroup, new MissionSubmissions(), new RegisteredStudioRecords(),
-                new RegisteredMasteryChecks(), new RegisteredNotes());
+        this(name, matricNumber, phone, email, tags, studioGroup, new MissionSubmissions(),
+                new RegisteredStudioRecords(), new RegisteredMasteryChecks(), new RegisteredNotes());
     }
 
     /**
      * Creates a student with the supplied profile details and recorded student activities.
      *
      * @param name Student's name.
+     * @param matricNumber Student's matriculation number.
      * @param phone Student's phone number.
      * @param email Student's email address.
      * @param tags Student's tags.
@@ -60,15 +62,18 @@ public class Student {
      * @param registeredStudioRecords Student's registered studio records.
      * @param registeredMasteryChecks Student's numbered mastery check appointments.
      * @param registeredNotes Student's registered notes.
-     * @throws NullPointerException If the name, phone, email, tag set, or any activity collection is null.
+     * @throws NullPointerException If the name, matriculation number, phone, email, tag set,
+     *         or any activity collection is null.
      */
-    public Student(Name name, Phone phone, Email email, Set<Tag> tags, StudioGroup studioGroup,
-                   MissionSubmissions missionSubmissions, RegisteredStudioRecords registeredStudioRecords,
-                   RegisteredMasteryChecks registeredMasteryChecks, RegisteredNotes registeredNotes) {
+    public Student(Name name, MatriculationNumber matricNumber, Phone phone, Email email, Set<Tag> tags,
+                   StudioGroup studioGroup, MissionSubmissions missionSubmissions,
+                   RegisteredStudioRecords registeredStudioRecords, RegisteredMasteryChecks registeredMasteryChecks,
+                   RegisteredNotes registeredNotes) {
         requireAllNonNull(
-                name, phone, email, tags, studioGroup, missionSubmissions, registeredStudioRecords,
+                name, matricNumber, phone, email, tags, studioGroup, missionSubmissions, registeredStudioRecords,
                 registeredMasteryChecks, registeredNotes);
         this.name = name;
+        this.matricNumber = matricNumber;
         this.phone = phone;
         this.email = email;
         this.tags.addAll(tags);
@@ -89,6 +94,10 @@ public class Student {
 
     public Email getEmail() {
         return email;
+    }
+
+    public MatriculationNumber getMatricNumber() {
+        return matricNumber;
     }
 
     /**
@@ -121,7 +130,7 @@ public class Student {
      */
     public Student withMissionSubmissions(MissionSubmissions submissions) {
         requireNonNull(submissions);
-        return new Student(name, phone, email, tags, studioGroup, submissions,
+        return new Student(name, matricNumber, phone, email, tags, studioGroup, submissions,
                 registeredStudioRecords, registeredMasteryChecks, registeredNotes);
     }
 
@@ -137,7 +146,7 @@ public class Student {
      */
     public Student withRegisteredStudioRecords(RegisteredStudioRecords registeredStudioRecords) {
         requireNonNull(registeredStudioRecords);
-        return new Student(name, phone, email, tags, studioGroup, missionSubmissions,
+        return new Student(name, matricNumber, phone, email, tags, studioGroup, missionSubmissions,
                 registeredStudioRecords, registeredMasteryChecks, registeredNotes);
     }
 
@@ -149,8 +158,8 @@ public class Student {
      */
     public Student withRegisteredNotes(RegisteredNotes registeredNotes) {
         requireNonNull(registeredNotes);
-        return new Student(name, phone, email, tags, studioGroup, missionSubmissions, registeredStudioRecords,
-                registeredMasteryChecks, registeredNotes);
+        return new Student(name, matricNumber, phone, email, tags, studioGroup, missionSubmissions,
+                registeredStudioRecords, registeredMasteryChecks, registeredNotes);
     }
 
     /**
@@ -161,7 +170,7 @@ public class Student {
      */
     public Student withRegisteredMasteryChecks(RegisteredMasteryChecks registeredMasteryChecks) {
         requireNonNull(registeredMasteryChecks);
-        return new Student(name, phone, email, tags, studioGroup, missionSubmissions,
+        return new Student(name, matricNumber, phone, email, tags, studioGroup, missionSubmissions,
                 registeredStudioRecords, registeredMasteryChecks, registeredNotes);
     }
 
@@ -185,8 +194,11 @@ public class Student {
     }
 
     /**
-     * Returns true if both students have the same name.
-     * This defines a weaker notion of equality between two students.
+     * Checks student identity using matriculation numbers, independently of names and other profile details.
+     * This defines a weaker notion of equality than comparing every student field.
+     *
+     * @param otherStudent Student to compare with this student; may be null.
+     * @return True if the other student has the same matriculation number.
      */
     public boolean isSameStudent(Student otherStudent) {
         if (otherStudent == this) {
@@ -194,13 +206,9 @@ public class Student {
         }
 
         return otherStudent != null
-                && otherStudent.getName().equals(getName());
+                && matricNumber.equals(otherStudent.matricNumber);
     }
 
-    /**
-     * Returns true if both students have the same identity and data fields.
-     * This defines a stronger notion of equality between two students.
-     */
     @Override
     public boolean equals(Object other) {
         if (other == this) {
@@ -213,6 +221,7 @@ public class Student {
         }
 
         return name.equals(otherStudent.name)
+                && matricNumber.equals(otherStudent.matricNumber)
                 && phone.equals(otherStudent.phone)
                 && email.equals(otherStudent.email)
                 && tags.equals(otherStudent.tags)
@@ -226,14 +235,15 @@ public class Student {
     @Override
     public int hashCode() {
         // use this method for custom fields hashing instead of implementing your own
-        return Objects.hash(name, phone, email, tags, studioGroup, missionSubmissions, registeredStudioRecords,
-                registeredMasteryChecks, registeredNotes);
+        return Objects.hash(name, matricNumber, phone, email, tags, studioGroup, missionSubmissions,
+                registeredStudioRecords, registeredMasteryChecks, registeredNotes);
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
                 .add("name", name)
+                .add("matriculationNumber", matricNumber)
                 .add("phone", phone)
                 .add("email", email)
                 .add("tags", tags)

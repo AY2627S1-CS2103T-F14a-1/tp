@@ -56,6 +56,9 @@
                 <Label fx:id="studentName"
                        styleClass="student-details-name"/>
 
+                <Label fx:id="matricNumber"
+                       styleClass="field-value"/>
+
                 <Label fx:id="studioGroup"
                        styleClass="field-value"/>
 

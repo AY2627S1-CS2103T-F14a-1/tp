@@ -3,6 +3,7 @@ package seedu.address.logic.parser;
 import static java.util.Objects.requireNonNull;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_EMAIL;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_INDEX;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_MATRIC_NUMBER;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PHONE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_STUDIO_GROUP;
@@ -22,7 +23,7 @@ import seedu.address.logic.parser.util.StudentParserUtil;
 import seedu.address.model.tag.Tag;
 
 /**
- * Parses input arguments and creates a new EditStudentCommand object
+ * Parses input arguments and creates a new {@code EditStudentCommand}.
  */
 public class EditStudentCommandParser implements Parser<EditStudentCommand> {
 
@@ -35,11 +36,12 @@ public class EditStudentCommandParser implements Parser<EditStudentCommand> {
         requireNonNull(args);
 
         try {
-            ArgumentMultimap argMultimap =
-                    ArgumentStructureValidator.validateStructureWithOptionals(args,
-                            new Prefix[]{PREFIX_INDEX},
-                            new Prefix[]{PREFIX_INDEX, PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL, PREFIX_STUDIO_GROUP},
-                            PREFIX_INDEX, PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL, PREFIX_TAG, PREFIX_STUDIO_GROUP);
+            ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructureWithOptionals(args,
+                    new Prefix[]{PREFIX_INDEX},
+                    new Prefix[]{PREFIX_INDEX, PREFIX_NAME, PREFIX_MATRIC_NUMBER, PREFIX_PHONE, PREFIX_EMAIL,
+                        PREFIX_STUDIO_GROUP},
+                    PREFIX_INDEX, PREFIX_NAME, PREFIX_MATRIC_NUMBER, PREFIX_PHONE,
+                    PREFIX_EMAIL, PREFIX_TAG, PREFIX_STUDIO_GROUP);
 
             EditStudentDescriptor editStudentDescriptor = buildEditStudentDescriptor(argMultimap);
             if (!editStudentDescriptor.isAnyFieldEdited()) {
@@ -67,6 +69,10 @@ public class EditStudentCommandParser implements Parser<EditStudentCommand> {
 
         if (argMultimap.getValue(PREFIX_NAME).isPresent()) {
             editStudentDescriptor.setName(StudentParserUtil.parseName(argMultimap.getRequiredValue(PREFIX_NAME)));
+        }
+        if (argMultimap.getValue(PREFIX_MATRIC_NUMBER).isPresent()) {
+            editStudentDescriptor.setMatricNumber(
+                    StudentParserUtil.parseMatricNumber(argMultimap.getRequiredValue(PREFIX_MATRIC_NUMBER)));
         }
         if (argMultimap.getValue(PREFIX_PHONE).isPresent()) {
             editStudentDescriptor.setPhone(StudentParserUtil.parsePhone(argMultimap.getRequiredValue(PREFIX_PHONE)));

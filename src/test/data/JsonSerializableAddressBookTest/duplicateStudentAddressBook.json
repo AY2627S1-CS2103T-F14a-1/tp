@@ -2,6 +2,7 @@
   "students": [
     {
       "name": "Alice Pauline",
+    "matricNumber": "A0000001A",
       "phone": "94351253",
       "email": "alice@example.com",
       "tags": [
@@ -11,6 +12,7 @@
     },
     {
       "name": "Alice Pauline",
+    "matricNumber": "A0000001A",
       "phone": "94351253",
       "email": "pauline@example.com",
       "studioGroup": "1A"

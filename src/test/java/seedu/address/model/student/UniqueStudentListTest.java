@@ -169,4 +169,37 @@ public class UniqueStudentListTest {
     public void toStringMethod() {
         assertEquals(uniqueStudentList.asUnmodifiableObservableList().toString(), uniqueStudentList.toString());
     }
+
+    @Test
+    public void add_sameNameDifferentMatricNumber_acceptsBothStudents() {
+        Student distinct = new StudentBuilder(ALICE).withMatricNumber("A9999999Z").build();
+        uniqueStudentList.add(ALICE);
+        uniqueStudentList.add(distinct);
+        assertEquals(List.of(ALICE, distinct), uniqueStudentList.asUnmodifiableObservableList());
+    }
+
+    @Test
+    public void add_sameMatricNumberDifferentName_rejectsWithoutChangingList() {
+        Student duplicate = new StudentBuilder(ALICE).withName("Different Name").build();
+        uniqueStudentList.add(ALICE);
+        assertThrows(DuplicateStudentException.class, () -> uniqueStudentList.add(duplicate));
+        assertEquals(List.of(ALICE), uniqueStudentList.asUnmodifiableObservableList());
+    }
+
+    @Test
+    public void setStudent_existingMatricNumber_rejectsWithoutChangingList() {
+        uniqueStudentList.add(ALICE);
+        uniqueStudentList.add(BOB);
+        Student duplicate = new StudentBuilder(ALICE).withMatricNumber(BOB.getMatricNumber().toString()).build();
+        assertThrows(DuplicateStudentException.class, () -> uniqueStudentList.setStudent(ALICE, duplicate));
+        assertEquals(List.of(ALICE, BOB), uniqueStudentList.asUnmodifiableObservableList());
+    }
+
+    @Test
+    public void setStudents_sameMatricNumberDifferentNames_rejectsWithoutChangingList() {
+        uniqueStudentList.add(BOB);
+        Student duplicate = new StudentBuilder(ALICE).withName("Different Name").build();
+        assertThrows(DuplicateStudentException.class, () -> uniqueStudentList.setStudents(List.of(ALICE, duplicate)));
+        assertEquals(List.of(BOB), uniqueStudentList.asUnmodifiableObservableList());
+    }
 }

@@ -8,6 +8,7 @@ import java.util.Set;
 
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.student.Email;
+import seedu.address.model.student.MatriculationNumber;
 import seedu.address.model.student.Name;
 import seedu.address.model.student.Phone;
 import seedu.address.model.student.StudioGroup;
@@ -31,6 +32,25 @@ public final class StudentParserUtil {
             throw new ParseException(Name.MESSAGE_CONSTRAINTS);
         }
         return new Name(trimmedName);
+    }
+
+    /**
+     * Parses a matriculation number after trimming leading and trailing whitespace.
+     * Requires uppercase A, exactly seven ASCII digits, and a final uppercase letter A-Z.
+     * Internal whitespace and lowercase letters are rejected rather than normalized.
+     *
+     * @param matricNumber Raw matriculation number text.
+     * @return The validated matriculation number with surrounding whitespace removed.
+     * @throws NullPointerException If matricNumber is null.
+     * @throws ParseException If the trimmed text does not match the required format.
+     */
+    public static MatriculationNumber parseMatricNumber(String matricNumber) throws ParseException {
+        requireNonNull(matricNumber);
+        String trimmedMatricNumber = matricNumber.trim();
+        if (!MatriculationNumber.isValidMatricNumber(trimmedMatricNumber)) {
+            throw new ParseException(MatriculationNumber.MESSAGE_CONSTRAINTS);
+        }
+        return new MatriculationNumber(trimmedMatricNumber);
     }
 
     /**

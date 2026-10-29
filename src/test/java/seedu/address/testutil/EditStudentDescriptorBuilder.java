@@ -6,6 +6,7 @@ import java.util.stream.Stream;
 
 import seedu.address.logic.commands.EditStudentCommand.EditStudentDescriptor;
 import seedu.address.model.student.Email;
+import seedu.address.model.student.MatriculationNumber;
 import seedu.address.model.student.Name;
 import seedu.address.model.student.Phone;
 import seedu.address.model.student.Student;
@@ -33,6 +34,7 @@ public class EditStudentDescriptorBuilder {
     public EditStudentDescriptorBuilder(Student student) {
         descriptor = new EditStudentDescriptor();
         descriptor.setName(student.getName());
+        descriptor.setMatricNumber(student.getMatricNumber());
         descriptor.setPhone(student.getPhone());
         descriptor.setEmail(student.getEmail());
         descriptor.setTags(student.getTags());
@@ -44,6 +46,17 @@ public class EditStudentDescriptorBuilder {
      */
     public EditStudentDescriptorBuilder withName(String name) {
         descriptor.setName(new Name(name));
+        return this;
+    }
+
+    /**
+     * Sets the matriculation number to use in the edit.
+     *
+     * @param matricNumber Valid replacement matriculation number.
+     * @return This builder.
+     */
+    public EditStudentDescriptorBuilder withMatricNumber(String matricNumber) {
+        descriptor.setMatricNumber(new MatriculationNumber(matricNumber));
         return this;
     }
 

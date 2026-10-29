@@ -3,6 +3,7 @@
   "students": [
     {
       "name": "Alice Pauline",
+    "matricNumber": "A0000001A",
       "phone": "94351253",
       "email": "alice@example.com",
       "tags": [
@@ -12,6 +13,7 @@
     },
     {
       "name": "Benson Meier",
+    "matricNumber": "A0000002A",
       "phone": "98765432",
       "email": "johnd@example.com",
       "tags": [
@@ -22,6 +24,7 @@
     },
     {
       "name": "Carl Kurz",
+    "matricNumber": "A0000003A",
       "phone": "95352563",
       "email": "heinz@example.com",
       "tags": [],
@@ -29,6 +32,7 @@
     },
     {
       "name": "Daniel Meier",
+    "matricNumber": "A0000004A",
       "phone": "87652533",
       "email": "cornelia@example.com",
       "tags": [
@@ -38,6 +42,7 @@
     },
     {
       "name": "Elle Meyer",
+    "matricNumber": "A0000005A",
       "phone": "9482224",
       "email": "werner@example.com",
       "tags": [],
@@ -45,6 +50,7 @@
     },
     {
       "name": "Fiona Kunz",
+    "matricNumber": "A0000006A",
       "phone": "9482427",
       "email": "lydia@example.com",
       "tags": [],
@@ -52,6 +58,7 @@
     },
     {
       "name": "George Best",
+    "matricNumber": "A0000007A",
       "phone": "9482442",
       "email": "anna@example.com",
       "tags": [],
