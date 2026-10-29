@@ -5,9 +5,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 import static seedu.address.testutil.TypicalStudents.AMY;
+import static seedu.address.testutil.TypicalStudents.getTypicalStudents;
+import static seedu.address.ui.testutil.GuiTestAssert.assertCardDisplaysStudent;
 
 import java.util.Collections;
 
+import guitests.guihandles.StudentCardHandle;
+import guitests.guihandles.StudentListPanelHandle;
+import javafx.beans.property.SimpleObjectProperty;
 import org.junit.jupiter.api.Test;
 
 import javafx.collections.FXCollections;
@@ -21,7 +26,12 @@ import seedu.address.model.student.StudioGroup;
 
 public class StudentListPanelTest extends GuiUnitTest {
 
+    private static final ObservableList<Student> TYPICAL_STUDENTS =
+            FXCollections.observableList(getTypicalStudents());
+
     private static final long CARD_CREATION_AND_DELETION_TIMEOUT = 2500;
+
+    private StudentListPanelHandle studentListPanelHandle;
 
     /**
      * Initializes {@code studentListPanelHandle} with a {@code StudentListPanel} backed by {@code backingList}.
@@ -31,8 +41,24 @@ public class StudentListPanelTest extends GuiUnitTest {
         StudentListPanel studentListPanel =
                 new StudentListPanel(backingList);
         uiPartExtension.setUiPart(studentListPanel);
+
+        studentListPanelHandle = new StudentListPanelHandle(getChildNode(studentListPanel.getRoot(),
+                StudentListPanelHandle.STUDENT_LIST_VIEW_ID));
     }
 
+    @Test
+    public void display() {
+        initUi(TYPICAL_STUDENTS);
+
+        for (int i = 0; i < TYPICAL_STUDENTS.size(); i++) {
+            studentListPanelHandle.navigateToCard(TYPICAL_STUDENTS.get(i));
+            Student expectedStudent = TYPICAL_STUDENTS.get(i);
+            StudentCardHandle actualCard = studentListPanelHandle.getStudentCardHandle(i);
+
+            assertCardDisplaysStudent(expectedStudent, actualCard);
+            assertEquals(Integer.toString(i + 1), actualCard.getId());
+        }
+    }
     /**
      * Verifies that creating and deleting large number of students in {@code StudentListPanel} requires less than
      * {@code CARD_CREATION_AND_DELETION_TIMEOUT} milliseconds to execute.
