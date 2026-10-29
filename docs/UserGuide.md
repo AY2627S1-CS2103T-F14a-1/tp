@@ -76,6 +76,8 @@ AvengerHub is a **desktop address book application for managing students, optimi
 
 Opens the help window containing usage instructions for the commands.
 
+Any arguments provided after `help` are ignored.
+
 ![help message](images/helpMessage.png)
 
 Format: `help`
@@ -406,6 +408,33 @@ Format: `unmarkmc id/INDEX num/NUMBER`
 Example: 
 
 `unmarkmc id/1 num/2`, followed by `view id/1`, shows appointment 2 as Not completed.
+
+### Listing Upcoming Mastery Checks: `listmc`
+
+Lists all upcoming mastery-check appointments for students in the
+currently filtered student list.
+
+Only appointments after the current date and time are shown. Results are
+sorted chronologically.
+
+Any arguments provided after `listmc` are ignored.
+
+`listmc` is a read-only command. It does not change student data,
+mastery-check records, or the current filter.
+
+Format: `listmc`
+
+Example output:
+```text
+Listed all upcoming mastery checks as of 29 Oct 2026, 12:00:
+1 | Bernice Yu | 02 Nov 2026, 10:00 | Not completed
+2 | Alex Tan | 03 Nov 2026, 15:30 | Completed
+```
+
+If there are no upcoming mastery checks:
+```text
+No upcoming mastery checks in the current student list.
+```
 
 ### Adding a mission: `addmission`
 
