@@ -51,3 +51,18 @@ This project has two types of tests:
        For example: `seedu.address.storage.StorageManagerTest`
     - *Hybrid tests* combine unit and integration testing. These tests check both the individual units and how they work together.<br>
        For example: `seedu.address.logic.LogicManagerTest`
+
+## Troubleshooting Testing
+**Problem: `HelpWindowTest` fails with a `NullPointerException`.**
+
+* Reason: One of its dependencies, `HelpWindow.html` in `src/main/resources/docs` is missing.
+* Solution: Execute Gradle task `processResources`.
+
+**Problem: Keyboard and mouse movements are not simulated on macOS Mojave, resulting in GUI Tests failure.**
+
+* Reason: From macOS Mojave onwards, applications without `Accessibility` permission cannot simulate certain keyboard and mouse movements.
+* Solution: Open `System Preferences`, click `Security and Privacy` -> `Privacy` -> `Accessibility`, and check the box beside `Intellij IDEA`.
+
+`Accessibility` permission is granted to `IntelliJ IDEA`
+[docs/images/testfx-idea-accessibility-permissions.png]
+<img src="images/testfx-idea-accessibility-permissions.png" width="600px">
