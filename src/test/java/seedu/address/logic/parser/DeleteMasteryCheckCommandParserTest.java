@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
+import static seedu.address.logic.parser.util.ParserUtil.MESSAGE_SEE_USAGE;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_STUDENT;
 
 import java.util.List;
@@ -12,13 +13,13 @@ import org.junit.jupiter.api.Test;
 
 import seedu.address.logic.commands.DeleteMasteryCheckCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.logic.parser.util.MasteryCheckParserUtil;
 import seedu.address.logic.parser.util.ParserUtil;
-import seedu.address.model.student.RegisteredMasteryChecks;
 
 /** Tests deletion argument structure, number validation, and delete-specific usage feedback. */
 public class DeleteMasteryCheckCommandParserTest {
 
-    private static final String USAGE_SUFFIX = "\n\n" + DeleteMasteryCheckCommand.MESSAGE_USAGE;
+    private static final String USAGE_SUFFIX = MESSAGE_SEE_USAGE + DeleteMasteryCheckCommand.MESSAGE_USAGE;
     private final DeleteMasteryCheckCommandParser parser = new DeleteMasteryCheckCommandParser();
 
     @Test
@@ -43,7 +44,7 @@ public class DeleteMasteryCheckCommandParserTest {
 
     @Test
     public void parse_invalidIndex_reportsIndexConstraint() {
-        for (String index : List.of("", "0", "-1", "abc", "1 extra", "2147483648")) {
+        for (String index : List.of("0", "-1", "abc", "1 extra", "2147483648")) {
             assertParseFailure(parser, "id/" + index + " num/1",
                 ParserUtil.MESSAGE_INVALID_INDEX + USAGE_SUFFIX);
         }
@@ -60,16 +61,16 @@ public class DeleteMasteryCheckCommandParserTest {
     @Test
     public void parse_nonPositiveNumber_reportsNumberConstraint() {
         for (String number : List.of("0", "-1", "-2147483648")) {
-            assertParseFailure(parser, "id/1 num/" + number + "",
-                    RegisteredMasteryChecks.MESSAGE_CONSTRAINTS + USAGE_SUFFIX);
+            assertParseFailure(parser, "id/1 num/" + number,
+                    MasteryCheckParserUtil.MESSAGE_ERROR_NEGATIVE_NUMBER + USAGE_SUFFIX);
         }
     }
 
     @Test
     public void parse_nonIntegerOrOverflowingNumber_reportsNonNumberMessage() {
-        for (String number : List.of("", "1.5", "abc", "2147483648")) {
+        for (String number : List.of("1.5", "abc", "2147483648")) {
             assertParseFailure(parser, "id/1 num/" + number + "",
-                    RegisteredMasteryChecks.MESSAGE_NON_NUMBER + USAGE_SUFFIX);
+                    MasteryCheckParserUtil.MESSAGE_ERROR_NON_NUMBER + USAGE_SUFFIX);
         }
     }
 

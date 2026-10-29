@@ -12,7 +12,6 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import seedu.address.logic.parser.exceptions.ParseException;
-import seedu.address.model.student.RegisteredMasteryChecks;
 
 public class MasteryCheckParserUtilTest {
 
@@ -31,7 +30,7 @@ public class MasteryCheckParserUtilTest {
     @Test
     public void parseMasteryCheckNumber_nonPositiveValues_reportsNumberConstraint() {
         for (String number : List.of("0", "-1", "-2147483648")) {
-            assertThrows(ParseException.class, RegisteredMasteryChecks.MESSAGE_CONSTRAINTS, () ->
+            assertThrows(ParseException.class, MasteryCheckParserUtil.MESSAGE_ERROR_NEGATIVE_NUMBER, () ->
                     MasteryCheckParserUtil.parseMasteryCheckNumber(number));
         }
     }
@@ -39,7 +38,7 @@ public class MasteryCheckParserUtilTest {
     @Test
     public void parseMasteryCheckNumber_nonIntegerOrOverflowingValues_reportsNonNumberMessage() {
         for (String number : List.of("", WHITESPACE, "1.5", "1e2", "abc", "1 2", "2147483648")) {
-            assertThrows(ParseException.class, RegisteredMasteryChecks.MESSAGE_NON_NUMBER, () ->
+            assertThrows(ParseException.class, MasteryCheckParserUtil.MESSAGE_ERROR_NON_NUMBER, () ->
                     MasteryCheckParserUtil.parseMasteryCheckNumber(number));
         }
     }

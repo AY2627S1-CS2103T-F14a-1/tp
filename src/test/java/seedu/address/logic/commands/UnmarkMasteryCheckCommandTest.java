@@ -189,7 +189,13 @@ public class UnmarkMasteryCheckCommandTest {
     public void equals_indexNumberAndCommandType_returnsExpectedEquality() {
         UnmarkMasteryCheckCommand command = new UnmarkMasteryCheckCommand(INDEX_FIRST_STUDENT, 1);
         assertEquals(command, command);
-        assertEquals(new UnmarkMasteryCheckCommand(INDEX_FIRST_STUDENT, 1), command);
+        UnmarkMasteryCheckCommand equalCommand =
+                new UnmarkMasteryCheckCommand(
+                        INDEX_FIRST_STUDENT,
+                        1);
+
+        assertEquals(equalCommand, command);
+        assertEquals(equalCommand.hashCode(), command.hashCode());
         assertNotEquals(new UnmarkMasteryCheckCommand(INDEX_SECOND_STUDENT, 1), command);
         assertNotEquals(new UnmarkMasteryCheckCommand(INDEX_FIRST_STUDENT, 2), command);
         assertNotEquals(new MarkMasteryCheckCommand(INDEX_FIRST_STUDENT, 1), command);

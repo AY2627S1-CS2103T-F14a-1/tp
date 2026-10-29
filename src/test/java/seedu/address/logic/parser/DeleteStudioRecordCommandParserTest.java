@@ -4,6 +4,7 @@ import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_WEEK;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
+import static seedu.address.logic.parser.util.ParserUtil.MESSAGE_SEE_USAGE;
 import static seedu.address.logic.parser.util.StudioRecordParserUtil.MESSAGE_INVALID_WEEK;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_STUDENT;
 
@@ -17,7 +18,7 @@ import seedu.address.logic.parser.util.ParserUtil;
  */
 public class DeleteStudioRecordCommandParserTest {
 
-    private static final String USAGE_SUFFIX = "\n\n" + DeleteStudioRecordCommand.MESSAGE_USAGE;
+    private static final String USAGE_SUFFIX = MESSAGE_SEE_USAGE + DeleteStudioRecordCommand.MESSAGE_USAGE;
 
     private final DeleteStudioRecordCommandParser parser = new DeleteStudioRecordCommandParser();
 
@@ -53,9 +54,9 @@ public class DeleteStudioRecordCommandParserTest {
     }
 
     @Test
-    public void parse_emptyWeek_reportsInvalidWeek() {
+    public void parse_emptyWeek_reportsMissingArgument() {
         assertParseFailure(parser, "id/1 w/",
-                MESSAGE_INVALID_WEEK + USAGE_SUFFIX);
+                "Prefix w/ is missing its argument." + USAGE_SUFFIX);
     }
 
     @Test

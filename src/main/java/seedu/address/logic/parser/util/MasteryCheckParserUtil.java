@@ -19,8 +19,11 @@ import seedu.address.model.student.RegisteredMasteryChecks;
  */
 public final class MasteryCheckParserUtil {
 
-    public static final String MESSAGE_INVALID_MASTERY_CHECK_DATETIME =
-            "Mastery check appointment must be a valid date and 24-hour time in dd-MM|HH:mm format.";
+    public static final String MESSAGE_ERROR_NEGATIVE_NUMBER =
+            "Provided mastery check number is smaller than or equal to 0.";
+    public static final String MESSAGE_ERROR_NON_NUMBER =
+            "Provided mastery check number value is not a valid integer.";
+    public static final String MESSAGE_INVALID_MASTERY_CHECK_DATETIME = "Provided date value is invalid.";
 
     /** Strict input formatter whose default year is captured when this class is initialized. */
     private static final DateTimeFormatter MASTERY_CHECK_DATETIME_FORMATTER =
@@ -43,11 +46,11 @@ public final class MasteryCheckParserUtil {
         try {
             int trimmedNumber = Integer.parseInt(number.trim());
             if (!RegisteredMasteryChecks.isValidMasteryCheckNumber(trimmedNumber)) {
-                throw new ParseException(RegisteredMasteryChecks.MESSAGE_CONSTRAINTS);
+                throw new ParseException(MESSAGE_ERROR_NEGATIVE_NUMBER);
             }
             return trimmedNumber;
         } catch (NumberFormatException _) {
-            throw new ParseException(RegisteredMasteryChecks.MESSAGE_NON_NUMBER);
+            throw new ParseException(MESSAGE_ERROR_NON_NUMBER);
         }
     }
 

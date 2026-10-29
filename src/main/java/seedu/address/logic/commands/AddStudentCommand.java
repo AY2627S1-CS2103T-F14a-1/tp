@@ -7,6 +7,8 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_PHONE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_STUDIO_GROUP;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
 
+import java.util.Objects;
+
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.Messages;
 import seedu.address.logic.commands.exceptions.CommandException;
@@ -72,6 +74,11 @@ public class AddStudentCommand extends Command {
         }
 
         return toAdd.equals(otherAddStudentCommand.toAdd);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(toAdd);
     }
 
     @Override

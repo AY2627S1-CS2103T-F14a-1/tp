@@ -11,6 +11,7 @@ import java.util.Set;
 
 import seedu.address.logic.commands.AddStudentCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.logic.parser.util.ParserUtil;
 import seedu.address.logic.parser.util.StudentParserUtil;
 import seedu.address.model.student.Email;
 import seedu.address.model.student.Name;
@@ -39,16 +40,16 @@ public class AddStudentCommandParser implements Parser<AddStudentCommand> {
                             new Prefix[]{PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL, PREFIX_STUDIO_GROUP},
                             new Prefix[]{PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL, PREFIX_STUDIO_GROUP},
                             PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL, PREFIX_TAG, PREFIX_STUDIO_GROUP);
-            Name name = StudentParserUtil.parseName(argMultimap.getValue(PREFIX_NAME).get());
-            Phone phone = StudentParserUtil.parsePhone(argMultimap.getValue(PREFIX_PHONE).get());
-            Email email = StudentParserUtil.parseEmail(argMultimap.getValue(PREFIX_EMAIL).get());
+            Name name = StudentParserUtil.parseName(argMultimap.getRequiredValue(PREFIX_NAME));
+            Phone phone = StudentParserUtil.parsePhone(argMultimap.getRequiredValue(PREFIX_PHONE));
+            Email email = StudentParserUtil.parseEmail(argMultimap.getRequiredValue(PREFIX_EMAIL));
             Set<Tag> tagList = StudentParserUtil.parseTags(argMultimap.getAllValues(PREFIX_TAG));
-            StudioGroup studioGroup = StudentParserUtil.parseStudioGroup(
-                    argMultimap.getValue(PREFIX_STUDIO_GROUP).get());
+            StudioGroup studioGroup =
+                    StudentParserUtil.parseStudioGroup(argMultimap.getRequiredValue(PREFIX_STUDIO_GROUP));
             Student student = new Student(name, phone, email, tagList, studioGroup);
             return new AddStudentCommand(student);
         } catch (ParseException e) {
-            throw new ParseException(e.getMessage() + "\n\n" + AddStudentCommand.MESSAGE_USAGE);
+            throw new ParseException(e.getMessage() + ParserUtil.MESSAGE_SEE_USAGE + AddStudentCommand.MESSAGE_USAGE);
         }
     }
 }

@@ -3,6 +3,7 @@ package seedu.address.logic.parser;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
+import static seedu.address.logic.parser.util.ParserUtil.MESSAGE_SEE_USAGE;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_STUDENT;
 
 import org.junit.jupiter.api.Test;
@@ -18,7 +19,7 @@ import seedu.address.logic.commands.DeleteStudentCommand;
  */
 public class DeleteStudentCommandParserTest {
 
-    private static final String USAGE_SUFFIX = "\n\n" + DeleteStudentCommand.MESSAGE_USAGE;
+    private static final String USAGE_SUFFIX = MESSAGE_SEE_USAGE + DeleteStudentCommand.MESSAGE_USAGE;
 
     private DeleteStudentCommandParser parser = new DeleteStudentCommandParser();
 

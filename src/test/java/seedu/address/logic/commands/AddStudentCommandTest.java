@@ -70,6 +70,9 @@ public class AddStudentCommandTest {
         // same values -> returns true
         AddStudentCommand addAliceCommandCopy = new AddStudentCommand(alice);
         assertTrue(addAliceCommand.equals(addAliceCommandCopy));
+        assertEquals(
+                addAliceCommandCopy.hashCode(),
+                addAliceCommand.hashCode());
 
         // different types -> returns false
         assertFalse(addAliceCommand.equals(1));

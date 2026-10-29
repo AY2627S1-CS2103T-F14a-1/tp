@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
+import static seedu.address.logic.parser.util.ParserUtil.MESSAGE_SEE_USAGE;
 import static seedu.address.testutil.TypicalStudents.getTypicalAddressBook;
 
 import java.util.List;
@@ -27,7 +28,7 @@ import seedu.address.testutil.StudentBuilder;
 
 public class FindCommandParserTest {
 
-    private static final String USAGE_SUFFIX = "\n\n" + FindCommand.MESSAGE_USAGE;
+    private static final String USAGE_SUFFIX = MESSAGE_SEE_USAGE + FindCommand.MESSAGE_USAGE;
 
     private final FindCommandParser parser = new FindCommandParser();
 

@@ -29,12 +29,12 @@ public class EditNoteCommandParser implements Parser<EditNoteCommand> {
             ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
                     args, PREFIX_INDEX, PREFIX_NOTE_INDEX, PREFIX_NOTE_TEXT);
 
-            Index index = ParserUtil.parseIndex(argMultimap.getValue(PREFIX_INDEX).get());
-            Index noteIndex = NoteParserUtil.parseNoteIndex(argMultimap.getValue(PREFIX_NOTE_INDEX).get());
-            Note note = NoteParserUtil.parseNoteText(argMultimap.getValue(PREFIX_NOTE_TEXT).get());
+            Index index = ParserUtil.parseIndex(argMultimap.getRequiredValue(PREFIX_INDEX));
+            Index noteIndex = NoteParserUtil.parseNoteIndex(argMultimap.getRequiredValue(PREFIX_NOTE_INDEX));
+            Note note = NoteParserUtil.parseNoteText(argMultimap.getRequiredValue(PREFIX_NOTE_TEXT));
             return new EditNoteCommand(index, noteIndex, note);
         } catch (ParseException pe) {
-            throw new ParseException(pe.getMessage() + "\n\n" + EditNoteCommand.MESSAGE_USAGE);
+            throw new ParseException(pe.getMessage() + ParserUtil.MESSAGE_SEE_USAGE + EditNoteCommand.MESSAGE_USAGE);
         }
     }
 }

@@ -26,6 +26,7 @@ import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_FRIEND;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_HUSBAND;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
+import static seedu.address.logic.parser.util.ParserUtil.MESSAGE_SEE_USAGE;
 import static seedu.address.testutil.TypicalStudents.AMY;
 import static seedu.address.testutil.TypicalStudents.BOB;
 
@@ -42,7 +43,7 @@ import seedu.address.testutil.StudentBuilder;
 
 public class AddStudentCommandParserTest {
 
-    private static final String USAGE_SUFFIX = "\n\n" + AddStudentCommand.MESSAGE_USAGE;
+    private static final String USAGE_SUFFIX = MESSAGE_SEE_USAGE + AddStudentCommand.MESSAGE_USAGE;
     private AddStudentCommandParser parser = new AddStudentCommandParser();
 
     @Test

@@ -50,6 +50,9 @@ public class ViewCommandTest {
 
         ViewCommand viewFirstCommandCopy = new ViewCommand(INDEX_FIRST_STUDENT);
         assertTrue(viewFirstCommand.equals(viewFirstCommandCopy));
+        assertEquals(
+                viewFirstCommandCopy.hashCode(),
+                viewFirstCommand.hashCode());
 
         assertFalse(viewFirstCommand.equals(1));
         assertFalse(viewFirstCommand.equals(null));

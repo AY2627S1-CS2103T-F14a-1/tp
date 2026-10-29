@@ -2,6 +2,7 @@ package seedu.address.logic.parser;
 
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
+import static seedu.address.logic.parser.util.ParserUtil.MESSAGE_SEE_USAGE;
 import static seedu.address.logic.parser.util.StudioRecordParserUtil.MESSAGE_INVALID_EFFORT;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_STUDENT;
 
@@ -17,7 +18,7 @@ import seedu.address.model.student.StudioRecord;
  */
 public class AddStudioRecordCommandParserTest {
 
-    private static final String USAGE_SUFFIX = "\n\n" + AddStudioRecordCommand.MESSAGE_USAGE;
+    private static final String USAGE_SUFFIX = MESSAGE_SEE_USAGE + AddStudioRecordCommand.MESSAGE_USAGE;
 
     private final AddStudioRecordCommandParser parser = new AddStudioRecordCommandParser();
 
@@ -41,7 +42,7 @@ public class AddStudioRecordCommandParserTest {
 
     @Test
     public void parse_invalidEffort_reportsInvalidEffort() {
-        String[] effortScores = {"", "-1", "1.5", "abc", "2147483648"};
+        String[] effortScores = {"-1", "1.5", "abc", "2147483648"};
         for (String effortScore : effortScores) {
             assertParseFailure(parser, "id/1 w/3 ef/" + effortScore,
                 MESSAGE_INVALID_EFFORT + USAGE_SUFFIX);

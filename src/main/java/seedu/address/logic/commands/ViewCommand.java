@@ -2,6 +2,8 @@ package seedu.address.logic.commands;
 
 import static seedu.address.logic.parser.CliSyntax.PREFIX_INDEX;
 
+import java.util.Objects;
+
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.commands.exceptions.CommandException;
@@ -60,6 +62,11 @@ public class ViewCommand extends Command {
         }
 
         return targetIndex.equals(otherViewCommand.targetIndex);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(targetIndex);
     }
 
     @Override

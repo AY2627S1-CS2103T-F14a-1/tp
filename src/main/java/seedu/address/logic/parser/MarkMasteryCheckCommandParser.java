@@ -29,11 +29,12 @@ public class MarkMasteryCheckCommandParser implements Parser<MarkMasteryCheckCom
         try {
             ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
                     args, PREFIX_INDEX, PREFIX_NUMBER);
-            Index index = ParserUtil.parseIndex(argMultimap.getValue(PREFIX_INDEX).get());
-            int number = MasteryCheckParserUtil.parseMasteryCheckNumber(argMultimap.getValue(PREFIX_NUMBER).get());
+            Index index = ParserUtil.parseIndex(argMultimap.getRequiredValue(PREFIX_INDEX));
+            int number = MasteryCheckParserUtil.parseMasteryCheckNumber(argMultimap.getRequiredValue(PREFIX_NUMBER));
             return new MarkMasteryCheckCommand(index, number);
         } catch (ParseException e) {
-            throw new ParseException(e.getMessage() + "\n\n" + MarkMasteryCheckCommand.MESSAGE_USAGE);
+            throw new ParseException(e.getMessage()
+                    + ParserUtil.MESSAGE_SEE_USAGE + MarkMasteryCheckCommand.MESSAGE_USAGE);
         }
     }
 }

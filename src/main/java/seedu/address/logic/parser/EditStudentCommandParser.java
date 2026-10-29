@@ -46,10 +46,10 @@ public class EditStudentCommandParser implements Parser<EditStudentCommand> {
                 throw new ParseException(EditStudentCommand.MESSAGE_NOT_EDITED);
             }
 
-            Index index = ParserUtil.parseIndex(argMultimap.getValue(PREFIX_INDEX).get());
+            Index index = ParserUtil.parseIndex(argMultimap.getRequiredValue(PREFIX_INDEX));
             return new EditStudentCommand(index, editStudentDescriptor);
         } catch (ParseException e) {
-            throw new ParseException(e.getMessage() + "\n\n" + EditStudentCommand.MESSAGE_USAGE);
+            throw new ParseException(e.getMessage() + ParserUtil.MESSAGE_SEE_USAGE + EditStudentCommand.MESSAGE_USAGE);
         }
     }
 
@@ -66,18 +66,18 @@ public class EditStudentCommandParser implements Parser<EditStudentCommand> {
         EditStudentDescriptor editStudentDescriptor = new EditStudentDescriptor();
 
         if (argMultimap.getValue(PREFIX_NAME).isPresent()) {
-            editStudentDescriptor.setName(StudentParserUtil.parseName(argMultimap.getValue(PREFIX_NAME).get()));
+            editStudentDescriptor.setName(StudentParserUtil.parseName(argMultimap.getRequiredValue(PREFIX_NAME)));
         }
         if (argMultimap.getValue(PREFIX_PHONE).isPresent()) {
-            editStudentDescriptor.setPhone(StudentParserUtil.parsePhone(argMultimap.getValue(PREFIX_PHONE).get()));
+            editStudentDescriptor.setPhone(StudentParserUtil.parsePhone(argMultimap.getRequiredValue(PREFIX_PHONE)));
         }
         if (argMultimap.getValue(PREFIX_EMAIL).isPresent()) {
-            editStudentDescriptor.setEmail(StudentParserUtil.parseEmail(argMultimap.getValue(PREFIX_EMAIL).get()));
+            editStudentDescriptor.setEmail(StudentParserUtil.parseEmail(argMultimap.getRequiredValue(PREFIX_EMAIL)));
         }
         parseTagsForEdit(argMultimap.getAllValues(PREFIX_TAG)).ifPresent(editStudentDescriptor::setTags);
         if (argMultimap.getValue(PREFIX_STUDIO_GROUP).isPresent()) {
             editStudentDescriptor.setStudioGroup(
-                    StudentParserUtil.parseStudioGroup(argMultimap.getValue(PREFIX_STUDIO_GROUP).get()));
+                    StudentParserUtil.parseStudioGroup(argMultimap.getRequiredValue(PREFIX_STUDIO_GROUP)));
         }
         return editStudentDescriptor;
     }
