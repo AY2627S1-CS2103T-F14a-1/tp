@@ -101,7 +101,7 @@ Inspect the saved file before running that verification command to ensure reject
 | ID | Steps | Expected result |
 | --- | --- | --- |
 | MISSION-001 | Run `addmission`, `addmission m/M01`, and `addmission m/M01 n/Runes`. | Reports the missing prefixes using their `CliSyntax` messages; no mission is added. |
-| MISSION-002 | Run `addmission m/M01 n/Rune Reading d/2026-10-20`, then view student 1. | Creates M01, Rune Reading, due 2026-10-20, not submitted. |
+| MISSION-002 | Run `addmission m/M01 n/Rune Reading d/2026-10-20`, then view student 1. | Creates M01, Rune Reading, due 2026-10-20, not submitted. The Mission submissions panel shows `Due: 20 October 2026`. |
 | MISSION-003 | Run `addmission m/M02 n/ RUNE   READING d/2026-10-21`. | Duplicate-name feedback; M01 and saved state remain unchanged. |
 | MISSION-004 | Run `addmission m/M02 n/Curves d/2026-10-21`, then `editmission m/M02 n/Rune Reading`. | M02 is added; the duplicate edit is rejected. |
 | MISSION-012 | Attempt `addmission m/M01 n/Curves d/2026-10-21`, then `addmission m/M1 n/Curves d/2026-10-21` and `addmission m/M00 n/Curves d/2026-10-21`. | Duplicate ID feedback for M01; malformed IDs are rejected with the ID format constraint. Catalogue and saved data remain unchanged. |

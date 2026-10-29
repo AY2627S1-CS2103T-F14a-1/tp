@@ -145,13 +145,14 @@ The studio-record parsers share argument-structure validation through `ArgumentS
 The `Model` component,
 
 * stores the address book data, including all `Student` objects (contained in a `UniqueStudentList`) and shared `Mission` objects (contained in a `MissionCatalogue`).
-* stores each student's contact details, studio group, tags, studio records,
-  notes, mastery check appointments, and mission submissions. Studio records
-  track attendance and effort scores by week, while `MissionSubmissions`
-  stores an immutable set of submitted mission IDs that reference the shared
-  catalogue. A mission without a recorded submission is treated as not
-  submitted; deleting a mission also removes its ID from every student's
-  submissions.
+* stores each student's matriculation number, contact details, studio group,
+  tags, studio records, notes, mastery check appointments, and mission
+  submissions. The matriculation number is a validated identity value
+  independent of the student's name. Studio records track attendance and
+  effort scores by week, while `MissionSubmissions` stores an immutable set of
+  submitted mission IDs that reference the shared catalogue. A mission without
+  a recorded submission is treated as not submitted; deleting a mission also
+  removes its ID from every student's submissions.
 * stores each mission's user-supplied ID, name, and deadline. `MissionId`
   validates the ID format and normalizes its case; `MissionCatalogue` enforces
   ID and name uniqueness and stores the supplied ID without allocating or
