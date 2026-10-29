@@ -107,7 +107,7 @@ public class StudentDetailsPanel extends UiPart<Region> {
         studentDetails.setManaged(true);
 
         String studentTags = student.getTags().stream()
-                .map(Tag::toString)
+                .map(tag -> tag.tagName)
                 .collect(Collectors.joining(", "));
 
         studentName.setText(student.getName().fullName);
