@@ -22,8 +22,8 @@ public class DeleteNoteCommand extends Command {
 
     public static final String MESSAGE_USAGE = COMMAND_WORD
             + ": Deletes a note for the selected student.\n"
-            + "Parameters: " + PREFIX_INDEX + "INDEX " + PREFIX_NOTE_INDEX + "NOTE_INDEX\n"
-            + "INDEX must be a positive integer identifying a displayed student.\n"
+            + "Parameters: " + PREFIX_INDEX + "STUDENT_INDEX " + PREFIX_NOTE_INDEX + "NOTE_INDEX\n"
+            + "STUDENT_INDEX must be a positive integer identifying a displayed student.\n"
             + "NOTE_INDEX must be a positive integer less than or equal to "
             + RegisteredNotes.MAX_NOTE_INDEX + " inclusive.\n"
             + "Example: " + COMMAND_WORD + " " + PREFIX_INDEX + "1 "

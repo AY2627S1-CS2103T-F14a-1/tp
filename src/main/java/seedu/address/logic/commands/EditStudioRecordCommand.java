@@ -28,8 +28,9 @@ public class EditStudioRecordCommand extends Command {
             "Edited %1$s's studio record for studio week %2$d.";
     public static final String MESSAGE_USAGE = COMMAND_WORD
             + ": Edits a week's studio record for the selected student.\n"
-            + "Parameters: " + PREFIX_INDEX + "INDEX " + PREFIX_WEEK + "WEEK " + PREFIX_STUDIO_EFFORT + "EFFORT\n"
-            + "INDEX must be a positive integer identifying a displayed student.\n"
+            + "Parameters: " + PREFIX_INDEX + "STUDENT_INDEX " + PREFIX_WEEK + "WEEK "
+            + PREFIX_STUDIO_EFFORT + "EFFORT\n"
+            + "STUDENT_INDEX must be a positive integer identifying a displayed student.\n"
             + "WEEK must be between " + RegisteredStudioRecords.MIN_WEEK
             + " and " + RegisteredStudioRecords.MAX_WEEK + " inclusive.\n"
             + "Example: " + COMMAND_WORD + " " + PREFIX_INDEX + "1 " + PREFIX_WEEK + "3 " + PREFIX_STUDIO_EFFORT + "30";

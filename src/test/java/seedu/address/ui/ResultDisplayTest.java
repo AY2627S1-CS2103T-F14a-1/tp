@@ -202,7 +202,7 @@ public class ResultDisplayTest extends GuiUnitTest {
 
             String feedback =
                     "Invalid command format! "
-                            + "Parameters: INDEX "
+                            + "Parameters: STUDENT_INDEX "
                             + "Example: view 1";
 
             resultDisplay.setFeedbackToUser(feedback);

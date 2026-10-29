@@ -26,8 +26,8 @@ public class UnmarkMissionCommand extends Command {
 
     public static final String MESSAGE_USAGE = COMMAND_WORD
             + ": Removes record of a mission submission for the selected student.\n"
-            + "Parameters: " + PREFIX_INDEX + "INDEX " + PREFIX_MISSION + "MISSION_ID\n"
-            + "INDEX must be a positive integer identifying a displayed student.\n"
+            + "Parameters: " + PREFIX_INDEX + "STUDENT_INDEX " + PREFIX_MISSION + "MISSION_ID\n"
+            + "STUDENT_INDEX must be a positive integer identifying a displayed student.\n"
             + MissionId.MESSAGE_CONSTRAINTS + "\n"
             + "Example: " + COMMAND_WORD + " " + PREFIX_INDEX + "1 " + PREFIX_MISSION + "M05";
 

@@ -23,8 +23,8 @@ public class DeleteMasteryCheckCommand extends Command {
 
     public static final String MESSAGE_USAGE = COMMAND_WORD
             + ": Removes a numbered mastery check for the selected student.\n"
-            + "Parameters: " + PREFIX_INDEX + "INDEX " + PREFIX_NUMBER + "NUMBER\n"
-            + "INDEX must be a positive integer identifying a displayed student.\n"
+            + "Parameters: " + PREFIX_INDEX + "STUDENT_INDEX " + PREFIX_NUMBER + "NUMBER\n"
+            + "STUDENT_INDEX must be a positive integer identifying a displayed student.\n"
             + "NUMBER must be a positive integer identifying a mastery check.\n"
             + "Example: " + COMMAND_WORD + " " + PREFIX_INDEX + "1 " + PREFIX_NUMBER + "2";
 
