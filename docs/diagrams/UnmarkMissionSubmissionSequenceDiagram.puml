@@ -44,8 +44,9 @@ activate M
 M --> C : displayed students
 deactivate M
 note over C
-  Select the displayed student and check
-  submission state; copy the student
+  The inherited Command#getStudentAtDisplayedIndex(...)
+  validates and selects the displayed student.
+  Check submission state; if needed, copy the student
   with the submitted mission ID removed.
 end note
 C -> M : setStudent(studentToUpdate, updatedStudent)

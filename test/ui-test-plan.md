@@ -23,7 +23,7 @@ notes and the saved data are unchanged.
 | NOTE-EDIT-001 | Run `editnote id/1 ni/1 nt/Updated lecture notes`, then view both students. | Success feedback identifies student 1 and note index 1. Index 1 has the new text, index 2 is unchanged, and student 2 is unchanged. |
 | NOTE-EDIT-002 | Run `editnote id/1 ni/1 nt/Updated lecture notes` again, then view student 1. | Same-note feedback appears. Both note texts remain unchanged. |
 | NOTE-EDIT-003 | Run `editnote id/1 ni/3 nt/Unexpected`, then view student 1. | Missing-note feedback appears. Indexes 1 and 2 remain unchanged. |
-| NOTE-EDIT-004 | Run `editnote id/1 ni/0 nt/Invalid`, `editnote id/1 ni/1 nt/Invalid!`, and `editnote id/1 ni/1`, viewing student 1 after each command. | The invalid-index, invalid-text, and missing-`nt/` messages appear respectively. No note changes. |
+| NOTE-EDIT-004 | Run `editnote id/1 ni/0 nt/Invalid`, `editnote id/1 ni/1 nt/Invalid!`, and `editnote id/1 ni/1`, viewing student 1 after each command. | The invalid-index and missing-`nt/` messages appear for the first and last commands; the middle command succeeds and stores `Invalid!`. |
 | NOTE-EDIT-005 | Run `editnote id/3 ni/1 nt/Unexpected`, then view both students. | Invalid-student-index feedback appears; neither student changes. |
 | NOTE-EDIT-006 | Run `editnote id/1 ni/1 ni/2 nt/Unexpected`, then view student 1. | Duplicate-`ni/` feedback appears. Both note texts and saved data remain unchanged. |
 | NOTE-EDIT-007 | Run `editnote id/1 ni/1 nt/Persisted update`, restart, and view student 1. | Index 1 retains `Persisted update`; index 2 and student 2 remain unchanged. |
@@ -39,7 +39,7 @@ unchanged.
 | --- | --- | --- |
 | NOTE-ADD-001 | Run `addnote id/1 nt/Review lecture notes`, then view student 1. | Success feedback names student 1. The note list contains `1: Review lecture notes`; student 2 is unchanged. |
 | NOTE-ADD-002 | Run `addnote id/1 nt/Prepare consultation`, then view student 1. | The second note is appended at index 2; index 1 remains unchanged. |
-| NOTE-ADD-003 | Run `addnote id/1 nt/Invalid!`, then view student 1. | Invalid-text feedback appears. The two existing notes remain unchanged. |
+| NOTE-ADD-003 | Run `addnote id/1 nt/Don't forget: chapter 2!`, then view student 1. | The note is accepted with its punctuation unchanged and is appended after the existing notes. |
 | NOTE-ADD-004 | Run `addnote id/1`, then `addnote id/1 nt/Valid nt/Other`, viewing student 1 after each command. | The missing-`nt/` and duplicate-`nt/` messages appear respectively. No note is added. |
 | NOTE-ADD-005 | Run `addnote id/3 nt/Invalid index`, then view both students. | Invalid-student-index feedback appears; neither student changes. |
 | NOTE-ADD-006 | Restart after NOTE-ADD-002 and view student 1. | Both notes and their insertion order are restored unchanged. |
@@ -256,6 +256,8 @@ direct UI equivalent.
 | MISSION-PARSE-003 | Parse a leap-day deadline `2024-02-29`, a valid regular date, and a date with surrounding whitespace. | Valid dates parse to the expected `LocalDate`; surrounding whitespace is trimmed. |
 | MISSION-PARSE-004 | Parse malformed deadline formats and impossible calendar dates, then parse a valid date. | Invalid formats and impossible dates produce their respective `ParseException` messages; valid parsing still succeeds. |
 | MISSION-PARSE-005 | Parse lowercase `m/m03` with surrounding whitespace. | The parser trims the input and returns canonical ID `M03`; `MissionId` owns case normalization. |
+| MISSION-ID-BOUNDARY-001 | In an empty catalogue, run `addmission m/M9223372036854775807 n/Maximum ID d/2026-12-13`. | The mission is added successfully with ID `M9223372036854775807`. |
+| MISSION-ID-BOUNDARY-002 | After the successful addition above, run `addmission m/M9223372036854775808 n/Overflow ID d/2026-12-13`, then `listmissions m/M9223372036854775807`. | The error says the mission number must not exceed `9223372036854775807` and includes command usage; the existing maximum-ID mission remains unchanged. |
 | MISSION-DELETE-RECREATE-001 | With mission `M03` submitted by a student, delete `M03`, then recreate it using `m/M03` with a new name and deadline. | The recreated mission uses ID `M03` and has no previous submissions. |
 
 ## Mission catalogue counts and deadline labels
@@ -337,6 +339,21 @@ Record M01 for Betsy and M02 plus M10 for John.
 | MISSION-ALL-006 | Run `find NobodyMatchesThisName`, then `listmissions s/submitted`. | Reports no students in the current student list. The list remains empty. |
 | MISSION-ALL-007 | Run `list`, then `listmissions`. | Catalogue summaries still appear with the original counts. All records remain unchanged. |
 | MISSION-ALL-008 | In a separate isolated dataset with students but no missions, run `listmissions s/overdue`. | Displays `No missions configured.` |
+
+## Mission submission index error usage
+
+Start with exactly two students displayed and mission `M03` configured. Record a
+submission for one student before testing unmarking. After each rejected
+command, inspect the student profile and confirm the submission state is
+unchanged. This ensures displayed index 3 is invalid for the index-error cases.
+
+| ID | Steps | Expected result |
+| --- | --- | --- |
+| MISSION-INDEX-USAGE-001 | Run `markmission id/1 m/M03`, then `view id/1`. | The first displayed student's M03 status is Submitted. |
+| MISSION-INDEX-USAGE-002 | Run `markmission id/3 m/M03`, then `view id/1`. | Invalid displayed-index feedback is followed by a blank line and complete `markmission` usage; M03 remains Submitted for student 1 and no other student changes. |
+| MISSION-INDEX-USAGE-003 | Run `unmarkmission id/1 m/M03`, then `view id/1`. | The first displayed student's M03 status is Not submitted. |
+| MISSION-INDEX-USAGE-004 | Run `unmarkmission id/3 m/M03`, then `view id/1`. | Invalid displayed-index feedback is followed by a blank line and complete `unmarkmission` usage; M03 remains Not submitted for student 1 and no other student changes. |
+| MISSION-INDEX-USAGE-005 | Run `find` so only one student is displayed, then run `markmission id/2 m/M03` and `unmarkmission id/2 m/M03`, inspecting the displayed student afterward. | Each execution-time index error includes the corresponding command usage; neither submission state nor the active student filter changes. |
 
 ## Missing-prefix usage suffix regression
 

@@ -9,16 +9,16 @@ import static seedu.address.commons.util.AppUtil.checkArgument;
  */
 public final class Note {
 
-    public static final int MAX_NOTE_LENGTH = 100;
+    public static final int MAX_NOTE_LENGTH = 1000;
     public static final String MESSAGE_CONSTRAINTS =
-            "Notes should only contain alphanumeric characters and spaces, should not be blank, "
+            "Notes should only contain alphanumeric characters, punctuation, and spaces, should not be blank, "
                     + "and be less than or equal to " + Note.MAX_NOTE_LENGTH + " characters";
 
     /*
      * The first character of the text must not be a whitespace,
      * otherwise " " (a blank string) becomes a valid input.
      */
-    public static final String VALIDATION_REGEX = "[\\p{Alnum}][\\p{Alnum} ]*";
+    public static final String VALIDATION_REGEX = "[\\p{Alnum}\\p{Punct}][\\p{Alnum}\\p{Punct} ]*";
 
     private final String noteText;
 

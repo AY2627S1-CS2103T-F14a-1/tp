@@ -1,8 +1,8 @@
 package seedu.address.logic.parser.util;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static seedu.address.logic.parser.util.ParserUtilTest.WHITESPACE;
 import static seedu.address.testutil.Assert.assertThrows;
+import static seedu.address.testutil.TestUtil.WHITESPACE;
 
 import java.util.List;
 
@@ -34,7 +34,7 @@ public class NoteParserUtilTest {
                     NoteParserUtil.parseNoteIndex(noteIndex));
         }
         assertThrows(ParseException.class, RegisteredNotes.MESSAGE_CONSTRAINTS, () ->
-                NoteParserUtil.parseNoteIndex("11"));
+                NoteParserUtil.parseNoteIndex("1001"));
     }
 
     @Test
@@ -50,7 +50,7 @@ public class NoteParserUtilTest {
 
     @Test
     public void parseNoteText_invalidValues_throwsParseException() {
-        for (String noteText : List.of("", WHITESPACE, "Review!", "a".repeat(Note.MAX_NOTE_LENGTH + 1))) {
+        for (String noteText : List.of("", WHITESPACE, "a".repeat(Note.MAX_NOTE_LENGTH + 1))) {
             assertThrows(ParseException.class, Note.MESSAGE_CONSTRAINTS, () -> NoteParserUtil.parseNoteText(noteText));
         }
     }
