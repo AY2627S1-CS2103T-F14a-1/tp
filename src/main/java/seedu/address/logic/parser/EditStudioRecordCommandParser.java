@@ -1,7 +1,7 @@
 package seedu.address.logic.parser;
 
 import static java.util.Objects.requireNonNull;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_INDEX;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_STUDENT_INDEX;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_STUDIO_EFFORT;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_WEEK;
 
@@ -30,9 +30,9 @@ public class EditStudioRecordCommandParser implements Parser<EditStudioRecordCom
         requireNonNull(args);
         try {
             ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
-                    args, PREFIX_INDEX, PREFIX_WEEK, PREFIX_STUDIO_EFFORT);
+                    args, PREFIX_STUDENT_INDEX, PREFIX_WEEK, PREFIX_STUDIO_EFFORT);
 
-            Index index = ParserUtil.parseIndex(argMultimap.getRequiredValue(PREFIX_INDEX));
+            Index index = ParserUtil.parseIndex(argMultimap.getRequiredValue(PREFIX_STUDENT_INDEX));
             int week = StudioRecordParserUtil.parseWeek(argMultimap.getRequiredValue(PREFIX_WEEK));
             int effortScore = StudioRecordParserUtil.parseEffortScore(
                     argMultimap.getRequiredValue(PREFIX_STUDIO_EFFORT));

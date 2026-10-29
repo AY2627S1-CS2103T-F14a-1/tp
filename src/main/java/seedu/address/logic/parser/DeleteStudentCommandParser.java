@@ -1,7 +1,7 @@
 package seedu.address.logic.parser;
 
 import static java.util.Objects.requireNonNull;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_INDEX;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_STUDENT_INDEX;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.DeleteStudentCommand;
@@ -22,9 +22,9 @@ public class DeleteStudentCommandParser implements Parser<DeleteStudentCommand> 
         requireNonNull(args);
         try {
             ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
-                    args, PREFIX_INDEX);
+                    args, PREFIX_STUDENT_INDEX);
 
-            Index index = ParserUtil.parseIndex(argMultimap.getRequiredValue(PREFIX_INDEX));
+            Index index = ParserUtil.parseIndex(argMultimap.getRequiredValue(PREFIX_STUDENT_INDEX));
             return new DeleteStudentCommand(index);
         } catch (ParseException e) {
             throw new ParseException(e.getMessage()

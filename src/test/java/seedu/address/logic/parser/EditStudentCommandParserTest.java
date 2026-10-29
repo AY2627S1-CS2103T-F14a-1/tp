@@ -76,7 +76,7 @@ public class EditStudentCommandParserTest {
                 EditStudentCommand.MESSAGE_NOT_EDITED + USAGE_SUFFIX);
 
         // no index and no field specified
-        assertParseFailure(parser, "", CliSyntax.PREFIX_INDEX.getMissingMessage() + USAGE_SUFFIX);
+        assertParseFailure(parser, "", CliSyntax.PREFIX_STUDENT_INDEX.getMissingMessage() + USAGE_SUFFIX);
     }
 
     @Test
@@ -308,7 +308,7 @@ public class EditStudentCommandParserTest {
     @Test
     public void parse_repeatedIndex_reportsDuplicateIndex() {
         assertParseFailure(parser, "id/1 id/2" + NAME_DESC_AMY,
-                CliSyntax.PREFIX_INDEX.getDuplicateMessage() + USAGE_SUFFIX);
+                CliSyntax.PREFIX_STUDENT_INDEX.getDuplicateMessage() + USAGE_SUFFIX);
     }
 
     @Test

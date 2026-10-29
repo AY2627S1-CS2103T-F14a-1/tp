@@ -1,7 +1,7 @@
 package seedu.address.logic.parser;
 
 import static java.util.Objects.requireNonNull;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_INDEX;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_STUDENT_INDEX;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_WEEK;
 
 import seedu.address.commons.core.index.Index;
@@ -27,9 +27,9 @@ public class DeleteStudioRecordCommandParser implements Parser<DeleteStudioRecor
         requireNonNull(args);
         try {
             ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
-                    args, PREFIX_INDEX, PREFIX_WEEK);
+                    args, PREFIX_STUDENT_INDEX, PREFIX_WEEK);
 
-            Index index = ParserUtil.parseIndex(argMultimap.getRequiredValue(PREFIX_INDEX));
+            Index index = ParserUtil.parseIndex(argMultimap.getRequiredValue(PREFIX_STUDENT_INDEX));
             int week = StudioRecordParserUtil.parseWeek(argMultimap.getRequiredValue(PREFIX_WEEK));
             return new DeleteStudioRecordCommand(index, week);
         } catch (ParseException e) {

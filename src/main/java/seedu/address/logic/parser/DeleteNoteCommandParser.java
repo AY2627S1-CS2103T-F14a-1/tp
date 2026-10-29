@@ -1,8 +1,8 @@
 package seedu.address.logic.parser;
 
 import static java.util.Objects.requireNonNull;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_INDEX;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NOTE_INDEX;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_STUDENT_INDEX;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.DeleteNoteCommand;
@@ -25,9 +25,9 @@ public class DeleteNoteCommandParser implements Parser<DeleteNoteCommand> {
         requireNonNull(args);
         try {
             ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
-                    args, PREFIX_INDEX, PREFIX_NOTE_INDEX);
+                    args, PREFIX_STUDENT_INDEX, PREFIX_NOTE_INDEX);
 
-            Index index = ParserUtil.parseIndex(argMultimap.getRequiredValue(PREFIX_INDEX));
+            Index index = ParserUtil.parseIndex(argMultimap.getRequiredValue(PREFIX_STUDENT_INDEX));
             Index noteIndex = NoteParserUtil.parseNoteIndex(argMultimap.getRequiredValue(PREFIX_NOTE_INDEX));
             return new DeleteNoteCommand(index, noteIndex);
         } catch (ParseException pe) {

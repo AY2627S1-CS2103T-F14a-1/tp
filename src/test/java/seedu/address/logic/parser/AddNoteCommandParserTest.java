@@ -57,7 +57,7 @@ public class AddNoteCommandParserTest {
         assertParseFailure(parser, "id/1",
                 CliSyntax.PREFIX_NOTE_TEXT.getMissingMessage() + MESSAGE_SEE_USAGE + AddNoteCommand.MESSAGE_USAGE);
         assertParseFailure(parser, "nt/Review lecture notes",
-                CliSyntax.PREFIX_INDEX.getMissingMessage() + MESSAGE_SEE_USAGE + AddNoteCommand.MESSAGE_USAGE);
+                CliSyntax.PREFIX_STUDENT_INDEX.getMissingMessage() + MESSAGE_SEE_USAGE + AddNoteCommand.MESSAGE_USAGE);
         assertParseFailure(parser, "id/1 nt/Review lecture notes nt/Other note",
                 CliSyntax.PREFIX_NOTE_TEXT.getDuplicateMessage() + MESSAGE_SEE_USAGE + AddNoteCommand.MESSAGE_USAGE);
     }

@@ -1,8 +1,8 @@
 package seedu.address.logic.parser;
 
 import static java.util.Objects.requireNonNull;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_INDEX;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_MISSION;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_STUDENT_INDEX;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.UnmarkMissionCommand;
@@ -29,9 +29,9 @@ public class UnmarkMissionCommandParser implements Parser<UnmarkMissionCommand> 
         requireNonNull(args);
         try {
             ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
-                    args, PREFIX_INDEX, PREFIX_MISSION);
+                    args, PREFIX_STUDENT_INDEX, PREFIX_MISSION);
 
-            Index index = ParserUtil.parseIndex(argMultimap.getRequiredValue(PREFIX_INDEX));
+            Index index = ParserUtil.parseIndex(argMultimap.getRequiredValue(PREFIX_STUDENT_INDEX));
             MissionId missionId = MissionParserUtil.parseMissionId(argMultimap.getRequiredValue(PREFIX_MISSION));
             return new UnmarkMissionCommand(index, missionId);
         } catch (ParseException e) {

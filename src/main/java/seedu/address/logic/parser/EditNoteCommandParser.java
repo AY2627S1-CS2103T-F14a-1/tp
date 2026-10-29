@@ -1,9 +1,9 @@
 package seedu.address.logic.parser;
 
 import static java.util.Objects.requireNonNull;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_INDEX;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NOTE_INDEX;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NOTE_TEXT;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_STUDENT_INDEX;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.EditNoteCommand;
@@ -27,9 +27,9 @@ public class EditNoteCommandParser implements Parser<EditNoteCommand> {
         requireNonNull(args);
         try {
             ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
-                    args, PREFIX_INDEX, PREFIX_NOTE_INDEX, PREFIX_NOTE_TEXT);
+                    args, PREFIX_STUDENT_INDEX, PREFIX_NOTE_INDEX, PREFIX_NOTE_TEXT);
 
-            Index index = ParserUtil.parseIndex(argMultimap.getRequiredValue(PREFIX_INDEX));
+            Index index = ParserUtil.parseIndex(argMultimap.getRequiredValue(PREFIX_STUDENT_INDEX));
             Index noteIndex = NoteParserUtil.parseNoteIndex(argMultimap.getRequiredValue(PREFIX_NOTE_INDEX));
             Note note = NoteParserUtil.parseNoteText(argMultimap.getRequiredValue(PREFIX_NOTE_TEXT));
             return new EditNoteCommand(index, noteIndex, note);

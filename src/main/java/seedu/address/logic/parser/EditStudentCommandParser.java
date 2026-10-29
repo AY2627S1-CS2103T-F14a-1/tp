@@ -2,10 +2,10 @@ package seedu.address.logic.parser;
 
 import static java.util.Objects.requireNonNull;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_EMAIL;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_INDEX;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_MATRIC_NUMBER;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PHONE;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_STUDENT_INDEX;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_STUDIO_GROUP;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
 
@@ -37,10 +37,10 @@ public class EditStudentCommandParser implements Parser<EditStudentCommand> {
 
         try {
             ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructureWithOptionals(args,
-                    new Prefix[]{PREFIX_INDEX},
-                    new Prefix[]{PREFIX_INDEX, PREFIX_NAME, PREFIX_MATRIC_NUMBER, PREFIX_PHONE, PREFIX_EMAIL,
+                    new Prefix[]{PREFIX_STUDENT_INDEX},
+                    new Prefix[]{PREFIX_STUDENT_INDEX, PREFIX_NAME, PREFIX_MATRIC_NUMBER, PREFIX_PHONE, PREFIX_EMAIL,
                         PREFIX_STUDIO_GROUP},
-                    PREFIX_INDEX, PREFIX_NAME, PREFIX_MATRIC_NUMBER, PREFIX_PHONE,
+                    PREFIX_STUDENT_INDEX, PREFIX_NAME, PREFIX_MATRIC_NUMBER, PREFIX_PHONE,
                     PREFIX_EMAIL, PREFIX_TAG, PREFIX_STUDIO_GROUP);
 
             EditStudentDescriptor editStudentDescriptor = buildEditStudentDescriptor(argMultimap);
@@ -48,7 +48,7 @@ public class EditStudentCommandParser implements Parser<EditStudentCommand> {
                 throw new ParseException(EditStudentCommand.MESSAGE_NOT_EDITED);
             }
 
-            Index index = ParserUtil.parseIndex(argMultimap.getRequiredValue(PREFIX_INDEX));
+            Index index = ParserUtil.parseIndex(argMultimap.getRequiredValue(PREFIX_STUDENT_INDEX));
             return new EditStudentCommand(index, editStudentDescriptor);
         } catch (ParseException e) {
             throw new ParseException(e.getMessage() + ParserUtil.MESSAGE_SEE_USAGE + EditStudentCommand.MESSAGE_USAGE);

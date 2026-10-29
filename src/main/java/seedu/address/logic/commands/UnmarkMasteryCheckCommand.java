@@ -2,8 +2,8 @@ package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.AppUtil.checkArgument;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_INDEX;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NUMBER;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_STUDENT_INDEX;
 
 import java.util.Objects;
 import java.util.logging.Logger;
@@ -25,10 +25,10 @@ public class UnmarkMasteryCheckCommand extends Command {
 
     public static final String MESSAGE_USAGE = COMMAND_WORD
             + ": Revokes completion status for the numbered mastery check of the selected student.\n"
-            + "Parameters: " + PREFIX_INDEX + "STUDENT_INDEX " + PREFIX_NUMBER + "NUMBER\n"
+            + "Parameters: " + PREFIX_STUDENT_INDEX + "STUDENT_INDEX " + PREFIX_NUMBER + "NUMBER\n"
             + "STUDENT_INDEX must be a positive integer identifying a displayed student.\n"
             + "NUMBER must be a positive integer identifying a mastery check.\n"
-            + "Example: " + COMMAND_WORD + " " + PREFIX_INDEX + "1 " + PREFIX_NUMBER + "2";
+            + "Example: " + COMMAND_WORD + " " + PREFIX_STUDENT_INDEX + "1 " + PREFIX_NUMBER + "2";
 
     public static final String MESSAGE_SUCCESS =
             "Marked %1$s’s mastery check %2$s as incomplete.";

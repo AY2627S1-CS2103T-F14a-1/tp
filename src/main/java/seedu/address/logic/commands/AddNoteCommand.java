@@ -2,8 +2,8 @@ package seedu.address.logic.commands;
 
 import static java.util.Objects.hash;
 import static java.util.Objects.requireNonNull;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_INDEX;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NOTE_TEXT;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_STUDENT_INDEX;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.ToStringBuilder;
@@ -22,11 +22,11 @@ public class AddNoteCommand extends Command {
 
     public static final String MESSAGE_USAGE = COMMAND_WORD
             + ": Registers a note for the selected student.\n"
-            + "Parameters: " + PREFIX_INDEX + "STUDENT_INDEX " + PREFIX_NOTE_TEXT + "TEXT\n"
+            + "Parameters: " + PREFIX_STUDENT_INDEX + "STUDENT_INDEX " + PREFIX_NOTE_TEXT + "TEXT\n"
             + "STUDENT_INDEX must be a positive integer identifying a displayed student.\n"
             + "TEXT must only contain alphanumeric characters, punctuation, and spaces, should not be blank, and "
             + "be less than or equal to " + Note.MAX_NOTE_LENGTH + " characters.\n"
-            + "Example: " + COMMAND_WORD + " " + PREFIX_INDEX + "1 "
+            + "Example: " + COMMAND_WORD + " " + PREFIX_STUDENT_INDEX + "1 "
             + PREFIX_NOTE_TEXT + "hello";
 
     public static final String MESSAGE_SUCCESS =

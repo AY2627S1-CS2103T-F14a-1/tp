@@ -31,6 +31,6 @@ public class ViewCommandParserTest {
         assertParseFailure(parser, "id/abc",
                 ParserUtil.MESSAGE_INVALID_INDEX + USAGE_SUFFIX);
         assertParseFailure(parser, "",
-                CliSyntax.PREFIX_INDEX.getMissingMessage() + USAGE_SUFFIX);
+                CliSyntax.PREFIX_STUDENT_INDEX.getMissingMessage() + USAGE_SUFFIX);
     }
 }

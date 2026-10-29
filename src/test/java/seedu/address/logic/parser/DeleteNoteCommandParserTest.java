@@ -57,7 +57,8 @@ public class DeleteNoteCommandParserTest {
         assertParseFailure(parser, "id/1",
                 CliSyntax.PREFIX_NOTE_INDEX.getMissingMessage() + MESSAGE_SEE_USAGE + DeleteNoteCommand.MESSAGE_USAGE);
         assertParseFailure(parser, "ni/3",
-                CliSyntax.PREFIX_INDEX.getMissingMessage() + MESSAGE_SEE_USAGE + DeleteNoteCommand.MESSAGE_USAGE);
+                CliSyntax.PREFIX_STUDENT_INDEX.getMissingMessage()
+                        + MESSAGE_SEE_USAGE + DeleteNoteCommand.MESSAGE_USAGE);
         assertParseFailure(parser, "id/1 ni/3 ni/4",
                 CliSyntax.PREFIX_NOTE_INDEX.getDuplicateMessage()
                         + MESSAGE_SEE_USAGE + DeleteNoteCommand.MESSAGE_USAGE);

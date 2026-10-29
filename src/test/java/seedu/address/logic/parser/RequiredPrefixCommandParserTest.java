@@ -4,11 +4,11 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_DATETIME;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_INDEX;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_MISSION;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NOTE_INDEX;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NOTE_TEXT;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NUMBER;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_STUDENT_INDEX;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_STUDIO_EFFORT;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_WEEK;
 import static seedu.address.logic.parser.util.ParserUtil.MESSAGE_SEE_USAGE;
@@ -47,37 +47,38 @@ public class RequiredPrefixCommandParserTest {
                         CliSyntax.PREFIX_EMAIL, CliSyntax.PREFIX_STUDIO_GROUP),
                 List.of("Alice", "A0123456B", "91234567", "alice@example.com", "1A"));
         verifyRequiredPrefixes(new AddMasteryCheckCommandParser(), AddMasteryCheckCommand.MESSAGE_USAGE,
-                List.of(PREFIX_INDEX, PREFIX_NUMBER, PREFIX_DATETIME), List.of("1", "1", "18-08|14:30"));
+                List.of(PREFIX_STUDENT_INDEX, PREFIX_NUMBER, PREFIX_DATETIME), List.of("1", "1", "18-08|14:30"));
         verifyRequiredPrefixes(new DeleteMasteryCheckCommandParser(), DeleteMasteryCheckCommand.MESSAGE_USAGE,
-                List.of(PREFIX_INDEX, PREFIX_NUMBER), List.of("1", "1"));
+                List.of(PREFIX_STUDENT_INDEX, PREFIX_NUMBER), List.of("1", "1"));
         verifyRequiredPrefixes(new MarkMasteryCheckCommandParser(), MarkMasteryCheckCommand.MESSAGE_USAGE,
-                List.of(PREFIX_INDEX, PREFIX_NUMBER), List.of("1", "1"));
+                List.of(PREFIX_STUDENT_INDEX, PREFIX_NUMBER), List.of("1", "1"));
         verifyRequiredPrefixes(new UnmarkMasteryCheckCommandParser(), UnmarkMasteryCheckCommand.MESSAGE_USAGE,
-                List.of(PREFIX_INDEX, PREFIX_NUMBER), List.of("1", "1"));
+                List.of(PREFIX_STUDENT_INDEX, PREFIX_NUMBER), List.of("1", "1"));
         verifyRequiredPrefixes(new AddStudioRecordCommandParser(), AddStudioRecordCommand.MESSAGE_USAGE,
-                List.of(PREFIX_INDEX, PREFIX_WEEK, PREFIX_STUDIO_EFFORT), List.of("1", "3", "50"));
+                List.of(PREFIX_STUDENT_INDEX, PREFIX_WEEK, PREFIX_STUDIO_EFFORT), List.of("1", "3", "50"));
         verifyRequiredPrefixes(new EditStudioRecordCommandParser(), EditStudioRecordCommand.MESSAGE_USAGE,
-                List.of(PREFIX_INDEX, PREFIX_WEEK, PREFIX_STUDIO_EFFORT), List.of("1", "3", "50"));
+                List.of(PREFIX_STUDENT_INDEX, PREFIX_WEEK, PREFIX_STUDIO_EFFORT), List.of("1", "3", "50"));
         verifyRequiredPrefixes(new DeleteStudioRecordCommandParser(), DeleteStudioRecordCommand.MESSAGE_USAGE,
-                List.of(PREFIX_INDEX, PREFIX_WEEK), List.of("1", "3"));
+                List.of(PREFIX_STUDENT_INDEX, PREFIX_WEEK), List.of("1", "3"));
         verifyRequiredPrefixes(new MarkMissionCommandParser(), MarkMissionCommand.MESSAGE_USAGE,
-                List.of(PREFIX_INDEX, PREFIX_MISSION), List.of("1", "M01"));
+                List.of(PREFIX_STUDENT_INDEX, PREFIX_MISSION), List.of("1", "M01"));
         verifyRequiredPrefixes(new UnmarkMissionCommandParser(), UnmarkMissionCommand.MESSAGE_USAGE,
-                List.of(PREFIX_INDEX, PREFIX_MISSION), List.of("1", "M01"));
+                List.of(PREFIX_STUDENT_INDEX, PREFIX_MISSION), List.of("1", "M01"));
         verifyRequiredPrefixes(new DeleteStudentCommandParser(), DeleteStudentCommand.MESSAGE_USAGE,
-                List.of(PREFIX_INDEX), List.of("1"));
-        verifyRequiredPrefixes(new ViewCommandParser(), ViewCommand.MESSAGE_USAGE, List.of(PREFIX_INDEX), List.of("1"));
+                List.of(PREFIX_STUDENT_INDEX), List.of("1"));
+        verifyRequiredPrefixes(new ViewCommandParser(), ViewCommand.MESSAGE_USAGE,
+                List.of(PREFIX_STUDENT_INDEX), List.of("1"));
         verifyRequiredPrefixes(new DeleteMissionCommandParser(), DeleteMissionCommand.MESSAGE_USAGE,
                 List.of(PREFIX_MISSION), List.of("M01"));
         verifyRequiredPrefixes(new AddMissionCommandParser(), AddMissionCommand.MESSAGE_USAGE,
                 List.of(PREFIX_MISSION, CliSyntax.PREFIX_NAME, CliSyntax.PREFIX_DATE),
                 List.of("M01", "Runes", "2026-10-20"));
         verifyRequiredPrefixes(new AddNoteCommandParser(), AddNoteCommand.MESSAGE_USAGE,
-                List.of(PREFIX_INDEX, PREFIX_NOTE_TEXT), List.of("1", "Review notes"));
+                List.of(PREFIX_STUDENT_INDEX, PREFIX_NOTE_TEXT), List.of("1", "Review notes"));
         verifyRequiredPrefixes(new DeleteNoteCommandParser(), DeleteNoteCommand.MESSAGE_USAGE,
-                List.of(PREFIX_INDEX, PREFIX_NOTE_INDEX), List.of("1", "3"));
+                List.of(PREFIX_STUDENT_INDEX, PREFIX_NOTE_INDEX), List.of("1", "3"));
         verifyRequiredPrefixes(new EditNoteCommandParser(), EditNoteCommand.MESSAGE_USAGE,
-                List.of(PREFIX_INDEX, PREFIX_NOTE_INDEX, PREFIX_NOTE_TEXT), List.of("1", "3", "Review notes"));
+                List.of(PREFIX_STUDENT_INDEX, PREFIX_NOTE_INDEX, PREFIX_NOTE_TEXT), List.of("1", "3", "Review notes"));
     }
 
     /**

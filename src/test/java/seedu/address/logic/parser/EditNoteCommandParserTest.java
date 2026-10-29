@@ -72,7 +72,7 @@ public class EditNoteCommandParserTest {
         assertParseFailure(parser, "id/1 nt/Valid note",
                 CliSyntax.PREFIX_NOTE_INDEX.getMissingMessage() + MESSAGE_SEE_USAGE + EditNoteCommand.MESSAGE_USAGE);
         assertParseFailure(parser, "ni/3 nt/Valid note",
-                CliSyntax.PREFIX_INDEX.getMissingMessage() + MESSAGE_SEE_USAGE + EditNoteCommand.MESSAGE_USAGE);
+                CliSyntax.PREFIX_STUDENT_INDEX.getMissingMessage() + MESSAGE_SEE_USAGE + EditNoteCommand.MESSAGE_USAGE);
         assertParseFailure(parser, "id/1 ni/3 nt/Valid note nt/Other note",
                 CliSyntax.PREFIX_NOTE_TEXT.getDuplicateMessage() + MESSAGE_SEE_USAGE + EditNoteCommand.MESSAGE_USAGE);
     }

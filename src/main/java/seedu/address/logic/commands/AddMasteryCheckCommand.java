@@ -3,8 +3,8 @@ package seedu.address.logic.commands;
 import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.AppUtil.checkArgument;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_DATETIME;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_INDEX;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NUMBER;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_STUDENT_INDEX;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
@@ -27,11 +27,11 @@ public class AddMasteryCheckCommand extends Command {
 
     public static final String MESSAGE_USAGE = COMMAND_WORD
             + ": Records a mastery check appointment for the selected student.\n"
-            + "Parameters: " + PREFIX_INDEX + "STUDENT_INDEX " + PREFIX_NUMBER + "NUMBER "
+            + "Parameters: " + PREFIX_STUDENT_INDEX + "STUDENT_INDEX " + PREFIX_NUMBER + "NUMBER "
             + PREFIX_DATETIME + "DATE-TIME\n"
             + "NUMBER must be a positive integer identifying a mastery check.\n"
             + "DATE-TIME must be a real date in dd-MM|HH:mm format.\n"
-            + "Example: " + COMMAND_WORD + " " + PREFIX_INDEX + "1 " + PREFIX_NUMBER + "1 " + PREFIX_DATETIME
+            + "Example: " + COMMAND_WORD + " " + PREFIX_STUDENT_INDEX + "1 " + PREFIX_NUMBER + "1 " + PREFIX_DATETIME
             + "27-09|23:59";
 
     public static final String MESSAGE_SUCCESS =

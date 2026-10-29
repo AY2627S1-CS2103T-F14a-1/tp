@@ -2,8 +2,8 @@ package seedu.address.logic.parser;
 
 import static java.util.Objects.requireNonNull;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_DATETIME;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_INDEX;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NUMBER;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_STUDENT_INDEX;
 
 import java.time.LocalDateTime;
 
@@ -33,9 +33,9 @@ public class AddMasteryCheckCommandParser implements Parser<AddMasteryCheckComma
         requireNonNull(args);
         try {
             ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
-                    args, PREFIX_INDEX, PREFIX_NUMBER, PREFIX_DATETIME);
+                    args, PREFIX_STUDENT_INDEX, PREFIX_NUMBER, PREFIX_DATETIME);
 
-            Index index = ParserUtil.parseIndex(argMultimap.getRequiredValue(PREFIX_INDEX));
+            Index index = ParserUtil.parseIndex(argMultimap.getRequiredValue(PREFIX_STUDENT_INDEX));
             int number = MasteryCheckParserUtil.parseMasteryCheckNumber(argMultimap.getRequiredValue(PREFIX_NUMBER));
             LocalDateTime dateTime = MasteryCheckParserUtil.parseMasteryCheckDateTime(argMultimap
                     .getRequiredValue(PREFIX_DATETIME));

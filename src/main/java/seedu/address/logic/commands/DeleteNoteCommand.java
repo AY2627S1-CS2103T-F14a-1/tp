@@ -3,8 +3,8 @@ package seedu.address.logic.commands;
 import static java.util.Objects.hash;
 import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.AppUtil.checkArgument;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_INDEX;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NOTE_INDEX;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_STUDENT_INDEX;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.ToStringBuilder;
@@ -22,11 +22,11 @@ public class DeleteNoteCommand extends Command {
 
     public static final String MESSAGE_USAGE = COMMAND_WORD
             + ": Deletes a note for the selected student.\n"
-            + "Parameters: " + PREFIX_INDEX + "STUDENT_INDEX " + PREFIX_NOTE_INDEX + "NOTE_INDEX\n"
+            + "Parameters: " + PREFIX_STUDENT_INDEX + "STUDENT_INDEX " + PREFIX_NOTE_INDEX + "NOTE_INDEX\n"
             + "STUDENT_INDEX must be a positive integer identifying a displayed student.\n"
             + "NOTE_INDEX must be a positive integer less than or equal to "
             + RegisteredNotes.MAX_NOTE_INDEX + " inclusive.\n"
-            + "Example: " + COMMAND_WORD + " " + PREFIX_INDEX + "1 "
+            + "Example: " + COMMAND_WORD + " " + PREFIX_STUDENT_INDEX + "1 "
             + PREFIX_NOTE_INDEX + "3";
 
     public static final String MESSAGE_SUCCESS =

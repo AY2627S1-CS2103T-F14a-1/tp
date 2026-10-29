@@ -35,7 +35,7 @@ public class DeleteStudioRecordCommandParserTest {
 
     @Test
     public void parse_missingIndex_reportsMissingPrefixes() {
-        String bothMissing = String.join("\n", CliSyntax.PREFIX_INDEX.getMissingMessage(),
+        String bothMissing = String.join("\n", CliSyntax.PREFIX_STUDENT_INDEX.getMissingMessage(),
                 PREFIX_WEEK.getMissingMessage());
         assertParseFailure(parser, "",
                 bothMissing + USAGE_SUFFIX);
@@ -43,7 +43,7 @@ public class DeleteStudioRecordCommandParserTest {
                 bothMissing + USAGE_SUFFIX);
         for (String input : new String[]{"w/", "w/3", "w/ 3"}) {
             assertParseFailure(parser, input,
-                CliSyntax.PREFIX_INDEX.getMissingMessage() + USAGE_SUFFIX);
+                CliSyntax.PREFIX_STUDENT_INDEX.getMissingMessage() + USAGE_SUFFIX);
         }
     }
 
@@ -93,10 +93,10 @@ public class DeleteStudioRecordCommandParserTest {
         }
         for (String input : new String[]{"w/3 1", "W/3 1"}) {
             assertParseFailure(parser, input,
-                    CliSyntax.PREFIX_INDEX.getMissingMessage() + USAGE_SUFFIX);
+                    CliSyntax.PREFIX_STUDENT_INDEX.getMissingMessage() + USAGE_SUFFIX);
         }
         assertParseFailure(parser, "w/3 extra",
-                CliSyntax.PREFIX_INDEX.getMissingMessage() + USAGE_SUFFIX);
+                CliSyntax.PREFIX_STUDENT_INDEX.getMissingMessage() + USAGE_SUFFIX);
         assertParseFailure(parser, "id/1 extra w/3",
                 ParserUtil.MESSAGE_INVALID_INDEX + USAGE_SUFFIX);
         assertParseFailure(parser, "id/1w/3",

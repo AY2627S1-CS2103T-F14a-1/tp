@@ -213,7 +213,7 @@ public class AddressBookParserTest {
 
     @Test
     public void parseCommand_addStudioRecordMissingArguments_reportsAllMissingPrefixes() {
-        String expected = String.join("\n", CliSyntax.PREFIX_INDEX.getMissingMessage(),
+        String expected = String.join("\n", CliSyntax.PREFIX_STUDENT_INDEX.getMissingMessage(),
                 CliSyntax.PREFIX_WEEK.getMissingMessage(), CliSyntax.PREFIX_STUDIO_EFFORT.getMissingMessage())
                 + MESSAGE_SEE_USAGE + AddStudioRecordCommand.MESSAGE_USAGE;
 
@@ -239,7 +239,7 @@ public class AddressBookParserTest {
 
     @Test
     public void parseCommand_deleteStudioRecordMissingArguments_reportsAllMissingPrefixes() {
-        String expected = String.join("\n", CliSyntax.PREFIX_INDEX.getMissingMessage(),
+        String expected = String.join("\n", CliSyntax.PREFIX_STUDENT_INDEX.getMissingMessage(),
                 CliSyntax.PREFIX_WEEK.getMissingMessage())
                         + MESSAGE_SEE_USAGE + DeleteStudioRecordCommand.MESSAGE_USAGE;
 
