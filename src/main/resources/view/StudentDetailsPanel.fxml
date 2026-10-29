@@ -108,7 +108,7 @@
                     </columnConstraints>
                 </GridPane>
 
-                <Label text="Mission submissions"
+                <Label text="Mission Submissions"
                        styleClass="section-heading"/>
 
                 <GridPane fx:id="missionSubmissionsGrid"
@@ -129,7 +129,7 @@
                     </padding>
                 </GridPane>
 
-                <Label text="Mastery checks"
+                <Label text="Mastery Checks"
                        styleClass="section-heading"/>
 
                 <GridPane fx:id="masteryChecksGrid"
