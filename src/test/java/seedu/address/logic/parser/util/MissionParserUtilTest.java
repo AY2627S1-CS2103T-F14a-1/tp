@@ -1,14 +1,11 @@
 package seedu.address.logic.parser.util;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.testutil.Assert.assertThrows;
 import static seedu.address.testutil.TestUtil.WHITESPACE;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
@@ -85,28 +82,4 @@ public class MissionParserUtilTest {
         }
     }
 
-    @Test
-    public void parseMissionOverdueFilter_absent_returnsFalse() throws Exception {
-        assertFalse(MissionParserUtil.parseMissionOverdueFilter(Optional.empty()));
-    }
-
-    @Test
-    public void parseMissionOverdueFilter_validValue_returnsTrue() throws Exception {
-        assertTrue(MissionParserUtil.parseMissionOverdueFilter(Optional.of("overdue")));
-        assertTrue(MissionParserUtil.parseMissionOverdueFilter(Optional.of(" OVERDUE ")));
-    }
-
-    @Test
-    public void parseMissionOverdueFilter_invalidValue_throwsParseException() {
-        for (String value : new String[]{"", " ", "submitted", "overdue extra"}) {
-            assertThrows(ParseException.class, () ->
-                    MissionParserUtil.parseMissionOverdueFilter(Optional.of(value)));
-        }
-    }
-
-    @Test
-    public void parseMissionOverdueFilter_nullOptional_throwsNullPointerException() {
-        assertThrows(NullPointerException.class, () ->
-                MissionParserUtil.parseMissionOverdueFilter(null));
-    }
 }

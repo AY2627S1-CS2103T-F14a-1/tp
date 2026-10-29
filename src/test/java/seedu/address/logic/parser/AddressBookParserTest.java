@@ -147,6 +147,17 @@ public class AddressBookParserTest {
     }
 
     @Test
+    public void parseCommand_removedMissionCommands_throwsUnknownCommand() {
+        for (String input : List.of(
+                "viewmission m/M01",
+                "VIEWMISSION m/M01 s/overdue",
+                "listoverdue",
+                "LISTOVERDUE")) {
+            assertThrows(ParseException.class, MESSAGE_UNKNOWN_COMMAND, () -> parser.parseCommand(input));
+        }
+    }
+
+    @Test
     public void parseCommand_markMissionIgnoringCase_returnsCommand() throws Exception {
         MarkMissionCommand expected = new MarkMissionCommand(INDEX_FIRST_STUDENT, new MissionId("M03"));
 
