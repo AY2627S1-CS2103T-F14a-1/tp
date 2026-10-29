@@ -23,7 +23,6 @@ import seedu.address.model.student.Note;
 import seedu.address.model.student.RegisteredStudioRecords;
 import seedu.address.model.student.Student;
 import seedu.address.model.student.StudioRecord;
-import seedu.address.model.tag.Tag;
 
 /**
  * UI panel that displays the selected student's profile, attendance,
