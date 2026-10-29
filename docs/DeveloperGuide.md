@@ -836,13 +836,16 @@ are excluded, regardless of when they were recorded.
 
 * **Mainstream OS**: Windows, Linux, Unix, or macOS
 * **Private student detail**: A student detail that is not meant to be shared with others
+* **Matriculation number**: The NUS-supplied number that uniquely identifies a student, starting with the letter A, followed by 7 digits, and ending with another uppercase letter from A-Z. Example: A0123456B.
 * **AvengerHub**: The name of the application.
 * **Tutor**: The TAs (teaching assistants) in the CS1101S course that handle the tutorial sessions. Also known as "Avengers" by the course.
 * **Mission**: The CS1101S term for homework assignments. A mission submission usually happens via the course website.
 * **Studio group**: The CS1101S term for tutorial groups.
+* **Studio week**: Equivalent to a tutorial week. They are numbered weeks of the term.
 * **Studio effort**: The score given by an Avenger to students for each studio.
-* **Mastery check**: A CS1101S assessment where the tutor conducts an oral interview with a pair of students to ensure they have understood the course content. The date and time of the assessment is decided jointly by the students and the tutor.
+* **Mastery check/Mastery check appointment**: A CS1101S assessment where the tutor conducts an oral interview with a pair of students to ensure they have understood the course content. The date and time of the assessment is decided jointly by the students and the tutor.
 * **Record(s)**: The list of all student information. This is saved on the disk and exists in memory as well when the application is running.
+* **(Mission) Catalogue**: The list of missions, visible and standard across all students.
 * **Storage**: The file containing the list of student information that is saved to disk.
 * **Corrupted**: Any data read from Storage that does not adhere to our expected format will be considered corrupted.
 * **Operation**: The entire sequence of events resulting from a discrete user action.
