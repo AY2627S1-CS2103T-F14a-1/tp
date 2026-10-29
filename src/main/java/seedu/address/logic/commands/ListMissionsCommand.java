@@ -18,7 +18,7 @@ import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 import seedu.address.model.mission.Mission;
 import seedu.address.model.mission.MissionId;
-import seedu.address.model.mission.MissionSubmissionStatus;
+import seedu.address.model.mission.MissionSubmissionStatusEnum;
 import seedu.address.model.student.Student;
 
 /**
@@ -44,11 +44,13 @@ public class ListMissionsCommand extends Command {
             "No students in the current student list.";
     public static final String MESSAGE_NO_MATCHES =
             "No submissions match the selected status.";
+    private static final String STUDENT_STATUS_ROW_FORMAT =
+            "%1$d. %2$s | Studio group: %3$s%4$s | %5$s";
 
     /** Selected mission, or empty for a query across all missions. */
     private final Optional<MissionId> missionId;
     private final Clock clock;
-    private final Optional<MissionSubmissionStatus> statusFilter;
+    private final Optional<MissionSubmissionStatusEnum> statusFilter;
 
     /**
      * Creates a command using the computer's local calendar date.
@@ -80,7 +82,7 @@ public class ListMissionsCommand extends Command {
      * @throws NullPointerException If any argument is null.
      */
     ListMissionsCommand(MissionId missionId, Clock clock,
-                        Optional<MissionSubmissionStatus> statusFilter) {
+                        Optional<MissionSubmissionStatusEnum> statusFilter) {
         this(Optional.of(missionId), clock, statusFilter);
     }
 
@@ -93,7 +95,7 @@ public class ListMissionsCommand extends Command {
      * @throws NullPointerException If any argument is null.
      */
     private ListMissionsCommand(Optional<MissionId> missionId, Clock clock,
-                                Optional<MissionSubmissionStatus> statusFilter) {
+                                Optional<MissionSubmissionStatusEnum> statusFilter) {
         this.missionId = requireNonNull(missionId);
         this.clock = requireNonNull(clock);
         this.statusFilter = requireNonNull(statusFilter);
@@ -107,7 +109,7 @@ public class ListMissionsCommand extends Command {
      * @return Command listing students with the requested status.
      * @throws NullPointerException If either argument is null.
      */
-    public static ListMissionsCommand withStatus(MissionId missionId, MissionSubmissionStatus status) {
+    public static ListMissionsCommand withStatus(MissionId missionId, MissionSubmissionStatusEnum status) {
         return new ListMissionsCommand(
                 missionId, Clock.systemDefaultZone(), Optional.of(status));
     }
@@ -119,7 +121,7 @@ public class ListMissionsCommand extends Command {
      * @return Command querying the selected status across all missions.
      * @throws NullPointerException If the status is null.
      */
-    public static ListMissionsCommand withStatus(MissionSubmissionStatus status) {
+    public static ListMissionsCommand withStatus(MissionSubmissionStatusEnum status) {
         return withStatus(status, Clock.systemDefaultZone());
     }
 
@@ -131,7 +133,7 @@ public class ListMissionsCommand extends Command {
      * @return Command querying the selected status across all missions.
      * @throws NullPointerException If either argument is null.
      */
-    static ListMissionsCommand withStatus(MissionSubmissionStatus status, Clock clock) {
+    static ListMissionsCommand withStatus(MissionSubmissionStatusEnum status, Clock clock) {
         return new ListMissionsCommand(Optional.empty(), clock, Optional.of(status));
     }
 
@@ -222,15 +224,15 @@ public class ListMissionsCommand extends Command {
         List<String> rows = new ArrayList<>();
         for (int index = 0; index < students.size(); index++) {
             Student student = students.get(index);
-            MissionSubmissionStatus status = MissionSubmissionStatus.from(
+            MissionSubmissionStatusEnum status = MissionSubmissionStatusEnum.from(
                     student.getMissionSubmissions().hasSubmission(mission.getId()), isPastDeadline);
             if (statusFilter.isPresent() && statusFilter.orElseThrow() != status) {
                 continue;
             }
 
-            rows.add((index + 1) + ". " + student.getName()
-                    + " | Studio group: " + student.getStudioGroup()
-                    + missionDetails + " | " + status);
+            rows.add(String.format(STUDENT_STATUS_ROW_FORMAT,
+                    index + 1, student.getName(), student.getStudioGroup(),
+                    missionDetails, status));
         }
         return rows;
     }

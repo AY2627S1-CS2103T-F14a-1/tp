@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 import seedu.address.logic.commands.ListMissionCatalogueCommand;
 import seedu.address.logic.commands.ListMissionsCommand;
 import seedu.address.model.mission.MissionId;
-import seedu.address.model.mission.MissionSubmissionStatus;
+import seedu.address.model.mission.MissionSubmissionStatusEnum;
 
 /**
  * Tests catalogue routing and mission ID parsing for submission listing.
@@ -74,9 +74,9 @@ public class ListMissionsCommandParserTest {
         MissionId missionId = new MissionId("M01");
 
         assertParseSuccess(parser, "m/M01 s/submitted",
-                ListMissionsCommand.withStatus(missionId, MissionSubmissionStatus.SUBMITTED));
+                ListMissionsCommand.withStatus(missionId, MissionSubmissionStatusEnum.SUBMITTED));
         assertParseSuccess(parser, "S/OVERDUE M/m01",
-                ListMissionsCommand.withStatus(missionId, MissionSubmissionStatus.OVERDUE));
+                ListMissionsCommand.withStatus(missionId, MissionSubmissionStatusEnum.OVERDUE));
     }
 
     @Test
@@ -98,11 +98,11 @@ public class ListMissionsCommandParserTest {
     @Test
     public void parse_statusWithoutMission_returnsAllMissionQuery() throws Exception {
         assertParseSuccess(parser, "s/submitted",
-                ListMissionsCommand.withStatus(MissionSubmissionStatus.SUBMITTED));
+                ListMissionsCommand.withStatus(MissionSubmissionStatusEnum.SUBMITTED));
         assertParseSuccess(parser, " S/OVERDUE ",
-                ListMissionsCommand.withStatus(MissionSubmissionStatus.OVERDUE));
+                ListMissionsCommand.withStatus(MissionSubmissionStatusEnum.OVERDUE));
         assertEquals(
-                ListMissionsCommand.withStatus(MissionSubmissionStatus.OVERDUE),
+                ListMissionsCommand.withStatus(MissionSubmissionStatusEnum.OVERDUE),
                 new AddressBookParser().parseCommand("LISTMISSIONS s/overdue"));
     }
 

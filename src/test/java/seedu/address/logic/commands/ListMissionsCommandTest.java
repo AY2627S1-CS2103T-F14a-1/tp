@@ -22,7 +22,7 @@ import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.UserPrefs;
 import seedu.address.model.mission.MissionId;
-import seedu.address.model.mission.MissionSubmissionStatus;
+import seedu.address.model.mission.MissionSubmissionStatusEnum;
 import seedu.address.model.student.Student;
 import seedu.address.testutil.StudentBuilder;
 
@@ -171,7 +171,7 @@ public class ListMissionsCommandTest {
         Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
 
         assertCommandSuccess(new ListMissionsCommand(
-                        MISSION_ID, CLOCK, Optional.of(MissionSubmissionStatus.SUBMITTED)), model,
+                        MISSION_ID, CLOCK, Optional.of(MissionSubmissionStatusEnum.SUBMITTED)), model,
                 "Submission statuses for M01 · Rune Reading (Due: 2026-10-20)"
                         + " (current student list):\n"
                         + "2. Betsy Crowe | Studio group: 1A | Submitted",
@@ -183,7 +183,7 @@ public class ListMissionsCommandTest {
         Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
 
         assertCommandSuccess(new ListMissionsCommand(
-                        MISSION_ID, CLOCK, Optional.of(MissionSubmissionStatus.OVERDUE)), model,
+                        MISSION_ID, CLOCK, Optional.of(MissionSubmissionStatusEnum.OVERDUE)), model,
                 "Submission statuses for M01 · Rune Reading (Due: 2026-10-20)"
                         + " (current student list):\n"
                         + "1. John Doe | Studio group: 1A | Overdue",
@@ -197,7 +197,7 @@ public class ListMissionsCommandTest {
         Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
 
         assertCommandSuccess(new ListMissionsCommand(
-                        MISSION_ID, todayClock, Optional.of(MissionSubmissionStatus.OVERDUE)), model,
+                        MISSION_ID, todayClock, Optional.of(MissionSubmissionStatusEnum.OVERDUE)), model,
                 "Submission statuses for M01 · Rune Reading (Due: 2026-10-20)"
                         + " (current student list):\n"
                         + "No submissions match the selected status.",
@@ -211,7 +211,7 @@ public class ListMissionsCommandTest {
         expectedModel.updateFilteredStudentList(student -> student.equals(john));
 
         assertCommandSuccess(new ListMissionsCommand(
-                        MISSION_ID, CLOCK, Optional.of(MissionSubmissionStatus.SUBMITTED)), model,
+                        MISSION_ID, CLOCK, Optional.of(MissionSubmissionStatusEnum.SUBMITTED)), model,
                 "Submission statuses for M01 · Rune Reading (Due: 2026-10-20)"
                         + " (current student list):\n"
                         + "No submissions match the selected status.",
@@ -226,7 +226,7 @@ public class ListMissionsCommandTest {
         Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
 
         assertCommandSuccess(
-                ListMissionsCommand.withStatus(MissionSubmissionStatus.SUBMITTED, CLOCK), model,
+                ListMissionsCommand.withStatus(MissionSubmissionStatusEnum.SUBMITTED, CLOCK), model,
                 "Submission statuses for all missions (current student list):\n"
                         + "2. Betsy Crowe | Studio group: 1A"
                         + " | M01 · Rune Reading (Due: 2026-10-20) | Submitted\n"
@@ -244,7 +244,7 @@ public class ListMissionsCommandTest {
         Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
 
         assertCommandSuccess(
-                ListMissionsCommand.withStatus(MissionSubmissionStatus.OVERDUE, CLOCK), model,
+                ListMissionsCommand.withStatus(MissionSubmissionStatusEnum.OVERDUE, CLOCK), model,
                 "Submission statuses for all missions (current student list):\n"
                         + "1. John Doe | Studio group: 1A"
                         + " | M01 · Rune Reading (Due: 2026-10-20) | Overdue",
@@ -258,7 +258,7 @@ public class ListMissionsCommandTest {
         expectedModel.updateFilteredStudentList(student -> student.equals(john));
 
         assertCommandSuccess(
-                ListMissionsCommand.withStatus(MissionSubmissionStatus.SUBMITTED, CLOCK), model,
+                ListMissionsCommand.withStatus(MissionSubmissionStatusEnum.SUBMITTED, CLOCK), model,
                 "Submission statuses for all missions (current student list):\n"
                         + "No submissions match the selected status.",
                 expectedModel);
@@ -271,7 +271,7 @@ public class ListMissionsCommandTest {
         expectedModel.updateFilteredStudentList(student -> false);
 
         assertCommandSuccess(
-                ListMissionsCommand.withStatus(MissionSubmissionStatus.OVERDUE, CLOCK), model,
+                ListMissionsCommand.withStatus(MissionSubmissionStatusEnum.OVERDUE, CLOCK), model,
                 "Submission statuses for all missions (current student list):\n"
                         + "No students in the current student list.",
                 expectedModel);
@@ -284,27 +284,27 @@ public class ListMissionsCommandTest {
         Model expectedModel = new ModelManager(emptyModel.getAddressBook(), new UserPrefs());
 
         assertCommandSuccess(
-                ListMissionsCommand.withStatus(MissionSubmissionStatus.SUBMITTED, CLOCK), emptyModel,
+                ListMissionsCommand.withStatus(MissionSubmissionStatusEnum.SUBMITTED, CLOCK), emptyModel,
                 "No missions configured.",
                 expectedModel);
     }
 
     @Test
     public void equals_allMissionAndSpecificMissionQueries_returnsFalse() {
-        ListMissionsCommand all = ListMissionsCommand.withStatus(MissionSubmissionStatus.SUBMITTED);
-        ListMissionsCommand same = ListMissionsCommand.withStatus(MissionSubmissionStatus.SUBMITTED);
+        ListMissionsCommand all = ListMissionsCommand.withStatus(MissionSubmissionStatusEnum.SUBMITTED);
+        ListMissionsCommand same = ListMissionsCommand.withStatus(MissionSubmissionStatusEnum.SUBMITTED);
 
         assertEquals(all, same);
         assertEquals(all.hashCode(), same.hashCode());
-        assertNotEquals(all, ListMissionsCommand.withStatus(MISSION_ID, MissionSubmissionStatus.SUBMITTED));
-        assertNotEquals(all, ListMissionsCommand.withStatus(MissionSubmissionStatus.OVERDUE));
+        assertNotEquals(all, ListMissionsCommand.withStatus(MISSION_ID, MissionSubmissionStatusEnum.SUBMITTED));
+        assertNotEquals(all, ListMissionsCommand.withStatus(MissionSubmissionStatusEnum.OVERDUE));
     }
 
     @Test
     public void withStatus_nullStatusOrClock_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> ListMissionsCommand.withStatus(null));
         assertThrows(NullPointerException.class, () ->
-                ListMissionsCommand.withStatus(MissionSubmissionStatus.SUBMITTED, null));
+                ListMissionsCommand.withStatus(MissionSubmissionStatusEnum.SUBMITTED, null));
     }
 
     @Test
@@ -315,13 +315,13 @@ public class ListMissionsCommandTest {
         Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
 
         assertCommandSuccess(
-                ListMissionsCommand.withStatus(MissionSubmissionStatus.OVERDUE, utcClock), model,
+                ListMissionsCommand.withStatus(MissionSubmissionStatusEnum.OVERDUE, utcClock), model,
                 "Submission statuses for all missions (current student list):\n"
                         + "No submissions match the selected status.",
                 expectedModel);
 
         assertCommandSuccess(
-                ListMissionsCommand.withStatus(MissionSubmissionStatus.OVERDUE, localClock), model,
+                ListMissionsCommand.withStatus(MissionSubmissionStatusEnum.OVERDUE, localClock), model,
                 "Submission statuses for all missions (current student list):\n"
                         + "1. John Doe | Studio group: 1A"
                         + " | M01 · Rune Reading (Due: 2026-10-20) | Overdue",
@@ -334,7 +334,7 @@ public class ListMissionsCommandTest {
         Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
 
         assertCommandSuccess(
-                ListMissionsCommand.withStatus(MissionSubmissionStatus.OVERDUE, CLOCK), model,
+                ListMissionsCommand.withStatus(MissionSubmissionStatusEnum.OVERDUE, CLOCK), model,
                 "Submission statuses for all missions (current student list):\n"
                         + "1. John Doe | Studio group: 1A"
                         + " | M01 · Rune Reading (Due: 2026-10-20) | Overdue\n"
@@ -348,7 +348,7 @@ public class ListMissionsCommandTest {
     @Test
     public void execute_afterMarkAndUnmark_refreshesStatusesWithoutChangingIndexes() throws Exception {
         ListMissionsCommand command = ListMissionsCommand.withStatus(
-                MissionSubmissionStatus.OVERDUE, CLOCK);
+                MissionSubmissionStatusEnum.OVERDUE, CLOCK);
         Index johnIndex = Index.fromOneBased(1);
 
         command.execute(model);
@@ -375,11 +375,11 @@ public class ListMissionsCommandTest {
     @Test
     public void equals_differentStatusFilters_returnsFalse() {
         ListMissionsCommand submitted = ListMissionsCommand.withStatus(
-                MISSION_ID, MissionSubmissionStatus.SUBMITTED);
+                MISSION_ID, MissionSubmissionStatusEnum.SUBMITTED);
         ListMissionsCommand same = ListMissionsCommand.withStatus(
-                MISSION_ID, MissionSubmissionStatus.SUBMITTED);
+                MISSION_ID, MissionSubmissionStatusEnum.SUBMITTED);
         ListMissionsCommand overdue = ListMissionsCommand.withStatus(
-                MISSION_ID, MissionSubmissionStatus.OVERDUE);
+                MISSION_ID, MissionSubmissionStatusEnum.OVERDUE);
 
         assertEquals(submitted, same);
         assertEquals(submitted.hashCode(), same.hashCode());

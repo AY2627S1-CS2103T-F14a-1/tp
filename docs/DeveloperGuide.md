@@ -692,10 +692,8 @@ student filter remain unchanged throughout this use case.
 **MSS**
 
 1. Tutor requests the mission catalogue.
-2. AvengerHub displays all missions in ascending numeric ID order,
-   including each mission's ID, name, deadline, and submitted/total count
-   for the currently displayed students. Past deadlines are labelled
-   `Deadline passed`.
+2. AvengerHub displays all configured missions and their relevant details,
+   including submission counts for the current student list.
 
    Use case ends.
 
@@ -717,10 +715,10 @@ and the current student filter remain unchanged.
 
 1. Tutor requests to display all students or a filtered set of students.
 2. AvengerHub displays the requested student list.
-3. Tutor requests to list submissions for a specified mission ID.
-4. AvengerHub displays the students in the current list who have a recorded
-   submission for that mission, including each student's name and studio
-   group and their displayed student indexes.
+3. Tutor requests submission statuses for a specified mission, optionally
+   filtering by submitted or overdue status.
+4. AvengerHub displays matching students and their submission statuses,
+   using their indexes in the current student list.
 
    Use case ends.
 
@@ -740,11 +738,17 @@ and the current student filter remain unchanged.
 
       Use case resumes from step 3.
 
-* 4a. No students in the current list have a recorded submission for the mission,
-  including when the current student list is empty.
+* 4a. No submission statuses match the selected status filter.
 
-    * 4a1. AvengerHub reports that no submissions are recorded for the mission
-      within the current student list.
+    * 4a1. AvengerHub informs the tutor that no submissions match the
+      selected status.
+
+      Use case ends.
+
+* 4b. The current student list is empty.
+
+    * 4b1. AvengerHub informs the tutor that no students are in the
+      current student list.
 
       Use case ends.
 
@@ -776,23 +780,20 @@ student filter remain unchanged throughout this use case.
 
 * 4b. The current student list is empty.
 
-    * 4b1. AvengerHub informs the tutor that no overdue submissions exist
-      within the current student list.
+    * 4b1. AvengerHub informs the tutor that no students are in the
+      current student list.
 
       Use case ends.
 
 * 4c. No missions are configured.
 
-    * 4c1. AvengerHub informs the tutor that no overdue submissions exist
-      within the current student list.
+    * 4c1. AvengerHub informs the tutor that no missions are configured.
 
       Use case ends.
 
 Deadlines are inclusive: missions due today are not overdue. The current
 date follows the computer's local date and time zone. Recorded submissions
 are excluded, regardless of when they were recorded.
-
-*{More to be added}*
 
 ### Non-Functional Requirements
 

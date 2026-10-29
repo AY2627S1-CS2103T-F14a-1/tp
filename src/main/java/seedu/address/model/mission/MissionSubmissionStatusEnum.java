@@ -3,7 +3,7 @@ package seedu.address.model.mission;
 /**
  * Represents a student's recorded or deadline-derived submission status.
  */
-public enum MissionSubmissionStatus {
+public enum MissionSubmissionStatusEnum {
     SUBMITTED("Submitted"),
     NOT_SUBMITTED("Not submitted"),
     OVERDUE("Overdue");
@@ -15,7 +15,7 @@ public enum MissionSubmissionStatus {
      *
      * @param displayName Text displayed for this status.
      */
-    MissionSubmissionStatus(String displayName) {
+    MissionSubmissionStatusEnum(String displayName) {
         this.displayName = displayName;
     }
 
@@ -26,7 +26,7 @@ public enum MissionSubmissionStatus {
      * @param isPastDeadline Whether the deadline has passed.
      * @return Submitted when recorded; otherwise overdue or not submitted.
      */
-    public static MissionSubmissionStatus from(boolean hasSubmission, boolean isPastDeadline) {
+    public static MissionSubmissionStatusEnum from(boolean hasSubmission, boolean isPastDeadline) {
         if (hasSubmission) {
             return SUBMITTED;
         }

@@ -13,7 +13,7 @@ import seedu.address.logic.commands.ListMissionsCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.logic.parser.util.MissionParserUtil;
 import seedu.address.model.mission.MissionId;
-import seedu.address.model.mission.MissionSubmissionStatus;
+import seedu.address.model.mission.MissionSubmissionStatusEnum;
 
 /**
  * Parses catalogue-listing or mission-submission-listing requests.
@@ -46,7 +46,7 @@ public class ListMissionsCommandParser implements Parser<Command> {
                     new Prefix[]{PREFIX_MISSION, PREFIX_STATUS},
                     PREFIX_MISSION, PREFIX_STATUS);
 
-            Optional<MissionSubmissionStatus> status = parseStatus(arguments.getValue(PREFIX_STATUS));
+            Optional<MissionSubmissionStatusEnum> status = parseStatus(arguments.getValue(PREFIX_STATUS));
             Optional<String> missionValue = arguments.getValue(PREFIX_MISSION);
             if (missionValue.isEmpty()) {
                 return ListMissionsCommand.withStatus(status.orElseThrow(() ->
@@ -71,16 +71,16 @@ public class ListMissionsCommandParser implements Parser<Command> {
      * @return Requested status, or empty when no status filter was supplied.
      * @throws ParseException If the supplied status is empty or unsupported.
      */
-    private Optional<MissionSubmissionStatus> parseStatus(Optional<String> value) throws ParseException {
+    private Optional<MissionSubmissionStatusEnum> parseStatus(Optional<String> value) throws ParseException {
         assert value != null;
 
         if (value.isEmpty()) {
             return Optional.empty();
         }
 
-        MissionSubmissionStatus status = switch (value.orElseThrow().strip().toLowerCase(Locale.ROOT)) {
-            case "submitted" -> MissionSubmissionStatus.SUBMITTED;
-            case "overdue" -> MissionSubmissionStatus.OVERDUE;
+        MissionSubmissionStatusEnum status = switch (value.orElseThrow().strip().toLowerCase(Locale.ROOT)) {
+            case "submitted" -> MissionSubmissionStatusEnum.SUBMITTED;
+            case "overdue" -> MissionSubmissionStatusEnum.OVERDUE;
             default -> throw new ParseException(MESSAGE_INVALID_STATUS);
         };
         return Optional.of(status);
