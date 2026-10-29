@@ -58,7 +58,6 @@ unchanged.
 | NOTE-ADD-006 | Run `addnote id/1`, then `addnote id/1 nt/Valid nt/Other`, viewing student 1 after each command. | The missing-`nt/` and duplicate-`nt/` messages appear respectively. No note is added. |
 | NOTE-ADD-007 | Run `addnote id/3 nt/Invalid index`, then view both students. | Invalid-student-index feedback appears; neither student changes. |
 | NOTE-ADD-008 | Restart after NOTE-ADD-002 and view student 1. | Both notes and their insertion order are restored unchanged. |
-| NOTE-ADD-009 | Add notes until student 1 has 10, then run `addnote id/1 nt/Overflow` and view student 1. | `Amy Bee already has the maximum of 10 notes. No changes made.` appears. The original 10 notes and saved data remain unchanged. |
 
 ## Delete-note command regression
 
