@@ -139,9 +139,14 @@ The `Model` component,
 * stores each student's contact details, studio group, tags, studio records,
   notes, mastery check appointments, and mission submissions. Studio records
   track attendance and effort scores by week, while `MissionSubmissions`
-  records the IDs of submitted missions. A mission without a recorded
-  submission is treated as not submitted.
-* stores each mission's user-supplied ID, name, and deadline. The mission catalogue validates IDs and does not allocate them.
+  stores an immutable set of submitted mission IDs that reference the shared
+  catalogue. A mission without a recorded submission is treated as not
+  submitted; deleting a mission also removes its ID from every student's
+  submissions.
+* stores each mission's user-supplied ID, name, and deadline. `MissionId`
+  validates the ID format and normalizes its case; `MissionCatalogue` enforces
+  ID and name uniqueness and stores the supplied ID without allocating or
+  renumbering IDs.
 * maintains a _filtered_ view of the students, such as search results. It exposes this view as an unmodifiable `ObservableList<Student>` that the UI can observe and bind to, so the UI updates when the list changes.
 * stores a `UserPrefs` object that represents the user's preferences (currently, just the GUI settings). This is exposed to the outside as a `ReadOnlyUserPrefs` object.
 * does not depend on any of the other three components (as the `Model` represents data entities of the domain, they should make sense on their own without depending on other components).
@@ -151,13 +156,18 @@ map from studio weeks 0 through 13 to `StudioRecord` objects. Each recorded
 week has one record containing a non-negative effort score. The week is the map
 key; the presence of a record indicates attendance, even when its effort score
 is zero. Weeks without a record are displayed as absent with an effort score
-of zero. Each student also has one `RegisteredNotes` object containing notes
-keyed by IDs from 1 through 10, one `RegisteredMasteryChecks` object
-containing numbered mastery check appointments, and one `MissionSubmissions`
-object containing zero or more submitted mission IDs. The `1` multiplicities
-count these containers, not the records inside them.
+of zero. Each student also has one `RegisteredNotes` object containing at most
+1,000 notes, one `RegisteredMasteryChecks` object containing numbered
+appointments, and one `MissionSubmissions` object containing zero or more
+submitted mission IDs. The notes list and mastery-check registration map are
+unmodifiable; mastery-check appointment objects retain mutable completion
+status. The `1` multiplicities count the per-student containers, not the
+records inside them.
 
-Composition diamonds show conceptual ownership of the values that form a student record; immutable values may be reused internally when records are replaced. Submission IDs reference shared missions rather than owning them.
+Composition diamonds show conceptual ownership of student records and mission
+definitions; immutable values may be reused internally when records are
+replaced. Submission IDs reference shared mission definitions rather than
+owning them.
 
 <box type="info" seamless>
 
