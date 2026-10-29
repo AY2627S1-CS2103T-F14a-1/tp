@@ -82,7 +82,8 @@ public class UnmarkMissionCommand extends Command {
             logger.fine("UnmarkMissionCommand made no changes for mission " + missionId
                     + " for student " + studentToUpdate.getName()
                     + " at displayed student index " + targetIndex.getOneBased() + ".");
-            return new CommandResult(String.format(MESSAGE_NOT_RECORDED, studentToUpdate.getName(), missionId));
+            return new CommandResult(String.format(MESSAGE_NOT_RECORDED, studentToUpdate.getName(), missionId),
+                    studentToUpdate);
         }
 
         Student updatedStudent = studentToUpdate.withMissionSubmissions(submissions.withoutSubmission(missionId));
@@ -90,7 +91,7 @@ public class UnmarkMissionCommand extends Command {
         logger.info("Removed submission for mission " + missionId
                 + " for student " + studentToUpdate.getName()
                 + " at displayed student index " + targetIndex.getOneBased() + " in memory.");
-        return new CommandResult(String.format(MESSAGE_SUCCESS, studentToUpdate.getName(), missionId));
+        return new CommandResult(String.format(MESSAGE_SUCCESS, studentToUpdate.getName(), missionId), updatedStudent);
     }
 
     @Override

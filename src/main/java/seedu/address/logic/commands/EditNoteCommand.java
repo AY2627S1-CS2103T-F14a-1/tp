@@ -63,21 +63,23 @@ public class EditNoteCommand extends Command {
         requireNonNull(model);
         Student studentToUpdate = getStudentAtDisplayedIndex(model, targetIndex);
         RegisteredNotes registeredNotes = studentToUpdate.getRegisteredNotes();
-
         if (!registeredNotes.hasNote(noteIndex)) {
             return new CommandResult(String.format(MESSAGE_INDEX_NOT_RECORDED, studentToUpdate.getName(),
-                    noteIndex.getOneBased()));
+                    noteIndex.getOneBased()), studentToUpdate);
         }
 
         if (registeredNotes.hasMatchingNote(noteIndex, updatedNote)) {
             return new CommandResult(String.format(MESSAGE_SAME_NOTE,
-                    studentToUpdate.getName(), noteIndex.getOneBased()));
+                    studentToUpdate.getName(), noteIndex.getOneBased()), studentToUpdate);
         }
 
         Student updatedStudent = studentToUpdate.withRegisteredNotes(
                 registeredNotes.editNote(noteIndex, updatedNote));
         model.setStudent(studentToUpdate, updatedStudent);
-        return new CommandResult(String.format(MESSAGE_SUCCESS, studentToUpdate.getName(), noteIndex.getOneBased()));
+        return new CommandResult(String.format(MESSAGE_SUCCESS,
+                studentToUpdate.getName(),
+                noteIndex.getOneBased()),
+                updatedStudent);
     }
 
     @Override

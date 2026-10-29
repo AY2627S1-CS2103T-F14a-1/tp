@@ -46,9 +46,18 @@ public class DeleteNoteCommandTest {
         Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
         expectedModel.setStudent(studentWithNote, studentToUpdate);
 
-        assertCommandSuccess(command, model,
-                String.format(DeleteNoteCommand.MESSAGE_SUCCESS,
-                        studentWithNote.getName(), INDEX_FIRST_NOTE.getOneBased()), expectedModel);
+        Student updatedStudent = studentToUpdate;
+
+        assertCommandSuccess(
+                command,
+                model,
+                new CommandResult(
+                        String.format(
+                                DeleteNoteCommand.MESSAGE_SUCCESS,
+                                studentWithNote.getName(),
+                                INDEX_FIRST_NOTE.getOneBased()),
+                        updatedStudent),
+                expectedModel);
     }
 
     @Test
@@ -58,9 +67,15 @@ public class DeleteNoteCommandTest {
         DeleteNoteCommand command = new DeleteNoteCommand(INDEX_FIRST_STUDENT, INDEX_FIRST_NOTE);
         Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
 
-        assertCommandSuccess(command, model,
-                String.format(DeleteNoteCommand.MESSAGE_ALREADY_NOT_RECORDED,
-                        studentToUpdate.getName()), expectedModel);
+        assertCommandSuccess(
+                command,
+                model,
+                new CommandResult(
+                        String.format(
+                                DeleteNoteCommand.MESSAGE_ALREADY_NOT_RECORDED,
+                                studentToUpdate.getName()),
+                        studentToUpdate),
+                expectedModel);
     }
 
     @Test

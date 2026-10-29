@@ -81,13 +81,24 @@ public class EditMissionCommand extends Command {
             throw new CommandException(Messages.MESSAGE_DUPLICATE_MISSION);
         }
         if (editedMission.equals(missionToEdit)) {
-            return new CommandResult(String.format(MESSAGE_NO_CHANGES, missionId));
+            return new CommandResult(
+                    String.format(
+                            MESSAGE_NO_CHANGES, missionId),
+                    null,
+                    model.getMissionList(),
+                    false);
+
         }
 
         model.setMission(missionToEdit, editedMission);
         logger.info("Edited mission " + missionId + " in the in-memory catalogue.");
-        return new CommandResult(String.format(
-                MESSAGE_EDIT_MISSION_SUCCESS, Messages.format(editedMission)));
+        return new CommandResult(
+                String.format(
+                        MESSAGE_EDIT_MISSION_SUCCESS,
+                        Messages.format(editedMission)),
+                null,
+                model.getMissionList(),
+                true);
     }
 
     /**

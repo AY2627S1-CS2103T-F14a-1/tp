@@ -87,7 +87,8 @@ public class UnmarkMasteryCheckCommand extends Command {
             logger.fine("UnmarkMasteryCheckCommand made no changes for mastery check " + number
                     + " for student " + studentToUpdate.getName()
                     + " at displayed student index " + targetIndex.getOneBased() + ".");
-            return new CommandResult(String.format(MESSAGE_ALREADY_MARKED, studentToUpdate.getName(), number));
+            return new CommandResult(String.format(MESSAGE_ALREADY_MARKED, studentToUpdate.getName(), number),
+                    studentToUpdate);
         }
 
         Student updatedStudent = studentToUpdate.withRegisteredMasteryChecks(
@@ -96,7 +97,7 @@ public class UnmarkMasteryCheckCommand extends Command {
         logger.info("Revoked completion for mastery check " + number
                 + " for student " + studentToUpdate.getName()
                 + " at displayed student index " + targetIndex.getOneBased() + " in memory.");
-        return new CommandResult(String.format(MESSAGE_SUCCESS, studentToUpdate.getName(), number));
+        return new CommandResult(String.format(MESSAGE_SUCCESS, studentToUpdate.getName(), number), updatedStudent);
     }
 
     /**

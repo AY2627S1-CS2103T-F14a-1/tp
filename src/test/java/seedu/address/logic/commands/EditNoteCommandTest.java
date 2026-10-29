@@ -50,11 +50,20 @@ public class EditNoteCommandTest {
         Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
         RegisteredNotes expectedNotes = new RegisteredNotes(List.of(
                 UPDATED_NOTE, new Note("Prepare consultation")));
-        expectedModel.setStudent(studentToUpdate, studentToUpdate.withRegisteredNotes(expectedNotes));
 
-        assertCommandSuccess(command, model,
-                String.format(EditNoteCommand.MESSAGE_SUCCESS,
-                        studentToUpdate.getName(), INDEX_FIRST_NOTE.getOneBased()), expectedModel);
+        Student updatedStudent = studentToUpdate.withRegisteredNotes(expectedNotes);
+        expectedModel.setStudent(studentToUpdate, updatedStudent);
+
+        assertCommandSuccess(
+                command,
+                model,
+                new CommandResult(
+                        String.format(
+                                EditNoteCommand.MESSAGE_SUCCESS,
+                                studentToUpdate.getName(),
+                                INDEX_FIRST_NOTE.getOneBased()),
+                        updatedStudent),
+                expectedModel);
     }
 
     @Test
@@ -64,9 +73,15 @@ public class EditNoteCommandTest {
         EditNoteCommand command = new EditNoteCommand(INDEX_FIRST_STUDENT, INDEX_THIRD_NOTE, UPDATED_NOTE);
         Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
 
-        assertCommandSuccess(command, model,
-                String.format(EditNoteCommand.MESSAGE_INDEX_NOT_RECORDED,
-                        studentToUpdate.getName(), INDEX_THIRD_NOTE.getOneBased()),
+        assertCommandSuccess(
+                command,
+                model,
+                new CommandResult(
+                        String.format(
+                                EditNoteCommand.MESSAGE_INDEX_NOT_RECORDED,
+                                studentToUpdate.getName(),
+                                INDEX_THIRD_NOTE.getOneBased()),
+                        studentToUpdate),
                 expectedModel);
     }
 
@@ -77,9 +92,16 @@ public class EditNoteCommandTest {
         EditNoteCommand command = new EditNoteCommand(INDEX_FIRST_STUDENT, INDEX_FIRST_NOTE, ORIGINAL_NOTE);
         Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
 
-        assertCommandSuccess(command, model,
-                String.format(EditNoteCommand.MESSAGE_SAME_NOTE,
-                        studentToUpdate.getName(), INDEX_FIRST_NOTE.getOneBased()), expectedModel);
+        assertCommandSuccess(
+                command,
+                model,
+                new CommandResult(
+                        String.format(
+                                EditNoteCommand.MESSAGE_SAME_NOTE,
+                                studentToUpdate.getName(),
+                                INDEX_FIRST_NOTE.getOneBased()),
+                        studentToUpdate),
+                expectedModel);
     }
 
     @Test

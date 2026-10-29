@@ -56,7 +56,6 @@ public class AddNoteCommand extends Command {
 
         Student studentToUpdate = getStudentAtDisplayedIndex(model, targetIndex);
         RegisteredNotes registeredNotes = studentToUpdate.getRegisteredNotes();
-
         boolean hasMatchingNoteText = registeredNotes.hasNoteText(note.getNoteText());
 
         RegisteredNotes updatedNotes;
@@ -64,13 +63,13 @@ public class AddNoteCommand extends Command {
             updatedNotes = registeredNotes.withNote(note);
         } catch (IllegalStateException exception) {
             return new CommandResult(String.format(
-                    MESSAGE_MAXIMUM_NOTES_REACHED, studentToUpdate.getName(), RegisteredNotes.MAX_NOTE_INDEX));
+                    MESSAGE_MAXIMUM_NOTES_REACHED, studentToUpdate.getName(), RegisteredNotes.MAX_NOTE_INDEX),
+                    studentToUpdate);
         }
         Student updatedStudent = studentToUpdate.withRegisteredNotes(updatedNotes);
         model.setStudent(studentToUpdate, updatedStudent);
-
         CommandResult result = new CommandResult(
-                String.format(MESSAGE_SUCCESS, studentToUpdate.getName()));
+                String.format(MESSAGE_SUCCESS, studentToUpdate.getName()), updatedStudent);
         if (hasMatchingNoteText) {
             return result.withWarning(
                     String.format(MESSAGE_WARNING_MATCHING_TEXT, studentToUpdate.getName()));
