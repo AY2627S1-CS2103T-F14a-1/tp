@@ -15,6 +15,7 @@ Class UserPrefs
 Class UniqueStudentList
 Class Student
 Class Name
+Class MatriculationNumber
 Class Phone
 Class Email
 Class Tag
@@ -53,6 +54,7 @@ MissionCatalogue *--> "*" Mission
 Mission *-down-> "1" MissionId
 
 Student *--> "1" Name
+Student *--> "1" MatriculationNumber
 Student *--> "1" Phone
 Student *--> "1" Email
 Student --> "*" Tag
@@ -76,6 +78,8 @@ ModelManager -[hidden]right-> UserPrefs
 ' Student attributes ordering
 MissionSubmissions -[hidden]right-> Name
 Name -[hidden]right-> Phone
+Name -[hidden]right-> MatriculationNumber
+MatriculationNumber -[hidden]right-> Phone
 Phone -[hidden]right-> Email
 Email -[hidden]right-> Tag
 Tag -[hidden]right-> StudioGroup
