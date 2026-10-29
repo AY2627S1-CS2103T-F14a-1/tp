@@ -3,7 +3,7 @@ package guitests.guihandles;
 import javafx.scene.Node;
 
 /**
- * A handler for the {@code BrowserPanel} of the UI.
+ * A handler for the {@code StudentDetailsPanel} of the UI.
  */
 public class StudentDetailsPanelHandle extends NodeHandle<Node> {
 
