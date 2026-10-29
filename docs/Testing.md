@@ -63,6 +63,6 @@ This project has two types of tests:
 * Reason: From macOS Mojave onwards, applications without `Accessibility` permission cannot simulate certain keyboard and mouse movements.
 * Solution: Open `System Preferences`, click `Security and Privacy` -> `Privacy` -> `Accessibility`, and check the box beside `Intellij IDEA`.
 
-`Accessibility` permission is granted to `IntelliJ IDEA`
-[docs/images/testfx-idea-accessibility-permissions.png]
 <img src="images/testfx-idea-accessibility-permissions.png" width="600px">
+
+Figure 1. `Accessibility` permission is granted to `IntelliJ IDEA`
