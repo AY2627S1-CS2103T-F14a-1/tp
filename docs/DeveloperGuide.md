@@ -81,6 +81,15 @@ and status filters without replacing the current student filter.
 Student profiles use model objects and the mission catalogue supplied
 through the logic component.
 
+`ResultDisplay` calculates its preferred height from wrapped feedback and
+visible warnings, including padding. JavaFX bindings update this height
+when the text, width, or height limit changes.
+
+`MainWindow` limits the results area, including its surrounding padding,
+to 30% of the space shared with the student panels. Longer results scroll
+within `ResultDisplay`, while shorter results release space back to the
+student panels. New feedback resets the results scroll position.
+
 The `UI` component uses the JavaFX UI framework. The layouts of these UI parts are defined in matching `.fxml` files in `src/main/resources/view`. For example, [`MainWindow.fxml`](https://github.com/AY2627S1-CS2103T-F14a-1/tp/blob/master/src/main/resources/view/MainWindow.fxml) specifies the layout of [`MainWindow`](https://github.com/AY2627S1-CS2103T-F14a-1/tp/blob/master/src/main/java/seedu/address/ui/MainWindow.java).
 
 The `UI` component,
