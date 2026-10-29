@@ -35,18 +35,18 @@ public class AddNoteCommand extends Command {
             "%1$s already has the maximum of %2$d notes. No changes made.";
     public static final String MESSAGE_WARNING_MATCHING_TEXT = "%1$s has a matching note text.";
 
-    private final Index targetIndex;
+    private final Index targetStudentIndex;
     private final Note note;
 
     /**
-     * @param targetIndex Index of the student in the filtered student list to edit.
+     * @param targetStudentIndex Index of the student in the filtered student list to edit.
      * @param note        Note to register to student.
      */
-    public AddNoteCommand(Index targetIndex, Note note) {
-        requireNonNull(targetIndex);
+    public AddNoteCommand(Index targetStudentIndex, Note note) {
+        requireNonNull(targetStudentIndex);
         requireNonNull(note);
 
-        this.targetIndex = targetIndex;
+        this.targetStudentIndex = targetStudentIndex;
         this.note = note;
     }
 
@@ -54,7 +54,7 @@ public class AddNoteCommand extends Command {
     public CommandResult execute(Model model) throws CommandException {
         requireNonNull(model);
 
-        Student studentToUpdate = getStudentAtDisplayedIndex(model, targetIndex);
+        Student studentToUpdate = getStudentAtDisplayedIndex(model, targetStudentIndex);
         RegisteredNotes registeredNotes = studentToUpdate.getRegisteredNotes();
         boolean hasMatchingNoteText = registeredNotes.hasNoteText(note.getNoteText());
 
@@ -87,19 +87,19 @@ public class AddNoteCommand extends Command {
             return false;
         }
 
-        return targetIndex.equals(otherAddNoteCommand.targetIndex)
+        return targetStudentIndex.equals(otherAddNoteCommand.targetStudentIndex)
                 && note.equals(otherAddNoteCommand.note);
     }
 
     @Override
     public int hashCode() {
-        return hash(targetIndex, note);
+        return hash(targetStudentIndex, note);
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .add("targetIndex", targetIndex)
+                .add("targetStudentIndex", targetStudentIndex)
                 .add("note", note)
                 .toString();
     }

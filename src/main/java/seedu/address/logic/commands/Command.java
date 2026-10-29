@@ -27,17 +27,17 @@ public abstract class Command {
      * Returns the student at the specified index in the currently displayed list.
      *
      * @param model {@code model} that provides the currently displayed student list.
-     * @param targetIndex Zero-based position of the student to retrieve.
+     * @param targetStudentIndex Zero-based position of the student to retrieve.
      * @return Student at the specified displayed-list index.
-     * @throws CommandException If {@code targetIndex} is outside the currently displayed student list.
+     * @throws CommandException If {@code targetStudentIndex} is outside the currently displayed student list.
      */
-    protected Student getStudentAtDisplayedIndex(Model model, Index targetIndex) throws CommandException {
+    protected Student getStudentAtDisplayedIndex(Model model, Index targetStudentIndex) throws CommandException {
         List<Student> lastShownList = model.getFilteredStudentList();
-        if (targetIndex.getZeroBased() >= lastShownList.size()) {
+        if (targetStudentIndex.getZeroBased() >= lastShownList.size()) {
             throw new CommandException(Messages.MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX);
         }
 
-        return lastShownList.get(targetIndex.getZeroBased());
+        return lastShownList.get(targetStudentIndex.getZeroBased());
     }
 
 }

@@ -79,12 +79,13 @@ public class CommandTest {
          * Returns the student selected by the inherited displayed-index lookup.
          *
          * @param model the model containing the displayed students
-         * @param targetIndex the displayed student index
+         * @param targetStudentIndex the displayed student index
          * @return the selected student
          * @throws CommandException if the index is outside the displayed student list
          */
-        private Student getStudentAtDisplayedIndexForTest(Model model, Index targetIndex) throws CommandException {
-            return getStudentAtDisplayedIndex(model, targetIndex);
+        private Student getStudentAtDisplayedIndexForTest(Model model, Index targetStudentIndex)
+                throws CommandException {
+            return getStudentAtDisplayedIndex(model, targetStudentIndex);
         }
     }
 }

@@ -227,11 +227,11 @@ public class EditStudentCommandTest {
 
     @Test
     public void toStringMethod() {
-        Index index = Index.fromOneBased(1);
+        Index targetStudentIndex = Index.fromOneBased(1);
         EditStudentDescriptor editStudentDescriptor = new EditStudentDescriptor();
-        EditStudentCommand editStudentCommand = new EditStudentCommand(index, editStudentDescriptor);
-        String expected = EditStudentCommand.class.getCanonicalName() + "{index=" + index + ", editStudentDescriptor="
-                + editStudentDescriptor + "}";
+        EditStudentCommand editStudentCommand = new EditStudentCommand(targetStudentIndex, editStudentDescriptor);
+        String expected = EditStudentCommand.class.getCanonicalName() + "{targetStudentIndex="
+                + targetStudentIndex + ", editStudentDescriptor=" + editStudentDescriptor + "}";
         assertEquals(expected, editStudentCommand.toString());
     }
 

@@ -102,8 +102,8 @@ public class AddMasteryCheckCommandTest {
 
     @Test
     public void execute_invalidIndex_leavesModelUnchanged() {
-        Index index = Index.fromOneBased(model.getFilteredStudentList().size() + 1);
-        assertCommandFailure(new AddMasteryCheckCommand(index, 1, new MasteryCheck(APPOINTMENT)), model,
+        Index targetStudentIndex = Index.fromOneBased(model.getFilteredStudentList().size() + 1);
+        assertCommandFailure(new AddMasteryCheckCommand(targetStudentIndex, 1, new MasteryCheck(APPOINTMENT)), model,
                 Messages.MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX);
     }
 
@@ -173,7 +173,7 @@ public class AddMasteryCheckCommandTest {
     public void toString_validCommand_includesIndexNumberAndAppointment() {
         MasteryCheck check = new MasteryCheck(APPOINTMENT);
         AddMasteryCheckCommand command = new AddMasteryCheckCommand(INDEX_FIRST_STUDENT, 1, check);
-        assertEquals(AddMasteryCheckCommand.class.getCanonicalName() + "{targetIndex=" + INDEX_FIRST_STUDENT
+        assertEquals(AddMasteryCheckCommand.class.getCanonicalName() + "{targetStudentIndex=" + INDEX_FIRST_STUDENT
                 + ", number=1, masteryCheck=" + check + "}", command.toString());
     }
 }

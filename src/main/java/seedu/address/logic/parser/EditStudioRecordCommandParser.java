@@ -32,11 +32,11 @@ public class EditStudioRecordCommandParser implements Parser<EditStudioRecordCom
             ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
                     args, PREFIX_STUDENT_INDEX, PREFIX_WEEK, PREFIX_STUDIO_EFFORT);
 
-            Index index = ParserUtil.parseIndex(argMultimap.getRequiredValue(PREFIX_STUDENT_INDEX));
+            Index targetStudentIndex = ParserUtil.parseIndex(argMultimap.getRequiredValue(PREFIX_STUDENT_INDEX));
             int week = StudioRecordParserUtil.parseWeek(argMultimap.getRequiredValue(PREFIX_WEEK));
             int effortScore = StudioRecordParserUtil.parseEffortScore(
                     argMultimap.getRequiredValue(PREFIX_STUDIO_EFFORT));
-            return new EditStudioRecordCommand(index, week, new StudioRecord(effortScore));
+            return new EditStudioRecordCommand(targetStudentIndex, week, new StudioRecord(effortScore));
         } catch (ParseException e) {
             throw new ParseException(e.getMessage()
                     + ParserUtil.MESSAGE_SEE_USAGE + EditStudioRecordCommand.MESSAGE_USAGE);

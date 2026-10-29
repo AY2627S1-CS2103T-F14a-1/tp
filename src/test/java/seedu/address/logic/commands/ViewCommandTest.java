@@ -61,9 +61,9 @@ public class ViewCommandTest {
 
     @Test
     public void toStringMethod() {
-        Index targetIndex = Index.fromOneBased(1);
-        ViewCommand command = new ViewCommand(targetIndex);
-        String expected = ViewCommand.class.getCanonicalName() + "{targetIndex=" + targetIndex + "}";
+        Index targetStudentIndex = Index.fromOneBased(1);
+        ViewCommand command = new ViewCommand(targetStudentIndex);
+        String expected = ViewCommand.class.getCanonicalName() + "{targetStudentIndex=" + targetStudentIndex + "}";
         assertEquals(expected, command.toString());
     }
 

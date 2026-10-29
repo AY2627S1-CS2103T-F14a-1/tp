@@ -192,7 +192,7 @@ public class DeleteStudioRecordCommandTest {
     public void toString_validCommand_returnsExpectedString() {
         DeleteStudioRecordCommand command = new DeleteStudioRecordCommand(INDEX_FIRST_STUDENT, 3);
         String expected = DeleteStudioRecordCommand.class.getCanonicalName()
-                + "{targetIndex=" + INDEX_FIRST_STUDENT + ", week=3}";
+                + "{targetStudentIndex=" + INDEX_FIRST_STUDENT + ", week=3}";
 
         assertEquals(expected, command.toString());
     }

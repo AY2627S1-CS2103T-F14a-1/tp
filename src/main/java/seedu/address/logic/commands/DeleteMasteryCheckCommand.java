@@ -34,23 +34,23 @@ public class DeleteMasteryCheckCommand extends Command {
     public static final String MESSAGE_NOT_FOUND =
             "%1$s has no mastery check numbered %2$d. No changes made.";
 
-    private final Index targetIndex;
+    private final Index targetStudentIndex;
     private final int number;
 
     /**
      * Creates a command to remove a student's numbered mastery check registration.
      *
-     * @param targetIndex Index of the student in the displayed list.
+     * @param targetStudentIndex Index of the student in the displayed list.
      * @param number Mastery check number to remove.
      * @throws NullPointerException If the student index is null.
      * @throws IllegalArgumentException If the number fails the currently enforced studio-week range check.
      */
-    public DeleteMasteryCheckCommand(Index targetIndex, int number) {
-        requireNonNull(targetIndex);
+    public DeleteMasteryCheckCommand(Index targetStudentIndex, int number) {
+        requireNonNull(targetStudentIndex);
         checkArgument(RegisteredMasteryChecks.isValidMasteryCheckNumber(number),
                 RegisteredMasteryChecks.MESSAGE_CONSTRAINTS);
 
-        this.targetIndex = targetIndex;
+        this.targetStudentIndex = targetStudentIndex;
         this.number = number;
     }
 
@@ -66,7 +66,7 @@ public class DeleteMasteryCheckCommand extends Command {
     @Override
     public CommandResult execute(Model model) throws CommandException {
         requireNonNull(model);
-        Student studentToUpdate = getStudentAtDisplayedIndex(model, targetIndex);
+        Student studentToUpdate = getStudentAtDisplayedIndex(model, targetStudentIndex);
         RegisteredMasteryChecks registeredMasteryChecks = studentToUpdate.getRegisteredMasteryChecks();
 
         if (!registeredMasteryChecks.hasMasteryCheck(number)) {
@@ -97,13 +97,13 @@ public class DeleteMasteryCheckCommand extends Command {
             return false;
         }
 
-        return targetIndex.equals(otherDeleteMasteryCheckCommand.targetIndex)
+        return targetStudentIndex.equals(otherDeleteMasteryCheckCommand.targetStudentIndex)
                 && number == otherDeleteMasteryCheckCommand.number;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(targetIndex, number);
+        return Objects.hash(targetStudentIndex, number);
     }
 
     /**
@@ -114,7 +114,7 @@ public class DeleteMasteryCheckCommand extends Command {
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .add("targetIndex", targetIndex)
+                .add("targetStudentIndex", targetStudentIndex)
                 .add("number", number)
                 .toString();
     }

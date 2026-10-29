@@ -40,21 +40,21 @@ public class EditNoteCommand extends Command {
             + "Example: " + COMMAND_WORD + " " + PREFIX_STUDENT_INDEX + "1 "
             + PREFIX_NOTE_INDEX + "3 " + PREFIX_NOTE_TEXT + "hello";
 
-    private final Index targetIndex;
+    private final Index targetStudentIndex;
     private final Index noteIndex;
     private final Note updatedNote;
 
     /**
-     * @param targetIndex Index of the student in the filtered student list to edit.
+     * @param targetStudentIndex Index of the student in the filtered student list to edit.
      * @param noteIndex Index of note to edit.
      * @param updatedNote Updated note to register.
      */
-    public EditNoteCommand(Index targetIndex, Index noteIndex, Note updatedNote) {
-        requireNonNull(targetIndex);
+    public EditNoteCommand(Index targetStudentIndex, Index noteIndex, Note updatedNote) {
+        requireNonNull(targetStudentIndex);
         requireNonNull(updatedNote);
         checkArgument(RegisteredNotes.isValidNoteIndex(noteIndex), RegisteredNotes.MESSAGE_CONSTRAINTS);
 
-        this.targetIndex = targetIndex;
+        this.targetStudentIndex = targetStudentIndex;
         this.noteIndex = noteIndex;
         this.updatedNote = updatedNote;
     }
@@ -62,7 +62,7 @@ public class EditNoteCommand extends Command {
     @Override
     public CommandResult execute(Model model) throws CommandException {
         requireNonNull(model);
-        Student studentToUpdate = getStudentAtDisplayedIndex(model, targetIndex);
+        Student studentToUpdate = getStudentAtDisplayedIndex(model, targetStudentIndex);
         RegisteredNotes registeredNotes = studentToUpdate.getRegisteredNotes();
         if (!registeredNotes.hasNote(noteIndex)) {
             return new CommandResult(String.format(MESSAGE_INDEX_NOT_RECORDED, studentToUpdate.getName(),
@@ -93,20 +93,20 @@ public class EditNoteCommand extends Command {
             return false;
         }
 
-        return targetIndex.equals(otherEditNoteCommand.targetIndex)
+        return targetStudentIndex.equals(otherEditNoteCommand.targetStudentIndex)
                 && noteIndex.equals(otherEditNoteCommand.noteIndex)
                 && updatedNote.equals(otherEditNoteCommand.updatedNote);
     }
 
     @Override
     public int hashCode() {
-        return hash(targetIndex, noteIndex, updatedNote);
+        return hash(targetStudentIndex, noteIndex, updatedNote);
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .add("targetIndex", targetIndex)
+                .add("targetStudentIndex", targetStudentIndex)
                 .add("noteIndex", noteIndex)
                 .add("note", updatedNote)
                 .toString();

@@ -170,7 +170,7 @@ public class UnmarkMissionCommandTest {
     public void toString_validCommand_returnsExpectedString() {
         UnmarkMissionCommand command = new UnmarkMissionCommand(INDEX_FIRST_STUDENT, new MissionId("M03"));
         String expected = UnmarkMissionCommand.class.getCanonicalName()
-                + "{targetIndex=" + INDEX_FIRST_STUDENT + ", missionId=M03}";
+                + "{targetStudentIndex=" + INDEX_FIRST_STUDENT + ", missionId=M03}";
 
         assertEquals(expected, command.toString());
     }

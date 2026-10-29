@@ -119,13 +119,13 @@ public class CommandTestUtil {
         assertEquals(expectedFilteredList, actualModel.getFilteredStudentList());
     }
     /**
-     * Updates {@code model}'s filtered list to show only the student at the given {@code targetIndex} in the
+     * Updates {@code model}'s filtered list to show only the student at the given {@code targetStudentIndex} in the
      * {@code model}'s address book.
      */
-    public static void showStudentAtIndex(Model model, Index targetIndex) {
-        assertTrue(targetIndex.getZeroBased() < model.getFilteredStudentList().size());
+    public static void showStudentAtIndex(Model model, Index targetStudentIndex) {
+        assertTrue(targetStudentIndex.getZeroBased() < model.getFilteredStudentList().size());
 
-        Student student = model.getFilteredStudentList().get(targetIndex.getZeroBased());
+        Student student = model.getFilteredStudentList().get(targetStudentIndex.getZeroBased());
         final String[] splitName = student.getName().fullName.split("\\s+");
         model.updateFilteredStudentList(new NameContainsKeywordsPredicate(List.of(splitName[0])));
 

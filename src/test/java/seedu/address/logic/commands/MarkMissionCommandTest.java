@@ -170,7 +170,7 @@ public class MarkMissionCommandTest {
     public void toString_validCommand_returnsExpectedString() {
         MarkMissionCommand command = new MarkMissionCommand(INDEX_FIRST_STUDENT, new MissionId("M03"));
         String expected = MarkMissionCommand.class.getCanonicalName()
-                + "{targetIndex=" + INDEX_FIRST_STUDENT + ", missionId=M03}";
+                + "{targetStudentIndex=" + INDEX_FIRST_STUDENT + ", missionId=M03}";
 
         assertEquals(expected, command.toString());
     }

@@ -55,18 +55,18 @@ public class EditStudentCommand extends Command {
     public static final String MESSAGE_NOT_EDITED = "At least one field to edit must be provided.";
     public static final String MESSAGE_DUPLICATE_STUDENT = "This student already exists in the address book.";
 
-    private final Index index;
+    private final Index targetStudentIndex;
     private final EditStudentDescriptor editStudentDescriptor;
 
     /**
-     * @param index of the student in the filtered student list to edit
+     * @param targetStudentIndex Index of the student in the filtered student list to edit.
      * @param editStudentDescriptor details to edit the student with
      */
-    public EditStudentCommand(Index index, EditStudentDescriptor editStudentDescriptor) {
-        requireNonNull(index);
+    public EditStudentCommand(Index targetStudentIndex, EditStudentDescriptor editStudentDescriptor) {
+        requireNonNull(targetStudentIndex);
         requireNonNull(editStudentDescriptor);
 
-        this.index = index;
+        this.targetStudentIndex = targetStudentIndex;
         this.editStudentDescriptor = new EditStudentDescriptor(editStudentDescriptor);
     }
 
@@ -74,7 +74,7 @@ public class EditStudentCommand extends Command {
     public CommandResult execute(Model model) throws CommandException {
         requireNonNull(model);
 
-        Student studentToEdit = getStudentAtDisplayedIndex(model, index);
+        Student studentToEdit = getStudentAtDisplayedIndex(model, targetStudentIndex);
         Student editedStudent = createEditedStudent(studentToEdit, editStudentDescriptor);
 
         if (!studentToEdit.isSameStudent(editedStudent) && model.hasStudent(editedStudent)) {
@@ -122,14 +122,14 @@ public class EditStudentCommand extends Command {
             return false;
         }
 
-        return index.equals(otherEditStudentCommand.index)
+        return targetStudentIndex.equals(otherEditStudentCommand.targetStudentIndex)
                 && editStudentDescriptor.equals(otherEditStudentCommand.editStudentDescriptor);
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .add("index", index)
+                .add("targetStudentIndex", targetStudentIndex)
                 .add("editStudentDescriptor", editStudentDescriptor)
                 .toString();
     }

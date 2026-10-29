@@ -39,18 +39,18 @@ public class MarkMissionCommand extends Command {
 
     private static final Logger logger = LogsCenter.getLogger(MarkMissionCommand.class);
 
-    private final Index targetIndex;
+    private final Index targetStudentIndex;
     private final MissionId missionId;
 
     /**
      * Creates a command to record a mission submission.
      *
-     * @param targetIndex Index of the student in the displayed list.
+     * @param targetStudentIndex Index of the student in the displayed list.
      * @param missionId Configured mission identifier.
      * @throws NullPointerException If the index or mission ID is null.
      */
-    public MarkMissionCommand(Index targetIndex, MissionId missionId) {
-        this.targetIndex = requireNonNull(targetIndex);
+    public MarkMissionCommand(Index targetStudentIndex, MissionId missionId) {
+        this.targetStudentIndex = requireNonNull(targetStudentIndex);
         this.missionId = requireNonNull(missionId);
     }
 
@@ -72,7 +72,7 @@ public class MarkMissionCommand extends Command {
 
         Student studentToUpdate;
         try {
-            studentToUpdate = getStudentAtDisplayedIndex(model, targetIndex);
+            studentToUpdate = getStudentAtDisplayedIndex(model, targetStudentIndex);
         } catch (CommandException e) {
             throw new CommandException(e.getMessage() + "\n\n" + MESSAGE_USAGE);
         }
@@ -81,7 +81,7 @@ public class MarkMissionCommand extends Command {
         if (submissions.hasSubmission(missionId)) {
             logger.fine("MarkMissionCommand made no changes for mission " + missionId
                     + " for student " + studentToUpdate.getName()
-                    + " at displayed student index " + targetIndex.getOneBased() + ".");
+                    + " at displayed student index " + targetStudentIndex.getOneBased() + ".");
             return new CommandResult(String.format(MESSAGE_ALREADY_RECORDED, studentToUpdate.getName(), missionId),
                     studentToUpdate);
         }
@@ -90,7 +90,7 @@ public class MarkMissionCommand extends Command {
         model.setStudent(studentToUpdate, updatedStudent);
         logger.info("Recorded submission for mission " + missionId
                 + " for student " + studentToUpdate.getName()
-                + " at displayed student index " + targetIndex.getOneBased() + " in memory.");
+                + " at displayed student index " + targetStudentIndex.getOneBased() + " in memory.");
         return new CommandResult(String.format(MESSAGE_SUCCESS, studentToUpdate.getName(), missionId), updatedStudent);
     }
 
@@ -105,19 +105,19 @@ public class MarkMissionCommand extends Command {
             return false;
         }
 
-        return targetIndex.equals(otherMissionCommand.targetIndex)
+        return targetStudentIndex.equals(otherMissionCommand.targetStudentIndex)
                 && missionId.equals(otherMissionCommand.missionId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(targetIndex.getZeroBased(), missionId);
+        return Objects.hash(targetStudentIndex.getZeroBased(), missionId);
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .add("targetIndex", targetIndex)
+                .add("targetStudentIndex", targetStudentIndex)
                 .add("missionId", missionId)
                 .toString();
     }

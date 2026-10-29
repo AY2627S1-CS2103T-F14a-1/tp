@@ -34,18 +34,18 @@ public class DeleteNoteCommand extends Command {
     public static final String MESSAGE_ALREADY_NOT_RECORDED =
             "%1$s’s note index does not exist. No changes made.";
 
-    private final Index targetIndex;
+    private final Index targetStudentIndex;
     private final Index noteIndex;
 
     /**
-     * @param targetIndex Index of the student in the filtered student list to delete a note from.
+     * @param targetStudentIndex Index of the student in the filtered student list to delete a note from.
      * @param noteIndex Index of note to delete.
      */
-    public DeleteNoteCommand(Index targetIndex, Index noteIndex) {
-        requireNonNull(targetIndex);
+    public DeleteNoteCommand(Index targetStudentIndex, Index noteIndex) {
+        requireNonNull(targetStudentIndex);
         checkArgument(RegisteredNotes.isValidNoteIndex(noteIndex), RegisteredNotes.MESSAGE_CONSTRAINTS);
 
-        this.targetIndex = targetIndex;
+        this.targetStudentIndex = targetStudentIndex;
         this.noteIndex = noteIndex;
     }
 
@@ -53,7 +53,7 @@ public class DeleteNoteCommand extends Command {
     public CommandResult execute(Model model) throws CommandException {
         requireNonNull(model);
 
-        Student studentToUpdate = getStudentAtDisplayedIndex(model, targetIndex);
+        Student studentToUpdate = getStudentAtDisplayedIndex(model, targetStudentIndex);
         RegisteredNotes registeredNotes = studentToUpdate.getRegisteredNotes();
 
         if (!registeredNotes.hasNote(noteIndex)) {
@@ -78,19 +78,19 @@ public class DeleteNoteCommand extends Command {
             return false;
         }
 
-        return targetIndex.equals(otherDeleteNoteCommand.targetIndex)
+        return targetStudentIndex.equals(otherDeleteNoteCommand.targetStudentIndex)
                 && noteIndex.equals(otherDeleteNoteCommand.noteIndex);
     }
 
     @Override
     public int hashCode() {
-        return hash(targetIndex, noteIndex);
+        return hash(targetStudentIndex, noteIndex);
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .add("targetIndex", targetIndex)
+                .add("targetStudentIndex", targetStudentIndex)
                 .add("noteIndex", noteIndex)
                 .toString();
     }

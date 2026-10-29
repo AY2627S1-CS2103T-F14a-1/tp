@@ -35,17 +35,17 @@ public class DeleteStudioRecordCommand extends Command {
     public static final String MESSAGE_ALREADY_NOT_RECORDED =
             "%1$s’s studio record was already not marked for studio week %2$d. No changes made.";
 
-    private final Index targetIndex;
+    private final Index targetStudentIndex;
     private final int week;
 
     /**
      * Creates a command to delete a week's studio record.
      *
-     * @param targetIndex Index of the student in the displayed list.
+     * @param targetStudentIndex Index of the student in the displayed list.
      * @param week Tutorial week for the deletion.
      */
-    public DeleteStudioRecordCommand(Index targetIndex, int week) {
-        this.targetIndex = requireNonNull(targetIndex);
+    public DeleteStudioRecordCommand(Index targetStudentIndex, int week) {
+        this.targetStudentIndex = requireNonNull(targetStudentIndex);
         checkArgument(RegisteredStudioRecords.isValidWeek(week), RegisteredStudioRecords.MESSAGE_CONSTRAINTS);
         this.week = week;
     }
@@ -60,7 +60,7 @@ public class DeleteStudioRecordCommand extends Command {
     @Override
     public CommandResult execute(Model model) throws CommandException {
         requireNonNull(model);
-        Student studentToUpdate = getStudentAtDisplayedIndex(model, targetIndex);
+        Student studentToUpdate = getStudentAtDisplayedIndex(model, targetStudentIndex);
         RegisteredStudioRecords registeredStudioRecords = studentToUpdate.getRegisteredStudioRecords();
 
         if (!registeredStudioRecords.hasStudioRecord(week)) {
@@ -85,19 +85,19 @@ public class DeleteStudioRecordCommand extends Command {
             return false;
         }
 
-        return targetIndex.equals(otherDeleteStudioRecordCommand.targetIndex)
+        return targetStudentIndex.equals(otherDeleteStudioRecordCommand.targetStudentIndex)
                 && week == otherDeleteStudioRecordCommand.week;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(targetIndex, week);
+        return Objects.hash(targetStudentIndex, week);
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .add("targetIndex", targetIndex)
+                .add("targetStudentIndex", targetStudentIndex)
                 .add("week", week)
                 .toString();
     }

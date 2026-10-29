@@ -41,23 +41,23 @@ public class UnmarkMasteryCheckCommand extends Command {
 
     private static final Logger logger = LogsCenter.getLogger(UnmarkMasteryCheckCommand.class);
 
-    private final Index targetIndex;
+    private final Index targetStudentIndex;
     private final int number;
 
     /**
      * Creates a command to mark a numbered mastery check incomplete.
      * The mastery check number is validated when the command executes.
      *
-     * @param targetIndex Index of the student in the displayed list.
+     * @param targetStudentIndex Index of the student in the displayed list.
      * @param number Mastery check registration number to update.
      * @throws NullPointerException If the student index is null.
      */
-    public UnmarkMasteryCheckCommand(Index targetIndex, int number) {
-        requireNonNull(targetIndex);
+    public UnmarkMasteryCheckCommand(Index targetStudentIndex, int number) {
+        requireNonNull(targetStudentIndex);
         checkArgument(RegisteredMasteryChecks.isValidMasteryCheckNumber(number),
                 RegisteredMasteryChecks.MESSAGE_CONSTRAINTS);
 
-        this.targetIndex = targetIndex;
+        this.targetStudentIndex = targetStudentIndex;
         this.number = number;
     }
 
@@ -75,7 +75,7 @@ public class UnmarkMasteryCheckCommand extends Command {
     public CommandResult execute(Model model) throws CommandException {
         requireNonNull(model);
 
-        Student studentToUpdate = getStudentAtDisplayedIndex(model, targetIndex);
+        Student studentToUpdate = getStudentAtDisplayedIndex(model, targetStudentIndex);
         RegisteredMasteryChecks registeredMasteryChecks = studentToUpdate.getRegisteredMasteryChecks();
 
         if (!registeredMasteryChecks.hasMasteryCheck(number)) {
@@ -87,7 +87,7 @@ public class UnmarkMasteryCheckCommand extends Command {
         if (!registeredMasteryChecks.isCompleteMasteryCheck(number)) {
             logger.fine("UnmarkMasteryCheckCommand made no changes for mastery check " + number
                     + " for student " + studentToUpdate.getName()
-                    + " at displayed student index " + targetIndex.getOneBased() + ".");
+                    + " at displayed student index " + targetStudentIndex.getOneBased() + ".");
             return new CommandResult(String.format(MESSAGE_ALREADY_MARKED, studentToUpdate.getName(), number),
                     studentToUpdate);
         }
@@ -97,7 +97,7 @@ public class UnmarkMasteryCheckCommand extends Command {
         model.setStudent(studentToUpdate, updatedStudent);
         logger.info("Revoked completion for mastery check " + number
                 + " for student " + studentToUpdate.getName()
-                + " at displayed student index " + targetIndex.getOneBased() + " in memory.");
+                + " at displayed student index " + targetStudentIndex.getOneBased() + " in memory.");
         return new CommandResult(String.format(MESSAGE_SUCCESS, studentToUpdate.getName(), number), updatedStudent);
     }
 
@@ -118,13 +118,13 @@ public class UnmarkMasteryCheckCommand extends Command {
             return false;
         }
 
-        return targetIndex.equals(otherUnmarkMasteryCheckCommand.targetIndex)
+        return targetStudentIndex.equals(otherUnmarkMasteryCheckCommand.targetStudentIndex)
                 && number == otherUnmarkMasteryCheckCommand.number;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(targetIndex, number);
+        return Objects.hash(targetStudentIndex, number);
     }
 
     /**
@@ -135,7 +135,7 @@ public class UnmarkMasteryCheckCommand extends Command {
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .add("targetIndex", targetIndex)
+                .add("targetStudentIndex", targetStudentIndex)
                 .add("number", number)
                 .toString();
     }

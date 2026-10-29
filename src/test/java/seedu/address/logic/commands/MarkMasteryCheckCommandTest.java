@@ -204,7 +204,7 @@ public class MarkMasteryCheckCommandTest {
     @Test
     public void toString_validCommand_includesTargetIndexAndNumber() {
         MarkMasteryCheckCommand command = new MarkMasteryCheckCommand(INDEX_FIRST_STUDENT, 1);
-        assertEquals(MarkMasteryCheckCommand.class.getCanonicalName() + "{targetIndex=" + INDEX_FIRST_STUDENT
+        assertEquals(MarkMasteryCheckCommand.class.getCanonicalName() + "{targetStudentIndex=" + INDEX_FIRST_STUDENT
                 + ", number=1}", command.toString());
     }
 

@@ -214,7 +214,7 @@ public class DeleteMasteryCheckCommandTest {
     @Test
     public void toString_validCommand_includesStudentIndexAndMasteryCheckNumber() {
         DeleteMasteryCheckCommand command = new DeleteMasteryCheckCommand(INDEX_FIRST_STUDENT, 1);
-        assertEquals(DeleteMasteryCheckCommand.class.getCanonicalName() + "{targetIndex=" + INDEX_FIRST_STUDENT
+        assertEquals(DeleteMasteryCheckCommand.class.getCanonicalName() + "{targetStudentIndex=" + INDEX_FIRST_STUDENT
                 + ", number=1}", command.toString());
     }
 }

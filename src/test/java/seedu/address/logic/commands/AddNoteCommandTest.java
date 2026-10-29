@@ -159,7 +159,7 @@ public class AddNoteCommandTest {
         AddNoteCommand command = new AddNoteCommand(INDEX_FIRST_STUDENT, NOTE);
 
         assertEquals(AddNoteCommand.class.getCanonicalName()
-                + "{targetIndex=seedu.address.commons.core.index.Index{zeroBasedIndex=0}, "
+                + "{targetStudentIndex=seedu.address.commons.core.index.Index{zeroBasedIndex=0}, "
                 + "note=Review lecture notes}", command.toString());
     }
 }

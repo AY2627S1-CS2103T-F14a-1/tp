@@ -24,8 +24,8 @@ public class ViewCommandParser implements Parser<ViewCommand> {
         try {
             ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
                     args, PREFIX_STUDENT_INDEX);
-            Index index = ParserUtil.parseIndex(argMultimap.getRequiredValue(PREFIX_STUDENT_INDEX));
-            return new ViewCommand(index);
+            Index targetStudentIndex = ParserUtil.parseIndex(argMultimap.getRequiredValue(PREFIX_STUDENT_INDEX));
+            return new ViewCommand(targetStudentIndex);
         } catch (ParseException e) {
             throw new ParseException(e.getMessage() + ParserUtil.MESSAGE_SEE_USAGE + ViewCommand.MESSAGE_USAGE);
         }

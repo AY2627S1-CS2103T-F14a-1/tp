@@ -147,7 +147,7 @@ public class EditNoteCommandTest {
         EditNoteCommand command = new EditNoteCommand(INDEX_FIRST_STUDENT, INDEX_FIRST_NOTE, UPDATED_NOTE);
 
         assertEquals(EditNoteCommand.class.getCanonicalName()
-                + "{targetIndex=seedu.address.commons.core.index.Index{zeroBasedIndex=0}, "
+                + "{targetStudentIndex=seedu.address.commons.core.index.Index{zeroBasedIndex=0}, "
                 + "noteIndex=seedu.address.commons.core.index.Index{zeroBasedIndex=0}, "
                 + "note=Review tutorial notes}", command.toString());
     }

@@ -31,9 +31,9 @@ public class UnmarkMissionCommandParser implements Parser<UnmarkMissionCommand> 
             ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
                     args, PREFIX_STUDENT_INDEX, PREFIX_MISSION);
 
-            Index index = ParserUtil.parseIndex(argMultimap.getRequiredValue(PREFIX_STUDENT_INDEX));
+            Index targetStudentIndex = ParserUtil.parseIndex(argMultimap.getRequiredValue(PREFIX_STUDENT_INDEX));
             MissionId missionId = MissionParserUtil.parseMissionId(argMultimap.getRequiredValue(PREFIX_MISSION));
-            return new UnmarkMissionCommand(index, missionId);
+            return new UnmarkMissionCommand(targetStudentIndex, missionId);
         } catch (ParseException e) {
             throw new ParseException(e.getMessage()
                     + ParserUtil.MESSAGE_SEE_USAGE + UnmarkMissionCommand.MESSAGE_USAGE);

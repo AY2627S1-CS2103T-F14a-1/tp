@@ -29,9 +29,9 @@ public class UnmarkMasteryCheckCommandParser implements Parser<UnmarkMasteryChec
         try {
             ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
                     args, PREFIX_STUDENT_INDEX, PREFIX_NUMBER);
-            Index index = ParserUtil.parseIndex(argMultimap.getRequiredValue(PREFIX_STUDENT_INDEX));
+            Index targetStudentIndex = ParserUtil.parseIndex(argMultimap.getRequiredValue(PREFIX_STUDENT_INDEX));
             int number = MasteryCheckParserUtil.parseMasteryCheckNumber(argMultimap.getRequiredValue(PREFIX_NUMBER));
-            return new UnmarkMasteryCheckCommand(index, number);
+            return new UnmarkMasteryCheckCommand(targetStudentIndex, number);
         } catch (ParseException e) {
             throw new ParseException(e.getMessage()
                     + ParserUtil.MESSAGE_SEE_USAGE + UnmarkMasteryCheckCommand.MESSAGE_USAGE);

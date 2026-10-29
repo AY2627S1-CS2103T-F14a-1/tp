@@ -31,9 +31,9 @@ public class MarkMissionCommandParser implements Parser<MarkMissionCommand> {
             ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
                     args, PREFIX_STUDENT_INDEX, PREFIX_MISSION);
 
-            Index index = ParserUtil.parseIndex(argMultimap.getRequiredValue(PREFIX_STUDENT_INDEX));
+            Index targetStudentIndex = ParserUtil.parseIndex(argMultimap.getRequiredValue(PREFIX_STUDENT_INDEX));
             MissionId missionId = MissionParserUtil.parseMissionId(argMultimap.getRequiredValue(PREFIX_MISSION));
-            return new MarkMissionCommand(index, missionId);
+            return new MarkMissionCommand(targetStudentIndex, missionId);
         } catch (ParseException e) {
             throw new ParseException(e.getMessage()
                     + ParserUtil.MESSAGE_SEE_USAGE + MarkMissionCommand.MESSAGE_USAGE);

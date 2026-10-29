@@ -106,9 +106,10 @@ public class DeleteStudentCommandTest {
 
     @Test
     public void toStringMethod() {
-        Index targetIndex = Index.fromOneBased(1);
-        DeleteStudentCommand deleteStudentCommand = new DeleteStudentCommand(targetIndex);
-        String expected = DeleteStudentCommand.class.getCanonicalName() + "{targetIndex=" + targetIndex + "}";
+        Index targetStudentIndex = Index.fromOneBased(1);
+        DeleteStudentCommand deleteStudentCommand = new DeleteStudentCommand(targetStudentIndex);
+        String expected = DeleteStudentCommand.class.getCanonicalName()
+                + "{targetStudentIndex=" + targetStudentIndex + "}";
         assertEquals(expected, deleteStudentCommand.toString());
     }
 

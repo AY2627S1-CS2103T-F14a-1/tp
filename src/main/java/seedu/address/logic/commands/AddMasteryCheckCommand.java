@@ -43,26 +43,26 @@ public class AddMasteryCheckCommand extends Command {
     private static final DateTimeFormatter APPOINTMENT_TIME_FORMATTER =
             DateTimeFormatter.ofPattern("MMM d, HH:mm", Locale.ENGLISH);
 
-    private final Index targetIndex;
+    private final Index targetStudentIndex;
     private final int number;
     private final MasteryCheck masteryCheck;
 
     /**
      * Creates a command to register a numbered mastery check appointment.
      *
-     * @param targetIndex Index of the student in the displayed list.
+     * @param targetStudentIndex Index of the student in the displayed list.
      * @param number Positive mastery check number used to identify the appointment.
      * @param masteryCheck Appointment to register for the student.
      * @throws NullPointerException If the index or mastery check is null.
      * @throws IllegalArgumentException If the mastery check number is not positive.
      */
-    public AddMasteryCheckCommand(Index targetIndex, int number, MasteryCheck masteryCheck) {
-        requireNonNull(targetIndex);
+    public AddMasteryCheckCommand(Index targetStudentIndex, int number, MasteryCheck masteryCheck) {
+        requireNonNull(targetStudentIndex);
         requireNonNull(masteryCheck);
 
         checkArgument(number > 0, RegisteredMasteryChecks.MESSAGE_CONSTRAINTS);
 
-        this.targetIndex = targetIndex;
+        this.targetStudentIndex = targetStudentIndex;
         this.number = number;
         this.masteryCheck = masteryCheck;
     }
@@ -80,7 +80,7 @@ public class AddMasteryCheckCommand extends Command {
     public CommandResult execute(Model model) throws CommandException {
         requireNonNull(model);
 
-        Student studentToUpdate = getStudentAtDisplayedIndex(model, targetIndex);
+        Student studentToUpdate = getStudentAtDisplayedIndex(model, targetStudentIndex);
         RegisteredMasteryChecks registeredMasteryChecks = studentToUpdate.getRegisteredMasteryChecks();
 
         if (registeredMasteryChecks.hasMasteryCheck(number)) {
@@ -113,14 +113,14 @@ public class AddMasteryCheckCommand extends Command {
             return false;
         }
 
-        return targetIndex.equals(otherAddMasteryCheckCommand.targetIndex)
+        return targetStudentIndex.equals(otherAddMasteryCheckCommand.targetStudentIndex)
                 && number == otherAddMasteryCheckCommand.number
                 && masteryCheck.equals(otherAddMasteryCheckCommand.masteryCheck);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(targetIndex, number, masteryCheck);
+        return Objects.hash(targetStudentIndex, number, masteryCheck);
     }
 
     /**
@@ -131,7 +131,7 @@ public class AddMasteryCheckCommand extends Command {
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .add("targetIndex", targetIndex)
+                .add("targetStudentIndex", targetStudentIndex)
                 .add("number", number)
                 .add("masteryCheck", masteryCheck)
                 .toString();

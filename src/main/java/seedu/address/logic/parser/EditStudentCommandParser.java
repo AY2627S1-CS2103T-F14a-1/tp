@@ -48,8 +48,8 @@ public class EditStudentCommandParser implements Parser<EditStudentCommand> {
                 throw new ParseException(EditStudentCommand.MESSAGE_NOT_EDITED);
             }
 
-            Index index = ParserUtil.parseIndex(argMultimap.getRequiredValue(PREFIX_STUDENT_INDEX));
-            return new EditStudentCommand(index, editStudentDescriptor);
+            Index targetStudentIndex = ParserUtil.parseIndex(argMultimap.getRequiredValue(PREFIX_STUDENT_INDEX));
+            return new EditStudentCommand(targetStudentIndex, editStudentDescriptor);
         } catch (ParseException e) {
             throw new ParseException(e.getMessage() + ParserUtil.MESSAGE_SEE_USAGE + EditStudentCommand.MESSAGE_USAGE);
         }

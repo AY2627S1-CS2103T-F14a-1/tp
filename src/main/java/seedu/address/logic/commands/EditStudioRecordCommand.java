@@ -38,24 +38,24 @@ public class EditStudioRecordCommand extends Command {
     public static final String MESSAGE_WEEK_NOT_RECORDED =
             "%1$s’s studio for studio week %2$d was not already recorded. No changes made.";
 
-    private final Index targetIndex;
+    private final Index targetStudentIndex;
     private final int week;
     private final StudioRecord studioRecord;
 
     /**
      * Creates a command to edit a week's studio record.
      *
-     * @param targetIndex Index of the student in the displayed list.
+     * @param targetStudentIndex Index of the student in the displayed list.
      * @param week Studio week for the record.
      * @param studioRecord Record to edit.
      */
-    public EditStudioRecordCommand(Index targetIndex, int week, StudioRecord studioRecord) {
-        requireNonNull(targetIndex);
+    public EditStudioRecordCommand(Index targetStudentIndex, int week, StudioRecord studioRecord) {
+        requireNonNull(targetStudentIndex);
         requireNonNull(studioRecord);
 
         checkArgument(RegisteredStudioRecords.isValidWeek(week), RegisteredStudioRecords.MESSAGE_CONSTRAINTS);
 
-        this.targetIndex = targetIndex;
+        this.targetStudentIndex = targetStudentIndex;
         this.week = week;
         this.studioRecord = studioRecord;
     }
@@ -70,7 +70,7 @@ public class EditStudioRecordCommand extends Command {
     @Override
     public CommandResult execute(Model model) throws CommandException {
         requireNonNull(model);
-        Student studentToUpdate = getStudentAtDisplayedIndex(model, targetIndex);
+        Student studentToUpdate = getStudentAtDisplayedIndex(model, targetStudentIndex);
         RegisteredStudioRecords registeredStudioRecords = studentToUpdate.getRegisteredStudioRecords();
 
         if (!registeredStudioRecords.hasStudioRecord(week)) {
@@ -100,20 +100,20 @@ public class EditStudioRecordCommand extends Command {
             return false;
         }
 
-        return targetIndex.equals(otherEditStudioRecordCommand.targetIndex)
+        return targetStudentIndex.equals(otherEditStudioRecordCommand.targetStudentIndex)
                 && week == otherEditStudioRecordCommand.week
                 && studioRecord.equals(otherEditStudioRecordCommand.studioRecord);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(targetIndex, week, studioRecord);
+        return Objects.hash(targetStudentIndex, week, studioRecord);
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .add("targetIndex", targetIndex)
+                .add("targetStudentIndex", targetStudentIndex)
                 .add("week", week)
                 .add("studioRecord", studioRecord)
                 .toString();

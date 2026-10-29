@@ -52,15 +52,15 @@ public final class RegisteredNotes {
     /**
      * Returns whether a note with the same index has been registered.
      *
-     * @param targetIndex Note index to check.
+     * @param targetStudentIndex Note index to check.
      * @return True if note index has been registered.
      * @throws NullPointerException If the note index is {@code null}.
      * @throws IllegalArgumentException If the note index is outside the valid range.
      */
-    public boolean hasNote(Index targetIndex) {
-        requireNonNull(targetIndex);
-        checkArgument(isValidNoteIndex(targetIndex), MESSAGE_CONSTRAINTS);
-        return targetIndex.getOneBased() <= registeredNotes.size();
+    public boolean hasNote(Index targetStudentIndex) {
+        requireNonNull(targetStudentIndex);
+        checkArgument(isValidNoteIndex(targetStudentIndex), MESSAGE_CONSTRAINTS);
+        return targetStudentIndex.getOneBased() <= registeredNotes.size();
     }
 
     /**
@@ -118,19 +118,19 @@ public final class RegisteredNotes {
      * without changing this object. Returns this object if a note with
      * the same index was already not registered.
      *
-     * @param targetIndex Note index to remove.
+     * @param targetStudentIndex Note index to remove.
      * @return {@code RegisteredNotes} containing the existing notes without
      *     the note with the given index.
      * @throws NullPointerException If the note index is {@code null}.
      * @throws IllegalArgumentException If the note index is outside the valid range.
      */
-    public RegisteredNotes withoutNote(Index targetIndex) {
-        if (!hasNote(targetIndex)) {
+    public RegisteredNotes withoutNote(Index targetStudentIndex) {
+        if (!hasNote(targetStudentIndex)) {
             return this;
         }
 
         List<Note> updatedNotes = new ArrayList<>(registeredNotes);
-        updatedNotes.remove(targetIndex.getZeroBased());
+        updatedNotes.remove(targetStudentIndex.getZeroBased());
         return new RegisteredNotes(updatedNotes);
     }
 

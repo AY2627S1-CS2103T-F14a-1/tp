@@ -130,27 +130,27 @@ public class EditStudentCommandParserTest {
 
     @Test
     public void parse_allFieldsSpecified_success() {
-        Index targetIndex = INDEX_SECOND_STUDENT;
-        String userInput = "id/" + targetIndex.getOneBased() + PHONE_DESC_BOB + TAG_DESC_HUSBAND
+        Index targetStudentIndex = INDEX_SECOND_STUDENT;
+        String userInput = "id/" + targetStudentIndex.getOneBased() + PHONE_DESC_BOB + TAG_DESC_HUSBAND
                 + EMAIL_DESC_AMY + NAME_DESC_AMY + MATRIC_NUMBER_DESC_AMY + TAG_DESC_FRIEND + STUDIO_GROUP_DESC_AMY;
 
         EditStudentDescriptor descriptor = new EditStudentDescriptorBuilder().withName(VALID_NAME_AMY)
                 .withMatricNumber(VALID_MATRIC_NUMBER_AMY).withPhone(VALID_PHONE_BOB).withEmail(VALID_EMAIL_AMY)
                 .withTags(VALID_TAG_HUSBAND, VALID_TAG_FRIEND).withStudioGroup(VALID_STUDIO_GROUP_AMY)
                 .build();
-        EditStudentCommand expectedCommand = new EditStudentCommand(targetIndex, descriptor);
+        EditStudentCommand expectedCommand = new EditStudentCommand(targetStudentIndex, descriptor);
 
         assertParseSuccess(parser, userInput, expectedCommand);
     }
 
     @Test
     public void parse_someFieldsSpecified_success() {
-        Index targetIndex = INDEX_FIRST_STUDENT;
-        String userInput = "id/" + targetIndex.getOneBased() + PHONE_DESC_BOB + EMAIL_DESC_AMY;
+        Index targetStudentIndex = INDEX_FIRST_STUDENT;
+        String userInput = "id/" + targetStudentIndex.getOneBased() + PHONE_DESC_BOB + EMAIL_DESC_AMY;
 
         EditStudentDescriptor descriptor = new EditStudentDescriptorBuilder().withPhone(VALID_PHONE_BOB)
                 .withEmail(VALID_EMAIL_AMY).build();
-        EditStudentCommand expectedCommand = new EditStudentCommand(targetIndex, descriptor);
+        EditStudentCommand expectedCommand = new EditStudentCommand(targetStudentIndex, descriptor);
 
         assertParseSuccess(parser, userInput, expectedCommand);
     }
@@ -158,40 +158,40 @@ public class EditStudentCommandParserTest {
     @Test
     public void parse_oneFieldSpecified_success() {
         // name
-        Index targetIndex = INDEX_THIRD_STUDENT;
-        String userInput = "id/" + targetIndex.getOneBased() + NAME_DESC_AMY;
+        Index targetStudentIndex = INDEX_THIRD_STUDENT;
+        String userInput = "id/" + targetStudentIndex.getOneBased() + NAME_DESC_AMY;
         EditStudentDescriptor descriptor = new EditStudentDescriptorBuilder().withName(VALID_NAME_AMY).build();
-        EditStudentCommand expectedCommand = new EditStudentCommand(targetIndex, descriptor);
+        EditStudentCommand expectedCommand = new EditStudentCommand(targetStudentIndex, descriptor);
         assertParseSuccess(parser, userInput, expectedCommand);
 
         // matriculation number
-        userInput = "id/" + targetIndex.getOneBased() + MATRIC_NUMBER_DESC_AMY;
+        userInput = "id/" + targetStudentIndex.getOneBased() + MATRIC_NUMBER_DESC_AMY;
         descriptor = new EditStudentDescriptorBuilder().withMatricNumber(VALID_MATRIC_NUMBER_AMY).build();
-        expectedCommand = new EditStudentCommand(targetIndex, descriptor);
+        expectedCommand = new EditStudentCommand(targetStudentIndex, descriptor);
         assertParseSuccess(parser, userInput, expectedCommand);
 
         // phone
-        userInput = "id/" + targetIndex.getOneBased() + PHONE_DESC_AMY;
+        userInput = "id/" + targetStudentIndex.getOneBased() + PHONE_DESC_AMY;
         descriptor = new EditStudentDescriptorBuilder().withPhone(VALID_PHONE_AMY).build();
-        expectedCommand = new EditStudentCommand(targetIndex, descriptor);
+        expectedCommand = new EditStudentCommand(targetStudentIndex, descriptor);
         assertParseSuccess(parser, userInput, expectedCommand);
 
         // email
-        userInput = "id/" + targetIndex.getOneBased() + EMAIL_DESC_AMY;
+        userInput = "id/" + targetStudentIndex.getOneBased() + EMAIL_DESC_AMY;
         descriptor = new EditStudentDescriptorBuilder().withEmail(VALID_EMAIL_AMY).build();
-        expectedCommand = new EditStudentCommand(targetIndex, descriptor);
+        expectedCommand = new EditStudentCommand(targetStudentIndex, descriptor);
         assertParseSuccess(parser, userInput, expectedCommand);
 
         // tags
-        userInput = "id/" + targetIndex.getOneBased() + TAG_DESC_FRIEND;
+        userInput = "id/" + targetStudentIndex.getOneBased() + TAG_DESC_FRIEND;
         descriptor = new EditStudentDescriptorBuilder().withTags(VALID_TAG_FRIEND).build();
-        expectedCommand = new EditStudentCommand(targetIndex, descriptor);
+        expectedCommand = new EditStudentCommand(targetStudentIndex, descriptor);
         assertParseSuccess(parser, userInput, expectedCommand);
 
         // studio group
-        userInput = "id/" + targetIndex.getOneBased() + STUDIO_GROUP_DESC_AMY;
+        userInput = "id/" + targetStudentIndex.getOneBased() + STUDIO_GROUP_DESC_AMY;
         descriptor = new EditStudentDescriptorBuilder().withStudioGroup(VALID_STUDIO_GROUP_AMY).build();
-        expectedCommand = new EditStudentCommand(targetIndex, descriptor);
+        expectedCommand = new EditStudentCommand(targetStudentIndex, descriptor);
         assertParseSuccess(parser, userInput, expectedCommand);
     }
 
@@ -201,35 +201,35 @@ public class EditStudentCommandParserTest {
         // AddStudentCommandParserTest#parse_repeatedNonTagValue_failure()
 
         // valid followed by invalid
-        Index targetIndex = INDEX_FIRST_STUDENT;
-        String userInput = "id/" + targetIndex.getOneBased() + INVALID_PHONE_DESC + PHONE_DESC_BOB;
+        Index targetStudentIndex = INDEX_FIRST_STUDENT;
+        String userInput = "id/" + targetStudentIndex.getOneBased() + INVALID_PHONE_DESC + PHONE_DESC_BOB;
 
         assertParseFailure(parser, userInput,
                 CliSyntax.PREFIX_PHONE.getDuplicateMessage() + USAGE_SUFFIX);
 
         // repeated matriculation number
-        userInput = "id/" + targetIndex.getOneBased() + MATRIC_NUMBER_DESC_AMY + MATRIC_NUMBER_DESC_AMY;
+        userInput = "id/" + targetStudentIndex.getOneBased() + MATRIC_NUMBER_DESC_AMY + MATRIC_NUMBER_DESC_AMY;
         assertParseFailure(parser, userInput,
                 CliSyntax.PREFIX_MATRIC_NUMBER.getDuplicateMessage() + USAGE_SUFFIX);
 
         // invalid matriculation number followed by valid value
-        userInput = "id/" + targetIndex.getOneBased() + INVALID_MATRIC_NUMBER_DESC + MATRIC_NUMBER_DESC_AMY;
+        userInput = "id/" + targetStudentIndex.getOneBased() + INVALID_MATRIC_NUMBER_DESC + MATRIC_NUMBER_DESC_AMY;
         assertParseFailure(parser, userInput,
                 CliSyntax.PREFIX_MATRIC_NUMBER.getDuplicateMessage() + USAGE_SUFFIX);
 
         // valid matriculation number followed by invalid value
-        userInput = "id/" + targetIndex.getOneBased() + MATRIC_NUMBER_DESC_AMY + INVALID_MATRIC_NUMBER_DESC;
+        userInput = "id/" + targetStudentIndex.getOneBased() + MATRIC_NUMBER_DESC_AMY + INVALID_MATRIC_NUMBER_DESC;
         assertParseFailure(parser, userInput,
                 CliSyntax.PREFIX_MATRIC_NUMBER.getDuplicateMessage() + USAGE_SUFFIX);
 
         // invalid followed by valid
-        userInput = "id/" + targetIndex.getOneBased() + PHONE_DESC_BOB + INVALID_PHONE_DESC;
+        userInput = "id/" + targetStudentIndex.getOneBased() + PHONE_DESC_BOB + INVALID_PHONE_DESC;
 
         assertParseFailure(parser, userInput,
                 CliSyntax.PREFIX_PHONE.getDuplicateMessage() + USAGE_SUFFIX);
 
         // multiple valid fields repeated
-        userInput = "id/" + targetIndex.getOneBased() + PHONE_DESC_AMY + EMAIL_DESC_AMY
+        userInput = "id/" + targetStudentIndex.getOneBased() + PHONE_DESC_AMY + EMAIL_DESC_AMY
                 + TAG_DESC_FRIEND + PHONE_DESC_AMY + EMAIL_DESC_AMY + TAG_DESC_FRIEND
                 + PHONE_DESC_BOB + EMAIL_DESC_BOB + TAG_DESC_HUSBAND + STUDIO_GROUP_DESC_AMY
                 + STUDIO_GROUP_DESC_BOB;
@@ -238,7 +238,7 @@ public class EditStudentCommandParserTest {
                 CliSyntax.PREFIX_PHONE.getDuplicateMessage() + USAGE_SUFFIX);
 
         // multiple invalid values
-        userInput = "id/" + targetIndex.getOneBased() + INVALID_PHONE_DESC + INVALID_STUDIO_GROUP_DESC
+        userInput = "id/" + targetStudentIndex.getOneBased() + INVALID_PHONE_DESC + INVALID_STUDIO_GROUP_DESC
                 + INVALID_EMAIL_DESC + INVALID_PHONE_DESC
                 + INVALID_EMAIL_DESC + INVALID_STUDIO_GROUP_DESC;
 
@@ -248,11 +248,11 @@ public class EditStudentCommandParserTest {
 
     @Test
     public void parse_resetTags_success() {
-        Index targetIndex = INDEX_THIRD_STUDENT;
-        String userInput = "id/" + targetIndex.getOneBased() + TAG_EMPTY;
+        Index targetStudentIndex = INDEX_THIRD_STUDENT;
+        String userInput = "id/" + targetStudentIndex.getOneBased() + TAG_EMPTY;
 
         EditStudentDescriptor descriptor = new EditStudentDescriptorBuilder().withTags().build();
-        EditStudentCommand expectedCommand = new EditStudentCommand(targetIndex, descriptor);
+        EditStudentCommand expectedCommand = new EditStudentCommand(targetStudentIndex, descriptor);
 
         assertParseSuccess(parser, userInput, expectedCommand);
     }

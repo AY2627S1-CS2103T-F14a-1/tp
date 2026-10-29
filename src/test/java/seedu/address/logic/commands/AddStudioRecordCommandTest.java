@@ -211,7 +211,7 @@ public class AddStudioRecordCommandTest {
     public void toString_validCommand_returnsExpectedString() {
         AddStudioRecordCommand command = new AddStudioRecordCommand(INDEX_FIRST_STUDENT, 3, studioRecord);
         String expected = AddStudioRecordCommand.class.getCanonicalName()
-                + "{targetIndex=" + INDEX_FIRST_STUDENT + ", week=3, studioRecord=" + studioRecord + "}";
+                + "{targetStudentIndex=" + INDEX_FIRST_STUDENT + ", week=3, studioRecord=" + studioRecord + "}";
 
         assertEquals(expected, command.toString());
     }

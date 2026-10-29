@@ -26,21 +26,21 @@ public class ViewCommand extends Command {
     public static final String MESSAGE_VIEW_STUDENT_SUCCESS =
             "Showing profile of %1$s";
 
-    private final Index targetIndex;
+    private final Index targetStudentIndex;
 
     /**
      * Creates a ViewCommand to display the student at the specified index.
      *
-     * @param targetIndex the index of the student to view
+     * @param targetStudentIndex the index of the student to view
      */
-    public ViewCommand(Index targetIndex) {
-        this.targetIndex = targetIndex;
+    public ViewCommand(Index targetStudentIndex) {
+        this.targetStudentIndex = targetStudentIndex;
     }
 
     @Override
     public CommandResult execute(Model model) throws CommandException {
         Student studentToView =
-                getStudentAtDisplayedIndex(model, targetIndex);
+                getStudentAtDisplayedIndex(model, targetStudentIndex);
 
         return new CommandResult(
         String.format(
@@ -61,18 +61,18 @@ public class ViewCommand extends Command {
             return false;
         }
 
-        return targetIndex.equals(otherViewCommand.targetIndex);
+        return targetStudentIndex.equals(otherViewCommand.targetStudentIndex);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(targetIndex);
+        return Objects.hash(targetStudentIndex);
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .add("targetIndex", targetIndex)
+                .add("targetStudentIndex", targetStudentIndex)
                 .toString();
     }
 }

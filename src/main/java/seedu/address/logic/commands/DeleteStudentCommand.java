@@ -26,17 +26,17 @@ public class DeleteStudentCommand extends Command {
 
     public static final String MESSAGE_DELETE_STUDENT_SUCCESS = "Deleted student: %1$s.";
 
-    private final Index targetIndex;
+    private final Index targetStudentIndex;
 
-    public DeleteStudentCommand(Index targetIndex) {
-        this.targetIndex = targetIndex;
+    public DeleteStudentCommand(Index targetStudentIndex) {
+        this.targetStudentIndex = targetStudentIndex;
     }
 
     @Override
     public CommandResult execute(Model model) throws CommandException {
         requireNonNull(model);
 
-        Student studentToDelete = getStudentAtDisplayedIndex(model, targetIndex);
+        Student studentToDelete = getStudentAtDisplayedIndex(model, targetStudentIndex);
         model.deleteStudent(studentToDelete);
         return new CommandResult(String.format(MESSAGE_DELETE_STUDENT_SUCCESS, Messages.format(studentToDelete)));
     }
@@ -52,18 +52,18 @@ public class DeleteStudentCommand extends Command {
             return false;
         }
 
-        return targetIndex.equals(otherDeleteStudentCommand.targetIndex);
+        return targetStudentIndex.equals(otherDeleteStudentCommand.targetStudentIndex);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(targetIndex);
+        return Objects.hash(targetStudentIndex);
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .add("targetIndex", targetIndex)
+                .add("targetStudentIndex", targetStudentIndex)
                 .toString();
     }
 }

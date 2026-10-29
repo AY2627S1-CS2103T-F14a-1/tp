@@ -29,9 +29,9 @@ public class DeleteStudioRecordCommandParser implements Parser<DeleteStudioRecor
             ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
                     args, PREFIX_STUDENT_INDEX, PREFIX_WEEK);
 
-            Index index = ParserUtil.parseIndex(argMultimap.getRequiredValue(PREFIX_STUDENT_INDEX));
+            Index targetStudentIndex = ParserUtil.parseIndex(argMultimap.getRequiredValue(PREFIX_STUDENT_INDEX));
             int week = StudioRecordParserUtil.parseWeek(argMultimap.getRequiredValue(PREFIX_WEEK));
-            return new DeleteStudioRecordCommand(index, week);
+            return new DeleteStudioRecordCommand(targetStudentIndex, week);
         } catch (ParseException e) {
             throw new ParseException(e.getMessage()
                     + ParserUtil.MESSAGE_SEE_USAGE + DeleteStudioRecordCommand.MESSAGE_USAGE);
