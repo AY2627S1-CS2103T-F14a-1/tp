@@ -1,7 +1,6 @@
 package guitests.guihandles;
 
 import javafx.stage.Stage;
-import seedu.address.ui.StudentDetailsPanel;
 
 /**
  * Provides a handle for {@code MainWindow}.
@@ -15,6 +14,9 @@ public class MainWindowHandle extends StageHandle {
     private final MainMenuHandle mainMenu;
     private final StudentDetailsPanelHandle studentDetailsPanel;
 
+    /**
+     * Initializes a handle for {@code MainWindow} using the given {@code stage}.
+     */
     public MainWindowHandle(Stage stage) {
         super(stage);
 
@@ -23,7 +25,8 @@ public class MainWindowHandle extends StageHandle {
         commandBox = new CommandBoxHandle(getChildNode(CommandBoxHandle.COMMAND_INPUT_FIELD_ID));
         statusBarFooter = new StatusBarFooterHandle(getChildNode(StatusBarFooterHandle.STATUS_BAR_PLACEHOLDER));
         mainMenu = new MainMenuHandle(getChildNode(MainMenuHandle.MENU_BAR_ID));
-        studentDetailsPanel = new StudentDetailsPanelHandle(getChildNode(StudentDetailsPanelHandle.STUDENT_DETAILS_PANEL_ID));
+        studentDetailsPanel = new StudentDetailsPanelHandle(getChildNode(
+                StudentDetailsPanelHandle.STUDENT_DETAILS_PANEL_ID));
     }
 
     public StudentListPanelHandle getStudentListPanel() {
