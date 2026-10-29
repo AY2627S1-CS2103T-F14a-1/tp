@@ -23,7 +23,7 @@ public class EditNoteCommand extends Command {
     public static final String COMMAND_WORD = "editnote";
 
     public static final String MESSAGE_INDEX_NOT_RECORDED =
-            "%1$s does not have a registered note with index %2$d. No changes made.";
+            "The note index provided doesn't exist.";
     public static final String MESSAGE_SAME_NOTE =
             "%1$s’s note with index %2$d is already the same. No changes made.";
     public static final String MESSAGE_SUCCESS =
@@ -64,8 +64,7 @@ public class EditNoteCommand extends Command {
         Student studentToUpdate = getStudentAtDisplayedIndex(model, targetIndex);
         RegisteredNotes registeredNotes = studentToUpdate.getRegisteredNotes();
         if (!registeredNotes.hasNote(noteIndex)) {
-            return new CommandResult(String.format(MESSAGE_INDEX_NOT_RECORDED, studentToUpdate.getName(),
-                    noteIndex.getOneBased()), studentToUpdate);
+            throw new CommandException(MESSAGE_INDEX_NOT_RECORDED);
         }
 
         if (registeredNotes.hasMatchingNote(noteIndex, updatedNote)) {
