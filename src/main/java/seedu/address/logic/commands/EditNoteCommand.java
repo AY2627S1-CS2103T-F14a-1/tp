@@ -30,7 +30,7 @@ public class EditNoteCommand extends Command {
             "Edited %1$s's note with index %2$d.";
     public static final String MESSAGE_USAGE = COMMAND_WORD
             + ": Edits a registered note for the selected student.\n"
-            + "Parameters: " + PREFIX_INDEX + "INDEX " + PREFIX_NOTE_INDEX + "index " + PREFIX_NOTE_TEXT + "TEXT\n"
+            + "Parameters: " + PREFIX_INDEX + "INDEX " + PREFIX_NOTE_INDEX + "NOTE_INDEX " + PREFIX_NOTE_TEXT + "TEXT\n"
             + "INDEX must be a positive integer identifying a displayed student.\n"
             + "NOTE_INDEX must be a positive integer less than or equal to "
             + RegisteredNotes.MAX_NOTE_INDEX + " inclusive.\n"
