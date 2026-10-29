@@ -135,6 +135,7 @@
         "deleting-a-mastery-check-delmc": "Deleting a mastery check: delmc",
         "marking-a-mastery-check-as-completed-markmc": "Marking a mastery check as completed: markmc",
         "unmarking-a-mastery-check-as-completed-unmarkmc": "Unmarking a mastery check as completed: unmarkmc",
+        "listing-upcoming-mastery-checks-listmc": "Listing Upcoming Mastery Checks: listmc",
         "adding-a-mission-addmission": "Adding a mission: addmission",
         "deleting-a-mission-delmission": "Deleting a mission: delmission",
         "recording-a-mission-submission-markmission": "Recording a mission submission: markmission",
