@@ -66,7 +66,7 @@ public class Student {
                    MissionSubmissions missionSubmissions, RegisteredStudioRecords registeredStudioRecords,
                    RegisteredMasteryChecks registeredMasteryChecks, RegisteredNotes registeredNotes) {
         requireAllNonNull(
-                name, phone, email, tags, missionSubmissions, registeredStudioRecords,
+                name, phone, email, tags, studioGroup, missionSubmissions, registeredStudioRecords,
                 registeredMasteryChecks, registeredNotes);
         this.name = name;
         this.phone = phone;
