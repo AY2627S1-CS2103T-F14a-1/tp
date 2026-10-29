@@ -110,6 +110,15 @@ public class MainWindow extends UiPart<Stage> {
     }
 
     /**
+     * Returns the student details panel displayed in the main window.
+     *
+     * @return the student details panel
+     */
+    StudentDetailsPanel getStudentDetailsPanel() {
+        return studentDetailsPanel;
+    }
+
+    /**
      * Assigns a keyboard shortcut to a menu item.
      *
      * <p>An event filter is used because text input controls may consume
@@ -296,58 +305,68 @@ public class MainWindow extends UiPart<Stage> {
      *
      * @see seedu.address.logic.Logic#execute(String)
      */
-    private CommandResult executeCommand(String commandText) throws CommandException, ParseException {
+    CommandResult executeCommand(String commandText) throws CommandException, ParseException {
         try {
             lastCommandLabel.setText(commandText);
             CommandResult commandResult = logic.execute(commandText);
 
-            logger.info("Result: " + commandResult.getFeedbackToUser());
+            logger.info(
+                    "Result: " + commandResult.getFeedbackToUser());
 
-            List<String> warnings = commandResult.getWarnings();
-            resultDisplay.setFeedbackToUser(commandResult.getFeedbackToUser(), warnings);
-
-            if (commandResult.isMissionUpdated()) {
-                studentDetailsPanel.updateMissions(
-                        commandResult.getMissions());
-            }
-
-            commandResult.getStudentToView().ifPresent(student -> {
-                boolean studentStillVisible = logic.getFilteredStudentList()
-                        .stream()
-                        .anyMatch(filteredStudent ->
-                                filteredStudent.getName().equals(
-                                        student.getName()));
-
-                if (studentStillVisible) {
-                    studentListPanel.getStudentListView()
-                            .getSelectionModel()
-                            .select(student);
-
-                    studentDetailsPanel.showStudent(
-                            student,
-                            logic.getMissions());
-                } else {
-                    studentDetailsPanel.clearStudent();
-
-                    studentListPanel.getStudentListView()
-                            .getSelectionModel()
-                            .clearSelection();
-                }
-            });
-
-            if (commandResult.isShowHelp()) {
-                handleHelp();
-            }
-
-            if (commandResult.isExit()) {
-                handleExit();
-            }
-
+            handleCommandResult(commandResult);
             return commandResult;
         } catch (CommandException | ParseException e) {
             logger.info("An error occurred while executing command: " + commandText);
             resultDisplay.setFeedbackToUser(e.getMessage());
             throw e;
         }
+    }
+
+    /**
+     * Updates the user interface using the result of an executed command.
+     *
+     * <p>Displays command feedback and warnings, refreshes mission information
+     * when the mission catalogue has changed, and displays the returned student
+     * if that student remains in the current filtered list. If the student is no
+     * longer visible, the details panel and list selection are cleared.</p>
+     *
+     * @param commandResult result returned after executing a command
+     */
+    void handleCommandResult(CommandResult commandResult) {
+        List<String> warnings = commandResult.getWarnings();
+
+        resultDisplay.setFeedbackToUser(
+                commandResult.getFeedbackToUser(),
+                warnings);
+
+        if (commandResult.isMissionUpdated()) {
+            studentDetailsPanel.updateMissions(
+                    commandResult.getMissions());
+        }
+
+        commandResult.getStudentToView().ifPresent(student -> {
+            boolean studentStillVisible =
+                    logic.getFilteredStudentList()
+                            .stream()
+                            .anyMatch(filteredStudent ->
+                                    filteredStudent.getName().equals(
+                                            student.getName()));
+
+            if (studentStillVisible) {
+                studentListPanel.getStudentListView()
+                        .getSelectionModel()
+                        .select(student);
+
+                studentDetailsPanel.showStudent(
+                        student,
+                        logic.getMissions());
+            } else {
+                studentDetailsPanel.clearStudent();
+
+                studentListPanel.getStudentListView()
+                        .getSelectionModel()
+                        .clearSelection();
+            }
+        });
     }
 }

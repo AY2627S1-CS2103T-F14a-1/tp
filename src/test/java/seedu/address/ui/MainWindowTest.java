@@ -6,6 +6,7 @@ import static seedu.address.testutil.TypicalStudents.AMY;
 import static seedu.address.testutil.TypicalStudents.getTypicalAddressBook;
 
 import java.nio.file.Path;
+import java.util.List;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 
@@ -16,6 +17,7 @@ import javafx.application.Platform;
 import javafx.stage.Stage;
 import seedu.address.logic.Logic;
 import seedu.address.logic.LogicManager;
+import seedu.address.logic.commands.CommandResult;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.UserPrefs;
@@ -237,6 +239,146 @@ public class MainWindowTest {
                         secondStudent,
                         getStudentDetailsPanel(mainWindow)
                                 .getDisplayedStudent());
+            } catch (Exception exception) {
+                throw new RuntimeException(exception);
+            }
+        });
+    }
+
+    @Test
+    public void executeCommand_viewVisibleStudent_displaysStudent()
+            throws Exception {
+        runOnJavaFxThread(() -> {
+            TestContext context = createTestContext();
+            MainWindow mainWindow = createMainWindow(context.logic);
+            mainWindow.fillInnerParts();
+
+            try {
+                mainWindow.executeCommand("view id/1");
+
+                Student expectedStudent =
+                        context.logic.getFilteredStudentList().getFirst();
+
+                assertEquals(
+                        expectedStudent,
+                        getStudentDetailsPanel(mainWindow)
+                                .getDisplayedStudent());
+
+                assertEquals(
+                        expectedStudent,
+                        mainWindow.getStudentListPanel()
+                                .getStudentListView()
+                                .getSelectionModel()
+                                .getSelectedItem());
+            } catch (Exception exception) {
+                throw new RuntimeException(exception);
+            }
+        });
+    }
+
+    @Test
+    public void handleCommandResult_visibleStudent_displaysStudent()
+            throws Exception {
+        runOnJavaFxThread(() -> {
+            TestContext context = createTestContext();
+            MainWindow mainWindow = createMainWindow(context.logic);
+            mainWindow.fillInnerParts();
+
+            Student student =
+                    context.logic.getFilteredStudentList().getFirst();
+
+            CommandResult result = new CommandResult(
+                    "Student displayed",
+                    student);
+
+            mainWindow.handleCommandResult(result);
+
+            try {
+                assertEquals(
+                        student,
+                        mainWindow.getStudentDetailsPanel()
+                                .getDisplayedStudent());
+
+                assertEquals(
+                        student,
+                        mainWindow.getStudentListPanel()
+                                .getStudentListView()
+                                .getSelectionModel()
+                                .getSelectedItem());
+            } catch (Exception exception) {
+                throw new RuntimeException(exception);
+            }
+        });
+    }
+
+    @Test
+    public void handleCommandResult_missionUpdated_refreshesMissions()
+            throws Exception {
+        runOnJavaFxThread(() -> {
+            TestContext context = createTestContext();
+            MainWindow mainWindow = createMainWindow(context.logic);
+            mainWindow.fillInnerParts();
+
+            Student student =
+                    context.logic.getFilteredStudentList().getFirst();
+
+            mainWindow.getStudentDetailsPanel()
+                    .showStudent(student, List.of());
+
+            CommandResult result = new CommandResult(
+                    "Mission updated",
+                    null,
+                    context.logic.getMissions(),
+                    true);
+
+            mainWindow.handleCommandResult(result);
+
+            try {
+                assertEquals(
+                        student,
+                        mainWindow.getStudentDetailsPanel()
+                                .getDisplayedStudent());
+            } catch (Exception exception) {
+                throw new RuntimeException(exception);
+            }
+        });
+    }
+
+    @Test
+    public void handleCommandResult_invisibleStudent_clearsDetails()
+            throws Exception {
+        runOnJavaFxThread(() -> {
+            TestContext context = createTestContext();
+            MainWindow mainWindow = createMainWindow(context.logic);
+            mainWindow.fillInnerParts();
+
+            Student student =
+                    context.logic.getFilteredStudentList().getFirst();
+
+            mainWindow.getStudentDetailsPanel()
+                    .showStudent(student, context.logic.getMissions());
+
+            context.model.updateFilteredStudentList(
+                    visibleStudent ->
+                            !visibleStudent.getName().equals(
+                                    student.getName()));
+
+            CommandResult result = new CommandResult(
+                    "Updated student",
+                    student);
+
+            mainWindow.handleCommandResult(result);
+
+            try {
+                assertNull(
+                        mainWindow.getStudentDetailsPanel()
+                                .getDisplayedStudent());
+
+                assertNull(
+                        mainWindow.getStudentListPanel()
+                                .getStudentListView()
+                                .getSelectionModel()
+                                .getSelectedItem());
             } catch (Exception exception) {
                 throw new RuntimeException(exception);
             }
