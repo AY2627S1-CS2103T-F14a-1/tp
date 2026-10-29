@@ -198,7 +198,13 @@ public class DeleteMasteryCheckCommandTest {
     public void equals_indexAndNumberDifferences_returnsExpectedEquality() {
         DeleteMasteryCheckCommand command = new DeleteMasteryCheckCommand(INDEX_FIRST_STUDENT, 1);
         assertEquals(command, command);
-        assertEquals(new DeleteMasteryCheckCommand(INDEX_FIRST_STUDENT, 1), command);
+        DeleteMasteryCheckCommand equalCommand =
+                new DeleteMasteryCheckCommand(
+                        INDEX_FIRST_STUDENT,
+                        1);
+
+        assertEquals(equalCommand, command);
+        assertEquals(equalCommand.hashCode(), command.hashCode());
         assertNotEquals(new DeleteMasteryCheckCommand(INDEX_SECOND_STUDENT, 1), command);
         assertNotEquals(new DeleteMasteryCheckCommand(INDEX_FIRST_STUDENT, 2), command);
         assertNotEquals(null, command);

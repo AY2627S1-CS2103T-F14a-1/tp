@@ -90,6 +90,9 @@ public class DeleteStudentCommandTest {
         // same values -> returns true
         DeleteStudentCommand deleteFirstCommandCopy = new DeleteStudentCommand(INDEX_FIRST_STUDENT);
         assertTrue(deleteFirstCommand.equals(deleteFirstCommandCopy));
+        assertEquals(
+                deleteFirstCommandCopy.hashCode(),
+                deleteFirstCommand.hashCode());
 
         // different types -> returns false
         assertFalse(deleteFirstCommand.equals(1));

@@ -5,6 +5,8 @@ import static seedu.address.commons.util.AppUtil.checkArgument;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_INDEX;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_WEEK;
 
+import java.util.Objects;
+
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.commands.exceptions.CommandException;
@@ -85,6 +87,11 @@ public class DeleteStudioRecordCommand extends Command {
 
         return targetIndex.equals(otherDeleteStudioRecordCommand.targetIndex)
                 && week == otherDeleteStudioRecordCommand.week;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(targetIndex, week);
     }
 
     @Override

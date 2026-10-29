@@ -5,6 +5,8 @@ import static seedu.address.commons.util.AppUtil.checkArgument;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_INDEX;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NUMBER;
 
+import java.util.Objects;
+
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.commands.exceptions.CommandException;
@@ -97,6 +99,11 @@ public class DeleteMasteryCheckCommand extends Command {
 
         return targetIndex.equals(otherDeleteMasteryCheckCommand.targetIndex)
                 && number == otherDeleteMasteryCheckCommand.number;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(targetIndex, number);
     }
 
     /**

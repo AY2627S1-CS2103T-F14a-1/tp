@@ -8,6 +8,7 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_NUMBER;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
+import java.util.Objects;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.ToStringBuilder;
@@ -114,6 +115,11 @@ public class AddMasteryCheckCommand extends Command {
         return targetIndex.equals(otherAddMasteryCheckCommand.targetIndex)
                 && number == otherAddMasteryCheckCommand.number
                 && masteryCheck.equals(otherAddMasteryCheckCommand.masteryCheck);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(targetIndex, number, masteryCheck);
     }
 
     /**
