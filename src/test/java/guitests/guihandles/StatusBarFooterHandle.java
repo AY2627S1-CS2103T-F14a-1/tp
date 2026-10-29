@@ -8,6 +8,8 @@ import javafx.scene.control.Labeled;
  */
 public class StatusBarFooterHandle extends NodeHandle<Node> {
 
+    public static final String STATUS_BAR_PLACEHOLDER = "#statusbarPlaceholder";
+
     private static final String SAVE_LOCATION_STATUS_ID = "#saveLocationStatus";
 
     private final Labeled saveLocationNode;
