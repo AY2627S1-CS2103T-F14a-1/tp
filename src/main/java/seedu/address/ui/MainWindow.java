@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -18,6 +19,7 @@ import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import seedu.address.commons.core.GuiSettings;
 import seedu.address.commons.core.LogsCenter;
@@ -34,6 +36,9 @@ import seedu.address.model.student.Student;
 public class MainWindow extends UiPart<Stage> {
 
     private static final String FXML = "MainWindow.fxml";
+
+    /** Maximum share of the central area allocated to command results. */
+    private static final double MAX_RESULT_HEIGHT_RATIO = 0.30;
 
     private final Logger logger = LogsCenter.getLogger(getClass());
 
@@ -70,6 +75,9 @@ public class MainWindow extends UiPart<Stage> {
 
     @FXML
     private SplitPane mainSplitPane;
+
+    @FXML
+    private VBox resultsAndDetails;
 
     /**
      * Creates a {@code MainWindow} with the given {@code Stage}, {@code Logic},
@@ -235,8 +243,18 @@ public class MainWindow extends UiPart<Stage> {
                 });
 
         resultDisplay = new ResultDisplay();
-        resultDisplayPlaceholder.getChildren()
-                .add(resultDisplay.getRoot());
+
+        resultDisplayPlaceholder.setMaxHeight(Region.USE_PREF_SIZE);
+
+        resultDisplay.getRoot().maxHeightProperty().bind(
+                Bindings.createDoubleBinding(() -> Math.max(0,
+                                resultsAndDetails.getHeight() * MAX_RESULT_HEIGHT_RATIO
+                                        - resultDisplayPlaceholder.getInsets().getTop()
+                                        - resultDisplayPlaceholder.getInsets().getBottom()),
+                        resultsAndDetails.heightProperty(),
+                        resultDisplayPlaceholder.insetsProperty()));
+
+        resultDisplayPlaceholder.getChildren().add(resultDisplay.getRoot());
 
         StatusBarFooter statusBarFooter =
                 new StatusBarFooter(dataFilePath);

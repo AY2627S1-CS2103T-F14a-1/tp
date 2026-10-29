@@ -604,6 +604,11 @@ With `s/STATUS` only:
 Run `list` first to include all students in counts and status results.
 Rerun `listmissions` with the desired arguments to refresh its output.
 
+Command results appear above the student panels. The results area grows
+with its content up to a height limit; scroll within it to read longer
+reports. Shorter feedback shrinks the area again, leaving more room for
+student details. Each new result starts at the top.
+
 Examples:
 
 * `listmissions` displays all missions with submitted/total counts for

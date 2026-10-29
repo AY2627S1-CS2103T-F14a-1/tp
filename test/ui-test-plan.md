@@ -127,6 +127,20 @@ Configure M01 due yesterday. Only Betsy has a recorded M01 submission.
 | MISSION-CONSOLIDATE-005 | Run `markmission id/1 m/M01`, then `listmissions s/overdue`. | No matching overdue submissions remain. Both students remain displayed with their original indexes. |
 | MISSION-CONSOLIDATE-006 | Run `unmarkmission id/1 m/M01`, then `listmissions s/overdue`. | John/M01 returns at index 1. Betsy's recorded submission remains unchanged. |
 
+## Dynamic command result height
+
+Use enough missions or students to produce a result longer than the
+available results area. Display a student's details before starting.
+
+| ID | Steps | Expected result |
+| --- | --- | --- |
+| RESULT-SIZE-001 | Run a command with short feedback, then `listmissions` with many results. | Results grow with their content, up to 30% of the area below the command input. Student details remain visible. |
+| RESULT-SIZE-002 | Scroll the long result to the bottom. | The final result line is reachable. Student details remain independently usable. |
+| RESULT-SIZE-003 | Enter an unknown command after scrolling the long result. | Error feedback starts at the top and the results area shrinks. The displayed student and records remain unchanged. |
+| RESULT-SIZE-004 | Repeat the long query, then resize the window narrower, wider, shorter, and taller. | Text wraps, the height cap updates, and overflowing results remain scrollable without overlapping student details. |
+| RESULT-SIZE-005 | Trigger feedback containing warnings, then feedback without warnings. | Warnings contribute to the results height and disappear without leaving unused warning space. |
+| RESULT-SIZE-006 | Scroll student details while a long command result is displayed. | Student details scroll independently of command results. |
+
 ## Studio parsing regression
 
 Studio argument parsing is most precisely checked at the parser level. Run the
