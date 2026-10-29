@@ -4,6 +4,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javafx.fxml.FXML;
 import javafx.geometry.VPos;
@@ -109,12 +110,16 @@ public class StudentDetailsPanel extends UiPart<Region> {
         studentDetails.setVisible(true);
         studentDetails.setManaged(true);
 
+        String studentTags = student.getTags().stream()
+                .map(tag -> tag.tagName)
+                .collect(Collectors.joining(", "));
+
         studentName.setText(student.getName().fullName);
         studioGroup.setText(
                 "Studio group: " + student.getStudioGroup().studioGroup);
         phone.setText("Phone: " + student.getPhone().value);
         email.setText("Email: " + student.getEmail().value);
-        tags.setText("Tags: " + student.getTags());
+        tags.setText("Tags: " + (studentTags.isEmpty() ? "-" : studentTags));
 
         populateNotes(student);
         populateMissionSubmissions(student, missions);

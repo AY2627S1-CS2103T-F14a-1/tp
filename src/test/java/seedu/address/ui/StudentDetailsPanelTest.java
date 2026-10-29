@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -28,6 +29,7 @@ import seedu.address.model.mission.MissionId;
 import seedu.address.model.student.RegisteredStudioRecords;
 import seedu.address.model.student.Student;
 import seedu.address.model.student.StudioRecord;
+import seedu.address.model.tag.Tag;
 import seedu.address.testutil.StudentBuilder;
 import seedu.address.testutil.StudentBuilder.StudioRecordSet;
 
@@ -64,6 +66,10 @@ public class StudentDetailsPanelTest {
 
             panel.showStudent(student, List.of());
 
+            String studentTags = student.getTags().stream()
+                    .map(Tag::toString)
+                    .collect(Collectors.joining(", "));
+
             assertEquals(
                     student.getName().fullName,
                     getLabel(panel, "#studentName").getText());
@@ -82,7 +88,7 @@ public class StudentDetailsPanelTest {
                     getLabel(panel, "#email").getText());
 
             assertEquals(
-                    "Tags: " + student.getTags(),
+                    "Tags: " + (studentTags.isEmpty() ? "-" : studentTags),
                     getLabel(panel, "#tags").getText());
 
             assertTrue(
