@@ -33,6 +33,8 @@ public class StudentDetailsPanel extends UiPart<Region> {
     private static final String FXML = "StudentDetailsPanel.fxml";
     private static final DateTimeFormatter APPOINTMENT_TIME_FORMATTER =
             DateTimeFormatter.ofPattern("MMM d, HH:mm", Locale.ENGLISH);
+    private static final DateTimeFormatter MISSION_DEADLINE_FORMATTER =
+            DateTimeFormatter.ofPattern("d MMMM uuuu", Locale.ENGLISH);
 
     private Student displayedStudent;
     private List<Mission> displayedMissions = List.of();
@@ -406,7 +408,7 @@ public class StudentDetailsPanel extends UiPart<Region> {
                         + mission.getName());
 
         Label deadline = new Label(
-                "Due: " + mission.getDeadline());
+                "Due: " + mission.getDeadline().format(MISSION_DEADLINE_FORMATTER));
 
         missionName.getStyleClass().add("grid-value");
         deadline.getStyleClass().add("mission-deadline");

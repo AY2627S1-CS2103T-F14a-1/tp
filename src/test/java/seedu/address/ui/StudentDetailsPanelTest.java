@@ -143,7 +143,7 @@ public class StudentDetailsPanelTest {
                     missionName.getText());
 
             assertEquals(
-                    "Due: 2026-10-20",
+                    "Due: 20 October 2026",
                     deadline.getText());
         });
     }
