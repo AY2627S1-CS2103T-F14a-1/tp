@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
+import static seedu.address.logic.parser.util.ParserUtil.MESSAGE_SEE_USAGE;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -20,7 +21,7 @@ import seedu.address.model.mission.MissionId;
  */
 public class EditMissionCommandParserTest {
 
-    private static final String USAGE_SUFFIX = "\n\n" + EditMissionCommand.MESSAGE_USAGE;
+    private static final String USAGE_SUFFIX = MESSAGE_SEE_USAGE + EditMissionCommand.MESSAGE_USAGE;
 
     private final EditMissionCommandParser parser = new EditMissionCommandParser();
 
@@ -75,17 +76,17 @@ public class EditMissionCommandParserTest {
         assertParseFailure(parser, "m/3 n/New",
                 MissionId.MESSAGE_CONSTRAINTS + USAGE_SUFFIX);
         assertParseFailure(parser, "m/ n/New",
-                MissionId.MESSAGE_CONSTRAINTS + USAGE_SUFFIX);
+                "Prefix m/ is missing its argument." + USAGE_SUFFIX);
         assertParseFailure(parser, "m/M01 n/",
-                MissionParserUtil.MESSAGE_INVALID_MISSION_NAME + USAGE_SUFFIX);
+                "Prefix n/ is missing its argument." + USAGE_SUFFIX);
         assertParseFailure(parser, "m/M01 n/\u00a0",
-                MissionParserUtil.MESSAGE_INVALID_MISSION_NAME + USAGE_SUFFIX);
+                MissionParserUtil.MESSAGE_ERROR_INVALID_MISSION_NAME + USAGE_SUFFIX);
         assertParseFailure(parser, "m/M01 d/",
-                MissionParserUtil.MESSAGE_INVALID_MISSION_DEADLINE + USAGE_SUFFIX);
+                "Prefix d/ is missing its argument." + USAGE_SUFFIX);
         assertParseFailure(parser, "m/M01 d/2026-1-01",
-                MissionParserUtil.MESSAGE_INVALID_MISSION_DEADLINE + USAGE_SUFFIX);
+                MissionParserUtil.MESSAGE_ERROR_INVALID_MISSION_DEADLINE + USAGE_SUFFIX);
         assertParseFailure(parser, "m/M01 d/2026-02-30",
-                MissionParserUtil.MESSAGE_INVALID_MISSION_CALENDAR_DATE + USAGE_SUFFIX);
+                MissionParserUtil.MESSAGE_ERROR_INVALID_MISSION_CALENDAR_DATE + USAGE_SUFFIX);
     }
 
     @Test

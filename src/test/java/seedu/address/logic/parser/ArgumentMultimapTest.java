@@ -12,12 +12,67 @@ import org.junit.jupiter.api.Test;
 
 import seedu.address.logic.parser.exceptions.ParseException;
 
+/** Tests prefix presence, required values, and duplicate-prefix validation without mutating stored arguments. */
 public class ArgumentMultimapTest {
 
     private static final Prefix NAME_PREFIX = new Prefix("n/");
     private static final Prefix PHONE_PREFIX = new Prefix("p/");
 
     private final ArgumentMultimap argumentMultimap = new ArgumentMultimap();
+
+    @Test
+    public void getRequiredValue_missingPrefix_throwsParseExceptionWithoutAddingValue() {
+        ParseException error = assertThrows(ParseException.class, () ->
+                argumentMultimap.getRequiredValue(NAME_PREFIX));
+
+        assertEquals("Prefix n/ is missing its argument.", error.getMessage());
+        assertTrue(argumentMultimap.getValue(NAME_PREFIX).isEmpty());
+        assertTrue(argumentMultimap.getAllValues(NAME_PREFIX).isEmpty());
+    }
+
+    @Test
+    public void getRequiredValue_blankValue_throwsParseExceptionWithoutChangingValue() {
+        for (String value : List.of("", " ", "\t\r\n", "\u2003")) {
+            ArgumentMultimap arguments = new ArgumentMultimap();
+            arguments.put(NAME_PREFIX, value);
+
+            ParseException error = assertThrows(ParseException.class, () -> arguments.getRequiredValue(NAME_PREFIX));
+
+            assertEquals("Prefix n/ is missing its argument.", error.getMessage());
+            assertEquals(value, arguments.getValue(NAME_PREFIX).orElseThrow());
+            assertEquals(List.of(value), arguments.getAllValues(NAME_PREFIX));
+        }
+    }
+
+    @Test
+    public void getRequiredValue_nonblankValue_returnsStoredTextUnchanged() throws ParseException {
+        argumentMultimap.put(NAME_PREFIX, "  Alice ");
+
+        assertEquals("  Alice ", argumentMultimap.getRequiredValue(NAME_PREFIX));
+        assertEquals(List.of("  Alice "), argumentMultimap.getAllValues(NAME_PREFIX));
+    }
+
+    @Test
+    public void getRequiredValue_repeatedPrefix_returnsLastValue() throws ParseException {
+        argumentMultimap.put(NAME_PREFIX, "");
+        argumentMultimap.put(NAME_PREFIX, "Alice");
+        argumentMultimap.put(NAME_PREFIX, "Bob");
+
+        assertEquals("Bob", argumentMultimap.getRequiredValue(NAME_PREFIX));
+        assertEquals(List.of("", "Alice", "Bob"), argumentMultimap.getAllValues(NAME_PREFIX));
+    }
+
+    @Test
+    public void getRequiredValue_blankLastValue_rejectsDespiteEarlierNonblankValue() {
+        argumentMultimap.put(NAME_PREFIX, "Alice");
+        argumentMultimap.put(NAME_PREFIX, "");
+
+        ParseException error = assertThrows(ParseException.class, () ->
+                argumentMultimap.getRequiredValue(NAME_PREFIX));
+
+        assertEquals("Prefix n/ is missing its argument.", error.getMessage());
+        assertEquals(List.of("Alice", ""), argumentMultimap.getAllValues(NAME_PREFIX));
+    }
 
     @Test
     public void arePrefixesPresent_noPrefixes_returnsTrue() {

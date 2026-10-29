@@ -29,11 +29,12 @@ public class DeleteStudioRecordCommandParser implements Parser<DeleteStudioRecor
             ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
                     args, PREFIX_INDEX, PREFIX_WEEK);
 
-            Index index = ParserUtil.parseIndex(argMultimap.getValue(PREFIX_INDEX).get());
-            int week = StudioRecordParserUtil.parseWeek(argMultimap.getValue(PREFIX_WEEK).get());
+            Index index = ParserUtil.parseIndex(argMultimap.getRequiredValue(PREFIX_INDEX));
+            int week = StudioRecordParserUtil.parseWeek(argMultimap.getRequiredValue(PREFIX_WEEK));
             return new DeleteStudioRecordCommand(index, week);
         } catch (ParseException e) {
-            throw new ParseException(e.getMessage() + "\n\n" + DeleteStudioRecordCommand.MESSAGE_USAGE);
+            throw new ParseException(e.getMessage()
+                    + ParserUtil.MESSAGE_SEE_USAGE + DeleteStudioRecordCommand.MESSAGE_USAGE);
         }
     }
 }

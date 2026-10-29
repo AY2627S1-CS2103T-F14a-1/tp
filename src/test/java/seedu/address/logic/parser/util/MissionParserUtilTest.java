@@ -41,7 +41,7 @@ public class MissionParserUtilTest {
     @Test
     public void parseMissionName_blankInput_throwsParseException() {
         for (String value : List.of("", " ", WHITESPACE)) {
-            assertThrows(ParseException.class, MissionParserUtil.MESSAGE_INVALID_MISSION_NAME, () ->
+            assertThrows(ParseException.class, MissionParserUtil.MESSAGE_ERROR_INVALID_MISSION_NAME, () ->
                     MissionParserUtil.parseMissionName(value));
         }
     }
@@ -71,7 +71,7 @@ public class MissionParserUtilTest {
     public void parseMissionDeadline_malformedFormat_throwsParseException() {
         for (String value : List.of("", WHITESPACE, "2026-2-03", "2026 -2 -03", "26-10-20", "2026/10/20",
                 "2026-10-20 extra", "2026-10-20T00:00")) {
-            assertThrows(ParseException.class, MissionParserUtil.MESSAGE_INVALID_MISSION_DEADLINE, () ->
+            assertThrows(ParseException.class, MissionParserUtil.MESSAGE_ERROR_INVALID_MISSION_DEADLINE, () ->
                     MissionParserUtil.parseMissionDeadline(value));
         }
     }
@@ -80,7 +80,7 @@ public class MissionParserUtilTest {
     public void parseMissionDeadline_impossibleCalendarDate_throwsParseException() {
         for (String value : List.of("2026-02-29", "2026-04-31", "2026-13-01", "2026-00-10",
                 "2026-10-00")) {
-            assertThrows(ParseException.class, MissionParserUtil.MESSAGE_INVALID_MISSION_CALENDAR_DATE, () ->
+            assertThrows(ParseException.class, MissionParserUtil.MESSAGE_ERROR_INVALID_MISSION_CALENDAR_DATE, () ->
                     MissionParserUtil.parseMissionDeadline(value));
         }
     }

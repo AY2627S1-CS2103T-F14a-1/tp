@@ -35,13 +35,14 @@ public class AddMasteryCheckCommandParser implements Parser<AddMasteryCheckComma
             ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
                     args, PREFIX_INDEX, PREFIX_NUMBER, PREFIX_DATETIME);
 
-            Index index = ParserUtil.parseIndex(argMultimap.getValue(PREFIX_INDEX).get());
-            int number = MasteryCheckParserUtil.parseMasteryCheckNumber(argMultimap.getValue(PREFIX_NUMBER).get());
+            Index index = ParserUtil.parseIndex(argMultimap.getRequiredValue(PREFIX_INDEX));
+            int number = MasteryCheckParserUtil.parseMasteryCheckNumber(argMultimap.getRequiredValue(PREFIX_NUMBER));
             LocalDateTime dateTime = MasteryCheckParserUtil.parseMasteryCheckDateTime(argMultimap
-                    .getValue(PREFIX_DATETIME).get());
+                    .getRequiredValue(PREFIX_DATETIME));
             return new AddMasteryCheckCommand(index, number, new MasteryCheck(dateTime));
         } catch (ParseException e) {
-            throw new ParseException(e.getMessage() + "\n\n" + AddMasteryCheckCommand.MESSAGE_USAGE);
+            throw new ParseException(e.getMessage()
+                    + ParserUtil.MESSAGE_SEE_USAGE + AddMasteryCheckCommand.MESSAGE_USAGE);
         }
     }
 }

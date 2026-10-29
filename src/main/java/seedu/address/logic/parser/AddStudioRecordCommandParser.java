@@ -32,13 +32,14 @@ public class AddStudioRecordCommandParser implements Parser<AddStudioRecordComma
             ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
                     args, PREFIX_INDEX, PREFIX_WEEK, PREFIX_STUDIO_EFFORT);
 
-            Index index = ParserUtil.parseIndex(argMultimap.getValue(PREFIX_INDEX).get());
-            int week = StudioRecordParserUtil.parseWeek(argMultimap.getValue(PREFIX_WEEK).get());
+            Index index = ParserUtil.parseIndex(argMultimap.getRequiredValue(PREFIX_INDEX));
+            int week = StudioRecordParserUtil.parseWeek(argMultimap.getRequiredValue(PREFIX_WEEK));
             int effortScore = StudioRecordParserUtil.parseEffortScore(
-                    argMultimap.getValue(PREFIX_STUDIO_EFFORT).get());
+                    argMultimap.getRequiredValue(PREFIX_STUDIO_EFFORT));
             return new AddStudioRecordCommand(index, week, new StudioRecord(effortScore));
         } catch (ParseException e) {
-            throw new ParseException(e.getMessage() + "\n\n" + AddStudioRecordCommand.MESSAGE_USAGE);
+            throw new ParseException(e.getMessage()
+                    + ParserUtil.MESSAGE_SEE_USAGE + AddStudioRecordCommand.MESSAGE_USAGE);
         }
     }
 }

@@ -27,11 +27,11 @@ public class DeleteNoteCommandParser implements Parser<DeleteNoteCommand> {
             ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
                     args, PREFIX_INDEX, PREFIX_NOTE_INDEX);
 
-            Index index = ParserUtil.parseIndex(argMultimap.getValue(PREFIX_INDEX).get());
-            Index noteIndex = NoteParserUtil.parseNoteIndex(argMultimap.getValue(PREFIX_NOTE_INDEX).get());
+            Index index = ParserUtil.parseIndex(argMultimap.getRequiredValue(PREFIX_INDEX));
+            Index noteIndex = NoteParserUtil.parseNoteIndex(argMultimap.getRequiredValue(PREFIX_NOTE_INDEX));
             return new DeleteNoteCommand(index, noteIndex);
         } catch (ParseException pe) {
-            throw new ParseException(pe.getMessage() + "\n\n" + DeleteNoteCommand.MESSAGE_USAGE);
+            throw new ParseException(pe.getMessage() + ParserUtil.MESSAGE_SEE_USAGE + DeleteNoteCommand.MESSAGE_USAGE);
         }
     }
 }

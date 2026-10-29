@@ -12,6 +12,7 @@ import seedu.address.logic.commands.ListMissionCatalogueCommand;
 import seedu.address.logic.commands.ListMissionsCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.logic.parser.util.MissionParserUtil;
+import seedu.address.logic.parser.util.ParserUtil;
 import seedu.address.model.mission.MissionId;
 import seedu.address.model.mission.MissionSubmissionStatusEnum;
 
@@ -60,7 +61,7 @@ public class ListMissionsCommandParser implements Parser<Command> {
 
             return ListMissionsCommand.withStatus(missionId, status.orElseThrow());
         } catch (ParseException e) {
-            throw new ParseException(e.getMessage() + "\n\n" + ListMissionsCommand.MESSAGE_USAGE);
+            throw new ParseException(e.getMessage() + ParserUtil.MESSAGE_SEE_USAGE + ListMissionsCommand.MESSAGE_USAGE);
         }
     }
 

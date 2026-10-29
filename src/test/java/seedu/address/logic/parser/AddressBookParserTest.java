@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.Messages.MESSAGE_UNKNOWN_COMMAND;
+import static seedu.address.logic.parser.util.ParserUtil.MESSAGE_SEE_USAGE;
 import static seedu.address.testutil.Assert.assertThrows;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_STUDENT;
 
@@ -46,7 +47,6 @@ import seedu.address.model.masterycheck.MasteryCheck;
 import seedu.address.model.mission.MissionId;
 import seedu.address.model.student.NameContainsKeywordsPredicate;
 import seedu.address.model.student.Note;
-import seedu.address.model.student.RegisteredMasteryChecks;
 import seedu.address.model.student.Student;
 import seedu.address.model.student.StudioRecord;
 import seedu.address.testutil.EditStudentDescriptorBuilder;
@@ -215,7 +215,7 @@ public class AddressBookParserTest {
     public void parseCommand_addStudioRecordMissingArguments_reportsAllMissingPrefixes() {
         String expected = String.join("\n", CliSyntax.PREFIX_INDEX.getMissingMessage(),
                 CliSyntax.PREFIX_WEEK.getMissingMessage(), CliSyntax.PREFIX_STUDIO_EFFORT.getMissingMessage())
-                + "\n\n" + AddStudioRecordCommand.MESSAGE_USAGE;
+                + MESSAGE_SEE_USAGE + AddStudioRecordCommand.MESSAGE_USAGE;
 
         assertThrows(ParseException.class, expected, () ->
                 parser.parseCommand("addstudiorecord"));
@@ -240,7 +240,8 @@ public class AddressBookParserTest {
     @Test
     public void parseCommand_deleteStudioRecordMissingArguments_reportsAllMissingPrefixes() {
         String expected = String.join("\n", CliSyntax.PREFIX_INDEX.getMissingMessage(),
-                CliSyntax.PREFIX_WEEK.getMissingMessage()) + "\n\n" + DeleteStudioRecordCommand.MESSAGE_USAGE;
+                CliSyntax.PREFIX_WEEK.getMissingMessage())
+                        + MESSAGE_SEE_USAGE + DeleteStudioRecordCommand.MESSAGE_USAGE;
 
         assertThrows(ParseException.class, expected, () ->
                 parser.parseCommand("delstudiorecord"));
@@ -280,7 +281,7 @@ public class AddressBookParserTest {
     public void parseCommand_masteryCheckInvalidDate_throwsParseException() {
         assertThrows(ParseException.class,
                 MasteryCheckParserUtil.MESSAGE_INVALID_MASTERY_CHECK_DATETIME
-                        + "\n\n" + AddMasteryCheckCommand.MESSAGE_USAGE, () ->
+                        + MESSAGE_SEE_USAGE + AddMasteryCheckCommand.MESSAGE_USAGE, () ->
                 parser.parseCommand("addmc id/1 num/1 dt/31-04|14:30"));
     }
 
@@ -296,7 +297,8 @@ public class AddressBookParserTest {
     @Test
     public void parseCommand_deleteMasteryCheckInvalidNumber_reportsMasteryCheckConstraint() {
         assertThrows(ParseException.class,
-                RegisteredMasteryChecks.MESSAGE_CONSTRAINTS + "\n\n" + DeleteMasteryCheckCommand.MESSAGE_USAGE, () ->
+                MasteryCheckParserUtil.MESSAGE_ERROR_NEGATIVE_NUMBER
+                        + MESSAGE_SEE_USAGE + DeleteMasteryCheckCommand.MESSAGE_USAGE, () ->
                 parser.parseCommand("delmc id/1 num/0"));
     }
 

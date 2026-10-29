@@ -28,6 +28,7 @@ import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_HUSBAND;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
+import static seedu.address.logic.parser.util.ParserUtil.MESSAGE_SEE_USAGE;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_STUDENT;
 import static seedu.address.testutil.TypicalIndexes.INDEX_SECOND_STUDENT;
 import static seedu.address.testutil.TypicalIndexes.INDEX_THIRD_STUDENT;
@@ -35,6 +36,7 @@ import static seedu.address.testutil.TypicalIndexes.INDEX_THIRD_STUDENT;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
@@ -51,7 +53,7 @@ import seedu.address.testutil.EditStudentDescriptorBuilder;
 
 public class EditStudentCommandParserTest {
 
-    private static final String USAGE_SUFFIX = "\n\n" + EditStudentCommand.MESSAGE_USAGE;
+    private static final String USAGE_SUFFIX = MESSAGE_SEE_USAGE + EditStudentCommand.MESSAGE_USAGE;
 
     private static final String TAG_EMPTY = " " + PREFIX_TAG;
 
@@ -239,9 +241,25 @@ public class EditStudentCommandParserTest {
     }
 
     @Test
+    public void parse_blankSuppliedField_reportsMissingArgumentAndAcceptsLaterValidEdit() {
+        EditStudentDescriptor descriptor = new EditStudentDescriptorBuilder().withName(VALID_NAME_AMY).build();
+        EditStudentCommand expectedCommand = new EditStudentCommand(INDEX_FIRST_STUDENT, descriptor);
+
+        for (Prefix prefix : List.of(CliSyntax.PREFIX_NAME, CliSyntax.PREFIX_PHONE,
+                CliSyntax.PREFIX_EMAIL, CliSyntax.PREFIX_STUDIO_GROUP)) {
+            for (String blankValue : List.of("", " ", "\t", "\u2003")) {
+                assertParseSuccess(parser, "id/1" + NAME_DESC_AMY, expectedCommand);
+                assertParseFailure(parser, "id/1 " + prefix + blankValue,
+                        "Prefix " + prefix + " is missing its argument." + USAGE_SUFFIX);
+                assertParseSuccess(parser, "id/1" + NAME_DESC_AMY, expectedCommand);
+            }
+        }
+    }
+
+    @Test
     public void parse_emptyStudioGroup_failure() {
         assertParseFailure(parser, "id/1 g/",
-                StudioGroup.MESSAGE_CONSTRAINTS + USAGE_SUFFIX);
+                "Prefix g/ is missing its argument." + USAGE_SUFFIX);
     }
 
     @Test
@@ -271,7 +289,7 @@ public class EditStudentCommandParserTest {
         assertParseFailure(parser, "id/0" + NAME_DESC_AMY,
                 ParserUtil.MESSAGE_INVALID_INDEX + USAGE_SUFFIX);
         assertParseFailure(parser, "id/" + NAME_DESC_AMY,
-                ParserUtil.MESSAGE_INVALID_INDEX + USAGE_SUFFIX);
+                "Prefix id/ is missing its argument." + USAGE_SUFFIX);
     }
 
     @Test
