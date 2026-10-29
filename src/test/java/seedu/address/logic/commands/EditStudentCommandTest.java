@@ -49,7 +49,11 @@ public class EditStudentCommandTest {
         Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
         expectedModel.setStudent(model.getFilteredStudentList().get(0), editedStudent);
 
-        assertCommandSuccess(editStudentCommand, model, expectedMessage, expectedModel);
+        assertCommandSuccess(
+                editStudentCommand,
+                model,
+                new CommandResult(expectedMessage, editedStudent),
+                expectedModel);
     }
 
     @Test
@@ -71,7 +75,11 @@ public class EditStudentCommandTest {
         Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
         expectedModel.setStudent(lastStudent, editedStudent);
 
-        assertCommandSuccess(editStudentCommand, model, expectedMessage, expectedModel);
+        assertCommandSuccess(
+                editStudentCommand,
+                model,
+                new CommandResult(expectedMessage, editedStudent),
+                expectedModel);
     }
 
     @Test
@@ -85,7 +93,11 @@ public class EditStudentCommandTest {
 
         Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
 
-        assertCommandSuccess(editStudentCommand, model, expectedMessage, expectedModel);
+        assertCommandSuccess(
+                editStudentCommand,
+                model,
+                new CommandResult(expectedMessage, editedStudent),
+                expectedModel);
     }
 
     @Test
@@ -103,7 +115,11 @@ public class EditStudentCommandTest {
         Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
         expectedModel.setStudent(model.getFilteredStudentList().get(0), editedStudent);
 
-        assertCommandSuccess(editStudentCommand, model, expectedMessage, expectedModel);
+        assertCommandSuccess(
+                editStudentCommand,
+                model,
+                new CommandResult(expectedMessage, editedStudent),
+                expectedModel);
     }
 
     @Test
@@ -198,7 +214,11 @@ public class EditStudentCommandTest {
         String expectedMessage = String.format(EditStudentCommand.MESSAGE_EDIT_STUDENT_SUCCESS,
                 Messages.format(editedStudent));
 
-        assertCommandSuccess(command, model, expectedMessage, expectedModel);
+        assertCommandSuccess(
+                command,
+                model,
+                new CommandResult(expectedMessage, editedStudent),
+                expectedModel);
     }
 
     @Test
@@ -228,7 +248,11 @@ public class EditStudentCommandTest {
         String expectedMessage = String.format(EditStudentCommand.MESSAGE_EDIT_STUDENT_SUCCESS,
                 Messages.format(editedStudent));
 
-        assertCommandSuccess(command, model, expectedMessage, expectedModel);
+        assertCommandSuccess(
+                command,
+                model,
+                new CommandResult(expectedMessage, editedStudent),
+                expectedModel);
     }
 
 }

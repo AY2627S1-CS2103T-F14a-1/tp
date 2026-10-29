@@ -49,7 +49,7 @@ AddressBook *--> "1" UniqueStudentList
 AddressBook *--> "1" MissionCatalogue
 UniqueStudentList --> "~* all" Student
 ModelManager --> "~* filtered" Student
-MissionCatalogue --> "*" Mission
+MissionCatalogue *--> "*" Mission
 Mission *-down-> "1" MissionId
 
 Student *--> "1" Name
@@ -63,9 +63,9 @@ Student *--> "1" RegisteredMasteryChecks
 Student *--> "1" RegisteredNotes
 
 RegisteredMasteryChecks *-down-> "*" MasteryCheck
-RegisteredNotes *-down-> "*" Note
 MissionSubmissions -down-> "*" MissionId
-RegisteredStudioRecords *--> "*" StudioRecord
+RegisteredStudioRecords *--> "0..14" StudioRecord
+RegisteredNotes *-down-> "0..1000" Note
 
 ' Top-level layout
 ReadOnlyAddressBook -[hidden]right-> Model

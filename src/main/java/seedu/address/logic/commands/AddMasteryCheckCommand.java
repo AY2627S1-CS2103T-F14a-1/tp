@@ -83,7 +83,8 @@ public class AddMasteryCheckCommand extends Command {
         RegisteredMasteryChecks registeredMasteryChecks = studentToUpdate.getRegisteredMasteryChecks();
 
         if (registeredMasteryChecks.hasMasteryCheck(number)) {
-            return new CommandResult(String.format(MESSAGE_ALREADY_RECORDED, studentToUpdate.getName(), number));
+            return new CommandResult(String.format(MESSAGE_ALREADY_RECORDED, studentToUpdate.getName(), number),
+                    studentToUpdate);
         }
 
         Student updatedStudent = studentToUpdate.withRegisteredMasteryChecks(
@@ -91,7 +92,7 @@ public class AddMasteryCheckCommand extends Command {
         model.setStudent(studentToUpdate, updatedStudent);
         return new CommandResult(String.format(
                 MESSAGE_SUCCESS, studentToUpdate.getName(), number,
-                masteryCheck.getAppointmentTime().format(APPOINTMENT_TIME_FORMATTER)));
+                masteryCheck.getAppointmentTime().format(APPOINTMENT_TIME_FORMATTER)), updatedStudent);
     }
 
     /**

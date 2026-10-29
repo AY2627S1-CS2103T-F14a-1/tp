@@ -70,14 +70,20 @@ public class MarkMissionCommand extends Command {
             throw new CommandException(String.format(Messages.MESSAGE_MISSION_NOT_FOUND, missionId));
         }
 
-        Student studentToUpdate = getStudentAtDisplayedIndex(model, targetIndex);
+        Student studentToUpdate;
+        try {
+            studentToUpdate = getStudentAtDisplayedIndex(model, targetIndex);
+        } catch (CommandException e) {
+            throw new CommandException(e.getMessage() + "\n\n" + MESSAGE_USAGE);
+        }
         MissionSubmissions submissions = studentToUpdate.getMissionSubmissions();
 
         if (submissions.hasSubmission(missionId)) {
             logger.fine("MarkMissionCommand made no changes for mission " + missionId
                     + " for student " + studentToUpdate.getName()
                     + " at displayed student index " + targetIndex.getOneBased() + ".");
-            return new CommandResult(String.format(MESSAGE_ALREADY_RECORDED, studentToUpdate.getName(), missionId));
+            return new CommandResult(String.format(MESSAGE_ALREADY_RECORDED, studentToUpdate.getName(), missionId),
+                    studentToUpdate);
         }
 
         Student updatedStudent = studentToUpdate.withMissionSubmissions(submissions.withSubmission(missionId));
@@ -85,7 +91,7 @@ public class MarkMissionCommand extends Command {
         logger.info("Recorded submission for mission " + missionId
                 + " for student " + studentToUpdate.getName()
                 + " at displayed student index " + targetIndex.getOneBased() + " in memory.");
-        return new CommandResult(String.format(MESSAGE_SUCCESS, studentToUpdate.getName(), missionId));
+        return new CommandResult(String.format(MESSAGE_SUCCESS, studentToUpdate.getName(), missionId), updatedStudent);
     }
 
     @Override

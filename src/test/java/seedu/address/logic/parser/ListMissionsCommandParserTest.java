@@ -1,6 +1,8 @@
 package seedu.address.logic.parser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
@@ -9,11 +11,13 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import seedu.address.logic.commands.ListMissionCatalogueCommand;
 import seedu.address.logic.commands.ListMissionsCommand;
 import seedu.address.model.mission.MissionId;
+import seedu.address.model.mission.MissionSubmissionStatusEnum;
 
 /**
- * Tests mission ID parsing and submission-list command routing.
+ * Tests catalogue routing and mission ID parsing for submission listing.
  */
 public class ListMissionsCommandParserTest {
 
@@ -33,11 +37,15 @@ public class ListMissionsCommandParserTest {
     }
 
     @Test
-    public void parse_missingMissionId_reportsMissingMission() {
-        for (String input : List.of("", " ")) {
-            assertParseFailure(parser, input,
-                CliSyntax.PREFIX_MISSION.getMissingMessage() + USAGE_SUFFIX);
+    public void parse_blankArguments_returnsCatalogueCommand() throws Exception {
+        for (String input : List.of("", " ", "\t")) {
+            assertInstanceOf(ListMissionCatalogueCommand.class, parser.parse(input));
         }
+
+        assertInstanceOf(ListMissionCatalogueCommand.class,
+                new AddressBookParser().parseCommand("listmissions"));
+        assertInstanceOf(ListMissionCatalogueCommand.class,
+                new AddressBookParser().parseCommand("  LISTMISSIONS \t "));
     }
 
     @Test
@@ -60,5 +68,81 @@ public class ListMissionsCommandParserTest {
     public void parse_duplicateMissionPrefix_reportsDuplicateField() {
         assertParseFailure(parser, "m/M01 m/M02",
                 CliSyntax.PREFIX_MISSION.getDuplicateMessage() + USAGE_SUFFIX);
+    }
+
+    @Test
+    public void parse_validStatusFilter_returnsFilteredCommand() {
+        MissionId missionId = new MissionId("M01");
+
+        assertParseSuccess(parser, "m/M01 s/submitted",
+                ListMissionsCommand.withStatus(missionId, MissionSubmissionStatusEnum.SUBMITTED));
+        assertParseSuccess(parser, "S/OVERDUE M/m01",
+                ListMissionsCommand.withStatus(missionId, MissionSubmissionStatusEnum.OVERDUE));
+    }
+
+    @Test
+    public void parse_invalidStatusFilter_reportsStatusConstraint() {
+        String expectedMessage = ListMissionsCommandParser.MESSAGE_INVALID_STATUS + USAGE_SUFFIX;
+
+        for (String input : List.of("m/M01 s/", "m/M01 s/unknown",
+                "m/M01 s/not_submitted", "m/M01 s/submitted extra")) {
+            assertParseFailure(parser, input, expectedMessage);
+        }
+    }
+
+    @Test
+    public void parse_duplicateStatusPrefix_reportsDuplicateField() {
+        assertParseFailure(parser, "m/M01 s/submitted s/overdue",
+                CliSyntax.PREFIX_STATUS.getDuplicateMessage() + USAGE_SUFFIX);
+    }
+
+    @Test
+    public void parse_statusWithoutMission_returnsAllMissionQuery() throws Exception {
+        assertParseSuccess(parser, "s/submitted",
+                ListMissionsCommand.withStatus(MissionSubmissionStatusEnum.SUBMITTED));
+        assertParseSuccess(parser, " S/OVERDUE ",
+                ListMissionsCommand.withStatus(MissionSubmissionStatusEnum.OVERDUE));
+        assertEquals(
+                ListMissionsCommand.withStatus(MissionSubmissionStatusEnum.OVERDUE),
+                new AddressBookParser().parseCommand("LISTMISSIONS s/overdue"));
+    }
+
+    @Test
+    public void parse_invalidStatusWithoutMission_reportsStatusConstraint() {
+        String expectedMessage = ListMissionsCommandParser.MESSAGE_INVALID_STATUS + USAGE_SUFFIX;
+
+        for (String input : List.of("s/", "s/unknown", "s/submitted extra")) {
+            assertParseFailure(parser, input, expectedMessage);
+        }
+    }
+
+    @Test
+    public void parse_statusWithEmptyMission_reportsIdConstraint() {
+        assertParseFailure(parser, "s/submitted m/",
+                MissionId.MESSAGE_CONSTRAINTS + USAGE_SUFFIX);
+    }
+
+    @Test
+    public void parse_nullArguments_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> parser.parse(null));
+    }
+
+    @Test
+    public void parse_rejectedInputThenValidQuery_returnsExpectedCommand() {
+        ListMissionsCommand expectedCommand = ListMissionsCommand.withStatus(
+                new MissionId("M01"), MissionSubmissionStatusEnum.SUBMITTED);
+
+        assertParseSuccess(parser, "m/M01 s/submitted", expectedCommand);
+        assertParseFailure(parser, "s/ \t",
+                ListMissionsCommandParser.MESSAGE_INVALID_STATUS + USAGE_SUFFIX);
+        assertParseSuccess(parser, "m/M01 s/submitted", expectedCommand);
+        assertParseFailure(parser, "unexpected s/submitted", MESSAGE_INVALID_COMMAND + USAGE_SUFFIX);
+        assertParseSuccess(parser, "m/M01 s/submitted", expectedCommand);
+    }
+
+    @Test
+    public void parse_duplicateStatusWithoutMission_reportsDuplicateField() {
+        assertParseFailure(parser, "s/submitted s/overdue",
+                CliSyntax.PREFIX_STATUS.getDuplicateMessage() + USAGE_SUFFIX);
     }
 }

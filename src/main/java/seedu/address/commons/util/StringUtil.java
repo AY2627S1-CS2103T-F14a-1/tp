@@ -13,6 +13,18 @@ import java.util.Arrays;
 public class StringUtil {
 
     /**
+     * Removes all Unicode whitespace characters from {@code value}.
+     *
+     * @param value String whose whitespace should be removed.
+     * @return The string without whitespace.
+     * @throws NullPointerException If {@code value} is null.
+     */
+    public static String removeWhitespace(String value) {
+        requireNonNull(value);
+        return value.replaceAll("(?U)\\s+", "");
+    }
+
+    /**
      * Returns true if the {@code sentence} contains the {@code word}.
      *   Ignores case, but a full word match is required.
      *   <br>examples:<pre>

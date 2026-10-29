@@ -67,8 +67,11 @@ public class DeleteStudioRecordCommandTest {
 
         String feedback = String.format(DeleteStudioRecordCommand.MESSAGE_SUCCESS, student.getName(), 3);
 
-        assertCommandSuccess(new DeleteStudioRecordCommand(INDEX_FIRST_STUDENT, 3),
-                model, feedback, expectedModel);
+        assertCommandSuccess(
+                new DeleteStudioRecordCommand(INDEX_FIRST_STUDENT, 3),
+                model,
+                new CommandResult(feedback, updated),
+                expectedModel);
         assertTrue(student.getRegisteredStudioRecords().hasStudioRecord(
                 3));
     }
@@ -108,8 +111,14 @@ public class DeleteStudioRecordCommandTest {
         String feedback = String.format(DeleteStudioRecordCommand.MESSAGE_ALREADY_NOT_RECORDED,
                 student.getName(), 3);
 
-        assertCommandSuccess(new DeleteStudioRecordCommand(INDEX_FIRST_STUDENT, 3),
-                model, feedback, expectedModel);
+        Student expectedStudent =
+                model.getFilteredStudentList().get(INDEX_FIRST_STUDENT.getZeroBased());
+
+        assertCommandSuccess(
+                new DeleteStudioRecordCommand(INDEX_FIRST_STUDENT, 3),
+                model,
+                new CommandResult(feedback, expectedStudent),
+                expectedModel);
     }
 
     @Test
@@ -146,8 +155,11 @@ public class DeleteStudioRecordCommandTest {
 
         String feedback = String.format(DeleteStudioRecordCommand.MESSAGE_SUCCESS, student.getName(), 3);
 
-        assertCommandSuccess(new DeleteStudioRecordCommand(INDEX_FIRST_STUDENT, 3),
-                model, feedback, expectedModel);
+        assertCommandSuccess(
+                new DeleteStudioRecordCommand(INDEX_FIRST_STUDENT, 3),
+                model,
+                new CommandResult(feedback, updated),
+                expectedModel);
         assertEquals(1, model.getFilteredStudentList().size());
         assertEquals(updated, model.getFilteredStudentList().get(0));
     }

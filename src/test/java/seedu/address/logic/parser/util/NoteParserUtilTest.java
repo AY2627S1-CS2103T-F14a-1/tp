@@ -23,13 +23,14 @@ public class NoteParserUtilTest {
     @Test
     public void parseNoteIndex_validBoundaries_returnsIndex() throws Exception {
         assertEquals(Index.fromOneBased(1), NoteParserUtil.parseNoteIndex("1"));
+        assertEquals(Index.fromOneBased(1), NoteParserUtil.parseNoteIndex("0 1"));
         assertEquals(Index.fromOneBased(RegisteredNotes.MAX_NOTE_INDEX),
                 NoteParserUtil.parseNoteIndex(" " + RegisteredNotes.MAX_NOTE_INDEX + " "));
     }
 
     @Test
     public void parseNoteIndex_invalidValues_throwsParseException() {
-        for (String noteIndex : List.of("", WHITESPACE, "0", "-1", "1.5", "abc", "1 2", "2147483648")) {
+        for (String noteIndex : List.of("", WHITESPACE, "0", "0 0", "-1", "1.5", "abc", "2147483648")) {
             assertThrows(ParseException.class, ParserUtil.MESSAGE_INVALID_INDEX, () ->
                     NoteParserUtil.parseNoteIndex(noteIndex));
         }

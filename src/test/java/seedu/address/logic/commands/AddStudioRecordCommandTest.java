@@ -82,8 +82,11 @@ public class AddStudioRecordCommandTest {
 
         String feedback = String.format(AddStudioRecordCommand.MESSAGE_SUCCESS, student.getName(), 3);
 
-        assertCommandSuccess(new AddStudioRecordCommand(INDEX_FIRST_STUDENT, 3, studioRecord),
-                model, feedback, expectedModel);
+        assertCommandSuccess(
+                new AddStudioRecordCommand(INDEX_FIRST_STUDENT, 3, studioRecord),
+                model,
+                new CommandResult(feedback, updated),
+                expectedModel);
         assertFalse(student.getRegisteredStudioRecords().hasStudioRecord(3));
     }
 
@@ -128,7 +131,9 @@ public class AddStudioRecordCommandTest {
 
         assertCommandSuccess(
                 new AddStudioRecordCommand(INDEX_FIRST_STUDENT, 3, studioRecord),
-                model, feedback, expectedModel);
+                model,
+                new CommandResult(feedback, student),
+                expectedModel);
     }
 
     @Test
@@ -165,8 +170,11 @@ public class AddStudioRecordCommandTest {
 
         String feedback = String.format(AddStudioRecordCommand.MESSAGE_SUCCESS, student.getName(), 3);
 
-        assertCommandSuccess(new AddStudioRecordCommand(INDEX_FIRST_STUDENT, 3, studioRecord),
-                model, feedback, expectedModel);
+        assertCommandSuccess(
+                new AddStudioRecordCommand(INDEX_FIRST_STUDENT, 3, studioRecord),
+                model,
+                new CommandResult(feedback, updated),
+                expectedModel);
         assertEquals(1, model.getFilteredStudentList().size());
         assertEquals(updated, model.getFilteredStudentList().get(0));
     }

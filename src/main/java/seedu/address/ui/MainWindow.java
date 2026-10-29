@@ -4,6 +4,10 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.logging.Logger;
 
+import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
@@ -15,6 +19,7 @@ import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import seedu.address.commons.core.GuiSettings;
 import seedu.address.commons.core.LogsCenter;
@@ -22,6 +27,7 @@ import seedu.address.logic.Logic;
 import seedu.address.logic.commands.CommandResult;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.model.student.Student;
 
 /**
  * The Main Window. Provides the basic application layout containing
@@ -30,6 +36,9 @@ import seedu.address.logic.parser.exceptions.ParseException;
 public class MainWindow extends UiPart<Stage> {
 
     private static final String FXML = "MainWindow.fxml";
+
+    /** Maximum share of the central area allocated to command results. */
+    private static final double MAX_RESULT_HEIGHT_RATIO = 0.30;
 
     private final Logger logger = LogsCenter.getLogger(getClass());
 
@@ -67,6 +76,9 @@ public class MainWindow extends UiPart<Stage> {
     @FXML
     private SplitPane mainSplitPane;
 
+    @FXML
+    private VBox resultsAndDetails;
+
     /**
      * Creates a {@code MainWindow} with the given {@code Stage}, {@code Logic},
      * and the data file path to show in the status bar.
@@ -103,6 +115,15 @@ public class MainWindow extends UiPart<Stage> {
      */
     private void setAccelerators() {
         setAccelerator(helpMenuItem, KeyCombination.valueOf("F1"));
+    }
+
+    /**
+     * Returns the student details panel displayed in the main window.
+     *
+     * @return the student details panel
+     */
+    StudentDetailsPanel getStudentDetailsPanel() {
+        return studentDetailsPanel;
     }
 
     /**
@@ -175,6 +196,38 @@ public class MainWindow extends UiPart<Stage> {
                 studentDetailsRoot,
                 Pos.TOP_LEFT);
 
+        ObservableList<Student> displayedStudents =
+                logic.getFilteredStudentList();
+
+        displayedStudents.addListener(
+                (ListChangeListener<Student>) change -> {
+                    Student displayedStudent =
+                            studentDetailsPanel.getDisplayedStudent();
+
+                    if (displayedStudent == null) {
+                        return;
+                    }
+
+                    Student updatedStudent = displayedStudents.stream()
+                            .filter(student ->
+                                    student.getName().equals(
+                                            displayedStudent.getName()))
+                            .findFirst()
+                            .orElse(null);
+
+                    if (updatedStudent == null) {
+                        studentDetailsPanel.clearStudent();
+                        Platform.runLater(() ->
+                                studentListPanel.getStudentListView()
+                                        .getSelectionModel()
+                                        .clearSelection());
+                    } else if (updatedStudent != displayedStudent) {
+                        studentDetailsPanel.showStudent(
+                                updatedStudent,
+                                logic.getMissions());
+                    }
+                });
+
         studentDetailsPanelPlaceholder.getChildren()
                 .add(studentDetailsRoot);
 
@@ -182,9 +235,7 @@ public class MainWindow extends UiPart<Stage> {
                 .getSelectionModel()
                 .selectedItemProperty()
                 .addListener((observable, oldStudent, newStudent) -> {
-                    if (newStudent == null) {
-                        studentDetailsPanel.clearStudent();
-                    } else {
+                    if (newStudent != null) {
                         studentDetailsPanel.showStudent(
                                 newStudent,
                                 logic.getMissions());
@@ -192,8 +243,18 @@ public class MainWindow extends UiPart<Stage> {
                 });
 
         resultDisplay = new ResultDisplay();
-        resultDisplayPlaceholder.getChildren()
-                .add(resultDisplay.getRoot());
+
+        resultDisplayPlaceholder.setMaxHeight(Region.USE_PREF_SIZE);
+
+        resultDisplay.getRoot().maxHeightProperty().bind(
+                Bindings.createDoubleBinding(() -> Math.max(0,
+                                resultsAndDetails.getHeight() * MAX_RESULT_HEIGHT_RATIO
+                                        - resultDisplayPlaceholder.getInsets().getTop()
+                                        - resultDisplayPlaceholder.getInsets().getBottom()),
+                        resultsAndDetails.heightProperty(),
+                        resultDisplayPlaceholder.insetsProperty()));
+
+        resultDisplayPlaceholder.getChildren().add(resultDisplay.getRoot());
 
         StatusBarFooter statusBarFooter =
                 new StatusBarFooter(dataFilePath);
@@ -262,29 +323,15 @@ public class MainWindow extends UiPart<Stage> {
      *
      * @see seedu.address.logic.Logic#execute(String)
      */
-    private CommandResult executeCommand(String commandText) throws CommandException, ParseException {
+    CommandResult executeCommand(String commandText) throws CommandException, ParseException {
         try {
             lastCommandLabel.setText(commandText);
             CommandResult commandResult = logic.execute(commandText);
 
-            logger.info("Result: " + commandResult.getFeedbackToUser());
+            logger.info(
+                    "Result: " + commandResult.getFeedbackToUser());
 
-            studentDetailsPanel.clearStudent();
-
-            studentListPanel.getStudentListView()
-                    .getSelectionModel()
-                    .clearSelection();
-
-            List<String> warnings = commandResult.getWarnings();
-            resultDisplay.setFeedbackToUser(commandResult.getFeedbackToUser(), warnings);
-
-            commandResult.getStudentToView().ifPresent(student -> {
-                studentDetailsPanel.showStudent(student,
-                        commandResult.getMissions());
-                studentListPanel.getStudentListView()
-                        .getSelectionModel()
-                        .select(student);
-            });
+            handleCommandResult(commandResult);
 
             if (commandResult.isShowHelp()) {
                 handleHelp();
@@ -300,5 +347,53 @@ public class MainWindow extends UiPart<Stage> {
             resultDisplay.setFeedbackToUser(e.getMessage());
             throw e;
         }
+    }
+
+    /**
+     * Updates the user interface using the result of an executed command.
+     *
+     * <p>Displays command feedback and warnings, refreshes mission information
+     * when the mission catalogue has changed, and displays the returned student
+     * if that student remains in the current filtered list. If the student is no
+     * longer visible, the details panel and list selection are cleared.</p>
+     *
+     * @param commandResult result returned after executing a command
+     */
+    void handleCommandResult(CommandResult commandResult) {
+        List<String> warnings = commandResult.getWarnings();
+
+        resultDisplay.setFeedbackToUser(
+                commandResult.getFeedbackToUser(),
+                warnings);
+
+        if (commandResult.isMissionUpdated()) {
+            studentDetailsPanel.updateMissions(
+                    commandResult.getMissions());
+        }
+
+        commandResult.getStudentToView().ifPresent(student -> {
+            boolean studentStillVisible =
+                    logic.getFilteredStudentList()
+                            .stream()
+                            .anyMatch(filteredStudent ->
+                                    filteredStudent.getName().equals(
+                                            student.getName()));
+
+            if (studentStillVisible) {
+                studentListPanel.getStudentListView()
+                        .getSelectionModel()
+                        .select(student);
+
+                studentDetailsPanel.showStudent(
+                        student,
+                        logic.getMissions());
+            } else {
+                studentDetailsPanel.clearStudent();
+
+                studentListPanel.getStudentListView()
+                        .getSelectionModel()
+                        .clearSelection();
+            }
+        });
     }
 }

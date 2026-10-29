@@ -75,7 +75,20 @@ The UI consists of a `MainWindow` and its parts: `CommandBox`, `ResultDisplay`, 
 
 `MainWindow` connects the student list, command feedback, and student details. Executing `view id/INDEX` displays the requested student's profile and mission statuses in `StudentDetailsPanel`, using the index in the currently displayed student list.
 
-`ResultDisplay` presents command feedback, including submission and overdue reports, in a scrollable area. `listmissions` and `listoverdue` produce textual feedback without replacing the current student filter. `viewmission` replaces the displayed student list with its query results and displays the selected mission's submission statuses in `ResultDisplay`. Student details use model objects and the mission catalogue supplied through the logic component.
+`ResultDisplay` presents command feedback, including mission summaries
+and submission-status reports. `listmissions` supports optional mission
+and status filters without replacing the current student filter.
+Student profiles use model objects and the mission catalogue supplied
+through the logic component.
+
+`ResultDisplay` calculates its preferred height from wrapped feedback and
+visible warnings, including padding. JavaFX bindings update this height
+when the text, width, or height limit changes.
+
+`MainWindow` limits the results area, including its surrounding padding,
+to 30% of the space shared with the student panels. Longer results scroll
+within `ResultDisplay`, while shorter results release space back to the
+student panels. New feedback resets the results scroll position.
 
 The `UI` component uses the JavaFX UI framework. The layouts of these UI parts are defined in matching `.fxml` files in `src/main/resources/view`. For example, [`MainWindow.fxml`](https://github.com/AY2627S1-CS2103T-F14a-1/tp/blob/master/src/main/resources/view/MainWindow.fxml) specifies the layout of [`MainWindow`](https://github.com/AY2627S1-CS2103T-F14a-1/tp/blob/master/src/main/java/seedu/address/ui/MainWindow.java).
 
@@ -135,9 +148,14 @@ The `Model` component,
 * stores each student's contact details, studio group, tags, studio records,
   notes, mastery check appointments, and mission submissions. Studio records
   track attendance and effort scores by week, while `MissionSubmissions`
-  records the IDs of submitted missions. A mission without a recorded
-  submission is treated as not submitted.
-* stores each mission's user-supplied ID, name, and deadline. The mission catalogue validates IDs and does not allocate them.
+  stores an immutable set of submitted mission IDs that reference the shared
+  catalogue. A mission without a recorded submission is treated as not
+  submitted; deleting a mission also removes its ID from every student's
+  submissions.
+* stores each mission's user-supplied ID, name, and deadline. `MissionId`
+  validates the ID format and normalizes its case; `MissionCatalogue` enforces
+  ID and name uniqueness and stores the supplied ID without allocating or
+  renumbering IDs.
 * maintains a _filtered_ view of the students, such as search results. It exposes this view as an unmodifiable `ObservableList<Student>` that the UI can observe and bind to, so the UI updates when the list changes.
 * stores a `UserPrefs` object that represents the user's preferences (currently, just the GUI settings). This is exposed to the outside as a `ReadOnlyUserPrefs` object.
 * does not depend on any of the other three components (as the `Model` represents data entities of the domain, they should make sense on their own without depending on other components).
@@ -147,13 +165,18 @@ map from studio weeks 0 through 13 to `StudioRecord` objects. Each recorded
 week has one record containing a non-negative effort score. The week is the map
 key; the presence of a record indicates attendance, even when its effort score
 is zero. Weeks without a record are displayed as absent with an effort score
-of zero. Each student also has one `RegisteredNotes` object containing notes
-keyed by IDs from 1 through 10, one `RegisteredMasteryChecks` object
-containing numbered mastery check appointments, and one `MissionSubmissions`
-object containing zero or more submitted mission IDs. The `1` multiplicities
-count these containers, not the records inside them.
+of zero. Each student also has one `RegisteredNotes` object containing at most
+1,000 notes, one `RegisteredMasteryChecks` object containing numbered
+appointments, and one `MissionSubmissions` object containing zero or more
+submitted mission IDs. The notes list and mastery-check registration map are
+unmodifiable; mastery-check appointment objects retain mutable completion
+status. The `1` multiplicities count the per-student containers, not the
+records inside them.
 
-Composition diamonds show conceptual ownership of the values that form a student record; immutable values may be reused internally when records are replaced. Submission IDs reference shared missions rather than owning them.
+Composition diamonds show conceptual ownership of student records and mission
+definitions; immutable values may be reused internally when records are
+replaced. Submission IDs reference shared mission definitions rather than
+owning them.
 
 <box type="info" seamless>
 
@@ -192,7 +215,7 @@ This section describes some noteworthy details on how certain features are imple
 
 ### Adding a mission
 
-For `addmission m/MISSION_ID n/NAME d/DEADLINE`, `AddressBookParser` delegates to `AddMissionCommandParser`, which validates exactly one mission ID, name, and deadline and creates an `AddMissionCommand`. `ParserUtil#parseMissionId(...)` validates the ID with `MissionId`, preserving the required `M` plus positive integer format. `ParserUtil#parseMissionName(...)` removes surrounding whitespace and collapses repeated whitespace in the name, while preserving case and punctuation. The deadline must be a real date in `YYYY-MM-DD` format; past dates are accepted. Missing, repeated, blank, or invalid fields and unexpected preamble text cause a `ParseException`.
+For `addmission m/MISSION_ID n/NAME d/DEADLINE`, `AddressBookParser` delegates to `AddMissionCommandParser`, which validates exactly one mission ID, name, and deadline and creates an `AddMissionCommand`. `MissionParserUtil#parseMissionId(...)` removes whitespace before validating the ID with `MissionId`: it must start with `M`, contain a positive integer of at least two digits with no unnecessary leading zeros, and its numeric value must not exceed `9223372036854775807` (`Long.MAX_VALUE`). IDs with larger numeric values receive the mission-ID constraint message. `MissionParserUtil#parseMissionName(...)` removes surrounding whitespace and collapses repeated whitespace in the name, while preserving case and punctuation. The deadline parser similarly removes whitespace before requiring a real `YYYY-MM-DD` date; past dates are accepted. Missing, repeated, blank, or invalid fields and unexpected preamble text cause a `ParseException`.
 
 When executed, `AddMissionCommand` checks for an existing ID and calls `Model#hasMissionName(...)` to reject duplicate names, ignoring case and whitespace differences. It then calls `Model#addMission(...)`, which delegates through `ModelManager` and `AddressBook` to `MissionCatalogue`. The catalogue validates uniqueness and stores the supplied ID; it never renumbers missions. The command returns a `CommandResult` containing the added mission.
 
@@ -203,8 +226,8 @@ stored with each mission; there is no allocation counter. Deletion leaves all re
 and removes the deleted ID from every student's submissions.
 
 Mission names share `Mission.normalizeName(...)` for whitespace normalization. Delete and submission-list
-parsers share `MissionParser.parseMissionIdArgument(...)`, while mark, unmark, and mission deletion use
-`Student.withMissionSubmissions(...)` to preserve all other student fields. Common command feedback is
+parsers both use `MissionParserUtil#parseMissionId(...)`. Marking, unmarking, and mission deletion use
+`Student#withMissionSubmissions(...)` to preserve all other student fields. Common command feedback is
 defined in `Messages`.
 
 The sequence diagram below illustrates the successful interaction flow using `execute("addmission m/M01 n/Rune Reading d/2026-10-20")`. Here, `missionId` is the parsed `MissionId`, `deadline` is the parsed `LocalDate` value for `2026-10-20`, and `feedback` is the formatted success message.
@@ -213,7 +236,7 @@ The sequence diagram below illustrates the successful interaction flow using `ex
 
 ### Deleting a mission
 
-For `delmission m/M03`, `AddressBookParser` delegates to `DeleteMissionCommandParser`. The parser requires exactly one nonblank `m/` value and rejects unexpected preamble text. `ParserUtil#parseMissionId(...)` trims and validates the ID, and `MissionId` normalizes it to uppercase. Thus, `m/m03` and `m/M03` identify the same mission; the ID is not a displayed list position.
+For `delmission m/M03`, `AddressBookParser` delegates to `DeleteMissionCommandParser`. The parser requires exactly one nonblank `m/` value and rejects unexpected preamble text. `MissionParserUtil#parseMissionId(...)` removes whitespace and validates the ID, and `MissionId` normalizes it to uppercase. Thus, `m/m03` and `m/M03` identify the same mission; the ID is not a displayed list position.
 
 When executed, `DeleteMissionCommand` calls `Model#findMission(...)` and rejects a nonexistent mission before making changes. It then calls `Model#deleteMission(...)`. Within the model, `AddressBook` prepares replacement student records without the deleted mission's submission ID and removes the mission from the catalogue. This includes students hidden by the current filter and preserves their other details and submissions. Remaining IDs do not change; a deleted ID may later be explicitly reused. The command returns a `CommandResult` identifying the deleted mission.
 
@@ -225,7 +248,7 @@ The sequence diagram below illustrates the successful interaction flow using `ex
 
 ### Marking and unmarking mission submissions
 
-For `markmission id/INDEX m/MISSION_ID` or `unmarkmission id/INDEX m/MISSION_ID`, `AddressBookParser` delegates to `MarkMissionCommandParser` or `UnmarkMissionCommandParser`. Both reuse `MissionParserUtil` to validate a positive student index and exactly one case-insensitive mission ID, then create the corresponding command. Invalid or extra arguments cause a `ParseException`; whether the mission and displayed student exist is checked during execution.
+For `markmission id/INDEX m/MISSION_ID` or `unmarkmission id/INDEX m/MISSION_ID`, `AddressBookParser` delegates to `MarkMissionCommandParser` or `UnmarkMissionCommandParser`. Both use `ArgumentStructureValidator` to require exactly one `id/` and `m/` value, `ParserUtil#parseIndex(...)` to remove whitespace and validate a positive student index, and `MissionParserUtil#parseMissionId(...)` to remove whitespace and validate the case-insensitive mission ID. They then create the corresponding command. Invalid or extra arguments cause a `ParseException` that includes command usage. A positive index that does not identify a student in the current displayed list is rejected during execution with a `CommandException`; this error also includes the corresponding command usage. A well-formed ID for a mission that does not exist is rejected during execution without changing records.
 
 When executed, the command calls `Model#findMission(...)` and retrieves the selected student from `Model#getFilteredStudentList()`. Marking uses `MissionSubmissions#withSubmission(...)`; unmarking uses `MissionSubmissions#withoutSubmission(...)`. Each produces updated immutable submission data, which the command places in a replacement `Student` before calling `Model#setStudent(...)`. Other student details and the current filter are preserved, and the observable student list notifies the UI of the replacement.
 
@@ -245,31 +268,72 @@ After any of these commands returns successfully, `LogicManager` calls `Storage.
 
 Parsing and command-validation failures exit before the saving step. If saving itself fails, `LogicManager` reports a `CommandException`; the in-memory change has already occurred and is not rolled back. On loading, storage validates the catalogue and requires saved submission IDs to refer to existing missions.
 
-### Viewing mission submission statuses
+### Listing mission submissions
 
-For `viewmission m/MISSION_ID [s/overdue]`, `AddressBookParser` delegates to `ViewMissionCommandParser`. The parser reuses `ArgumentStructureValidator#validateStructureWithOptionals(...)` to require exactly one mission prefix and allow at most one status prefix.
-`ParserUtil#parseMissionId(...)` validates the mission ID. When supplied, the status value must be `overdue`, ignoring case. Missing required prefixes, duplicate prefixes, unexpected preamble text, invalid mission IDs, and invalid status values cause a `ParseException`.
+`ListMissionsCommandParser` accepts optional, nonrepeatable `m/` and `s/`
+prefixes. Blank arguments produce `ListMissionCatalogueCommand`. Otherwise,
+a mission ID selects one mission, and an optional status restricts results
+to Submitted or Overdue. A status without a mission ID queries all missions.
+Malformed mission IDs, unsupported statuses, duplicate prefixes, and
+unexpected preamble text cause a `ParseException`.
 
-When executed, `ViewMissionCommand` first calls `Model#findMission(...)`. A nonexistent mission causes a `CommandException` before the displayed student list changes. The command then obtains the current local date using `LocalDate.now(clock)` and calls `Mission#isPastDeadline(...)`.
+`ListMissionsCommand` stores optional mission and status selections.
+A specified mission is resolved before generating results; a nonexistent
+mission causes a `CommandException`. Without a mission selection, the
+command obtains all missions in ascending numeric ID order.
 
-Without a status filter, the command calls `Model#updateFilteredStudentList(...)` with `PREDICATE_SHOW_ALL_STUDENTS`. With `s/overdue`, it installs a predicate that accepts a student only when the mission deadline has passed and `MissionSubmissions#hasSubmission(...)` returns false for that mission.
+The command obtains the current local date once using an injected `Clock`.
+`MissionSubmissionStatus#from(...)` determines each student's status:
 
-`ModelManager` maintains a `FilteredList<Student>` backed by the complete address-book student list. Replacing its predicate evaluates the query across all students, including students hidden by an earlier search.
-The UI observes the same filtered list and updates automatically.
+* A recorded submission is Submitted, regardless of the deadline.
+* A missing submission is Overdue when the deadline is before the local date.
+* Otherwise, a missing submission is Not submitted.
 
-The command formats rows from `Model#getFilteredStudentList()` after installing the predicate. Row numbers therefore match the displayed student indexes. Existing `view`, `markmission`, and `unmarkmission` commands continue to resolve indexes through `Command#getStudentAtDisplayedIndex(...)`.
+Missions due today are not overdue. Normal execution uses the computer's
+local time zone; tests inject a fixed clock for deterministic boundary checks.
 
-Submission status is derived as follows:
+Both query forms share the same row-building logic and inspect only
+`Model#getFilteredStudentList()`. The optional status filter selects
+matching rows without changing the model's student filter.
 
-* A recorded submission is `Submitted`, regardless of the deadline.
-* An absent submission is `Overdue` only when today's local date is strictly after the deadline.
-* Otherwise, an absent submission is `Not submitted`.
+Rows include displayed student indexes, names, studio groups, and statuses.
+All-mission queries also include mission details and order rows by mission
+ID, then displayed student order. A student may appear in multiple rows
+while retaining the same displayed index.
 
-A mission due today is not overdue. No overdue flag or submission timestamp is stored. The command uses `Clock.systemDefaultZone()` during normal operation and accepts an injected `Clock` through a package-private constructor for deterministic tests.
+Separate messages distinguish an empty mission catalogue, an empty student
+list, and no matching statuses. Student records, mission definitions,
+submission records, and the current student filter remain unchanged.
+Command equality includes both the mission and status selections.
 
-The installed predicate retains the deadline result calculated for that execution. Rerunning `viewmission` refreshes the query after the date or mission deadline changes. Student replacements still cause the filtered list to reevaluate the affected records: marking a displayed overdue student removes that student from the results, and remaining indexes shift.
+### Listing mission summaries
 
-Feedback includes the mission ID, description, deadline, result count, and numbered status rows. An empty result clears the displayed list and includes an explanatory message. Feedback also explains that results reflect manually maintained AvengerHub records; an absent record does not confirm that a student made no submission.
+For bare `listmissions`, `ListMissionsCommandParser` creates a
+`ListMissionCatalogueCommand`.
+
+The command reads `Model#getMissionList()` and sorts the output by numeric
+mission ID without changing stored catalogue order. Every mission appears
+regardless of the current student filter.
+
+For each mission, it counts recorded submissions within
+`Model#getFilteredStudentList()` using
+`MissionSubmissions#hasSubmission(...)`. It displays `Submitted: X/Y`,
+where X is the submitted count and Y is the filtered student count.
+Hidden students contribute to neither count. An empty filtered list
+produces `0/0`.
+
+The command obtains the local date once per execution from an injected
+`Clock` and evaluates deadlines using `Mission#isPastDeadline(...)`.
+`Messages#format(Mission, boolean)` adds `Deadline passed` inside the
+due-date parentheses when the deadline is before that date. Missions due
+today are not labelled. The label is independent of submission counts.
+
+Normal execution uses `Clock.systemDefaultZone()`; tests inject a fixed
+clock for deterministic deadline checks.
+
+An empty catalogue returns `No missions configured.` Student records,
+mission definitions, submission records, and the student filter remain
+unchanged. Rerunning the command recalculates counts and deadline labels.
 
 The query changes only the displayed student filter. It does not modify student records, mission definitions, or recorded submissions.
 --------------------------------------------------------------------------------------------------------------------
@@ -311,8 +375,9 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 | `* * *`  | TA                             | search for a student by name                                             | quickly find them without scrolling through the whole list                           |
 | `* * *`  | TA                             | edit a student's information                                             | keep my records accurate when their information changes                              |
 | `* * *`  | TA with multiple studio groups | see a combined view of all students across my groups                     | get a holistic view of my overall workload                                           |
-| `* * *`  | TA                             | mark a student as present or absent for a studio                  | maintain an accurate studio record                                               |
-| `* * *`  | TA                             | mark whether a student submitted a given mission                         | track completion without cross-checking another system                               |
+| `* * *`  | TA                             | mark a student as present or absent for a studio                  | maintain an accurate studio record                                                   |
+| `* * *`  | TA                             | add or delete shared missions                                           | manage the missions students need to complete                                        |
+| `* * *`  | TA                             | mark or unmark a student's mission submission                            | see who has submitted each mission                                                   |
 | `* * *`  | TA                             | record a student's mark for a given assessment                           | keep their performance data alongside other student records                          |
 | `* * *`  | TA with multiple studio groups | see which studio group a student belongs to                              | avoid mixing up students across studio groups                                        |
 | `* *`    | TA                             | view a summary of a student's studio records, participation, and submissions | understand their overall engagement without checking multiple records                |
@@ -544,8 +609,6 @@ submission records, or the current student filter.
 
 **MSS**
 
-**MSS**
-
 1. Tutor requests to edit a shared mission and provides the required details.
 2. AvengerHub updates the mission, saves the changes, and confirms success.
 
@@ -639,18 +702,42 @@ submission records, or the current student filter.
 
       Use case ends.
       
-Student records, mission definitions, submission records, and the current
-student filter remain unchanged throughout this use case.
+Only the selected student's submission record changes. Other student data and
+mission definitions remain unchanged. The current student filter remains
+active, so its displayed results may change if they depend on that submission.
 
-**Use case: List mission submissions**
+**Use case: List all configured missions**
+
+**MSS**
+
+1. Tutor requests the mission catalogue.
+2. AvengerHub displays all configured missions and their relevant details,
+   including submission counts for the current student list.
+
+   Use case ends.
+
+**Extensions**
+
+* 2a. No missions are configured.
+
+    * 2a1. AvengerHub informs the tutor that no missions are configured.
+
+      Use case ends.
+
+The catalogue includes all configured missions regardless of the current
+student filter. Student records, mission definitions, submission records,
+and the current student filter remain unchanged.
+
+**Use case: List specific mission submissions**
 
 **MSS**
 
 1. Tutor requests to display all students or a filtered set of students.
 2. AvengerHub displays the requested student list.
-3. Tutor requests to list submissions for a specified mission ID.
-4. AvengerHub displays the students in the current list who have a recorded
-   submission for that mission, retaining their displayed student indexes.
+3. Tutor requests submission statuses for a specified mission, optionally
+   filtering by submitted or overdue status.
+4. AvengerHub displays matching students and their submission statuses,
+   using their indexes in the current student list.
 
    Use case ends.
 
@@ -670,11 +757,17 @@ student filter remain unchanged throughout this use case.
 
       Use case resumes from step 3.
 
-* 4a. No students in the current list have a recorded submission for the mission,
-  including when the current student list is empty.
+* 4a. No submission statuses match the selected status filter.
 
-    * 4a1. AvengerHub reports that no submissions are recorded for the mission
-      within the current student list.
+    * 4a1. AvengerHub informs the tutor that no submissions match the
+      selected status.
+
+      Use case ends.
+
+* 4b. The current student list is empty.
+
+    * 4b1. AvengerHub informs the tutor that no students are in the
+      current student list.
 
       Use case ends.
 
@@ -706,66 +799,20 @@ student filter remain unchanged throughout this use case.
 
 * 4b. The current student list is empty.
 
-    * 4b1. AvengerHub informs the tutor that no overdue submissions exist
-      within the current student list.
+    * 4b1. AvengerHub informs the tutor that no students are in the
+      current student list.
 
       Use case ends.
 
 * 4c. No missions are configured.
 
-    * 4c1. AvengerHub informs the tutor that no overdue submissions exist
-      within the current student list.
+    * 4c1. AvengerHub informs the tutor that no missions are configured.
 
       Use case ends.
 
 Deadlines are inclusive: missions due today are not overdue. The current
 date follows the computer's local date and time zone. Recorded submissions
 are excluded, regardless of when they were recorded.
-
-**Use case: View mission submission statuses**
-
-**Actor:** Tutor
-
-**MSS**
-
-1. Tutor requests submission statuses for a mission, optionally
-   selecting the overdue filter.
-2. AvengerHub evaluates the query across all students and replaces the
-   displayed student list with the matching students.
-3. AvengerHub displays the mission ID, description, deadline, result count,
-   and each matching student's recorded submission status.
-
-   Use case ends.
-
-**Extensions**
-
-* 1a. The command contains missing, duplicate, or invalid arguments.
-
-    * 1a1. AvengerHub explains the invalid input and displays command usage.
-      Records and the displayed student list remain unchanged.
-
-      Use case ends.
-
-* 1b. The specified mission does not exist.
-
-    * 1b1. AvengerHub reports that the mission does not exist.
-      Records and the displayed student list remain unchanged.
-
-      Use case ends.
-
-* 2a. No students match the query.
-
-    * 2a1. AvengerHub clears the displayed student list and displays the
-      mission details, result count zero, and an empty-result explanation.
-
-      Use case ends.
-
-Without a status filter, all students are included. With the overdue
-filter, only students without a recorded submission whose mission deadline
-is before today's local date are included. Submitted students are never
-included in overdue results.
-
-*{More to be added}*
 
 ### Non-Functional Requirements
 
@@ -913,6 +960,18 @@ testers are expected to do more *exploratory* testing.
 
 ### Mission catalogue and submission reports
 
+1. Enter `listmissions`.
+   Expected: All configured missions appear with their IDs, names, and
+   deadlines in ascending numeric ID order.
+   Enter `find g/1A`, followed by `listmissions`.
+   Expected: The same complete catalogue appears; the student filter
+   remains restricted to group 1A.
+
+1. Enter `listmissions m/`.
+   Expected: Mission ID constraint feedback appears.
+   Enter `listmissions` again.
+   Expected: The catalogue and student filter remain unchanged.
+
 1. Enter `addmission m/M10 n/Manual Test d/2026-11-30`, followed by
    `addmission m/M11 n/manual   test d/2026-11-30`.
    Expected: The first mission is added with ID M10; the second is rejected
@@ -933,10 +992,10 @@ testers are expected to do more *exploratory* testing.
    result indexes still correspond to that displayed list.
 
 1. Enter `addmission m/M20 n/Overdue Manual Test d/2000-01-01`, then
-   `listoverdue`.
+   `listmissions s/overdue`.
    Expected: M20 is listed as overdue for each student in the current list
    without a recorded submission. Record one listed pair with
-   `markmission id/1 m/M20`, then run `listoverdue` again.
+   `markmission id/1 m/M20`, then run `listmissions s/overdue` again.
    Expected: That student-M20 pair is no longer reported.
 
 1. Enter `delmission m/M10`, then `view id/1`.

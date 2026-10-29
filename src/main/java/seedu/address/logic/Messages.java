@@ -52,10 +52,27 @@ public class Messages {
     }
 
     /**
-     * Formats the {@code mission} for display to the user.
+     * Formats mission details without a deadline-status label.
+     *
+     * @param mission Mission to format.
+     * @return Mission ID, name, and deadline.
      */
     public static String format(Mission mission) {
-        return mission.getId() + " · " + mission.getName() + " (Due: " + mission.getDeadline() + ")";
+        return format(mission, false);
+    }
+
+    /**
+     * Formats mission details with an optional deadline-status label.
+     *
+     * @param mission Mission to format.
+     * @param isPastDeadline Whether the mission's deadline has passed.
+     * @return Mission ID, name, and deadline with the requested status label.
+     */
+    public static String format(Mission mission, boolean isPastDeadline) {
+        String deadlineStatus = isPastDeadline ? " — Deadline passed" : "";
+
+        return mission.getId() + " · " + mission.getName()
+                + " (Due: " + mission.getDeadline() + deadlineStatus + ")";
     }
 
     /**

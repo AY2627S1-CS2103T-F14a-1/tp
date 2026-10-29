@@ -4,8 +4,8 @@ import static java.util.Objects.requireNonNull;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
-import java.util.Optional;
 
+import seedu.address.commons.util.StringUtil;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.mission.Mission;
 import seedu.address.model.mission.MissionId;
@@ -22,10 +22,6 @@ public final class MissionParserUtil {
     public static final String MESSAGE_INVALID_MISSION_CALENDAR_DATE =
             "Deadline is not a valid calendar date. Month must be 01–12, "
                     + "and day must be valid for the selected month and year.";
-    public static final String MESSAGE_INVALID_MISSION_STATUS =
-            "Invalid status filter. Use s/overdue or omit s/.";
-
-    private static final String MISSION_STATUS_OVERDUE = "overdue";
 
     /**
      * Parses a mission name, collapsing whitespace while preserving punctuation and case.
@@ -44,7 +40,7 @@ public final class MissionParserUtil {
     }
 
     /**
-     * Trims and validates a mission ID; {@link MissionId} normalizes its case.
+     * Removes whitespace and validates a mission ID; {@link MissionId} normalizes its case.
      *
      * @param missionIdText Mission ID text.
      * @return The validated mission ID.
@@ -55,34 +51,14 @@ public final class MissionParserUtil {
         requireNonNull(missionIdText);
 
         try {
-            return new MissionId(missionIdText.trim());
+            return new MissionId(StringUtil.removeWhitespace(missionIdText));
         } catch (IllegalArgumentException e) {
             throw new ParseException(MESSAGE_INVALID_MISSION_ID);
         }
     }
 
     /**
-     * Parses the optional mission overdue filter.
-     *
-     * @param status Optional status value supplied by the user.
-     * @return True if the overdue filter is supplied, or false if omitted.
-     * @throws NullPointerException If the optional container is null.
-     * @throws ParseException If a supplied value is not overdue.
-     */
-    public static boolean parseMissionOverdueFilter(Optional<String> status) throws ParseException {
-        requireNonNull(status);
-
-        if (status.isEmpty()) {
-            return false;
-        }
-        if (!MISSION_STATUS_OVERDUE.equalsIgnoreCase(status.orElseThrow().strip())) {
-            throw new ParseException(MESSAGE_INVALID_MISSION_STATUS);
-        }
-        return true;
-    }
-
-    /**
-     * Parses a strict calendar deadline, including past dates.
+     * Removes whitespace and parses a strict calendar deadline, including past dates.
      *
      * @param deadline Raw date text in YYYY-MM-DD format.
      * @return Valid calendar date.
@@ -90,12 +66,12 @@ public final class MissionParserUtil {
      */
     public static LocalDate parseMissionDeadline(String deadline) throws ParseException {
         requireNonNull(deadline);
-        String trimmedDeadline = deadline.strip();
-        if (!trimmedDeadline.matches("[0-9]{4}-[0-9]{2}-[0-9]{2}")) {
+        String compactDeadline = StringUtil.removeWhitespace(deadline);
+        if (!compactDeadline.matches("[0-9]{4}-[0-9]{2}-[0-9]{2}")) {
             throw new ParseException(MESSAGE_INVALID_MISSION_DEADLINE);
         }
         try {
-            return LocalDate.parse(trimmedDeadline);
+            return LocalDate.parse(compactDeadline);
         } catch (DateTimeParseException e) {
             throw new ParseException(MESSAGE_INVALID_MISSION_CALENDAR_DATE);
         }

@@ -1,6 +1,7 @@
 package seedu.address.logic.parser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.Messages.MESSAGE_UNKNOWN_COMMAND;
@@ -20,6 +21,7 @@ import seedu.address.logic.commands.AddNoteCommand;
 import seedu.address.logic.commands.AddStudentCommand;
 import seedu.address.logic.commands.AddStudioRecordCommand;
 import seedu.address.logic.commands.ClearCommand;
+import seedu.address.logic.commands.CommandResult;
 import seedu.address.logic.commands.DeleteMasteryCheckCommand;
 import seedu.address.logic.commands.DeleteNoteCommand;
 import seedu.address.logic.commands.DeleteStudentCommand;
@@ -39,6 +41,7 @@ import seedu.address.logic.commands.UnmarkMissionCommand;
 import seedu.address.logic.commands.ViewCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.logic.parser.util.MasteryCheckParserUtil;
+import seedu.address.model.ModelManager;
 import seedu.address.model.masterycheck.MasteryCheck;
 import seedu.address.model.mission.MissionId;
 import seedu.address.model.student.NameContainsKeywordsPredicate;
@@ -99,14 +102,30 @@ public class AddressBookParserTest {
 
     @Test
     public void parseCommand_help() throws Exception {
-        assertTrue(parser.parseCommand(HelpCommand.COMMAND_WORD) instanceof HelpCommand);
-        assertTrue(parser.parseCommand(HelpCommand.COMMAND_WORD + " 3") instanceof HelpCommand);
+        assertInstanceOf(HelpCommand.class, parser.parseCommand(HelpCommand.COMMAND_WORD));
+        assertInstanceOf(HelpCommand.class, parser.parseCommand(HelpCommand.COMMAND_WORD + " 3"));
     }
 
     @Test
-    public void parseCommand_list() throws Exception {
-        assertTrue(parser.parseCommand(ListCommand.COMMAND_WORD) instanceof ListCommand);
-        assertTrue(parser.parseCommand(ListCommand.COMMAND_WORD + " 3") instanceof ListCommand);
+    public void parseCommand_listWithoutArguments_returnsCommandWithoutWarning() throws Exception {
+        for (String input : List.of("list", "  list \t ", "LIST")) {
+            ListCommand command = assertInstanceOf(ListCommand.class, parser.parseCommand(input));
+            CommandResult result = command.execute(new ModelManager());
+
+            assertEquals(ListCommand.MESSAGE_SUCCESS, result.getFeedbackToUser());
+            assertEquals(List.of(), result.getWarnings());
+        }
+    }
+
+    @Test
+    public void parseCommand_listWithArguments_returnsCommandWithWarning() throws Exception {
+        for (String input : List.of("list missions m/01", "list 3", "list m/M01", "LIST extra")) {
+            ListCommand command = assertInstanceOf(ListCommand.class, parser.parseCommand(input));
+            CommandResult result = command.execute(new ModelManager());
+
+            assertEquals(ListCommand.MESSAGE_SUCCESS, result.getFeedbackToUser());
+            assertEquals(List.of(ListCommand.MESSAGE_WARNING_EXTRA_ARGUMENTS), result.getWarnings());
+        }
     }
 
     @Test
@@ -125,6 +144,17 @@ public class AddressBookParserTest {
     @Test
     public void parseCommand_unknownCommand_throwsParseException() {
         assertThrows(ParseException.class, MESSAGE_UNKNOWN_COMMAND, () -> parser.parseCommand("unknownCommand"));
+    }
+
+    @Test
+    public void parseCommand_removedMissionCommands_throwsUnknownCommand() {
+        for (String input : List.of(
+                "viewmission m/M01",
+                "VIEWMISSION m/M01 s/overdue",
+                "listoverdue",
+                "LISTOVERDUE")) {
+            assertThrows(ParseException.class, MESSAGE_UNKNOWN_COMMAND, () -> parser.parseCommand(input));
+        }
     }
 
     @Test
