@@ -31,6 +31,12 @@ public class UnmarkMissionCommandParserTest {
     }
 
     @Test
+    public void parse_internalWhitespaceInIndexAndMissionId_returnsCommand() throws Exception {
+        assertEquals(new UnmarkMissionCommand(INDEX_FIRST_STUDENT, new MissionId("M05")),
+                new UnmarkMissionCommandParser().parse("id/000 1 m/m 0 5"));
+    }
+
+    @Test
     public void parse_invalidArguments_rejectsInput() {
         for (String input : List.of("", "1", "m/M05", "id/0 m/M05", "id/-1 m/M05", "id/1.0 m/M05",
                 "id/2147483648 m/M05", "id/1 m/", "id/1 m/M5", "id/1 m/M00", "id/1 m/M05 extra", "1 x/M05",

@@ -53,10 +53,12 @@ unchanged.
 | NOTE-ADD-001 | Run `addnote id/1 nt/Review lecture notes`, then view student 1. | Success feedback names student 1. The note list contains `1: Review lecture notes`; student 2 is unchanged. |
 | NOTE-ADD-002 | Run `addnote id/1 nt/Prepare consultation`, then view student 1. | The second note is appended at index 2; index 1 remains unchanged. |
 | NOTE-ADD-003 | Run `addnote id/1 nt/Don't forget: chapter 2!`, then view student 1. | The note is accepted with its punctuation unchanged and is appended after the existing notes. |
-| NOTE-ADD-004 | Run `addnote id/1`, then `addnote id/1 nt/Valid nt/Other`, viewing student 1 after each command. | The missing-`nt/` and duplicate-`nt/` messages appear respectively. No note is added. |
-| NOTE-ADD-005 | Run `addnote id/3 nt/Invalid index`, then view both students. | Invalid-student-index feedback appears; neither student changes. |
-| NOTE-ADD-006 | Restart after NOTE-ADD-002 and view student 1. | Both notes and their insertion order are restored unchanged. |
-| NOTE-ADD-007 | Add notes until student 1 has 10, then run `addnote id/1 nt/Overflow` and view student 1. | `Amy Bee already has the maximum of 10 notes. No changes made.` appears. The original 10 notes and saved data remain unchanged. |
+| NOTE-ADD-004 | Run `addnote id/0 1 nt/Whitespace index`, then view student 1. | Whitespace inside the student index is ignored; the note is added to student 1. |
+| NOTE-ADD-005 | Run `addnote id/0 0 nt/Invalid index`, then view both students. | Invalid-student-index feedback appears; neither student changes. |
+| NOTE-ADD-006 | Run `addnote id/1`, then `addnote id/1 nt/Valid nt/Other`, viewing student 1 after each command. | The missing-`nt/` and duplicate-`nt/` messages appear respectively. No note is added. |
+| NOTE-ADD-007 | Run `addnote id/3 nt/Invalid index`, then view both students. | Invalid-student-index feedback appears; neither student changes. |
+| NOTE-ADD-008 | Restart after NOTE-ADD-002 and view student 1. | Both notes and their insertion order are restored unchanged. |
+| NOTE-ADD-009 | Add notes until student 1 has 10, then run `addnote id/1 nt/Overflow` and view student 1. | `Amy Bee already has the maximum of 10 notes. No changes made.` appears. The original 10 notes and saved data remain unchanged. |
 
 ## Delete-note command regression
 
@@ -112,6 +114,20 @@ Inspect the saved file before running that verification command to ensure reject
 | MISSION-009 | Mark M01 for both students; add M10; filter to one student; delete M01. Restart, run `list`, and inspect both profiles. | M10 retains its ID, and M01 plus its submissions are removed from both students. |
 | MISSION-010 | Back up data. In an isolated fixture, give two missions different IDs but equal names ignoring case/spaces. Start the app, inspect file, then run `list`. | Empty-address-book fallback; startup preserves invalid file, successful list saves the empty book. |
 | MISSION-011 | Add M10, delete it, then add `addmission m/M10 n/Limit d/2026-10-20`. | The deleted ID can be explicitly reused; the supplied ID is persisted unchanged. |
+
+## Mission command whitespace normalization
+
+Use an isolated dataset with two students and an empty mission catalogue.
+After each rejected command, inspect the catalogue or student profile to
+confirm that model state and saved data are unchanged.
+
+| ID | Steps | Expected result |
+| --- | --- | --- |
+| MISSION-WHITESPACE-001 | Run `addmission m/m 0 6 n/Curves d/2026 -12 -12`, then `listmissions`. | The mission is added as M06 with deadline 2026-12-12; whitespace inside the ID and date is ignored. |
+| MISSION-WHITESPACE-002 | Run `addmission m/m 0 7 n/Invalid date d/2026 -02 -30`, then `listmissions`. | The calendar-date error and usage appear. Only M06 remains in the catalogue and saved data. |
+| MISSION-WHITESPACE-003 | Run `markmission id/000 2 m/m 0 6`, then `view id/2`. | Student 2's M06 status is Submitted; whitespace inside the index and mission ID is ignored. |
+| MISSION-WHITESPACE-004 | Run `markmission id/0 0 m/M06`, then `view id/2`. | The invalid-index error and usage appear. Student 2's M06 status remains Submitted. |
+| MISSION-WHITESPACE-005 | Run `markmission id/1 m/M06`, then `unmarkmission id/1 m/m 0 6` and `view id/1`. | Student 1's M06 status changes from Submitted to Not submitted; whitespace inside the mission ID is ignored. |
 
 ## Consolidated mission command regression
 
@@ -285,9 +301,9 @@ direct UI equivalent.
 | --- | --- | --- |
 | MISSION-PARSE-001 | Parse a mission name containing leading/trailing and repeated whitespace, punctuation, and mixed case. | Surrounding whitespace is removed, internal whitespace collapses to single spaces, and punctuation/case are preserved. |
 | MISSION-PARSE-002 | Parse an empty or whitespace-only mission name, then a valid name. | Blank names produce the mission-name `ParseException`; valid parsing still succeeds. |
-| MISSION-PARSE-003 | Parse a leap-day deadline `2024-02-29`, a valid regular date, and a date with surrounding whitespace. | Valid dates parse to the expected `LocalDate`; surrounding whitespace is trimmed. |
+| MISSION-PARSE-003 | Parse a leap-day deadline `2024-02-29`, a valid regular date, and dates with surrounding or internal whitespace. | Valid dates parse to the expected `LocalDate`; all whitespace is removed before validation. |
 | MISSION-PARSE-004 | Parse malformed deadline formats and impossible calendar dates, then parse a valid date. | Invalid formats and impossible dates produce their respective `ParseException` messages; valid parsing still succeeds. |
-| MISSION-PARSE-005 | Parse lowercase `m/m03` with surrounding whitespace. | The parser trims the input and returns canonical ID `M03`; `MissionId` owns case normalization. |
+| MISSION-PARSE-005 | Parse lowercase `m/m03` with surrounding and internal whitespace. | The parser removes whitespace and returns canonical ID `M03`; `MissionId` owns case normalization. |
 | MISSION-ID-BOUNDARY-001 | In an empty catalogue, run `addmission m/M9223372036854775807 n/Maximum ID d/2026-12-13`. | The mission is added successfully with ID `M9223372036854775807`. |
 | MISSION-ID-BOUNDARY-002 | After the successful addition above, run `addmission m/M9223372036854775808 n/Overflow ID d/2026-12-13`, then `listmissions m/M9223372036854775807`. | The error says the mission number must not exceed `9223372036854775807` and includes command usage; the existing maximum-ID mission remains unchanged. |
 | MISSION-DELETE-RECREATE-001 | With mission `M03` submitted by a student, delete `M03`, then recreate it using `m/M03` with a new name and deadline. | The recreated mission uses ID `M03` and has no previous submissions. |
