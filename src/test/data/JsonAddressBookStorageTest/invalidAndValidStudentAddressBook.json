@@ -2,12 +2,14 @@
   "students": [
     {
       "name": "Valid Student",
+    "matricNumber": "A0000001A",
       "phone": "9482424",
       "email": "hans@example.com",
       "studioGroup": "1A"
     },
     {
       "name": "Student With Invalid Phone Field",
+    "matricNumber": "A0000002A",
       "phone": "948asdf2424",
       "email": "hans@example.com",
       "studioGroup": "1A"

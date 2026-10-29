@@ -7,10 +7,12 @@ import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND;
 import static seedu.address.logic.commands.CommandTestUtil.EMAIL_DESC_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.EMAIL_DESC_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_EMAIL_DESC;
+import static seedu.address.logic.commands.CommandTestUtil.INVALID_MATRIC_NUMBER_DESC;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_NAME_DESC;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_PHONE_DESC;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_STUDIO_GROUP_DESC;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_TAG_DESC;
+import static seedu.address.logic.commands.CommandTestUtil.MATRIC_NUMBER_DESC_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.NAME_DESC_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.PHONE_DESC_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.PHONE_DESC_BOB;
@@ -19,6 +21,7 @@ import static seedu.address.logic.commands.CommandTestUtil.STUDIO_GROUP_DESC_BOB
 import static seedu.address.logic.commands.CommandTestUtil.TAG_DESC_FRIEND;
 import static seedu.address.logic.commands.CommandTestUtil.TAG_DESC_HUSBAND;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_EMAIL_AMY;
+import static seedu.address.logic.commands.CommandTestUtil.VALID_MATRIC_NUMBER_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_NAME_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_PHONE_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_PHONE_BOB;
@@ -45,6 +48,7 @@ import seedu.address.logic.commands.EditStudentCommand;
 import seedu.address.logic.commands.EditStudentCommand.EditStudentDescriptor;
 import seedu.address.logic.parser.util.ParserUtil;
 import seedu.address.model.student.Email;
+import seedu.address.model.student.MatriculationNumber;
 import seedu.address.model.student.Name;
 import seedu.address.model.student.Phone;
 import seedu.address.model.student.StudioGroup;
@@ -94,6 +98,8 @@ public class EditStudentCommandParserTest {
     public void parse_invalidValue_failure() {
         assertParseFailure(parser, "id/1" + INVALID_NAME_DESC,
                 Name.MESSAGE_CONSTRAINTS + USAGE_SUFFIX); // invalid name
+        assertParseFailure(parser, "id/1" + INVALID_MATRIC_NUMBER_DESC,
+                MatriculationNumber.MESSAGE_CONSTRAINTS + USAGE_SUFFIX); // invalid matriculation number
         assertParseFailure(parser, "id/1" + INVALID_PHONE_DESC,
                 Phone.MESSAGE_CONSTRAINTS + USAGE_SUFFIX); // invalid phone
         assertParseFailure(parser, "id/1" + INVALID_EMAIL_DESC,
@@ -126,10 +132,10 @@ public class EditStudentCommandParserTest {
     public void parse_allFieldsSpecified_success() {
         Index targetIndex = INDEX_SECOND_STUDENT;
         String userInput = "id/" + targetIndex.getOneBased() + PHONE_DESC_BOB + TAG_DESC_HUSBAND
-                + EMAIL_DESC_AMY + NAME_DESC_AMY + TAG_DESC_FRIEND + STUDIO_GROUP_DESC_AMY;
+                + EMAIL_DESC_AMY + NAME_DESC_AMY + MATRIC_NUMBER_DESC_AMY + TAG_DESC_FRIEND + STUDIO_GROUP_DESC_AMY;
 
         EditStudentDescriptor descriptor = new EditStudentDescriptorBuilder().withName(VALID_NAME_AMY)
-                .withPhone(VALID_PHONE_BOB).withEmail(VALID_EMAIL_AMY)
+                .withMatricNumber(VALID_MATRIC_NUMBER_AMY).withPhone(VALID_PHONE_BOB).withEmail(VALID_EMAIL_AMY)
                 .withTags(VALID_TAG_HUSBAND, VALID_TAG_FRIEND).withStudioGroup(VALID_STUDIO_GROUP_AMY)
                 .build();
         EditStudentCommand expectedCommand = new EditStudentCommand(targetIndex, descriptor);
@@ -156,6 +162,12 @@ public class EditStudentCommandParserTest {
         String userInput = "id/" + targetIndex.getOneBased() + NAME_DESC_AMY;
         EditStudentDescriptor descriptor = new EditStudentDescriptorBuilder().withName(VALID_NAME_AMY).build();
         EditStudentCommand expectedCommand = new EditStudentCommand(targetIndex, descriptor);
+        assertParseSuccess(parser, userInput, expectedCommand);
+
+        // matriculation number
+        userInput = "id/" + targetIndex.getOneBased() + MATRIC_NUMBER_DESC_AMY;
+        descriptor = new EditStudentDescriptorBuilder().withMatricNumber(VALID_MATRIC_NUMBER_AMY).build();
+        expectedCommand = new EditStudentCommand(targetIndex, descriptor);
         assertParseSuccess(parser, userInput, expectedCommand);
 
         // phone
@@ -194,6 +206,21 @@ public class EditStudentCommandParserTest {
 
         assertParseFailure(parser, userInput,
                 CliSyntax.PREFIX_PHONE.getDuplicateMessage() + USAGE_SUFFIX);
+
+        // repeated matriculation number
+        userInput = "id/" + targetIndex.getOneBased() + MATRIC_NUMBER_DESC_AMY + MATRIC_NUMBER_DESC_AMY;
+        assertParseFailure(parser, userInput,
+                CliSyntax.PREFIX_MATRIC_NUMBER.getDuplicateMessage() + USAGE_SUFFIX);
+
+        // invalid matriculation number followed by valid value
+        userInput = "id/" + targetIndex.getOneBased() + INVALID_MATRIC_NUMBER_DESC + MATRIC_NUMBER_DESC_AMY;
+        assertParseFailure(parser, userInput,
+                CliSyntax.PREFIX_MATRIC_NUMBER.getDuplicateMessage() + USAGE_SUFFIX);
+
+        // valid matriculation number followed by invalid value
+        userInput = "id/" + targetIndex.getOneBased() + MATRIC_NUMBER_DESC_AMY + INVALID_MATRIC_NUMBER_DESC;
+        assertParseFailure(parser, userInput,
+                CliSyntax.PREFIX_MATRIC_NUMBER.getDuplicateMessage() + USAGE_SUFFIX);
 
         // invalid followed by valid
         userInput = "id/" + targetIndex.getOneBased() + PHONE_DESC_BOB + INVALID_PHONE_DESC;
@@ -246,7 +273,7 @@ public class EditStudentCommandParserTest {
         EditStudentCommand expectedCommand = new EditStudentCommand(INDEX_FIRST_STUDENT, descriptor);
 
         for (Prefix prefix : List.of(CliSyntax.PREFIX_NAME, CliSyntax.PREFIX_PHONE,
-                CliSyntax.PREFIX_EMAIL, CliSyntax.PREFIX_STUDIO_GROUP)) {
+                CliSyntax.PREFIX_EMAIL, CliSyntax.PREFIX_MATRIC_NUMBER, CliSyntax.PREFIX_STUDIO_GROUP)) {
             for (String blankValue : List.of("", " ", "\t", "\u2003")) {
                 assertParseSuccess(parser, "id/1" + NAME_DESC_AMY, expectedCommand);
                 assertParseFailure(parser, "id/1 " + prefix + blankValue,
@@ -303,4 +330,5 @@ public class EditStudentCommandParserTest {
                 parseTags.invoke(parser, new Object[]{null}));
         assertInstanceOf(AssertionError.class, error.getCause());
     }
+
 }

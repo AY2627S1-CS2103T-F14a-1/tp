@@ -520,3 +520,20 @@ Existing mission-edit cases, including MISSION-EDIT-001 and the single-field JUn
 cases, remain required: omitting an optional replacement must preserve it. The
 current EditMissionCommandParser reads n/ and d/ only when present; keep both
 single-field cases to ensure neither optional replacement becomes compulsory.
+
+## Matriculation number integration
+
+Use an isolated empty address book. After every rejected command, run list and
+view the relevant students to confirm that their profiles and saved data are unchanged.
+JUnit additionally covers null arguments, field equality and hash codes, strict
+ASCII validation, and preservation of matriculation numbers by student-copy methods.
+
+| ID | Steps | Expected result |
+| --- | --- | --- |
+| MATRIC-INTEGRATION-001 | Run addstudent n/Alice mtc/A0000001A p/91234567 e/alice@example.com g/1A, then view id/1. | Alice is added with matriculation number A0000001A. |
+| MATRIC-INTEGRATION-002 | Attempt the same add with a different name and mtc/A0000001A, then list and view id/1. | Duplicate-student feedback; Alice is unchanged. |
+| MATRIC-INTEGRATION-003 | Add another Alice with mtc/A0000002Z and otherwise valid fields, then list. | Both students are present despite having the same name. |
+| MATRIC-INTEGRATION-004 | Attempt addstudent with all other fields valid and mtc/ omitted, empty, lowercase, six digits, eight digits, or repeated. Verify both students after each rejection. | Missing-prefix, missing-argument, validation, or duplicate-prefix feedback appears as appropriate; no student is added. |
+| MATRIC-INTEGRATION-005 | Run editstudent id/1 mtc/A0000003B, then view id/1. | Only the matriculation number changes. |
+| MATRIC-INTEGRATION-006 | Run editstudent id/1 mtc/A0000002Z, then try mtc/a0000003B, blank mtc/, and repeated mtc/ values. Verify both students after each rejection. | Duplicate-student or parser feedback appears; both profiles remain unchanged. |
+| MATRIC-INTEGRATION-007 | Edit only student 1's phone, restart, then view both students. | Both matriculation numbers persist unchanged; the phone edit also persists. |

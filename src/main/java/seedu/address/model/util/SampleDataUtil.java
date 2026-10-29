@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import seedu.address.model.AddressBook;
 import seedu.address.model.ReadOnlyAddressBook;
 import seedu.address.model.student.Email;
+import seedu.address.model.student.MatriculationNumber;
 import seedu.address.model.student.Name;
 import seedu.address.model.student.Phone;
 import seedu.address.model.student.Student;
@@ -18,20 +19,29 @@ import seedu.address.model.tag.Tag;
  * Contains utility methods for populating {@code AddressBook} with sample data.
  */
 public class SampleDataUtil {
+    /**
+     * Creates fresh sample students with distinct matriculation numbers and empty activity records.
+     *
+     * @return Sample student profiles ready to add to an address book.
+     */
     public static Student[] getSampleStudents() {
         return new Student[] {
-            new Student(new Name("Alex Yeoh"), new Phone("87438807"), new Email("alexyeoh@example.com"),
-                getTagSet("friends"), new StudioGroup("1A")),
-            new Student(new Name("Bernice Yu"), new Phone("99272758"), new Email("berniceyu@example.com"),
-                getTagSet("colleagues", "friends"), new StudioGroup("1A")),
-            new Student(new Name("Charlotte Oliveiro"), new Phone("93210283"), new Email("charlotte@example.com"),
-                getTagSet("neighbours"), new StudioGroup("1A")),
-            new Student(new Name("David Li"), new Phone("91031282"), new Email("lidavid@example.com"),
-                getTagSet("family"), new StudioGroup("1A")),
-            new Student(new Name("Irfan Ibrahim"), new Phone("92492021"), new Email("irfan@example.com"),
-                getTagSet("classmates"), new StudioGroup("1A")),
-            new Student(new Name("Roy Balakrishnan"), new Phone("92624417"), new Email("royb@example.com"),
-                getTagSet("colleagues"), new StudioGroup("1A"))
+            new Student(new Name("Alex Yeoh"), new MatriculationNumber("A0303666K"), new Phone("87438807"),
+                    new Email("alexyeoh@example.com"), getTagSet("friends"), new StudioGroup("1A")),
+            new Student(new Name("Bernice Yu"), new MatriculationNumber("A1234567B"), new Phone("99272758"),
+                    new Email("berniceyu@example.com"), getTagSet("colleagues", "friends"),
+                    new StudioGroup("1A")),
+            new Student(new Name("Charlotte Oliveiro"), new MatriculationNumber("A0572438D"),
+                    new Phone("93210283"), new Email("charlotte@example.com"),
+                    getTagSet("neighbours"), new StudioGroup("1A")),
+            new Student(new Name("David Li"), new MatriculationNumber("A0159082D"), new Phone("91031282"),
+                    new Email("lidavid@example.com"), getTagSet("family"), new StudioGroup("1A")),
+            new Student(new Name("Irfan Ibrahim"), new MatriculationNumber("A0887251E"),
+                    new Phone("92492021"), new Email("irfan@example.com"), getTagSet("classmates"),
+                    new StudioGroup("1A")),
+            new Student(new Name("Roy Balakrishnan"), new MatriculationNumber("A0266487P"),
+                    new Phone("92624417"), new Email("royb@example.com"), getTagSet("colleagues"),
+                    new StudioGroup("1A"))
         };
     }
 

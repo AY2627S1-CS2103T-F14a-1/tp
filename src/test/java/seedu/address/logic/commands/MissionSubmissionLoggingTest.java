@@ -27,8 +27,10 @@ public class MissionSubmissionLoggingTest {
     @Test
     public void execute_filteredStudent_logsNameForChangesAndRepeatedRequests() throws Exception {
         Model model = new ModelManager();
-        Student first = new StudentBuilder().withName("Alice Example").withMissionSubmissions().build();
-        Student selected = new StudentBuilder().withName("Bob Example").withMissionSubmissions().build();
+        Student first = new StudentBuilder().withMatricNumber("A0000100A")
+                .withName("Alice Example").withMissionSubmissions().build();
+        Student selected = new StudentBuilder().withMatricNumber("A0000101A")
+                .withName("Bob Example").withMissionSubmissions().build();
         model.addStudent(first);
         model.addStudent(selected);
         MissionId missionId = new MissionId("M01");

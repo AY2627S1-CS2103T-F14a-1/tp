@@ -217,9 +217,12 @@ public class FindCommandParserTest {
 
     @Test
     public void execute_nameAlternativesAndGroup_appliesGroupToEveryAlternative() throws ParseException {
-        Student alex = new StudentBuilder().withName("Alex Tan").withStudioGroup("1A").build();
-        Student brian = new StudentBuilder().withName("Brian Lim").withStudioGroup("2B").build();
-        Student brianInGroup = new StudentBuilder().withName("Brian Lee").withStudioGroup("1A").build();
+        Student alex = new StudentBuilder().withMatricNumber("A0000100A")
+                .withName("Alex Tan").withStudioGroup("1A").build();
+        Student brian = new StudentBuilder().withMatricNumber("A0000101A")
+                .withName("Brian Lim").withStudioGroup("2B").build();
+        Student brianInGroup = new StudentBuilder().withMatricNumber("A0000102A")
+                .withName("Brian Lee").withStudioGroup("1A").build();
 
         AddressBook addressBook = new AddressBook();
         addressBook.addStudent(alex);
@@ -247,11 +250,14 @@ public class FindCommandParserTest {
 
     @Test
     public void execute_repeatedWordsAndAlternatives_filtersWithoutChangingRecords() throws ParseException {
-        Student alex = new StudentBuilder().withName("Alex Yeoh").withStudioGroup("1A").build();
-        Student repeatedAlex = new StudentBuilder().withName("Alex Alexander").withStudioGroup("1A").build();
+        Student alex = new StudentBuilder().withMatricNumber("A0000103A")
+                .withName("Alex Yeoh").withStudioGroup("1A").build();
+        Student repeatedAlex = new StudentBuilder().withMatricNumber("A0000104A")
+                .withName("Alex Alexander").withStudioGroup("1A").build();
         Student repeatedAlexOtherGroup =
-                new StudentBuilder().withName("Alex Alex").withStudioGroup("1B").build();
-        Student betsy = new StudentBuilder().withName("Betsy Crowe").withStudioGroup("1A").build();
+                new StudentBuilder().withMatricNumber("A0000105A").withName("Alex Alex").withStudioGroup("1B").build();
+        Student betsy = new StudentBuilder().withMatricNumber("A0000106A")
+                .withName("Betsy Crowe").withStudioGroup("1A").build();
         AddressBook addressBook = new AddressBook();
         addressBook.addStudent(alex);
         addressBook.addStudent(repeatedAlex);

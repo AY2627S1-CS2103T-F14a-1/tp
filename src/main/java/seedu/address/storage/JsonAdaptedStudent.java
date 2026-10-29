@@ -17,6 +17,7 @@ import seedu.address.commons.exceptions.IllegalValueException;
 import seedu.address.model.masterycheck.MasteryCheck;
 import seedu.address.model.mission.MissionId;
 import seedu.address.model.student.Email;
+import seedu.address.model.student.MatriculationNumber;
 import seedu.address.model.student.MissionSubmissions;
 import seedu.address.model.student.Name;
 import seedu.address.model.student.Note;
@@ -37,6 +38,7 @@ class JsonAdaptedStudent {
     public static final String MISSING_FIELD_MESSAGE_FORMAT = "Student's %s field is missing!";
 
     private final String name;
+    private final String matricNumber;
     private final String phone;
     private final String email;
     private final List<JsonAdaptedTag> tags = new ArrayList<>();
@@ -52,6 +54,7 @@ class JsonAdaptedStudent {
      * and notes default to empty collections.
      *
      * @param name Student's name.
+     * @param matricNumber Saved matriculation number text; missing or invalid values fail model conversion.
      * @param phone Student's phone number.
      * @param email Student's email address.
      * @param tags Student's tags, or null for no tags.
@@ -63,14 +66,15 @@ class JsonAdaptedStudent {
      * @param registeredNotes Saved note text strings in display order, or null for no notes.
      */
     @JsonCreator
-    public JsonAdaptedStudent(@JsonProperty("name") String name, @JsonProperty("phone") String phone,
-            @JsonProperty("email") String email,
+    public JsonAdaptedStudent(@JsonProperty("name") String name, @JsonProperty("matricNumber") String matricNumber,
+            @JsonProperty("phone") String phone, @JsonProperty("email") String email,
             @JsonProperty("tags") List<JsonAdaptedTag> tags, @JsonProperty("studio group") String studioGroup,
             @JsonProperty("missionSubmissions") List<?> missionSubmissions,
             @JsonProperty("registeredStudioRecords") List<?> registeredStudioRecords,
             @JsonProperty("registeredMasteryChecks") List<?> registeredMasteryChecks,
             @JsonProperty("registeredNotes") List<?> registeredNotes) {
         this.name = name;
+        this.matricNumber = matricNumber;
         this.phone = phone;
         this.email = email;
         if (tags != null) {
@@ -101,6 +105,7 @@ class JsonAdaptedStudent {
      */
     public JsonAdaptedStudent(Student source) {
         name = source.getName().fullName;
+        matricNumber = source.getMatricNumber().matricNumber;
         phone = source.getPhone().value;
         email = source.getEmail().value;
         tags.addAll(source.getTags().stream()
@@ -154,6 +159,15 @@ class JsonAdaptedStudent {
         }
         final Name modelName = new Name(name);
 
+        if (matricNumber == null) {
+            throw new IllegalValueException(
+                    String.format(MISSING_FIELD_MESSAGE_FORMAT, MatriculationNumber.class.getSimpleName()));
+        }
+        if (!MatriculationNumber.isValidMatricNumber(matricNumber)) {
+            throw new IllegalValueException(MatriculationNumber.MESSAGE_CONSTRAINTS);
+        }
+        final MatriculationNumber modelMatricNumber = new MatriculationNumber(matricNumber);
+
         if (phone == null) {
             throw new IllegalValueException(String.format(MISSING_FIELD_MESSAGE_FORMAT, Phone.class.getSimpleName()));
         }
@@ -184,7 +198,7 @@ class JsonAdaptedStudent {
         final RegisteredStudioRecords modelRegisteredStudioRecords = toModelRegisteredStudioRecords();
         final RegisteredMasteryChecks modelRegisteredMasteryChecks = toModelRegisteredMasteryChecks();
         final RegisteredNotes modelRegisteredNotes = toModelRegisteredNotes();
-        return new Student(modelName, modelPhone, modelEmail, modelTags, modelStudioGroup,
+        return new Student(modelName, modelMatricNumber, modelPhone, modelEmail, modelTags, modelStudioGroup,
                 modelMissionSubmissions, modelRegisteredStudioRecords, modelRegisteredMasteryChecks,
                 modelRegisteredNotes);
     }

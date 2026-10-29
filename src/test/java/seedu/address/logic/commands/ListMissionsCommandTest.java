@@ -43,8 +43,8 @@ public class ListMissionsCommandTest {
     public void setUp() {
         model = new ModelManager();
         model.addMission(MISSION_ID, "Rune Reading", LocalDate.of(2026, 10, 20));
-        john = new StudentBuilder().withName("John Doe").build();
-        betsy = new StudentBuilder().withName("Betsy Crowe")
+        john = new StudentBuilder().withMatricNumber("A0000100A").withName("John Doe").build();
+        betsy = new StudentBuilder().withMatricNumber("A0000101A").withName("Betsy Crowe")
                 .withStudioGroup("1A")
                 .withMissionSubmissions("M01").build();
         model.addStudent(john);
@@ -78,7 +78,7 @@ public class ListMissionsCommandTest {
 
     @Test
     public void execute_submittedStudentsInDifferentGroups_showsEachStudentsGroup() {
-        Student brian = new StudentBuilder().withName("Brian Lim")
+        Student brian = new StudentBuilder().withMatricNumber("A0000102A").withName("Brian Lim")
                 .withStudioGroup("1B")
                 .withMissionSubmissions("M01").build();
         model.addStudent(brian);

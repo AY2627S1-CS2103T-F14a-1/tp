@@ -22,6 +22,7 @@ import seedu.address.commons.util.JsonUtil;
 import seedu.address.model.masterycheck.MasteryCheck;
 import seedu.address.model.mission.MissionId;
 import seedu.address.model.student.Email;
+import seedu.address.model.student.MatriculationNumber;
 import seedu.address.model.student.MissionSubmissions;
 import seedu.address.model.student.Name;
 import seedu.address.model.student.Note;
@@ -42,10 +43,12 @@ public class JsonAdaptedStudentTest {
     private static final String INVALID_STUDIO_GROUP = "A1";
 
     private static final Student VALID_STUDENT = new Student(
-            new Name("Benson Meier"), new Phone("98765432"), new Email("johnd@example.com"), Set.of(),
+            new Name("Benson Meier"), new MatriculationNumber("A0000002A"),
+            new Phone("98765432"), new Email("johnd@example.com"), Set.of(),
             new StudioGroup("1A"), new MissionSubmissions(), new RegisteredStudioRecords(),
             new RegisteredMasteryChecks(), new RegisteredNotes());
 
+    private static final String VALID_MATRIC_NUMBER = VALID_STUDENT.getMatricNumber().toString();
     private static final String VALID_NAME = VALID_STUDENT.getName().toString();
     private static final String VALID_PHONE = VALID_STUDENT.getPhone().toString();
     private static final String VALID_EMAIL = VALID_STUDENT.getEmail().toString();
@@ -66,7 +69,7 @@ public class JsonAdaptedStudentTest {
 
     @Test
     public void toModelType_invalidName_throwsIllegalValueException() {
-        JsonAdaptedStudent student = new JsonAdaptedStudent(INVALID_NAME, VALID_PHONE, VALID_EMAIL,
+        JsonAdaptedStudent student = new JsonAdaptedStudent(INVALID_NAME, VALID_MATRIC_NUMBER, VALID_PHONE, VALID_EMAIL,
                 VALID_TAGS, VALID_STUDIO_GROUP, VALID_MISSION_SUBMISSIONS, VALID_REGISTERED_STUDIO_RECORDS,
                 VALID_MASTERY_CHECKS, VALID_REGISTERED_NOTES);
         String expectedMessage = Name.MESSAGE_CONSTRAINTS;
@@ -75,7 +78,7 @@ public class JsonAdaptedStudentTest {
 
     @Test
     public void toModelType_nullName_throwsIllegalValueException() {
-        JsonAdaptedStudent student = new JsonAdaptedStudent(null, VALID_PHONE, VALID_EMAIL,
+        JsonAdaptedStudent student = new JsonAdaptedStudent(null, VALID_MATRIC_NUMBER, VALID_PHONE, VALID_EMAIL,
                 VALID_TAGS, VALID_STUDIO_GROUP, VALID_MISSION_SUBMISSIONS, VALID_REGISTERED_STUDIO_RECORDS,
                 VALID_MASTERY_CHECKS, VALID_REGISTERED_NOTES);
         String expectedMessage = String.format(MISSING_FIELD_MESSAGE_FORMAT, Name.class.getSimpleName());
@@ -84,7 +87,7 @@ public class JsonAdaptedStudentTest {
 
     @Test
     public void toModelType_invalidPhone_throwsIllegalValueException() {
-        JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, INVALID_PHONE, VALID_EMAIL,
+        JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_MATRIC_NUMBER, INVALID_PHONE, VALID_EMAIL,
                 VALID_TAGS, VALID_STUDIO_GROUP, VALID_MISSION_SUBMISSIONS, VALID_REGISTERED_STUDIO_RECORDS,
                 VALID_MASTERY_CHECKS, VALID_REGISTERED_NOTES);
         String expectedMessage = Phone.MESSAGE_CONSTRAINTS;
@@ -93,7 +96,7 @@ public class JsonAdaptedStudentTest {
 
     @Test
     public void toModelType_nullPhone_throwsIllegalValueException() {
-        JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, null, VALID_EMAIL,
+        JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_MATRIC_NUMBER, null, VALID_EMAIL,
                 VALID_TAGS, VALID_STUDIO_GROUP, VALID_MISSION_SUBMISSIONS, VALID_REGISTERED_STUDIO_RECORDS,
                 VALID_MASTERY_CHECKS, VALID_REGISTERED_NOTES);
         String expectedMessage = String.format(MISSING_FIELD_MESSAGE_FORMAT, Phone.class.getSimpleName());
@@ -102,7 +105,7 @@ public class JsonAdaptedStudentTest {
 
     @Test
     public void toModelType_invalidEmail_throwsIllegalValueException() {
-        JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_PHONE, INVALID_EMAIL,
+        JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_MATRIC_NUMBER, VALID_PHONE, INVALID_EMAIL,
                 VALID_TAGS, VALID_STUDIO_GROUP, VALID_MISSION_SUBMISSIONS, VALID_REGISTERED_STUDIO_RECORDS,
                 VALID_MASTERY_CHECKS, VALID_REGISTERED_NOTES);
         String expectedMessage = Email.MESSAGE_CONSTRAINTS;
@@ -111,7 +114,7 @@ public class JsonAdaptedStudentTest {
 
     @Test
     public void toModelType_nullEmail_throwsIllegalValueException() {
-        JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_PHONE, null,
+        JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_MATRIC_NUMBER, VALID_PHONE, null,
                 VALID_TAGS, VALID_STUDIO_GROUP, VALID_MISSION_SUBMISSIONS, VALID_REGISTERED_STUDIO_RECORDS,
                 VALID_MASTERY_CHECKS, VALID_REGISTERED_NOTES);
         String expectedMessage = String.format(MISSING_FIELD_MESSAGE_FORMAT, Email.class.getSimpleName());
@@ -122,7 +125,7 @@ public class JsonAdaptedStudentTest {
     public void toModelType_invalidTags_throwsIllegalValueException() {
         List<JsonAdaptedTag> invalidTags = new ArrayList<>(VALID_TAGS);
         invalidTags.add(new JsonAdaptedTag(INVALID_TAG));
-        JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_PHONE, VALID_EMAIL,
+        JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_MATRIC_NUMBER, VALID_PHONE, VALID_EMAIL,
                 invalidTags, VALID_STUDIO_GROUP, VALID_MISSION_SUBMISSIONS, VALID_REGISTERED_STUDIO_RECORDS,
                 VALID_MASTERY_CHECKS, VALID_REGISTERED_NOTES);
         assertThrows(IllegalValueException.class, student::toModelType);
@@ -130,7 +133,7 @@ public class JsonAdaptedStudentTest {
 
     @Test
     public void toModelType_invalidStudioGroup_throwsIllegalValueException() {
-        JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_PHONE, VALID_EMAIL,
+        JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_MATRIC_NUMBER, VALID_PHONE, VALID_EMAIL,
                 VALID_TAGS, INVALID_STUDIO_GROUP, VALID_MISSION_SUBMISSIONS, VALID_REGISTERED_STUDIO_RECORDS,
                 VALID_MASTERY_CHECKS, VALID_REGISTERED_NOTES);
         String expectedMessage = StudioGroup.MESSAGE_CONSTRAINTS;
@@ -139,7 +142,7 @@ public class JsonAdaptedStudentTest {
 
     @Test
     public void toModelType_nullStudioGroup_throwsIllegalValueException() {
-        JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_PHONE, VALID_EMAIL,
+        JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_MATRIC_NUMBER, VALID_PHONE, VALID_EMAIL,
                 VALID_TAGS, null, VALID_MISSION_SUBMISSIONS, VALID_REGISTERED_STUDIO_RECORDS,
                 VALID_MASTERY_CHECKS, VALID_REGISTERED_NOTES);
         String expectedMessage = String.format(MISSING_FIELD_MESSAGE_FORMAT, StudioGroup.class.getSimpleName());
@@ -149,7 +152,7 @@ public class JsonAdaptedStudentTest {
     @Test
     public void toModelType_validMissionSubmissions_returnsStudent() throws Exception {
         Student expected = withMissionSubmissions(VALID_STUDENT, "M03", "M04", "M11", "M12", "M13");
-        JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_PHONE, VALID_EMAIL,
+        JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_MATRIC_NUMBER, VALID_PHONE, VALID_EMAIL,
                 VALID_TAGS, VALID_STUDIO_GROUP,
                 List.of("M03", "M04", "M11", "M12", "M13"), VALID_REGISTERED_STUDIO_RECORDS,
                 VALID_MASTERY_CHECKS, VALID_REGISTERED_NOTES);
@@ -160,7 +163,8 @@ public class JsonAdaptedStudentTest {
     @Test
     public void toModelType_invalidMissionSubmissions_throwsIllegalValueException() {
         for (String invalidId : List.of("", "M00", "M1", "M001")) {
-            JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_PHONE, VALID_EMAIL,
+            JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_MATRIC_NUMBER,
+                    VALID_PHONE, VALID_EMAIL,
                     VALID_TAGS, VALID_STUDIO_GROUP, List.of("M05", invalidId), VALID_REGISTERED_STUDIO_RECORDS,
                     VALID_MASTERY_CHECKS, VALID_REGISTERED_NOTES);
 
@@ -172,7 +176,7 @@ public class JsonAdaptedStudentTest {
     @Test
     public void toModelType_emptyMissionSubmissions_returnsStudentWithoutSubmissions() throws Exception {
         Student expected = withMissionSubmissions(VALID_STUDENT);
-        JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_PHONE, VALID_EMAIL,
+        JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_MATRIC_NUMBER, VALID_PHONE, VALID_EMAIL,
                 VALID_TAGS, VALID_STUDIO_GROUP, VALID_MISSION_SUBMISSIONS, VALID_REGISTERED_STUDIO_RECORDS,
                 VALID_MASTERY_CHECKS, VALID_REGISTERED_NOTES);
 
@@ -181,7 +185,7 @@ public class JsonAdaptedStudentTest {
 
     @Test
     public void toModelType_nullMissionSubmissionId_throwsIllegalValueException() {
-        JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_PHONE, VALID_EMAIL,
+        JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_MATRIC_NUMBER, VALID_PHONE, VALID_EMAIL,
                 VALID_TAGS, VALID_STUDIO_GROUP, Arrays.asList("M05", null), VALID_REGISTERED_STUDIO_RECORDS,
                 VALID_MASTERY_CHECKS, VALID_REGISTERED_NOTES);
 
@@ -192,7 +196,7 @@ public class JsonAdaptedStudentTest {
     @Test
     public void toModelType_nullMissionSubmissions_returnsStudentWithoutSubmissions() throws Exception {
         Student expected = withMissionSubmissions(VALID_STUDENT);
-        JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_PHONE, VALID_EMAIL,
+        JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_MATRIC_NUMBER, VALID_PHONE, VALID_EMAIL,
                 VALID_TAGS, VALID_STUDIO_GROUP, null, VALID_REGISTERED_STUDIO_RECORDS,
                 VALID_MASTERY_CHECKS, VALID_REGISTERED_NOTES);
 
@@ -202,7 +206,7 @@ public class JsonAdaptedStudentTest {
     @Test
     public void toModelType_duplicateMissionSubmissionIds_returnsUniqueSubmissions() throws Exception {
         Student expected = withMissionSubmissions(VALID_STUDENT, "M05", "M04");
-        JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_PHONE, VALID_EMAIL,
+        JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_MATRIC_NUMBER, VALID_PHONE, VALID_EMAIL,
                 VALID_TAGS, VALID_STUDIO_GROUP, List.of("M05", "M05", "M04"), VALID_REGISTERED_STUDIO_RECORDS,
                 VALID_MASTERY_CHECKS, VALID_REGISTERED_NOTES);
 
@@ -214,6 +218,7 @@ public class JsonAdaptedStudentTest {
         String json = """
                 {
                   "name": "Benson Meier",
+                  "matricNumber": "A0000002A",
                   "phone": "98765432",
                   "email": "johnd@example.com",
                   "tags": [],
@@ -249,7 +254,7 @@ public class JsonAdaptedStudentTest {
                 11, new StudioRecord(50),
                 12, new StudioRecord(75),
                 13, new StudioRecord(100)));
-        JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_PHONE, VALID_EMAIL,
+        JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_MATRIC_NUMBER, VALID_PHONE, VALID_EMAIL,
                 VALID_TAGS, VALID_STUDIO_GROUP, VALID_MISSION_SUBMISSIONS,
                 List.of(List.of(3, 10), List.of(4, 25), List.of(11, 50),
                         List.of(12, 75), List.of(13, 100)), VALID_MASTERY_CHECKS, VALID_REGISTERED_NOTES);
@@ -260,7 +265,8 @@ public class JsonAdaptedStudentTest {
     @Test
     public void toModelType_invalidStudioRecordWeek_throwsIllegalValueException() {
         for (int week : new int[] {-1, 14}) {
-            JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_PHONE, VALID_EMAIL,
+            JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_MATRIC_NUMBER,
+                    VALID_PHONE, VALID_EMAIL,
                     VALID_TAGS, VALID_STUDIO_GROUP, VALID_MISSION_SUBMISSIONS,
                     List.of(List.of(5, 50), List.of(week, 50)), VALID_MASTERY_CHECKS, VALID_REGISTERED_NOTES);
 
@@ -271,7 +277,7 @@ public class JsonAdaptedStudentTest {
 
     @Test
     public void toModelType_invalidStudioRecordEffortScore_throwsIllegalValueException() {
-        JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_PHONE, VALID_EMAIL,
+        JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_MATRIC_NUMBER, VALID_PHONE, VALID_EMAIL,
                 VALID_TAGS, VALID_STUDIO_GROUP, VALID_MISSION_SUBMISSIONS,
                 List.of(List.of(5, -1)), VALID_MASTERY_CHECKS, VALID_REGISTERED_NOTES);
 
@@ -282,7 +288,7 @@ public class JsonAdaptedStudentTest {
     @Test
     public void toModelType_emptyRegisteredStudioRecords_returnsStudentWithoutRecords() throws Exception {
         Student expected = withStudioRecordsByWeek(VALID_STUDENT, Map.of());
-        JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_PHONE, VALID_EMAIL,
+        JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_MATRIC_NUMBER, VALID_PHONE, VALID_EMAIL,
                 VALID_TAGS, VALID_STUDIO_GROUP, VALID_MISSION_SUBMISSIONS, VALID_REGISTERED_STUDIO_RECORDS,
                 VALID_MASTERY_CHECKS, VALID_REGISTERED_NOTES);
 
@@ -291,7 +297,7 @@ public class JsonAdaptedStudentTest {
 
     @Test
     public void toModelType_nullStudioRecordWeek_throwsIllegalValueException() {
-        JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_PHONE, VALID_EMAIL,
+        JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_MATRIC_NUMBER, VALID_PHONE, VALID_EMAIL,
                 VALID_TAGS, VALID_STUDIO_GROUP, VALID_MISSION_SUBMISSIONS,
                 List.of(Arrays.asList(null, 50)), VALID_MASTERY_CHECKS, VALID_REGISTERED_NOTES);
 
@@ -302,7 +308,7 @@ public class JsonAdaptedStudentTest {
     @Test
     public void toModelType_nullRegisteredStudioRecords_returnsStudentWithoutRecords() throws Exception {
         Student expected = withStudioRecordsByWeek(VALID_STUDENT, Map.of());
-        JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_PHONE, VALID_EMAIL,
+        JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_MATRIC_NUMBER, VALID_PHONE, VALID_EMAIL,
                 VALID_TAGS, VALID_STUDIO_GROUP, VALID_MISSION_SUBMISSIONS, null,
                 VALID_MASTERY_CHECKS, VALID_REGISTERED_NOTES);
 
@@ -314,7 +320,7 @@ public class JsonAdaptedStudentTest {
         Student expected = withStudioRecordsByWeek(VALID_STUDENT, Map.of(
                 4, new StudioRecord(25),
                 5, new StudioRecord(100)));
-        JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_PHONE, VALID_EMAIL,
+        JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_MATRIC_NUMBER, VALID_PHONE, VALID_EMAIL,
                 VALID_TAGS, VALID_STUDIO_GROUP, VALID_MISSION_SUBMISSIONS,
                 List.of(List.of(5, 50), List.of(5, 100), List.of(4, 25)), VALID_MASTERY_CHECKS, VALID_REGISTERED_NOTES);
 
@@ -326,6 +332,7 @@ public class JsonAdaptedStudentTest {
         String json = """
                 {
                   "name": "Amy Bee",
+                  "matricNumber": "A0000010A",
                   "phone": "85355255",
                   "email": "amy@gmail.com",
                   "tags": [],
@@ -342,7 +349,8 @@ public class JsonAdaptedStudentTest {
     @Test
     public void toModelType_malformedRegisteredStudioRecord_throwsIllegalValueException() {
         for (Object value : Arrays.asList(3, List.of(3), List.of(3, 50, 75), null)) {
-            JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_PHONE, VALID_EMAIL,
+            JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, VALID_MATRIC_NUMBER,
+                    VALID_PHONE, VALID_EMAIL,
                     VALID_TAGS, VALID_STUDIO_GROUP, VALID_MISSION_SUBMISSIONS,
                     Arrays.asList(value), VALID_MASTERY_CHECKS, VALID_REGISTERED_NOTES);
 
@@ -385,7 +393,8 @@ public class JsonAdaptedStudentTest {
      */
     private static Student withMissionSubmissions(Student student, String... missionIds) {
         Set<MissionId> submittedIds = Arrays.stream(missionIds).map(MissionId::new).collect(Collectors.toSet());
-        return new Student(student.getName(), student.getPhone(), student.getEmail(), student.getTags(),
+        return new Student(student.getName(), student.getMatricNumber(), student.getPhone(),
+                student.getEmail(), student.getTags(),
                 student.getStudioGroup(), new MissionSubmissions(submittedIds), student.getRegisteredStudioRecords(),
                 student.getRegisteredMasteryChecks(), student.getRegisteredNotes());
     }
@@ -399,7 +408,8 @@ public class JsonAdaptedStudentTest {
      */
     private static Student withStudioRecordsByWeek(Student student,
                                                    Map<Integer, StudioRecord> studioRecordsByWeek) {
-        return new Student(student.getName(), student.getPhone(), student.getEmail(), student.getTags(),
+        return new Student(student.getName(), student.getMatricNumber(), student.getPhone(),
+                student.getEmail(), student.getTags(),
                 student.getStudioGroup(), student.getMissionSubmissions(),
                 new RegisteredStudioRecords(studioRecordsByWeek),
                 student.getRegisteredMasteryChecks(), student.getRegisteredNotes());
@@ -415,6 +425,7 @@ public class JsonAdaptedStudentTest {
         return """
                 {
                   "name": "Amy Bee",
+                  "matricNumber": "A0000010A",
                   "phone": "85355255",
                   "email": "amy@gmail.com",
                   "tags": [],
@@ -595,7 +606,8 @@ public class JsonAdaptedStudentTest {
      * @return A student containing the specified registered notes.
      */
     private static Student withRegisteredNotes(Student student, RegisteredNotes registeredNotes) {
-        return new Student(student.getName(), student.getPhone(), student.getEmail(), student.getTags(),
+        return new Student(student.getName(), student.getMatricNumber(), student.getPhone(),
+                student.getEmail(), student.getTags(),
                 student.getStudioGroup(), student.getMissionSubmissions(), student.getRegisteredStudioRecords(),
                 student.getRegisteredMasteryChecks(), registeredNotes);
     }
@@ -607,7 +619,8 @@ public class JsonAdaptedStudentTest {
      * @return Adapted student containing the supplied records.
      */
     private static JsonAdaptedStudent withSavedMasteryChecks(List<?> appointments) {
-        return new JsonAdaptedStudent(VALID_NAME, VALID_PHONE, VALID_EMAIL, VALID_TAGS, VALID_STUDIO_GROUP,
+        return new JsonAdaptedStudent(VALID_NAME, VALID_MATRIC_NUMBER,
+                VALID_PHONE, VALID_EMAIL, VALID_TAGS, VALID_STUDIO_GROUP,
                 VALID_MISSION_SUBMISSIONS, VALID_REGISTERED_STUDIO_RECORDS, appointments, VALID_REGISTERED_NOTES);
     }
 
@@ -618,8 +631,48 @@ public class JsonAdaptedStudentTest {
      * @return Adapted student containing the supplied note records.
      */
     private static JsonAdaptedStudent withSavedNotes(List<?> notes) {
-        return new JsonAdaptedStudent(VALID_NAME, VALID_PHONE, VALID_EMAIL, VALID_TAGS, VALID_STUDIO_GROUP,
+        return new JsonAdaptedStudent(VALID_NAME, VALID_MATRIC_NUMBER,
+                VALID_PHONE, VALID_EMAIL, VALID_TAGS, VALID_STUDIO_GROUP,
                 VALID_MISSION_SUBMISSIONS, VALID_REGISTERED_STUDIO_RECORDS, VALID_MASTERY_CHECKS, notes);
     }
 
+
+    @Test
+    public void toModelType_invalidMatricNumber_throwsIllegalValueException() {
+        for (String value : List.of("", " ", "a0123456Z", "A0123456z", "A123456Z", "A01234567Z",
+                " A0123456Z", "A0123456Z ", "A012 456Z")) {
+            JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, value, VALID_PHONE, VALID_EMAIL,
+                    VALID_TAGS, VALID_STUDIO_GROUP, VALID_MISSION_SUBMISSIONS, VALID_REGISTERED_STUDIO_RECORDS,
+                    VALID_MASTERY_CHECKS, VALID_REGISTERED_NOTES);
+            assertThrows(IllegalValueException.class, MatriculationNumber.MESSAGE_CONSTRAINTS, student::toModelType);
+        }
+    }
+
+    @Test
+    public void toModelType_nullMatricNumber_throwsIllegalValueException() {
+        JsonAdaptedStudent student = new JsonAdaptedStudent(VALID_NAME, null, VALID_PHONE, VALID_EMAIL,
+                VALID_TAGS, VALID_STUDIO_GROUP, VALID_MISSION_SUBMISSIONS, VALID_REGISTERED_STUDIO_RECORDS,
+                VALID_MASTERY_CHECKS, VALID_REGISTERED_NOTES);
+        assertThrows(IllegalValueException.class,
+                String.format(MISSING_FIELD_MESSAGE_FORMAT, MatriculationNumber.class.getSimpleName()),
+                student::toModelType);
+    }
+
+    @Test
+    public void jsonRoundTrip_validMatricNumber_preservesValue() throws Exception {
+        Student expected = new StudentBuilder(VALID_STUDENT).withMatricNumber("A0000000Z").build();
+        String json = JsonUtil.toJsonString(new JsonAdaptedStudent(expected));
+        assertTrue(json.contains("\"matricNumber\" : \"A0000000Z\""));
+        assertEquals(expected, JsonUtil.fromJsonString(json, JsonAdaptedStudent.class).toModelType());
+    }
+
+    @Test
+    public void toModelType_jsonMissingMatricNumber_throwsIllegalValueException() throws Exception {
+        String json = JsonUtil.toJsonString(new JsonAdaptedStudent(VALID_STUDENT))
+                .replaceFirst("\"matricNumber\"\\s*:\\s*\"[^\"]*\",?", "");
+        JsonAdaptedStudent student = JsonUtil.fromJsonString(json, JsonAdaptedStudent.class);
+        assertThrows(IllegalValueException.class,
+                String.format(MISSING_FIELD_MESSAGE_FORMAT, MatriculationNumber.class.getSimpleName()),
+                student::toModelType);
+    }
 }

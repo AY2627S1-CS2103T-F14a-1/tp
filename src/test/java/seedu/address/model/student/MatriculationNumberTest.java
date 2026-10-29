@@ -15,7 +15,8 @@ public class MatriculationNumberTest {
     private static final List<String> INVALID_NUMBERS = List.of(
             "", " ", "1234567", "A123456B", "A12345678B", "B1234567A", "a1234567B", "A1234567b",
             "A1234567", "1234567B", "A12345678", "A1234567!", "A123X567B", " A1234567B", "A1234567B ",
-            "A123 567B", "A1234567B\n", "A１２３４５６７B");
+            "A123 567B", "A1234567B\n", "A１２３４５６７B", "\t", "\n", "A1234567BB",
+            "AA1234567B", "A1234567[B", "A1234567@", "A1234567[", "A١٢٣٤٥٦٧B", "A123\t567B");
 
     @Test
     public void constructor_null_throwsNullPointerException() {
@@ -47,7 +48,7 @@ public class MatriculationNumberTest {
     @Test
     public void isValidMatricNumber_validNumbersAndAllUppercaseSuffixes_returnsTrue() {
         for (String number : VALID_NUMBERS) {
-            assertTrue(MatriculationNumber.isValidMatricNumber(number));
+            assertTrue(MatriculationNumber.isValidMatricNumber(number), number);
         }
         for (char suffix = 'A'; suffix <= 'Z'; suffix++) {
             assertTrue(MatriculationNumber.isValidMatricNumber("A1234567" + suffix));
@@ -57,7 +58,28 @@ public class MatriculationNumberTest {
     @Test
     public void isValidMatricNumber_invalidNumbers_returnsFalse() {
         for (String number : INVALID_NUMBERS) {
-            assertFalse(MatriculationNumber.isValidMatricNumber(number));
+            assertFalse(MatriculationNumber.isValidMatricNumber(number), number);
         }
+    }
+
+    @Test
+    public void equals_sameValue_returnsTrue() {
+        MatriculationNumber number = new MatriculationNumber("A1234567B");
+        MatriculationNumber copy = new MatriculationNumber("A1234567B");
+
+        assertTrue(number.equals(number));
+        assertTrue(number.equals(copy));
+        assertTrue(copy.equals(number));
+        assertEquals(number.hashCode(), copy.hashCode());
+    }
+
+    @Test
+    public void equals_differentValueOrType_returnsFalse() {
+        MatriculationNumber number = new MatriculationNumber("A1234567B");
+
+        assertFalse(number.equals(null));
+        assertFalse(number.equals("A1234567B"));
+        assertFalse(number.equals(new MatriculationNumber("A1234568B")));
+        assertFalse(number.equals(new MatriculationNumber("A1234567C")));
     }
 }

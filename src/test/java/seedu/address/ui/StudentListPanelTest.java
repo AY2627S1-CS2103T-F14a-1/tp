@@ -18,6 +18,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ListView;
 import seedu.address.model.student.Email;
+import seedu.address.model.student.MatriculationNumber;
 import seedu.address.model.student.Name;
 import seedu.address.model.student.Phone;
 import seedu.address.model.student.Student;
@@ -77,13 +78,16 @@ public class StudentListPanelTest extends GuiUnitTest {
      * Returns a list of students containing {@code studentCount} students that is used to populate the
      * {@code StudentListPanel}.
      */
+
     private ObservableList<Student> createBackingList(int studentCount) {
         ObservableList<Student> backingList = FXCollections.observableArrayList();
         for (int i = 0; i < studentCount; i++) {
             Name name = new Name(i + "a");
+            MatriculationNumber matricNumber = new MatriculationNumber(String.format("A%07dA", i));
             Phone phone = new Phone("000");
             Email email = new Email("a@aa");
-            Student student = new Student(name, phone, email, Collections.emptySet(), new StudioGroup("1A"));
+            Student student = new Student(name, matricNumber,
+                    phone, email, Collections.emptySet(), new StudioGroup("1A"));
             backingList.add(student);
         }
         return backingList;

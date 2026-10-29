@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.student.Email;
+import seedu.address.model.student.MatriculationNumber;
 import seedu.address.model.student.Name;
 import seedu.address.model.student.Phone;
 import seedu.address.model.student.StudioGroup;
@@ -168,5 +169,30 @@ public class StudentParserUtilTest {
         String studioGroupWithWhitespace = WHITESPACE + VALID_STUDIO_GROUP + WHITESPACE;
         StudioGroup expectedStudioGroup = new StudioGroup(VALID_STUDIO_GROUP);
         assertEquals(expectedStudioGroup, StudentParserUtil.parseStudioGroup(studioGroupWithWhitespace));
+    }
+
+    @Test
+    public void parseMatricNumber_null_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> StudentParserUtil.parseMatricNumber(null));
+    }
+
+    @Test
+    public void parseMatricNumber_validValue_returnsMatricNumber() throws Exception {
+        assertEquals(new MatriculationNumber("A0123456Z"), StudentParserUtil.parseMatricNumber("A0123456Z"));
+    }
+
+    @Test
+    public void parseMatricNumber_surroundingWhitespace_returnsTrimmedMatricNumber() throws Exception {
+        assertEquals(new MatriculationNumber("A0123456Z"),
+                StudentParserUtil.parseMatricNumber(WHITESPACE + "A0123456Z" + WHITESPACE));
+    }
+
+    @Test
+    public void parseMatricNumber_invalidValues_throwsParseException() {
+        for (String value : List.of("", " ", "a0123456Z", "A0123456z", "B0123456Z", "A123456Z",
+                "A01234567Z", "A012 456Z", "A１２３４５６７Z")) {
+            assertThrows(ParseException.class, MatriculationNumber.MESSAGE_CONSTRAINTS, () ->
+                    StudentParserUtil.parseMatricNumber(value));
+        }
     }
 }

@@ -30,7 +30,7 @@ public class MissionStorageTest {
     @Test
     public void saveAndLoad_catalogueWithMissionSubmissions_preservesAllRecords() throws Exception {
         AddressBook original = new AddressBook();
-        Student student = new Student(ALICE.getName(), ALICE.getPhone(), ALICE.getEmail(),
+        Student student = new Student(ALICE.getName(), ALICE.getMatricNumber(), ALICE.getPhone(), ALICE.getEmail(),
                 ALICE.getTags(), ALICE.getStudioGroup(), new MissionSubmissions(Set.of(new MissionId("M105"))),
                 ALICE.getRegisteredStudioRecords(),
                 ALICE.getRegisteredMasteryChecks(), ALICE.getRegisteredNotes());
@@ -59,7 +59,7 @@ public class MissionStorageTest {
 
     @Test
     public void readAddressBook_danglingSubmission_rejectsWithoutChangingFile() throws Exception {
-        Student student = new Student(ALICE.getName(), ALICE.getPhone(), ALICE.getEmail(),
+        Student student = new Student(ALICE.getName(), ALICE.getMatricNumber(), ALICE.getPhone(), ALICE.getEmail(),
                 ALICE.getTags(), ALICE.getStudioGroup(), new MissionSubmissions(Set.of(new MissionId("M05"))),
                 ALICE.getRegisteredStudioRecords(),
                 ALICE.getRegisteredMasteryChecks(), ALICE.getRegisteredNotes());

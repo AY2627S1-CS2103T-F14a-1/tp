@@ -41,6 +41,9 @@ public class StudentDetailsPanel extends UiPart<Region> {
     private Label studentName;
 
     @FXML
+    private Label matricNumber;
+
+    @FXML
     private Label studioGroup;
 
     @FXML
@@ -115,6 +118,7 @@ public class StudentDetailsPanel extends UiPart<Region> {
                 .collect(Collectors.joining(", "));
 
         studentName.setText(student.getName().fullName);
+        matricNumber.setText(student.getMatricNumber().matricNumber);
         studioGroup.setText(
                 "Studio group: " + student.getStudioGroup().studioGroup);
         phone.setText("Phone: " + student.getPhone().value);

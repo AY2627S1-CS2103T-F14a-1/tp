@@ -4,10 +4,13 @@ import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND;
 import static seedu.address.logic.commands.CommandTestUtil.EMAIL_DESC_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.EMAIL_DESC_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_EMAIL_DESC;
+import static seedu.address.logic.commands.CommandTestUtil.INVALID_MATRIC_NUMBER_DESC;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_NAME_DESC;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_PHONE_DESC;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_STUDIO_GROUP_DESC;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_TAG_DESC;
+import static seedu.address.logic.commands.CommandTestUtil.MATRIC_NUMBER_DESC_AMY;
+import static seedu.address.logic.commands.CommandTestUtil.MATRIC_NUMBER_DESC_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.NAME_DESC_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.NAME_DESC_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.PHONE_DESC_AMY;
@@ -19,6 +22,7 @@ import static seedu.address.logic.commands.CommandTestUtil.STUDIO_GROUP_DESC_BOB
 import static seedu.address.logic.commands.CommandTestUtil.TAG_DESC_FRIEND;
 import static seedu.address.logic.commands.CommandTestUtil.TAG_DESC_HUSBAND;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_EMAIL_BOB;
+import static seedu.address.logic.commands.CommandTestUtil.VALID_MATRIC_NUMBER_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_NAME_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_PHONE_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_STUDIO_GROUP_BOB;
@@ -34,6 +38,7 @@ import org.junit.jupiter.api.Test;
 
 import seedu.address.logic.commands.AddStudentCommand;
 import seedu.address.model.student.Email;
+import seedu.address.model.student.MatriculationNumber;
 import seedu.address.model.student.Name;
 import seedu.address.model.student.Phone;
 import seedu.address.model.student.Student;
@@ -52,7 +57,8 @@ public class AddStudentCommandParserTest {
 
         // whitespace only preamble
         assertParseSuccess(parser, PREAMBLE_WHITESPACE + NAME_DESC_BOB + PHONE_DESC_BOB + EMAIL_DESC_BOB
-                + TAG_DESC_FRIEND + STUDIO_GROUP_DESC_BOB, new AddStudentCommand(expectedStudent));
+                + TAG_DESC_FRIEND + MATRIC_NUMBER_DESC_BOB + STUDIO_GROUP_DESC_BOB,
+                new AddStudentCommand(expectedStudent));
 
 
         // multiple tags - all accepted
@@ -60,7 +66,7 @@ public class AddStudentCommandParserTest {
                 .build();
         assertParseSuccess(parser,
                 NAME_DESC_BOB + PHONE_DESC_BOB + EMAIL_DESC_BOB
-                        + TAG_DESC_HUSBAND + TAG_DESC_FRIEND + STUDIO_GROUP_DESC_BOB,
+                        + TAG_DESC_HUSBAND + TAG_DESC_FRIEND + MATRIC_NUMBER_DESC_BOB + STUDIO_GROUP_DESC_BOB,
                 new AddStudentCommand(expectedStudentMultipleTags));
     }
 
@@ -69,18 +75,25 @@ public class AddStudentCommandParserTest {
         Student expectedStudent = new StudentBuilder(BOB).withTags(VALID_TAG_FRIEND).build();
 
         assertParseSuccess(parser, "N/" + VALID_NAME_BOB + " P/" + VALID_PHONE_BOB
-                        + " E/" + VALID_EMAIL_BOB + " T/" + VALID_TAG_FRIEND + " G/" + VALID_STUDIO_GROUP_BOB,
+                        + " MTC/" + VALID_MATRIC_NUMBER_BOB + " E/" + VALID_EMAIL_BOB + " T/" + VALID_TAG_FRIEND
+                        + " G/" + VALID_STUDIO_GROUP_BOB,
                 new AddStudentCommand(expectedStudent));
     }
 
     @Test
     public void parse_repeatedNonTagValue_failure() {
         String validExpectedStudentString = NAME_DESC_BOB + PHONE_DESC_BOB + EMAIL_DESC_BOB
-                + TAG_DESC_FRIEND + STUDIO_GROUP_DESC_BOB;
+                + TAG_DESC_FRIEND + MATRIC_NUMBER_DESC_BOB + STUDIO_GROUP_DESC_BOB;
 
         // multiple names
         assertParseFailure(parser, NAME_DESC_AMY + validExpectedStudentString,
                 CliSyntax.PREFIX_NAME.getDuplicateMessage() + USAGE_SUFFIX);
+
+        // multiple matriculation numbers
+        assertParseFailure(parser, MATRIC_NUMBER_DESC_AMY + validExpectedStudentString,
+                CliSyntax.PREFIX_MATRIC_NUMBER.getDuplicateMessage() + USAGE_SUFFIX);
+        assertParseFailure(parser, MATRIC_NUMBER_DESC_BOB + validExpectedStudentString,
+                CliSyntax.PREFIX_MATRIC_NUMBER.getDuplicateMessage() + USAGE_SUFFIX);
 
         // multiple phones
         assertParseFailure(parser, PHONE_DESC_AMY + validExpectedStudentString,
@@ -97,7 +110,7 @@ public class AddStudentCommandParserTest {
         // multiple fields repeated
         assertParseFailure(parser,
                 validExpectedStudentString + PHONE_DESC_AMY + EMAIL_DESC_AMY + NAME_DESC_AMY
-                        + STUDIO_GROUP_DESC_AMY + validExpectedStudentString,
+                        + MATRIC_NUMBER_DESC_AMY + STUDIO_GROUP_DESC_AMY + validExpectedStudentString,
                 CliSyntax.PREFIX_NAME.getDuplicateMessage() + USAGE_SUFFIX);
 
         // invalid value followed by valid value
@@ -105,6 +118,10 @@ public class AddStudentCommandParserTest {
         // invalid name
         assertParseFailure(parser, INVALID_NAME_DESC + validExpectedStudentString,
                 CliSyntax.PREFIX_NAME.getDuplicateMessage() + USAGE_SUFFIX);
+
+        // invalid matriculation number
+        assertParseFailure(parser, INVALID_MATRIC_NUMBER_DESC + validExpectedStudentString,
+                CliSyntax.PREFIX_MATRIC_NUMBER.getDuplicateMessage() + USAGE_SUFFIX);
 
         // invalid email
         assertParseFailure(parser, INVALID_EMAIL_DESC + validExpectedStudentString,
@@ -124,6 +141,10 @@ public class AddStudentCommandParserTest {
         assertParseFailure(parser, validExpectedStudentString + INVALID_NAME_DESC,
                 CliSyntax.PREFIX_NAME.getDuplicateMessage() + USAGE_SUFFIX);
 
+        // invalid matriculation number
+        assertParseFailure(parser, validExpectedStudentString + INVALID_MATRIC_NUMBER_DESC,
+                CliSyntax.PREFIX_MATRIC_NUMBER.getDuplicateMessage() + USAGE_SUFFIX);
+
         // invalid email
         assertParseFailure(parser, validExpectedStudentString + INVALID_EMAIL_DESC,
                 CliSyntax.PREFIX_EMAIL.getDuplicateMessage() + USAGE_SUFFIX);
@@ -142,7 +163,7 @@ public class AddStudentCommandParserTest {
         // zero tags
         Student expectedStudent = new StudentBuilder(AMY).withTags().build();
         assertParseSuccess(parser, NAME_DESC_AMY + PHONE_DESC_AMY + EMAIL_DESC_AMY
-                        + STUDIO_GROUP_DESC_AMY,
+                        + MATRIC_NUMBER_DESC_AMY + STUDIO_GROUP_DESC_AMY,
                 new AddStudentCommand(expectedStudent));
     }
 
@@ -152,22 +173,26 @@ public class AddStudentCommandParserTest {
 
         // missing name prefix
         assertParseFailure(parser, VALID_NAME_BOB + PHONE_DESC_BOB + EMAIL_DESC_BOB
-                        + STUDIO_GROUP_DESC_BOB,
+                        + MATRIC_NUMBER_DESC_BOB + STUDIO_GROUP_DESC_BOB,
                 expectedMessage);
+
+        // missing matriculation number prefix
+        assertParseFailure(parser, NAME_DESC_BOB + PHONE_DESC_BOB + EMAIL_DESC_BOB + STUDIO_GROUP_DESC_BOB,
+                CliSyntax.PREFIX_MATRIC_NUMBER.getMissingMessage() + USAGE_SUFFIX);
 
         // missing phone prefix
         assertParseFailure(parser, NAME_DESC_BOB + VALID_PHONE_BOB + EMAIL_DESC_BOB
-                        + STUDIO_GROUP_DESC_BOB,
+                        + MATRIC_NUMBER_DESC_BOB + STUDIO_GROUP_DESC_BOB,
                 CliSyntax.PREFIX_PHONE.getMissingMessage() + USAGE_SUFFIX);
 
         // missing email prefix
         assertParseFailure(parser, NAME_DESC_BOB + PHONE_DESC_BOB + VALID_EMAIL_BOB
-                        + STUDIO_GROUP_DESC_BOB,
+                        + MATRIC_NUMBER_DESC_BOB + STUDIO_GROUP_DESC_BOB,
                 CliSyntax.PREFIX_EMAIL.getMissingMessage() + USAGE_SUFFIX);
 
         // missing studio group prefix
         assertParseFailure(parser, NAME_DESC_BOB + PHONE_DESC_BOB + EMAIL_DESC_BOB
-                        + VALID_STUDIO_GROUP_BOB,
+                        + MATRIC_NUMBER_DESC_BOB + VALID_STUDIO_GROUP_BOB,
                 CliSyntax.PREFIX_STUDIO_GROUP.getMissingMessage() + USAGE_SUFFIX);
 
         // all prefixes missing
@@ -180,37 +205,42 @@ public class AddStudentCommandParserTest {
     public void parse_invalidValue_failure() {
         // invalid name
         assertParseFailure(parser, INVALID_NAME_DESC + PHONE_DESC_BOB + EMAIL_DESC_BOB
-                + TAG_DESC_HUSBAND + TAG_DESC_FRIEND + STUDIO_GROUP_DESC_BOB,
+                + TAG_DESC_HUSBAND + TAG_DESC_FRIEND + MATRIC_NUMBER_DESC_BOB + STUDIO_GROUP_DESC_BOB,
                 Name.MESSAGE_CONSTRAINTS + USAGE_SUFFIX);
+
+        // invalid matriculation number
+        assertParseFailure(parser, NAME_DESC_BOB + INVALID_MATRIC_NUMBER_DESC + PHONE_DESC_BOB + EMAIL_DESC_BOB
+                + TAG_DESC_HUSBAND + TAG_DESC_FRIEND + STUDIO_GROUP_DESC_BOB,
+                MatriculationNumber.MESSAGE_CONSTRAINTS + USAGE_SUFFIX);
 
         // invalid phone
         assertParseFailure(parser, NAME_DESC_BOB + INVALID_PHONE_DESC + EMAIL_DESC_BOB
-                + TAG_DESC_HUSBAND + TAG_DESC_FRIEND + STUDIO_GROUP_DESC_BOB,
+                + TAG_DESC_HUSBAND + TAG_DESC_FRIEND + MATRIC_NUMBER_DESC_BOB + STUDIO_GROUP_DESC_BOB,
                 Phone.MESSAGE_CONSTRAINTS + USAGE_SUFFIX);
 
         // invalid email
         assertParseFailure(parser, NAME_DESC_BOB + PHONE_DESC_BOB + INVALID_EMAIL_DESC
-                + TAG_DESC_HUSBAND + TAG_DESC_FRIEND + STUDIO_GROUP_DESC_BOB,
+                + TAG_DESC_HUSBAND + TAG_DESC_FRIEND + MATRIC_NUMBER_DESC_BOB + STUDIO_GROUP_DESC_BOB,
                 Email.MESSAGE_CONSTRAINTS + USAGE_SUFFIX);
 
         // invalid tag
         assertParseFailure(parser, NAME_DESC_BOB + PHONE_DESC_BOB + EMAIL_DESC_BOB
-                + INVALID_TAG_DESC + VALID_TAG_FRIEND + STUDIO_GROUP_DESC_BOB,
+                + INVALID_TAG_DESC + VALID_TAG_FRIEND + MATRIC_NUMBER_DESC_BOB + STUDIO_GROUP_DESC_BOB,
                 Tag.MESSAGE_CONSTRAINTS + USAGE_SUFFIX);
 
         // invalid studio group
         assertParseFailure(parser, NAME_DESC_BOB + PHONE_DESC_BOB + EMAIL_DESC_BOB
-                + TAG_DESC_HUSBAND + TAG_DESC_FRIEND + INVALID_STUDIO_GROUP_DESC,
+                + TAG_DESC_HUSBAND + TAG_DESC_FRIEND + MATRIC_NUMBER_DESC_BOB + INVALID_STUDIO_GROUP_DESC,
                 StudioGroup.MESSAGE_CONSTRAINTS + USAGE_SUFFIX);
 
         // two invalid values, only first invalid value reported
         assertParseFailure(parser,
-                INVALID_NAME_DESC + PHONE_DESC_BOB + EMAIL_DESC_BOB + STUDIO_GROUP_DESC_BOB,
+                INVALID_NAME_DESC + PHONE_DESC_BOB + EMAIL_DESC_BOB + MATRIC_NUMBER_DESC_BOB + STUDIO_GROUP_DESC_BOB,
                 Name.MESSAGE_CONSTRAINTS + USAGE_SUFFIX);
 
         // non-empty preamble
         assertParseFailure(parser, PREAMBLE_NON_EMPTY + NAME_DESC_BOB + PHONE_DESC_BOB + EMAIL_DESC_BOB
-                + TAG_DESC_HUSBAND + TAG_DESC_FRIEND + STUDIO_GROUP_DESC_BOB,
+                + TAG_DESC_HUSBAND + TAG_DESC_FRIEND + MATRIC_NUMBER_DESC_BOB + STUDIO_GROUP_DESC_BOB,
                 MESSAGE_INVALID_COMMAND + USAGE_SUFFIX);
     }
 }
