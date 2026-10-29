@@ -106,7 +106,8 @@
       "headings": {
         "testing-guide": "Testing guide",
         "running-tests": "Running tests",
-        "types-of-tests": "Types of tests"
+        "types-of-tests": "Types of tests",
+        "troubleshooting-testing": "Troubleshooting Testing"
       },
       "headingKeywords": {}
     },
