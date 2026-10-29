@@ -15,6 +15,7 @@ UniqueStudentList -right-> "*" Student
 Student -up-> "*" Tag
 
 Student *--> "1" Name
+Student *--> "1" MatriculationNumber
 Student *--> "1" Phone
 Student *--> "1" Email
 Student *--> "1" StudioGroup
@@ -27,6 +28,8 @@ Student *--> "1" RegisteredNotes
 RegisteredNotes *-down-> "*" Note
 
 Name -[hidden]right-> Phone
+Name -[hidden]right-> MatriculationNumber
+MatriculationNumber -[hidden]right-> Phone
 Phone -[hidden]right-> Email
 Email -[hidden]right-> StudioGroup
 StudioGroup -[hidden]right-> RegisteredStudioRecords
