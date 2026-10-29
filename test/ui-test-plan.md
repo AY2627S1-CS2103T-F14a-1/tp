@@ -1,5 +1,18 @@
 # UI Test Plan
 
+## Mission query recovery and diagnostic coverage
+
+Use the dataset from Specific mission status-filter regression below.
+JUnit also checks null parser arguments, null query collaborators, and diagnostic
+strings for mission-only, mission-and-status, and status-only queries. These
+developer contracts have no direct UI equivalent.
+
+| ID | Steps | Expected result |
+| --- | --- | --- |
+| MISSION-RECOVERY-001 | Run `listmissions m/M01 s/submitted`. | Only Betsy appears at displayed index 2; records and the student filter are unchanged. |
+| MISSION-RECOVERY-002 | Run `listmissions s/` with trailing whitespace, then repeat MISSION-RECOVERY-001. | Invalid-status feedback includes usage exactly once. The valid query reproduces its original results without state changes. |
+| MISSION-RECOVERY-003 | Run `listmissions unexpected s/submitted`, then repeat MISSION-RECOVERY-001. | Invalid-command feedback includes usage exactly once. The valid query still returns the original results without state changes. |
+
 ## Notes details panel
 
 Use two students. Add `First note` and then `Second note` to student 1, while

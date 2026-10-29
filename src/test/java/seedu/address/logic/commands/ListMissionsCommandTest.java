@@ -388,6 +388,26 @@ public class ListMissionsCommandTest {
     }
 
     @Test
+    public void toString_missionAndStatusSelections_describesQueryScope() {
+        String className = ListMissionsCommand.class.getCanonicalName();
+
+        assertEquals(className + "{missionId=Optional[M01], statusFilter=Optional.empty}",
+                new ListMissionsCommand(MISSION_ID, CLOCK).toString());
+        assertEquals(className + "{missionId=Optional[M01], statusFilter=Optional[Submitted]}",
+                ListMissionsCommand.withStatus(MISSION_ID, MissionSubmissionStatusEnum.SUBMITTED).toString());
+        assertEquals(className + "{missionId=Optional.empty, statusFilter=Optional[Overdue]}",
+                ListMissionsCommand.withStatus(MissionSubmissionStatusEnum.OVERDUE, CLOCK).toString());
+    }
+
+    @Test
+    public void withStatus_nullMissionOrStatus_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () ->
+                ListMissionsCommand.withStatus(null, MissionSubmissionStatusEnum.SUBMITTED));
+        assertThrows(NullPointerException.class, () -> ListMissionsCommand.withStatus(MISSION_ID, null));
+        assertThrows(NullPointerException.class, () -> new ListMissionsCommand(MISSION_ID, CLOCK, null));
+    }
+
+    @Test
     public void equals_sameAndDifferentMissionIds_comparesMissionIds() {
         ListMissionsCommand command = new ListMissionsCommand(MISSION_ID, CLOCK);
         ListMissionsCommand equalCommand = new ListMissionsCommand(new MissionId("M01"));

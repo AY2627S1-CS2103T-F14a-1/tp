@@ -2,6 +2,7 @@ package seedu.address.logic.parser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
@@ -119,6 +120,24 @@ public class ListMissionsCommandParserTest {
     public void parse_statusWithEmptyMission_reportsIdConstraint() {
         assertParseFailure(parser, "s/submitted m/",
                 MissionId.MESSAGE_CONSTRAINTS + USAGE_SUFFIX);
+    }
+
+    @Test
+    public void parse_nullArguments_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> parser.parse(null));
+    }
+
+    @Test
+    public void parse_rejectedInputThenValidQuery_returnsExpectedCommand() {
+        ListMissionsCommand expectedCommand = ListMissionsCommand.withStatus(
+                new MissionId("M01"), MissionSubmissionStatusEnum.SUBMITTED);
+
+        assertParseSuccess(parser, "m/M01 s/submitted", expectedCommand);
+        assertParseFailure(parser, "s/ \t",
+                ListMissionsCommandParser.MESSAGE_INVALID_STATUS + USAGE_SUFFIX);
+        assertParseSuccess(parser, "m/M01 s/submitted", expectedCommand);
+        assertParseFailure(parser, "unexpected s/submitted", MESSAGE_INVALID_COMMAND + USAGE_SUFFIX);
+        assertParseSuccess(parser, "m/M01 s/submitted", expectedCommand);
     }
 
     @Test
