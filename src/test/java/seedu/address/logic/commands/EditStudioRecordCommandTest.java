@@ -160,7 +160,14 @@ public class EditStudioRecordCommandTest {
     public void equals_sameIndexWeekAndScore_returnsTrue() {
         EditStudioRecordCommand command = new EditStudioRecordCommand(INDEX_FIRST_STUDENT, 3, updatedRecord);
         assertTrue(command.equals(command));
-        assertTrue(command.equals(new EditStudioRecordCommand(INDEX_FIRST_STUDENT, 3, updatedRecord)));
+        EditStudioRecordCommand equalCommand =
+                new EditStudioRecordCommand(
+                        INDEX_FIRST_STUDENT,
+                        3,
+                        updatedRecord);
+
+        assertTrue(command.equals(equalCommand));
+        assertEquals(equalCommand.hashCode(), command.hashCode());
         assertFalse(command.equals(new EditStudioRecordCommand(INDEX_SECOND_STUDENT, 3, updatedRecord)));
         assertFalse(command.equals(new EditStudioRecordCommand(INDEX_FIRST_STUDENT, 4, updatedRecord)));
         assertFalse(command.equals(new EditStudioRecordCommand(INDEX_FIRST_STUDENT, 3, originalRecord)));

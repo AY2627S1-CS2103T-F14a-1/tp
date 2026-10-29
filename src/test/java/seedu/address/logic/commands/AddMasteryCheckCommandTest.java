@@ -133,7 +133,14 @@ public class AddMasteryCheckCommandTest {
     public void equals_indexNumberTimeAndCompletion_returnsExpectedEquality() {
         AddMasteryCheckCommand command =
                 new AddMasteryCheckCommand(INDEX_FIRST_STUDENT, 1, new MasteryCheck(APPOINTMENT));
-        assertEquals(new AddMasteryCheckCommand(INDEX_FIRST_STUDENT, 1, new MasteryCheck(APPOINTMENT)), command);
+        AddMasteryCheckCommand equalCommand =
+                new AddMasteryCheckCommand(
+                        INDEX_FIRST_STUDENT,
+                        1,
+                        new MasteryCheck(APPOINTMENT));
+
+        assertEquals(equalCommand, command);
+        assertEquals(equalCommand.hashCode(), command.hashCode());
         assertNotEquals(new AddMasteryCheckCommand(INDEX_SECOND_STUDENT, 1, new MasteryCheck(APPOINTMENT)), command);
         assertNotEquals(new AddMasteryCheckCommand(INDEX_FIRST_STUDENT, 2, new MasteryCheck(APPOINTMENT)), command);
         assertNotEquals(command, new AddMasteryCheckCommand(INDEX_FIRST_STUDENT, 1,

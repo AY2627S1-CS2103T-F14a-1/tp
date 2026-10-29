@@ -165,7 +165,11 @@ public class DeleteStudioRecordCommandTest {
         DeleteStudioRecordCommand command = new DeleteStudioRecordCommand(INDEX_FIRST_STUDENT, 3);
 
         assertTrue(command.equals(command));
-        assertTrue(command.equals(new DeleteStudioRecordCommand(INDEX_FIRST_STUDENT, 3)));
+        DeleteStudioRecordCommand equalCommand =
+                new DeleteStudioRecordCommand(INDEX_FIRST_STUDENT, 3);
+
+        assertTrue(command.equals(equalCommand));
+        assertEquals(equalCommand.hashCode(), command.hashCode());
         assertFalse(command.equals(new DeleteStudioRecordCommand(INDEX_SECOND_STUDENT, 3)));
         assertFalse(command.equals(new DeleteStudioRecordCommand(INDEX_FIRST_STUDENT, 4)));
         assertFalse(command.equals(null));

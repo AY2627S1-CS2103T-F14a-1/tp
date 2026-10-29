@@ -124,4 +124,16 @@ public class ListOverdueCommandTest {
         assertThrows(NullPointerException.class, () -> new ListOverdueCommand(null));
         assertThrows(NullPointerException.class, () -> new ListOverdueCommand(CLOCK).execute(null));
     }
+
+    @Test
+    public void equals_sameClock_returnsSameHashCode() {
+        ListOverdueCommand first =
+                new ListOverdueCommand(CLOCK);
+
+        ListOverdueCommand second =
+                new ListOverdueCommand(CLOCK);
+
+        assertEquals(first, second);
+        assertEquals(first.hashCode(), second.hashCode());
+    }
 }

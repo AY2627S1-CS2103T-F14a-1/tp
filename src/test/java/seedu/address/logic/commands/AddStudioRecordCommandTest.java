@@ -184,7 +184,14 @@ public class AddStudioRecordCommandTest {
         AddStudioRecordCommand command = new AddStudioRecordCommand(INDEX_FIRST_STUDENT, 3, studioRecord);
 
         assertTrue(command.equals(command));
-        assertTrue(command.equals(new AddStudioRecordCommand(INDEX_FIRST_STUDENT, 3, studioRecord)));
+        AddStudioRecordCommand equalCommand =
+                new AddStudioRecordCommand(
+                        INDEX_FIRST_STUDENT,
+                        3,
+                        studioRecord);
+
+        assertTrue(command.equals(equalCommand));
+        assertEquals(equalCommand.hashCode(), command.hashCode());
         assertFalse(command.equals(new AddStudioRecordCommand(INDEX_SECOND_STUDENT, 3, studioRecord)));
         assertFalse(command.equals(new AddStudioRecordCommand(INDEX_FIRST_STUDENT, 4, studioRecord)));
         assertFalse(command.equals(new AddStudioRecordCommand(INDEX_FIRST_STUDENT, 3, new StudioRecord(50))));
