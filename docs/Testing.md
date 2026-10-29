@@ -15,12 +15,22 @@
 
 You can run tests in two ways.
 
-* **Method 1: Using IntelliJ JUnit test runner**
-  * To run all tests, right-click on the `src/test/java` folder and choose `Run 'All Tests'`
-  * To run a subset of tests, you can right-click on a test package,
+ **Method 1: Using IntelliJ JUnit test runner**
+
+To run all tests, right-click on the `src/test/java` folder and choose `Run 'All Tests'`
+
+To run a subset of tests, you can right-click on a test package,
     test class, or a test and choose `Run 'ABC'`
-* **Method 2: Using Gradle**
-  * Open a console and run the command `gradlew clean test` (Mac/Linux: `./gradlew clean test`)
+
+ **Method 2: Using Gradle**
+
+ Open a console and run the command `gradlew clean test` (Mac/Linux: `./gradlew clean test`)
+
+ **Method 3: Using Gradle (headless)**
+
+Thanks to the [TestFX](https://github.com/TestFX/TestFX) library we use, our GUI tests can be run in the _headless_ mode. In the headless mode, GUI tests do not show up on the screen. That means the developer can do other things on the Computer while the tests are running.
+
+To run tests in headless mode, open a console and run the command `gradlew clean headless allTests` (Mac/Linux: `./gradlew clean headless allTests`)
 
 <box type="info" seamless>
 
@@ -31,11 +41,13 @@ You can run tests in two ways.
 
 ## Types of tests
 
-This project has three types of tests:
-
-1. *Unit tests* target the lowest-level methods and classes.<br>
-   For example: `seedu.address.commons.StringUtilTest`
-1. *Integration tests* check how multiple code units work together; the individual units are assumed to work.<br>
-   For example: `seedu.address.storage.StorageManagerTest`
-1. *Hybrid tests* combine unit and integration testing. These tests check both the individual units and how they work together.<br>
-   For example: `seedu.address.logic.LogicManagerTest`
+This project has two types of tests:
+1. **GUI Tests** - These are tests involving the GUI. 
+    - *Unit tests* target the individual components. These are in the `seedu.address.ui` package.
+2. **Non-GUI Tests** - These are tests not involving the GUI.
+    - *Unit tests* target the lowest-level methods and classes.<br>
+       For example: `seedu.address.commons.StringUtilTest`
+    - *Integration tests* check how multiple code units work together; the individual units are assumed to work.<br>
+       For example: `seedu.address.storage.StorageManagerTest`
+    - *Hybrid tests* combine unit and integration testing. These tests check both the individual units and how they work together.<br>
+       For example: `seedu.address.logic.LogicManagerTest`
