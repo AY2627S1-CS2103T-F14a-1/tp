@@ -73,7 +73,7 @@ The **API** of this component is specified in [`Ui.java`](https://github.com/AY2
 
 The UI consists of a `MainWindow` and its parts: `CommandBox`, `ResultDisplay`, `StudentListPanel`, `StudentDetailsPanel`, `StatusBarFooter`, and `HelpWindow`. These classes inherit from `UiPart`, which loads their JavaFX layouts.
 
-`MainWindow` connects the student list, command feedback, and student details. Executing `view id/INDEX` displays the requested student's profile and mission statuses in `StudentDetailsPanel`, using the index in the currently displayed student list.
+`MainWindow` connects the student list, command feedback, and student details. Executing `view id/STUDENT_INDEX` displays the requested student's profile and mission statuses in `StudentDetailsPanel`, using the index in the currently displayed student list.
 
 `ResultDisplay` presents command feedback, including mission summaries
 and submission-status reports. `listmissions` supports optional mission
@@ -249,7 +249,7 @@ The sequence diagram below illustrates the successful interaction flow using `ex
 
 ### Marking and unmarking mission submissions
 
-For `markmission id/INDEX m/MISSION_ID` or `unmarkmission id/INDEX m/MISSION_ID`, `AddressBookParser` delegates to `MarkMissionCommandParser` or `UnmarkMissionCommandParser`. Both use `ArgumentStructureValidator` to require exactly one `id/` and `m/` value, `ParserUtil#parseIndex(...)` to remove whitespace and validate a positive student index, and `MissionParserUtil#parseMissionId(...)` to remove whitespace and validate the case-insensitive mission ID. They then create the corresponding command. Invalid or extra arguments cause a `ParseException` that includes command usage. A positive index that does not identify a student in the current displayed list is rejected during execution with a `CommandException`; this error also includes the corresponding command usage. A well-formed ID for a mission that does not exist is rejected during execution without changing records.
+For `markmission id/STUDENT_INDEX m/MISSION_ID` or `unmarkmission id/STUDENT_INDEX m/MISSION_ID`, `AddressBookParser` delegates to `MarkMissionCommandParser` or `UnmarkMissionCommandParser`. Both use `ArgumentStructureValidator` to require exactly one `id/` and `m/` value, `ParserUtil#parseIndex(...)` to remove whitespace and validate a positive student index, and `MissionParserUtil#parseMissionId(...)` to remove whitespace and validate the case-insensitive mission ID. They then create the corresponding command. Invalid or extra arguments cause a `ParseException` that includes command usage. A positive index that does not identify a student in the current displayed list is rejected during execution with a `CommandException`; this error also includes the corresponding command usage. A well-formed ID for a mission that does not exist is rejected during execution without changing records.
 
 When executed, the command calls `Model#findMission(...)` and retrieves the selected student from `Model#getFilteredStudentList()`. Marking uses `MissionSubmissions#withSubmission(...)`; unmarking uses `MissionSubmissions#withoutSubmission(...)`. Each produces updated immutable submission data, which the command places in a replacement `Student` before calling `Model#setStudent(...)`. Other student details and the current filter are preserved, and the observable student list notifies the UI of the replacement.
 
@@ -449,7 +449,7 @@ The user stories above represent the main intended functionality and selected fu
 
 1. Tutor requests to display all students or a filtered set of students.
 2. AvengerHub displays the requested student list.
-3. Tutor enters `view id/INDEX`, using the student's index in the displayed list.
+3. Tutor enters `view id/STUDENT_INDEX`, using the student's index in the displayed list.
 4. AvengerHub displays the selected student's profile, including contact
    details, studio group, tags, and mission submission statuses.
 
