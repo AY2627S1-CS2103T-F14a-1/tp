@@ -13,7 +13,7 @@
 
 ## Running tests
 
-You can run tests in two ways.
+You can run tests in three ways.
 
  **Method 1: Using IntelliJ JUnit test runner**
 
@@ -26,16 +26,16 @@ To run a subset of tests, you can right-click on a test package,
 
  Open a console and run the command `gradlew clean test` (Mac/Linux: `./gradlew clean test`)
 
+ <box type="info" seamless>
+
+**Link**: Read [this Gradle tutorial from the se-edu/guides](https://se-education.org/guides/tutorials/gradle.html) to learn more about using Gradle.
+</box>
+
  **Method 3: Using Gradle (headless)**
 
-Thanks to the [TestFX](https://github.com/TestFX/TestFX) library we use, our GUI tests can be run in the _headless_ mode. In the headless mode, GUI tests do not show up on the screen. That means the developer can do other things on the Computer while the tests are running.
+Thanks to the [TestFX](https://github.com/TestFX/TestFX) library we use, our GUI tests can be run in the _headless_ mode. In the headless mode, GUI tests do not show up on the screen. That means the developer can do other things on the computer while the tests are running.
 
 To run tests in headless mode, open a console and run the command `gradlew clean headless allTests` (Mac/Linux: `./gradlew clean headless allTests`)
-
-<box type="info" seamless>
-
-**Link**: Read [this Gradle Tutorial from the se-edu/guides](https://se-education.org/guides/tutorials/gradle.html) to learn more about using Gradle.
-</box>
 
 --------------------------------------------------------------------------------------------------------------------
 
@@ -51,6 +51,8 @@ This project has two types of tests:
        For example: `seedu.address.storage.StorageManagerTest`
     - *Hybrid tests* combine unit and integration testing. These tests check both the individual units and how they work together.<br>
        For example: `seedu.address.logic.LogicManagerTest`
+
+--------------------------------------------------------------------------------------------------------------------
 
 ## Troubleshooting Testing
 **Problem: `HelpWindowTest` fails with a `NullPointerException`.**

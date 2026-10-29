@@ -70,7 +70,7 @@ public class Student {
                    RegisteredStudioRecords registeredStudioRecords, RegisteredMasteryChecks registeredMasteryChecks,
                    RegisteredNotes registeredNotes) {
         requireAllNonNull(
-                name, matricNumber, phone, email, tags, missionSubmissions, registeredStudioRecords,
+                name, matricNumber, phone, email, tags, studioGroup, missionSubmissions, registeredStudioRecords,
                 registeredMasteryChecks, registeredNotes);
         this.name = name;
         this.matricNumber = matricNumber;
