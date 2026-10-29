@@ -4,6 +4,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javafx.fxml.FXML;
 import javafx.geometry.VPos;
@@ -32,6 +33,9 @@ public class StudentDetailsPanel extends UiPart<Region> {
     private static final String FXML = "StudentDetailsPanel.fxml";
     private static final DateTimeFormatter APPOINTMENT_TIME_FORMATTER =
             DateTimeFormatter.ofPattern("MMM d, HH:mm", Locale.ENGLISH);
+
+    private Student displayedStudent;
+    private List<Mission> displayedMissions = List.of();
 
     @FXML
     private Label studentName;
@@ -91,9 +95,11 @@ public class StudentDetailsPanel extends UiPart<Region> {
             List<Mission> missions) {
 
         if (student == null) {
-            clearStudent();
             return;
         }
+
+        displayedStudent = student;
+        displayedMissions = List.copyOf(missions);
 
         emptyMessage.setVisible(false);
         emptyMessage.setManaged(false);
@@ -104,12 +110,16 @@ public class StudentDetailsPanel extends UiPart<Region> {
         studentDetails.setVisible(true);
         studentDetails.setManaged(true);
 
+        String studentTags = student.getTags().stream()
+                .map(tag -> tag.tagName)
+                .collect(Collectors.joining(", "));
+
         studentName.setText(student.getName().fullName);
         studioGroup.setText(
                 "Studio group: " + student.getStudioGroup().studioGroup);
         phone.setText("Phone: " + student.getPhone().value);
         email.setText("Email: " + student.getEmail().value);
-        tags.setText("Tags: " + student.getTags());
+        tags.setText("Tags: " + (studentTags.isEmpty() ? "-" : studentTags));
 
         populateNotes(student);
         populateMissionSubmissions(student, missions);
@@ -118,17 +128,17 @@ public class StudentDetailsPanel extends UiPart<Region> {
     }
 
     /**
-     * Populates the notes grid with notes in ascending note-ID order.
+     * Populates the notes grid with notes in ascending note index order.
      * Displays an empty-state message when the student has no notes.
      *
      * @param student Student whose notes are displayed.
      */
     private void populateNotes(Student student) {
         notesGrid.getChildren().clear();
-        addGridLabel(notesGrid, "ID", 0, 0, true);
+        addGridLabel(notesGrid, "Index", 0, 0, true);
         addGridLabel(notesGrid, "Note", 1, 0, true);
 
-        Map<Integer, Note> notes = student.getRegisteredNotes().getNotesById();
+        List<Note> notes = student.getRegisteredNotes().getRegisteredNotes();
         if (notes.isEmpty()) {
             addGridLabel(notesGrid, "No notes recorded.", 0, 1, false);
             GridPane.setColumnSpan(notesGrid.getChildren().getLast(), 2);
@@ -136,10 +146,9 @@ public class StudentDetailsPanel extends UiPart<Region> {
         }
 
         int row = 1;
-        for (Map.Entry<Integer, Note> entry : notes.entrySet().stream()
-                .sorted(Map.Entry.comparingByKey()).toList()) {
-            addGridLabel(notesGrid, String.valueOf(entry.getKey()), 0, row, false);
-            addGridLabel(notesGrid, entry.getValue().getNoteText(), 1, row, false);
+        for (int i = 1; i <= notes.size(); i++) {
+            addGridLabel(notesGrid, String.valueOf(i), 0, row, false);
+            addGridLabel(notesGrid, notes.get(i - 1).getNoteText(), 1, row, false);
             row++;
         }
     }
@@ -148,6 +157,9 @@ public class StudentDetailsPanel extends UiPart<Region> {
      * Resets the panel to its default state where no student is selected.
      */
     public void clearStudent() {
+        displayedStudent = null;
+        displayedMissions = List.of();
+
         emptyMessage.setVisible(true);
         emptyMessage.setManaged(true);
 
@@ -383,9 +395,10 @@ public class StudentDetailsPanel extends UiPart<Region> {
             int row) {
 
         VBox missionDetails = new VBox(2);
-
         missionDetails.getStyleClass().add("grid-cell");
+
         missionDetails.setMaxWidth(Double.MAX_VALUE);
+        missionDetails.setFillWidth(true);
 
         Label missionName = new Label(
                 mission.getId()
@@ -401,6 +414,9 @@ public class StudentDetailsPanel extends UiPart<Region> {
         missionName.setWrapText(true);
         deadline.setWrapText(true);
 
+        missionName.setMinHeight(Region.USE_PREF_SIZE);
+        deadline.setMinHeight(Region.USE_PREF_SIZE);
+
         missionName.setMaxWidth(Double.MAX_VALUE);
         deadline.setMaxWidth(Double.MAX_VALUE);
 
@@ -410,12 +426,38 @@ public class StudentDetailsPanel extends UiPart<Region> {
 
         GridPane.setHgrow(
                 missionDetails,
-                javafx.scene.layout.Priority.ALWAYS);
+                Priority.ALWAYS);
 
         GridPane.setFillWidth(
                 missionDetails,
                 true);
 
         grid.add(missionDetails, 0, row);
+    }
+
+    /**
+     * Updates the mission-submission display for the currently displayed student.
+     *
+     * <p>If no student is currently displayed, this method does nothing.</p>
+     *
+     * @param missions updated missions to display
+     */
+    public void updateMissions(List<Mission> missions) {
+        if (displayedStudent == null) {
+            clearStudent();
+            return;
+        }
+
+        displayedMissions = List.copyOf(missions);
+        populateMissionSubmissions(displayedStudent, displayedMissions);
+    }
+
+    /**
+     * Returns the student currently displayed in the details panel.
+     *
+     * @return the displayed student, or {@code null} if no student is displayed
+     */
+    public Student getDisplayedStudent() {
+        return displayedStudent;
     }
 }

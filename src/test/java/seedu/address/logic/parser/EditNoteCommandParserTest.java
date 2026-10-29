@@ -5,12 +5,14 @@ import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_STUDENT;
+import static seedu.address.testutil.TypicalIndexes.INDEX_THIRD_NOTE;
 
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
 import seedu.address.logic.commands.EditNoteCommand;
+import seedu.address.logic.parser.util.ParserUtil;
 import seedu.address.model.student.Note;
 import seedu.address.model.student.RegisteredNotes;
 
@@ -26,10 +28,14 @@ public class EditNoteCommandParserTest {
 
     @Test
     public void parse_validArguments_returnsExpectedCommand() {
-        EditNoteCommand expected = new EditNoteCommand(INDEX_FIRST_STUDENT, 3, new Note("Review lecture notes"));
+        EditNoteCommand expected = new EditNoteCommand(
+                INDEX_FIRST_STUDENT, INDEX_THIRD_NOTE, new Note("Review lecture notes"));
+        EditNoteCommand punctuationExpected = new EditNoteCommand(
+                INDEX_FIRST_STUDENT, INDEX_THIRD_NOTE, new Note("Don't forget: chapter 2!"));
 
         assertParseSuccess(parser, "id/1 ni/3 nt/Review lecture notes", expected);
         assertParseSuccess(parser, " ni/ 3 nt/ Review lecture notes id/ 1 ", expected);
+        assertParseSuccess(parser, "id/1 ni/3 nt/Don't forget: chapter 2!", punctuationExpected);
     }
 
     @Test
@@ -41,16 +47,18 @@ public class EditNoteCommandParserTest {
     }
 
     @Test
-    public void parse_invalidNoteId_reportsNoteIdConstraint() {
-        for (String noteId : List.of("", "0", "11", "-1", "1.5", "abc", "2147483648")) {
-            assertParseFailure(parser, "id/1 ni/" + noteId + " nt/Valid note",
-                    RegisteredNotes.MESSAGE_CONSTRAINTS + "\n\n" + EditNoteCommand.MESSAGE_USAGE);
+    public void parse_invalidNoteIndex_reportsApplicableConstraint() {
+        for (String noteIndex : List.of("", "0", "-1", "1.5", "abc", "2147483648")) {
+            assertParseFailure(parser, "id/1 ni/" + noteIndex + " nt/Valid note",
+                    ParserUtil.MESSAGE_INVALID_INDEX + "\n\n" + EditNoteCommand.MESSAGE_USAGE);
         }
+        assertParseFailure(parser, "id/1 ni/1001 nt/Valid note",
+                RegisteredNotes.MESSAGE_CONSTRAINTS + "\n\n" + EditNoteCommand.MESSAGE_USAGE);
     }
 
     @Test
     public void parse_invalidNoteText_reportsNoteTextConstraint() {
-        for (String noteText : List.of("", "   ", "Invalid!", "a".repeat(Note.MAX_NOTE_LENGTH + 1))) {
+        for (String noteText : List.of("", "   ", "\t", "a".repeat(Note.MAX_NOTE_LENGTH + 1))) {
             assertParseFailure(parser, "id/1 ni/3 nt/" + noteText,
                     Note.MESSAGE_CONSTRAINTS + "\n\n" + EditNoteCommand.MESSAGE_USAGE);
         }
@@ -61,7 +69,7 @@ public class EditNoteCommandParserTest {
         assertParseFailure(parser, "id/1 ni/3",
                 CliSyntax.PREFIX_NOTE_TEXT.getMissingMessage() + "\n\n" + EditNoteCommand.MESSAGE_USAGE);
         assertParseFailure(parser, "id/1 nt/Valid note",
-                CliSyntax.PREFIX_NOTE_ID.getMissingMessage() + "\n\n" + EditNoteCommand.MESSAGE_USAGE);
+                CliSyntax.PREFIX_NOTE_INDEX.getMissingMessage() + "\n\n" + EditNoteCommand.MESSAGE_USAGE);
         assertParseFailure(parser, "ni/3 nt/Valid note",
                 CliSyntax.PREFIX_INDEX.getMissingMessage() + "\n\n" + EditNoteCommand.MESSAGE_USAGE);
         assertParseFailure(parser, "id/1 ni/3 nt/Valid note nt/Other note",

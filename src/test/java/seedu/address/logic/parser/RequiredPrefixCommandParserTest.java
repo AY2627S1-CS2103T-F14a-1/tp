@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_DATETIME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_INDEX;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_MISSION;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_NOTE_ID;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_NOTE_INDEX;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NOTE_TEXT;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NUMBER;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_STUDIO_EFFORT;
@@ -28,7 +28,6 @@ import seedu.address.logic.commands.DeleteStudentCommand;
 import seedu.address.logic.commands.DeleteStudioRecordCommand;
 import seedu.address.logic.commands.EditNoteCommand;
 import seedu.address.logic.commands.EditStudioRecordCommand;
-import seedu.address.logic.commands.ListMissionsCommand;
 import seedu.address.logic.commands.MarkMasteryCheckCommand;
 import seedu.address.logic.commands.MarkMissionCommand;
 import seedu.address.logic.commands.UnmarkMasteryCheckCommand;
@@ -64,17 +63,15 @@ public class RequiredPrefixCommandParserTest {
         verifyRequiredPrefixes(new ViewCommandParser(), ViewCommand.MESSAGE_USAGE, List.of(PREFIX_INDEX), List.of("1"));
         verifyRequiredPrefixes(new DeleteMissionCommandParser(), DeleteMissionCommand.MESSAGE_USAGE,
                 List.of(PREFIX_MISSION), List.of("M01"));
-        verifyRequiredPrefixes(new ListMissionsCommandParser(), ListMissionsCommand.MESSAGE_USAGE,
-                List.of(PREFIX_MISSION), List.of("M01"));
         verifyRequiredPrefixes(new AddMissionCommandParser(), AddMissionCommand.MESSAGE_USAGE,
                 List.of(PREFIX_MISSION, CliSyntax.PREFIX_NAME, CliSyntax.PREFIX_DATE),
                 List.of("M01", "Runes", "2026-10-20"));
         verifyRequiredPrefixes(new AddNoteCommandParser(), AddNoteCommand.MESSAGE_USAGE,
-                List.of(PREFIX_INDEX, PREFIX_NOTE_ID, PREFIX_NOTE_TEXT), List.of("1", "3", "Review notes"));
+                List.of(PREFIX_INDEX, PREFIX_NOTE_TEXT), List.of("1", "3", "Review notes"));
         verifyRequiredPrefixes(new DeleteNoteCommandParser(), DeleteNoteCommand.MESSAGE_USAGE,
-                List.of(PREFIX_INDEX, PREFIX_NOTE_ID), List.of("1", "3"));
+                List.of(PREFIX_INDEX, PREFIX_NOTE_INDEX), List.of("1", "3"));
         verifyRequiredPrefixes(new EditNoteCommandParser(), EditNoteCommand.MESSAGE_USAGE,
-                List.of(PREFIX_INDEX, PREFIX_NOTE_ID, PREFIX_NOTE_TEXT), List.of("1", "3", "Review notes"));
+                List.of(PREFIX_INDEX, PREFIX_NOTE_INDEX, PREFIX_NOTE_TEXT), List.of("1", "3", "Review notes"));
     }
 
     /**

@@ -28,7 +28,7 @@
                textAlignment="CENTER"
                styleClass="empty-details-message"/>
 
-        <Label text="Type view INDEX to open a profile."
+        <Label text="Type view id/INDEX to open a profile."
                textAlignment="CENTER"
                styleClass="empty-details-message"/>
     </VBox>

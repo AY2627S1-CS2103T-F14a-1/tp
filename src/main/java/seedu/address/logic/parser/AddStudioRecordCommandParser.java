@@ -8,6 +8,8 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_WEEK;
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.AddStudioRecordCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.logic.parser.util.ParserUtil;
+import seedu.address.logic.parser.util.StudioRecordParserUtil;
 import seedu.address.model.student.StudioRecord;
 
 /**
@@ -31,8 +33,9 @@ public class AddStudioRecordCommandParser implements Parser<AddStudioRecordComma
                     args, PREFIX_INDEX, PREFIX_WEEK, PREFIX_STUDIO_EFFORT);
 
             Index index = ParserUtil.parseIndex(argMultimap.getValue(PREFIX_INDEX).get());
-            int week = ParserUtil.parseWeek(argMultimap.getValue(PREFIX_WEEK).get());
-            int effortScore = ParserUtil.parseEffortScore(argMultimap.getValue(PREFIX_STUDIO_EFFORT).get());
+            int week = StudioRecordParserUtil.parseWeek(argMultimap.getValue(PREFIX_WEEK).get());
+            int effortScore = StudioRecordParserUtil.parseEffortScore(
+                    argMultimap.getValue(PREFIX_STUDIO_EFFORT).get());
             return new AddStudioRecordCommand(index, week, new StudioRecord(effortScore));
         } catch (ParseException e) {
             throw new ParseException(e.getMessage() + "\n\n" + AddStudioRecordCommand.MESSAGE_USAGE);

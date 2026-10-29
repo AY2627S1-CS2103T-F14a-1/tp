@@ -1,4 +1,4 @@
-package seedu.address.logic.parser;
+package seedu.address.logic.parser.util;
 
 import static java.util.Objects.requireNonNull;
 
@@ -17,7 +17,7 @@ import seedu.address.model.student.RegisteredMasteryChecks;
 /**
  * Contains utility methods used for parsing strings in the various Mastery Check Parser classes.
  */
-public class MasteryCheckParserUtil {
+public final class MasteryCheckParserUtil {
 
     public static final String MESSAGE_INVALID_MASTERY_CHECK_DATETIME =
             "Mastery check appointment must be a valid date and 24-hour time in dd-MM|HH:mm format.";

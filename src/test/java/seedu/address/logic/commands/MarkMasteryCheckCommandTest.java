@@ -78,8 +78,14 @@ public class MarkMasteryCheckCommandTest {
                 .build();
         Model expected = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
         expected.setStudent(student, updated);
-        assertCommandSuccess(new MarkMasteryCheckCommand(INDEX_FIRST_STUDENT, 1), model,
-                "Marked " + student.getName() + "’s mastery check 1 as completed.", expected);
+        String expectedMessage =
+                "Marked " + student.getName() + "’s mastery check 1 as completed.";
+
+        assertCommandSuccess(
+                new MarkMasteryCheckCommand(INDEX_FIRST_STUDENT, 1),
+                model,
+                new CommandResult(expectedMessage, updated),
+                expected);
         MasteryCheck saved = model.getFilteredStudentList().getFirst().getRegisteredMasteryChecks()
                 .getMasteryCheckAppointments().get(1);
         assertFalse(target.isComplete());
@@ -96,8 +102,16 @@ public class MarkMasteryCheckCommandTest {
         Student student = new StudentBuilder(original).withMasteryChecks(Map.of(1, createCheck(true))).build();
         model.setStudent(original, student);
         Model expected = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
-        assertCommandSuccess(new MarkMasteryCheckCommand(INDEX_FIRST_STUDENT, 1), model,
-                String.format(MarkMasteryCheckCommand.MESSAGE_ALREADY_MARKED, student.getName(), 1), expected);
+        String expectedMessage = String.format(
+                MarkMasteryCheckCommand.MESSAGE_ALREADY_MARKED,
+                student.getName(),
+                1);
+
+        assertCommandSuccess(
+                new MarkMasteryCheckCommand(INDEX_FIRST_STUDENT, 1),
+                model,
+                new CommandResult(expectedMessage, student),
+                expected);
         assertSame(student, model.getFilteredStudentList().getFirst());
     }
 
@@ -151,8 +165,16 @@ public class MarkMasteryCheckCommandTest {
         showStudentAtIndex(expected, INDEX_SECOND_STUDENT);
         Student updated = new StudentBuilder(student).withMasteryChecks(Map.of(1, createCheck(true))).build();
         expected.setStudent(student, updated);
-        assertCommandSuccess(new MarkMasteryCheckCommand(INDEX_FIRST_STUDENT, 1), model,
-                String.format(MarkMasteryCheckCommand.MESSAGE_SUCCESS, student.getName(), 1), expected);
+        String expectedMessage = String.format(
+                MarkMasteryCheckCommand.MESSAGE_SUCCESS,
+                student.getName(),
+                1);
+
+        assertCommandSuccess(
+                new MarkMasteryCheckCommand(INDEX_FIRST_STUDENT, 1),
+                model,
+                new CommandResult(expectedMessage, updated),
+                expected);
         assertEquals(1, model.getFilteredStudentList().size());
     }
 

@@ -64,8 +64,16 @@ public class EditStudioRecordCommandTest {
         Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
         expectedModel.setStudent(student, updated);
 
-        assertCommandSuccess(new EditStudioRecordCommand(INDEX_FIRST_STUDENT, 3, updatedRecord), model,
-                String.format(EditStudioRecordCommand.MESSAGE_SUCCESS, student.getName(), 3), expectedModel);
+        String expectedMessage = String.format(
+                EditStudioRecordCommand.MESSAGE_SUCCESS,
+                student.getName(),
+                3);
+
+        assertCommandSuccess(
+                new EditStudioRecordCommand(INDEX_FIRST_STUDENT, 3, updatedRecord),
+                model,
+                new CommandResult(expectedMessage, updated),
+                expectedModel);
         assertEquals(originalRecord, student.getRegisteredStudioRecords().getRecordsByWeek().get(3));
     }
 
@@ -100,8 +108,16 @@ public class EditStudioRecordCommandTest {
         model.setStudent(original, student);
         Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
 
-        assertCommandSuccess(new EditStudioRecordCommand(INDEX_FIRST_STUDENT, 3, updatedRecord), model,
-                String.format(EditStudioRecordCommand.MESSAGE_WEEK_NOT_RECORDED, student.getName(), 3), expectedModel);
+        String expectedMessage = String.format(
+                EditStudioRecordCommand.MESSAGE_WEEK_NOT_RECORDED,
+                student.getName(),
+                3);
+
+        assertCommandSuccess(
+                new EditStudioRecordCommand(INDEX_FIRST_STUDENT, 3, updatedRecord),
+                model,
+                new CommandResult(expectedMessage, student),
+                expectedModel);
     }
 
     @Test
@@ -112,8 +128,16 @@ public class EditStudioRecordCommandTest {
         model.setStudent(original, student);
         Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
 
-        assertCommandSuccess(new EditStudioRecordCommand(INDEX_FIRST_STUDENT, 3, originalRecord), model,
-                String.format(EditStudioRecordCommand.MESSAGE_ALREADY_RECORDED, student.getName(), 3), expectedModel);
+        String expectedMessage = String.format(
+                EditStudioRecordCommand.MESSAGE_ALREADY_RECORDED,
+                student.getName(),
+                3);
+
+        assertCommandSuccess(
+                new EditStudioRecordCommand(INDEX_FIRST_STUDENT, 3, originalRecord),
+                model,
+                new CommandResult(expectedMessage, student),
+                expectedModel);
     }
 
     @Test
@@ -143,8 +167,16 @@ public class EditStudioRecordCommandTest {
                 new StudentBuilder.StudioRecordSet(3, updatedRecord)).build();
         expectedModel.setStudent(student, updated);
 
-        assertCommandSuccess(new EditStudioRecordCommand(INDEX_FIRST_STUDENT, 3, updatedRecord), model,
-                String.format(EditStudioRecordCommand.MESSAGE_SUCCESS, student.getName(), 3), expectedModel);
+        String expectedMessage = String.format(
+                EditStudioRecordCommand.MESSAGE_SUCCESS,
+                student.getName(),
+                3);
+
+        assertCommandSuccess(
+                new EditStudioRecordCommand(INDEX_FIRST_STUDENT, 3, updatedRecord),
+                model,
+                new CommandResult(expectedMessage, updated),
+                expectedModel);
         assertEquals(1, model.getFilteredStudentList().size());
         assertEquals(updated, model.getFilteredStudentList().get(0));
     }

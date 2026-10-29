@@ -11,6 +11,7 @@ import java.util.Set;
 
 import seedu.address.logic.commands.AddStudentCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.logic.parser.util.StudentParserUtil;
 import seedu.address.model.student.Email;
 import seedu.address.model.student.Name;
 import seedu.address.model.student.Phone;
@@ -38,11 +39,12 @@ public class AddStudentCommandParser implements Parser<AddStudentCommand> {
                             new Prefix[]{PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL, PREFIX_STUDIO_GROUP},
                             new Prefix[]{PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL, PREFIX_STUDIO_GROUP},
                             PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL, PREFIX_TAG, PREFIX_STUDIO_GROUP);
-            Name name = ParserUtil.parseName(argMultimap.getValue(PREFIX_NAME).get());
-            Phone phone = ParserUtil.parsePhone(argMultimap.getValue(PREFIX_PHONE).get());
-            Email email = ParserUtil.parseEmail(argMultimap.getValue(PREFIX_EMAIL).get());
-            Set<Tag> tagList = ParserUtil.parseTags(argMultimap.getAllValues(PREFIX_TAG));
-            StudioGroup studioGroup = ParserUtil.parseStudioGroup(argMultimap.getValue(PREFIX_STUDIO_GROUP).get());
+            Name name = StudentParserUtil.parseName(argMultimap.getValue(PREFIX_NAME).get());
+            Phone phone = StudentParserUtil.parsePhone(argMultimap.getValue(PREFIX_PHONE).get());
+            Email email = StudentParserUtil.parseEmail(argMultimap.getValue(PREFIX_EMAIL).get());
+            Set<Tag> tagList = StudentParserUtil.parseTags(argMultimap.getAllValues(PREFIX_TAG));
+            StudioGroup studioGroup = StudentParserUtil.parseStudioGroup(
+                    argMultimap.getValue(PREFIX_STUDIO_GROUP).get());
             Student student = new Student(name, phone, email, tagList, studioGroup);
             return new AddStudentCommand(student);
         } catch (ParseException e) {

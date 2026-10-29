@@ -72,7 +72,13 @@ public class AddMissionCommand extends Command {
         }
         Mission added = model.addMission(missionId, name, deadline);
         logger.info("Added mission " + added.getId() + " to the in-memory catalogue.");
-        return new CommandResult(String.format(MESSAGE_SUCCESS, Messages.format(added)));
+        return new CommandResult(
+                String.format(
+                        MESSAGE_SUCCESS,
+                        Messages.format(added)),
+                null,
+                model.getMissionList(),
+                true);
     }
 
     @Override

@@ -36,4 +36,21 @@ public class ListCommandTest {
         showStudentAtIndex(model, INDEX_FIRST_STUDENT);
         assertCommandSuccess(new ListCommand(), model, ListCommand.MESSAGE_SUCCESS, expectedModel);
     }
+
+    @Test
+    public void execute_extraArgumentsAndUnfilteredList_showsSameListWithWarning() {
+        CommandResult expectedResult = new CommandResult(ListCommand.MESSAGE_SUCCESS)
+                .withWarning(ListCommand.MESSAGE_WARNING_EXTRA_ARGUMENTS);
+
+        assertCommandSuccess(new ListCommand(true), model, expectedResult, expectedModel);
+    }
+
+    @Test
+    public void execute_extraArgumentsAndFilteredList_showsEverythingWithWarning() {
+        showStudentAtIndex(model, INDEX_FIRST_STUDENT);
+        CommandResult expectedResult = new CommandResult(ListCommand.MESSAGE_SUCCESS)
+                .withWarning(ListCommand.MESSAGE_WARNING_EXTRA_ARGUMENTS);
+
+        assertCommandSuccess(new ListCommand(true), model, expectedResult, expectedModel);
+    }
 }

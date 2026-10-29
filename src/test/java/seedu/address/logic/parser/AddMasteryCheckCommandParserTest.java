@@ -13,6 +13,8 @@ import org.junit.jupiter.api.Test;
 
 import seedu.address.logic.commands.AddMasteryCheckCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.logic.parser.util.MasteryCheckParserUtil;
+import seedu.address.logic.parser.util.ParserUtil;
 import seedu.address.model.masterycheck.MasteryCheck;
 import seedu.address.model.student.RegisteredMasteryChecks;
 

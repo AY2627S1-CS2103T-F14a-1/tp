@@ -7,21 +7,30 @@
 
 <StackPane xmlns="http://javafx.com/javafx/17"
            xmlns:fx="http://javafx.com/fxml/1"
+           minHeight="0"
            maxWidth="Infinity"
            styleClass="result-display-container">
 
-  <ScrollPane fitToWidth="true"
+  <ScrollPane fx:id="resultScrollPane"
+              fitToWidth="true"
               hbarPolicy="NEVER"
               vbarPolicy="AS_NEEDED"
+              minHeight="0"
               maxWidth="Infinity"
               styleClass="result-scroll-pane">
 
     <content>
-      <VBox maxWidth="Infinity" styleClass="command-result">
+      <VBox fx:id="resultContent"
+            minHeight="-Infinity"
+            maxHeight="-Infinity"
+            maxWidth="Infinity"
+            styleClass="command-result">
+
         <Label fx:id="resultDisplay"
                wrapText="true"
                textOverrun="CLIP"
                maxWidth="Infinity"/>
+
         <Label fx:id="warningDisplay"
                managed="false"
                visible="false"

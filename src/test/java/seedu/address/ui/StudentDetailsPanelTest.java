@@ -2,6 +2,8 @@ package seedu.address.ui;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.testutil.TypicalStudents.AMY;
 
@@ -11,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -26,6 +29,7 @@ import seedu.address.model.mission.MissionId;
 import seedu.address.model.student.RegisteredStudioRecords;
 import seedu.address.model.student.Student;
 import seedu.address.model.student.StudioRecord;
+import seedu.address.model.tag.Tag;
 import seedu.address.testutil.StudentBuilder;
 import seedu.address.testutil.StudentBuilder.StudioRecordSet;
 
@@ -62,6 +66,10 @@ public class StudentDetailsPanelTest {
 
             panel.showStudent(student, List.of());
 
+            String studentTags = student.getTags().stream()
+                    .map(Tag::toString)
+                    .collect(Collectors.joining(", "));
+
             assertEquals(
                     student.getName().fullName,
                     getLabel(panel, "#studentName").getText());
@@ -80,7 +88,7 @@ public class StudentDetailsPanelTest {
                     getLabel(panel, "#email").getText());
 
             assertEquals(
-                    "Tags: " + student.getTags(),
+                    "Tags: " + (studentTags.isEmpty() ? "-" : studentTags),
                     getLabel(panel, "#tags").getText());
 
             assertTrue(
@@ -349,10 +357,73 @@ public class StudentDetailsPanelTest {
             assertEquals(6, grid.getChildren().size());
             assertEquals("Completed", getMasteryCell(grid, 2, 1));
             panel.showStudent(null, List.of());
-            assertFalse(panel.getRoot().lookup("#studentDetailsScrollPane").isVisible());
+
+            assertTrue(
+                    panel.getRoot()
+                            .lookup("#studentDetailsScrollPane")
+                            .isVisible());
+
             panel.showStudent(student, List.of());
+            prepareRoot(panel);
             assertEquals(6, grid.getChildren().size());
             assertEquals("Completed", getMasteryCell(grid, 2, 1));
+        });
+    }
+
+    @Test
+    public void getDisplayedStudent_afterShowStudent_returnsDisplayedStudent() throws Exception {
+        runOnJavaFxThread(() -> {
+            StudentDetailsPanel panel = new StudentDetailsPanel();
+
+            Student student = new StudentBuilder(AMY).build();
+            panel.showStudent(student, List.of());
+
+            assertSame(student, panel.getDisplayedStudent());
+        });
+    }
+
+    @Test
+    public void updateMissions_withDisplayedStudent_refreshesMissionStatuses() throws Exception {
+        runOnJavaFxThread(() -> {
+            Mission mission = new Mission(
+                    new MissionId("M01"),
+                    "Runes",
+                    LocalDate.of(2026, 10, 20));
+
+            Student student = new StudentBuilder(AMY)
+                    .withMissionSubmissions("M01")
+                    .build();
+
+            StudentDetailsPanel panel = new StudentDetailsPanel();
+            panel.showStudent(student, List.of());
+            panel.updateMissions(List.of(mission));
+
+            GridPane missionGrid = getMissionGrid(panel);
+
+            Label status = (Label) missionGrid.getChildren().get(3);
+            assertEquals("Submitted", status.getText());
+        });
+    }
+
+    @Test
+    public void updateMissions_withoutDisplayedStudent_doesNothing()
+            throws Exception {
+        runOnJavaFxThread(() -> {
+            StudentDetailsPanel panel = new StudentDetailsPanel();
+
+            int childrenBefore =
+                    getMissionGrid(panel).getChildren().size();
+
+            panel.updateMissions(List.of(
+                    new Mission(
+                            new MissionId("M01"),
+                            "Runes",
+                            LocalDate.of(2026, 10, 20))));
+
+            assertNull(panel.getDisplayedStudent());
+            assertEquals(
+                    childrenBefore,
+                    getMissionGrid(panel).getChildren().size());
         });
     }
 

@@ -75,8 +75,14 @@ public class DeleteMasteryCheckCommandTest {
         Student updated = new StudentBuilder(student).withMasteryChecks(Map.of(2, second)).build();
         Model expected = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
         expected.setStudent(student, updated);
-        assertCommandSuccess(new DeleteMasteryCheckCommand(INDEX_FIRST_STUDENT, 1), model,
-                "Removed " + student.getName() + "'s mastery check numbered 1.", expected);
+        String feedback =
+                "Removed " + student.getName() + "'s mastery check numbered 1.";
+
+        assertCommandSuccess(
+                new DeleteMasteryCheckCommand(INDEX_FIRST_STUDENT, 1),
+                model,
+                new CommandResult(feedback, updated),
+                expected);
         assertEquals(Map.of(1, first, 2, second), student.getRegisteredMasteryChecks().getMasteryCheckAppointments());
         assertTrue(model.getFilteredStudentList().getFirst().getRegisteredMasteryChecks()
                 .getMasteryCheckAppointments().get(2).isComplete());
@@ -114,16 +120,32 @@ public class DeleteMasteryCheckCommandTest {
                 .withMasteryChecks(Map.of(2, new MasteryCheck(APPOINTMENT))).build();
         model.setStudent(original, student);
         Model expected = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
-        assertCommandSuccess(new DeleteMasteryCheckCommand(INDEX_FIRST_STUDENT, 1), model,
-                String.format(DeleteMasteryCheckCommand.MESSAGE_NOT_FOUND, student.getName(), 1), expected);
+        String feedback = String.format(
+                DeleteMasteryCheckCommand.MESSAGE_NOT_FOUND,
+                student.getName(),
+                1);
+
+        assertCommandSuccess(
+                new DeleteMasteryCheckCommand(INDEX_FIRST_STUDENT, 1),
+                model,
+                new CommandResult(feedback, student),
+                expected);
     }
 
     @Test
     public void execute_emptyRegistrations_leavesModelUnchanged() {
         Student student = model.getFilteredStudentList().getFirst();
         Model expected = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
-        assertCommandSuccess(new DeleteMasteryCheckCommand(INDEX_FIRST_STUDENT, 1), model,
-                String.format(DeleteMasteryCheckCommand.MESSAGE_NOT_FOUND, student.getName(), 1), expected);
+        String feedback = String.format(
+                DeleteMasteryCheckCommand.MESSAGE_NOT_FOUND,
+                student.getName(),
+                1);
+
+        assertCommandSuccess(
+                new DeleteMasteryCheckCommand(INDEX_FIRST_STUDENT, 1),
+                model,
+                new CommandResult(feedback, student),
+                expected);
     }
 
     @Test
@@ -151,8 +173,16 @@ public class DeleteMasteryCheckCommandTest {
         showStudentAtIndex(expected, INDEX_SECOND_STUDENT);
         Student updated = new StudentBuilder(student).withMasteryChecks(Map.of(2, second)).build();
         expected.setStudent(student, updated);
-        assertCommandSuccess(new DeleteMasteryCheckCommand(INDEX_FIRST_STUDENT, 1), model,
-                String.format(DeleteMasteryCheckCommand.MESSAGE_SUCCESS, student.getName(), 1), expected);
+        String feedback = String.format(
+                DeleteMasteryCheckCommand.MESSAGE_SUCCESS,
+                student.getName(),
+                1);
+
+        assertCommandSuccess(
+                new DeleteMasteryCheckCommand(INDEX_FIRST_STUDENT, 1),
+                model,
+                new CommandResult(feedback, updated),
+                expected);
         assertEquals(1, model.getFilteredStudentList().size());
         assertEquals(updated, model.getFilteredStudentList().getFirst());
     }
