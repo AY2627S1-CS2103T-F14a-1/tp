@@ -10,11 +10,10 @@ import static seedu.address.ui.testutil.GuiTestAssert.assertCardDisplaysStudent;
 
 import java.util.Collections;
 
-import guitests.guihandles.StudentCardHandle;
-import guitests.guihandles.StudentListPanelHandle;
-import javafx.beans.property.SimpleObjectProperty;
 import org.junit.jupiter.api.Test;
 
+import guitests.guihandles.StudentCardHandle;
+import guitests.guihandles.StudentListPanelHandle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ListView;
@@ -59,6 +58,7 @@ public class StudentListPanelTest extends GuiUnitTest {
             assertEquals(Integer.toString(i + 1), actualCard.getId());
         }
     }
+
     /**
      * Verifies that creating and deleting large number of students in {@code StudentListPanel} requires less than
      * {@code CARD_CREATION_AND_DELETION_TIMEOUT} milliseconds to execute.
