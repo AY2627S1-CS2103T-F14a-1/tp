@@ -1,8 +1,10 @@
 package seedu.address.logic.commands;
 
+import static java.time.Duration.ofSeconds;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTimeout;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandFailure;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandSuccess;
@@ -18,6 +20,7 @@ import org.junit.jupiter.api.Test;
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.Messages;
 import seedu.address.logic.commands.exceptions.CommandException;
+import seedu.address.logic.parser.AddressBookParser;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.UserPrefs;
@@ -28,6 +31,7 @@ import seedu.address.model.student.Student;
 /** Tests the execution and value semantics of {@link AddNoteCommand}. */
 public class AddNoteCommandTest {
 
+    private static final int MAXIMUM_LENGTH_NOTE_COMMAND_TIMEOUT_SECONDS = 10;
     private static final Note NOTE = new Note("Review lecture notes");
 
     @Test
@@ -116,6 +120,36 @@ public class AddNoteCommandTest {
                 model,
                 new CommandResult(expectedMessage, expectedStudent),
                 expectedModel);
+    }
+
+    @Test
+    public void execute_thousandMaximumLengthNotes_completesWithoutSignificantLag() {
+        Model model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
+        AddressBookParser parser = new AddressBookParser();
+
+        assertTimeout(ofSeconds(MAXIMUM_LENGTH_NOTE_COMMAND_TIMEOUT_SECONDS), () -> {
+            for (int i = 0; i < RegisteredNotes.MAX_NOTE_INDEX; i++) {
+                Note note = createMaximumLengthNote(i);
+                parser.parseCommand("addnote id/1 nt/" + note.getNoteText()).execute(model);
+            }
+        });
+
+        RegisteredNotes registeredNotes = model.getFilteredStudentList()
+                .get(INDEX_FIRST_STUDENT.getZeroBased()).getRegisteredNotes();
+        assertEquals(RegisteredNotes.MAX_NOTE_INDEX, registeredNotes.getRegisteredNotes().size());
+        assertEquals(Note.MAX_NOTE_LENGTH,
+                registeredNotes.getRegisteredNotes().getLast().getNoteText().length());
+    }
+
+    /**
+     * Creates a distinct note whose text has the maximum valid length.
+     *
+     * @param index Zero-based note number used to make the text distinct.
+     * @return A distinct maximum-length note.
+     */
+    private static Note createMaximumLengthNote(int index) {
+        String prefix = String.format("%04d", index);
+        return new Note(prefix + "x".repeat(Note.MAX_NOTE_LENGTH - prefix.length()));
     }
 
     @Test
