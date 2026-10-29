@@ -72,6 +72,25 @@ After every rejected command, run `view id/1` and confirm that both notes and sa
 | NOTE-DELETE-005 | Run `delnote id/1 ni/1`, restart, and view student 1. | The Notes table shows the empty-state message. The deletion persists across restart. |
 | NOTE-DELETE-006 | Restore two notes, run `delnote id/1 ni/1 ni/2`, then view student 1. | Duplicate-`ni/` feedback appears. Both notes and the saved data remain unchanged. |
 
+## List ignored-argument warning regression
+
+Use an isolated dataset containing exactly two students:
+John Doe and Betsy Crowe.
+
+Commands with extra arguments should display:
+- Success feedback: `Listed all students.`
+- A separate warning beneath the success feedback, headed `WARNING:`
+- Warning text: `Extra arguments were ignored. The list command takes no arguments.`
+
+| ID | Steps | Expected result |
+| --- | --- | --- |
+| LIST-WARN-001 | Run `find John`, then `list extra`. | Both students appear. Success feedback and the warning appear separately, with the warning beneath the success feedback. Student records remain unchanged. |
+| LIST-WARN-002 | Run `list`. | Both students remain displayed. Success feedback appears; the previous warning text and `WARNING:` heading disappear. |
+| LIST-WARN-003 | Run `find John`, then `list missions m/01`. | Both students appear. The extra arguments are ignored, and exactly one warning appears beneath the success feedback. |
+| LIST-WARN-004 | Run `find John`, then enter `  list  ` with surrounding spaces. | Both students appear. Success feedback appears without a warning or warning heading. |
+| LIST-WARN-005 | Run `find John`, then `LIST extra`. | Both students appear. Success feedback and exactly one warning appear, confirming case-insensitive command handling. |
+| LIST-WARN-006 | Run `list extra` again, then `view id/1` and `view id/2`. | The repeated command shows exactly one warning without duplication. Each view command opens the correct profile and clears the warning. Both students' details remain unchanged. |
+
 ## Mission regression sequence
 
 Use a temporary data directory with two students and an empty catalogue. After each rejected
