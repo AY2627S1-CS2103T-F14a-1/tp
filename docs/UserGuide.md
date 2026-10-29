@@ -31,7 +31,7 @@ AvengerHub is a **desktop address book application for managing students, optimi
 
    * `list` : Lists all students.
 
-   * `addstudent n/John Doe p/98765432 e/johnd@example.com g/1A` : Adds a student named `John Doe` to the Address Book.
+   * `addstudent n/John Doe mtc/A0409127H p/98765432 e/johnd@example.com g/1A` : Adds a student named `John Doe` to the Address Book.
 
    * `delstudent id/3` : Deletes the 3rd student shown in the current list.
 
@@ -87,7 +87,9 @@ Format: `help`
 
 Adds a student to the address book.
 
-Format: `addstudent n/NAME p/PHONE_NUMBER e/EMAIL [t/TAG]... g/STUDIO_GROUP`
+Format: `addstudent n/NAME mtc/MATRICULATION_NUMBER p/PHONE_NUMBER e/EMAIL [t/TAG]... g/STUDIO_GROUP`
+
+* `MATRICULATION_NUMBER` is that supplied by NUS for every student, starting with A followed by seven digits, then an uppercase letter from A-Z. This must be unique for each student, otherwise the command will be rejected.
 
 <box type="tip" seamless>
 
@@ -95,8 +97,8 @@ Format: `addstudent n/NAME p/PHONE_NUMBER e/EMAIL [t/TAG]... g/STUDIO_GROUP`
 </box>
 
 Examples:
-* `addstudent n/John Doe p/98765432 e/johnd@example.com g/1A`
-* `addstudent n/Betsy Crowe t/talkative e/betsycrowe@example.com p/1234567 t/smart g/1A`
+* `addstudent n/John Doe mtc/A0123456C p/98765432 e/johnd@example.com g/1A`
+* `addstudent n/Betsy Crowe t/talkative mtc/A0312777K e/betsycrowe@example.com p/1234567 t/smart g/1A`
 
 ### Listing all students: `list`
 
@@ -152,10 +154,11 @@ Showing profile of Amy Lee
 
 Edits an existing student in the address book.
 
-Format: `editstudent id/INDEX [n/NAME] [p/PHONE] [e/EMAIL] [t/TAG]... [g/STUDIO_GROUP]`
+Format: `editstudent id/INDEX [n/NAME] [mtc/MATRICULATION_NUMBER] [p/PHONE] [e/EMAIL] [t/TAG]... [g/STUDIO_GROUP]`
 
 * Edits the student at the specified `INDEX`. The index refers to the index number shown in the displayed student list. The index **must be a positive integer** 1, 2, 3, ...
 * At least one of the optional fields must be provided.
+* Matriculation number cannot be changed to another address book student's matriculation number.
 * Existing values will be updated to the input values.
 * When editing tags, all of the student's existing tags are removed; adding tags is not cumulative.
 * To remove all of a student's tags, enter `t/` without a tag after it.
@@ -715,10 +718,10 @@ Failed commands do not save. A missing file instead loads the sample data.
 
 Action     | Format, Examples                                                                                                                                                   
 -----------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-**Add student**    | `addstudent n/NAME p/PHONE_NUMBER e/EMAIL [t/TAG]... g/STUDIO_GROUP` <br> e.g., `addstudent n/James Ho p/22224444 e/jamesho@example.com  t/smart t/talkative g/1A` 
+**Add student**    | `addstudent n/NAME mtc/MATRICULATION_NUMBER p/PHONE_NUMBER e/EMAIL [t/TAG]... g/STUDIO_GROUP` <br> e.g., `addstudent n/James Ho mtc/A0205429T p/22224444 e/jamesho@example.com  t/smart t/talkative g/1A` 
 **Delete student** | `delstudent id/INDEX`<br> e.g., `delstudent id/3`                                                                                                                     
 **View student** | `view id/INDEX`<br> e.g., `view id/1`                                                                                                                                 
-**Edit student**   | `editstudent id/INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [t/TAG]... [g/STUDIO_GROUP]`<br> e.g.,`editstudent id/2 n/James Lee e/jameslee@example.com g/1A`                       
+**Edit student**   | `editstudent id/INDEX [n/NAME] [mtc/MATRICULATION_NUMBER] [p/PHONE_NUMBER] [e/EMAIL] [t/TAG]... [g/STUDIO_GROUP]`<br> e.g.,`editstudent id/2 n/James Lee e/jameslee@example.com g/1A`                       
 **Add studio record** | `addstudiorecord id/INDEX w/WEEK ef/EFFORT`<br> e.g., `addstudiorecord id/1 w/3 ef/30`                                                                             
 **Delete studio record** | `delstudiorecord id/INDEX w/WEEK`<br> e.g., `delstudiorecord id/1 w/3`                                                                                             
 **Edit studio record** | `editstudiorecord id/INDEX w/WEEK ef/EFFORT`<br> e.g., `editstudiorecord id/1 w/3 ef/30`                                                                           
