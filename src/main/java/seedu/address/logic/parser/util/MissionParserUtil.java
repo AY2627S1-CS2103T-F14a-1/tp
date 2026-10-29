@@ -15,11 +15,11 @@ import seedu.address.model.mission.MissionId;
  */
 public final class MissionParserUtil {
 
-    public static final String MESSAGE_INVALID_MISSION_NAME = "Provide a mission name using n/NAME.";
-    public static final String MESSAGE_INVALID_MISSION_ID = MissionId.MESSAGE_CONSTRAINTS;
-    public static final String MESSAGE_INVALID_MISSION_DEADLINE =
+    public static final String MESSAGE_ERROR_INVALID_MISSION_NAME = "Provide a mission name using n/NAME.";
+    public static final String MESSAGE_ERROR_INVALID_MISSION_ID = MissionId.MESSAGE_CONSTRAINTS;
+    public static final String MESSAGE_ERROR_INVALID_MISSION_DEADLINE =
             "Deadline must use YYYY-MM-DD format, for example 2026-10-20.";
-    public static final String MESSAGE_INVALID_MISSION_CALENDAR_DATE =
+    public static final String MESSAGE_ERROR_INVALID_MISSION_CALENDAR_DATE =
             "Deadline is not a valid calendar date. Month must be 01–12, "
                     + "and day must be valid for the selected month and year.";
 
@@ -34,7 +34,7 @@ public final class MissionParserUtil {
         requireNonNull(name);
         String trimmedName = Mission.normalizeName(name);
         if (trimmedName.isBlank()) {
-            throw new ParseException(MESSAGE_INVALID_MISSION_NAME);
+            throw new ParseException(MESSAGE_ERROR_INVALID_MISSION_NAME);
         }
         return trimmedName;
     }
@@ -53,7 +53,7 @@ public final class MissionParserUtil {
         try {
             return new MissionId(StringUtil.removeWhitespace(missionIdText));
         } catch (IllegalArgumentException e) {
-            throw new ParseException(MESSAGE_INVALID_MISSION_ID);
+            throw new ParseException(MESSAGE_ERROR_INVALID_MISSION_ID);
         }
     }
 
@@ -68,12 +68,12 @@ public final class MissionParserUtil {
         requireNonNull(deadline);
         String compactDeadline = StringUtil.removeWhitespace(deadline);
         if (!compactDeadline.matches("[0-9]{4}-[0-9]{2}-[0-9]{2}")) {
-            throw new ParseException(MESSAGE_INVALID_MISSION_DEADLINE);
+            throw new ParseException(MESSAGE_ERROR_INVALID_MISSION_DEADLINE);
         }
         try {
             return LocalDate.parse(compactDeadline);
         } catch (DateTimeParseException e) {
-            throw new ParseException(MESSAGE_INVALID_MISSION_CALENDAR_DATE);
+            throw new ParseException(MESSAGE_ERROR_INVALID_MISSION_CALENDAR_DATE);
         }
     }
 

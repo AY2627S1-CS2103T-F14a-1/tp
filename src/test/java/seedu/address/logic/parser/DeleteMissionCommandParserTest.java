@@ -2,6 +2,7 @@ package seedu.address.logic.parser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static seedu.address.logic.parser.util.ParserUtil.MESSAGE_SEE_USAGE;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -26,7 +27,7 @@ import seedu.address.storage.StorageManager;
 /** Tests numeric mission parsing and ensures pending execution cannot alter saved data. */
 public class DeleteMissionCommandParserTest {
 
-    private static final String USAGE_SUFFIX = "\n\n" + DeleteMissionCommand.MESSAGE_USAGE;
+    private static final String USAGE_SUFFIX = MESSAGE_SEE_USAGE + DeleteMissionCommand.MESSAGE_USAGE;
 
     @TempDir
     public Path directory;

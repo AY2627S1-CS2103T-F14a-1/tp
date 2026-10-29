@@ -28,11 +28,11 @@ public class AddNoteCommandParser implements Parser<AddNoteCommand> {
             ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
                     args, PREFIX_INDEX, PREFIX_NOTE_TEXT);
 
-            Index index = ParserUtil.parseIndex(argMultimap.getValue(PREFIX_INDEX).get());
-            Note note = NoteParserUtil.parseNoteText(argMultimap.getValue(PREFIX_NOTE_TEXT).get());
+            Index index = ParserUtil.parseIndex(argMultimap.getRequiredValue(PREFIX_INDEX));
+            Note note = NoteParserUtil.parseNoteText(argMultimap.getRequiredValue(PREFIX_NOTE_TEXT));
             return new AddNoteCommand(index, note);
         } catch (ParseException pe) {
-            throw new ParseException(pe.getMessage() + "\n\n" + AddNoteCommand.MESSAGE_USAGE);
+            throw new ParseException(pe.getMessage() + ParserUtil.MESSAGE_SEE_USAGE + AddNoteCommand.MESSAGE_USAGE);
         }
     }
 }

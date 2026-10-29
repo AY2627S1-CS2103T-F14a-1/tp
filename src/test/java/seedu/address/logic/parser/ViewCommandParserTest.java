@@ -2,6 +2,7 @@ package seedu.address.logic.parser;
 
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
+import static seedu.address.logic.parser.util.ParserUtil.MESSAGE_SEE_USAGE;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_STUDENT;
 
 import org.junit.jupiter.api.Test;
@@ -11,7 +12,7 @@ import seedu.address.logic.parser.util.ParserUtil;
 
 public class ViewCommandParserTest {
 
-    private static final String USAGE_SUFFIX = "\n\n" + ViewCommand.MESSAGE_USAGE;
+    private static final String USAGE_SUFFIX = MESSAGE_SEE_USAGE + ViewCommand.MESSAGE_USAGE;
 
     private final ViewCommandParser parser = new ViewCommandParser();
 

@@ -24,10 +24,11 @@ public class DeleteStudentCommandParser implements Parser<DeleteStudentCommand> 
             ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
                     args, PREFIX_INDEX);
 
-            Index index = ParserUtil.parseIndex(argMultimap.getValue(PREFIX_INDEX).get());
+            Index index = ParserUtil.parseIndex(argMultimap.getRequiredValue(PREFIX_INDEX));
             return new DeleteStudentCommand(index);
         } catch (ParseException e) {
-            throw new ParseException(e.getMessage() + "\n\n" + DeleteStudentCommand.MESSAGE_USAGE);
+            throw new ParseException(e.getMessage()
+                    + ParserUtil.MESSAGE_SEE_USAGE + DeleteStudentCommand.MESSAGE_USAGE);
         }
     }
 

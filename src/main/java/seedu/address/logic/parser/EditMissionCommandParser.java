@@ -9,6 +9,7 @@ import seedu.address.logic.commands.EditMissionCommand;
 import seedu.address.logic.commands.EditMissionCommand.EditMissionDescriptor;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.logic.parser.util.MissionParserUtil;
+import seedu.address.logic.parser.util.ParserUtil;
 import seedu.address.model.mission.MissionId;
 
 /**
@@ -37,19 +38,19 @@ public class EditMissionCommandParser implements Parser<EditMissionCommand> {
             EditMissionDescriptor editMissionDescriptor = new EditMissionDescriptor();
             if (argMultimap.getValue(PREFIX_NAME).isPresent()) {
                 editMissionDescriptor.setName(MissionParserUtil.parseMissionName(
-                        argMultimap.getValue(PREFIX_NAME).orElseThrow())); // orElseThrow() should never happen normally
+                        argMultimap.getRequiredValue(PREFIX_NAME)));
             }
             if (argMultimap.getValue(PREFIX_DATE).isPresent()) {
                 editMissionDescriptor.setDeadline(MissionParserUtil.parseMissionDeadline(
-                        argMultimap.getValue(PREFIX_DATE).orElseThrow()));
+                        argMultimap.getRequiredValue(PREFIX_DATE)));
             }
             if (!editMissionDescriptor.isAnyFieldEdited()) {
                 throw new ParseException(EditMissionCommand.MESSAGE_NOT_EDITED);
             }
-            MissionId missionId = MissionParserUtil.parseMissionId(argMultimap.getValue(PREFIX_MISSION).orElseThrow());
+            MissionId missionId = MissionParserUtil.parseMissionId(argMultimap.getRequiredValue(PREFIX_MISSION));
             return new EditMissionCommand(missionId, editMissionDescriptor);
         } catch (ParseException e) {
-            throw new ParseException(e.getMessage() + "\n\n" + EditMissionCommand.MESSAGE_USAGE);
+            throw new ParseException(e.getMessage() + ParserUtil.MESSAGE_SEE_USAGE + EditMissionCommand.MESSAGE_USAGE);
         }
     }
 }

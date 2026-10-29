@@ -18,6 +18,7 @@ import seedu.address.logic.parser.exceptions.ParseException;
  */
 public class ArgumentMultimap {
 
+    private static final String missingArgumentString = "Prefix %1$s is missing its argument.";
     /** Prefixes mapped to their respective arguments */
     private final Map<Prefix, List<String>> argMultimap = new HashMap<>();
 
@@ -40,6 +41,23 @@ public class ArgumentMultimap {
     public Optional<String> getValue(Prefix prefix) {
         List<String> values = getAllValues(prefix);
         return values.isEmpty() ? Optional.empty() : Optional.of(values.getLast());
+    }
+
+    /**
+     * Returns the last value of a prefix, requiring it to contain non-whitespace text.
+     * Returns the stored text unchanged and does not check for repeated prefixes;
+     * callers must validate duplicate prefixes separately when repeats are forbidden.
+     *
+     * @param prefix Prefix whose value is required.
+     * @return The last stored, nonblank value.
+     * @throws ParseException If the prefix is absent or its last value is empty or whitespace-only.
+     */
+    public String getRequiredValue(Prefix prefix) throws ParseException {
+        List<String> values = getAllValues(prefix);
+        if (values.isEmpty() || values.getLast().isBlank()) {
+            throw new ParseException(String.format(missingArgumentString, prefix));
+        }
+        return values.getLast();
     }
 
     /**

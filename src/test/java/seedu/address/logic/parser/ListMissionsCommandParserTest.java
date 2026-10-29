@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
+import static seedu.address.logic.parser.util.ParserUtil.MESSAGE_SEE_USAGE;
 
 import java.util.List;
 
@@ -21,7 +22,7 @@ import seedu.address.model.mission.MissionSubmissionStatusEnum;
  */
 public class ListMissionsCommandParserTest {
 
-    private static final String USAGE_SUFFIX = "\n\n" + ListMissionsCommand.MESSAGE_USAGE;
+    private static final String USAGE_SUFFIX = MESSAGE_SEE_USAGE + ListMissionsCommand.MESSAGE_USAGE;
 
     private final ListMissionsCommandParser parser = new ListMissionsCommandParser();
 

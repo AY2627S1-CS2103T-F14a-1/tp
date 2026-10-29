@@ -31,11 +31,12 @@ public class MarkMissionCommandParser implements Parser<MarkMissionCommand> {
             ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
                     args, PREFIX_INDEX, PREFIX_MISSION);
 
-            Index index = ParserUtil.parseIndex(argMultimap.getValue(PREFIX_INDEX).get());
-            MissionId missionId = MissionParserUtil.parseMissionId(argMultimap.getValue(PREFIX_MISSION).get());
+            Index index = ParserUtil.parseIndex(argMultimap.getRequiredValue(PREFIX_INDEX));
+            MissionId missionId = MissionParserUtil.parseMissionId(argMultimap.getRequiredValue(PREFIX_MISSION));
             return new MarkMissionCommand(index, missionId);
         } catch (ParseException e) {
-            throw new ParseException(e.getMessage() + "\n\n" + MarkMissionCommand.MESSAGE_USAGE);
+            throw new ParseException(e.getMessage()
+                    + ParserUtil.MESSAGE_SEE_USAGE + MarkMissionCommand.MESSAGE_USAGE);
         }
     }
 }

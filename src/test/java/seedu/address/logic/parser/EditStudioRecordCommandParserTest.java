@@ -2,14 +2,13 @@ package seedu.address.logic.parser;
 
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
+import static seedu.address.logic.parser.util.ParserUtil.MESSAGE_SEE_USAGE;
 import static seedu.address.logic.parser.util.StudioRecordParserUtil.MESSAGE_INVALID_EFFORT;
-import static seedu.address.logic.parser.util.StudioRecordParserUtil.MESSAGE_INVALID_WEEK;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_STUDENT;
 
 import org.junit.jupiter.api.Test;
 
 import seedu.address.logic.commands.EditStudioRecordCommand;
-import seedu.address.logic.parser.util.ParserUtil;
 import seedu.address.model.student.StudioRecord;
 
 /**
@@ -17,7 +16,7 @@ import seedu.address.model.student.StudioRecord;
  */
 public class EditStudioRecordCommandParserTest {
 
-    private static final String USAGE_SUFFIX = "\n\n" + EditStudioRecordCommand.MESSAGE_USAGE;
+    private static final String USAGE_SUFFIX = MESSAGE_SEE_USAGE + EditStudioRecordCommand.MESSAGE_USAGE;
 
     private final EditStudioRecordCommandParser parser = new EditStudioRecordCommandParser();
 
@@ -31,7 +30,7 @@ public class EditStudioRecordCommandParserTest {
 
     @Test
     public void parse_invalidEffort_reportsInvalidEffort() {
-        String[] effortScores = {"", "-1", "1.5", "abc", "2147483648"};
+        String[] effortScores = {"-1", "1.5", "abc", "2147483648"};
 
         for (String effortScore : effortScores) {
             assertParseFailure(parser, "id/1 w/3 ef/" + effortScore,
@@ -50,8 +49,8 @@ public class EditStudioRecordCommandParserTest {
     @Test
     public void parse_emptyIndexOrWeek_reportsValueError() {
         assertParseFailure(parser, "id/ w/3 ef/50",
-                ParserUtil.MESSAGE_INVALID_INDEX + USAGE_SUFFIX);
+                "Prefix id/ is missing its argument." + USAGE_SUFFIX);
         assertParseFailure(parser, "id/1 w/ ef/50",
-                MESSAGE_INVALID_WEEK + USAGE_SUFFIX);
+                "Prefix w/ is missing its argument." + USAGE_SUFFIX);
     }
 }
