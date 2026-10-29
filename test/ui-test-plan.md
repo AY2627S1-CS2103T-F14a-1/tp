@@ -475,3 +475,16 @@ Command parser errors must append the corresponding command usage.
 | MC-NUMBER-003 | Run `markmc id/1 num/1`, then view the student. | Appointment 1 is completed. |
 | MC-NUMBER-004 | Repeat the four-command rejection sequence with blank num/, abc, 1.5, and 2147483648. Inspect saved data and view the student after each attempt. | Each error uses the non-integer message and includes its command usage. Appointment 1 remains completed; other records and saved data are unchanged. |
 | MC-NUMBER-005 | Run `unmarkmc id/1 num/1`, then view the student. | Appointment 1 returns to incomplete with its original time. |
+
+## Matriculation number validation regression
+
+Run `MatriculationNumberTest` to verify the field-level validation contract.
+A valid value contains uppercase A, exactly seven ASCII digits, and one uppercase
+letter A-Z, for example `A1234567B`. These are model-level checks; no new UI command is added.
+
+| ID | Steps | Expected result |
+| --- | --- | --- |
+| MATRIC-001 | Construct and validate `A0000000A`, `A1234567B`, and `A9999999Z`. | Values are accepted and preserved exactly. |
+| MATRIC-002 | Validate lowercase letters, a different initial letter, six/eight digits, missing letters, punctuation, non-ASCII digits, and whitespace. | Validation returns false; construction throws IllegalArgumentException with the matriculation constraints message. |
+| MATRIC-003 | Validate values ending in each uppercase letter from A to Z after the invalid cases. | Every uppercase suffix is accepted. |
+| MATRIC-004 | Validate and construct null. | Both operations throw NullPointerException. |
