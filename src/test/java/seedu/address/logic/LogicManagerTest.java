@@ -45,6 +45,7 @@ import seedu.address.logic.commands.UnmarkMissionCommand;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.logic.parser.util.MasteryCheckParserUtil;
+import seedu.address.logic.parser.util.NoteParserUtil;
 import seedu.address.logic.parser.util.ParserUtil;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
@@ -500,7 +501,7 @@ public class LogicManagerTest {
         assertStudioState(model, storage, withRemainingNote);
 
         String saved = Files.readString(storage.getAddressBookFilePath());
-        assertThrows(ParseException.class, ParserUtil.MESSAGE_INVALID_INDEX
+        assertThrows(ParseException.class, NoteParserUtil.MESSAGE_INVALID_NOTE_INDEX + ParserUtil.MESSAGE_INVALID_INDEX
                 + MESSAGE_SEE_USAGE + DeleteNoteCommand.MESSAGE_USAGE, () ->
                 logic.execute("delnote id/1 ni/0"));
         assertEquals(saved, Files.readString(storage.getAddressBookFilePath()));
@@ -509,8 +510,8 @@ public class LogicManagerTest {
         Model restored = new ModelManager(storage.readAddressBook().orElseThrow(), new UserPrefs());
         Logic restoredLogic = new LogicManager(restored, new StorageManager(storage,
                 new JsonUserPrefsStorage(temporaryFolder.resolve("deleteNotePrefs.json"))));
-        assertEquals(String.format(DeleteNoteCommand.MESSAGE_ALREADY_NOT_RECORDED, original.getName()),
-                restoredLogic.execute("DELNOTE id/1 ni/2").getFeedbackToUser());
+        assertThrows(CommandException.class, DeleteNoteCommand.MESSAGE_INDEX_NOT_RECORDED, () ->
+                restoredLogic.execute("DELNOTE id/1 ni/2"));
         assertEquals(saved, Files.readString(storage.getAddressBookFilePath()));
         assertStudioState(restored, storage, withRemainingNote);
 

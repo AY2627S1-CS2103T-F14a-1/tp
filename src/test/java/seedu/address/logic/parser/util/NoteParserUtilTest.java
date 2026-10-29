@@ -30,12 +30,12 @@ public class NoteParserUtilTest {
 
     @Test
     public void parseNoteIndex_invalidValues_throwsParseException() {
+        String invalidIndexMessage = NoteParserUtil.MESSAGE_INVALID_NOTE_INDEX + ParserUtil.MESSAGE_INVALID_INDEX;
         for (String noteIndex : List.of("", WHITESPACE, "0", "0 0", "-1", "1.5", "abc", "2147483648")) {
-            assertThrows(ParseException.class, ParserUtil.MESSAGE_INVALID_INDEX, () ->
-                    NoteParserUtil.parseNoteIndex(noteIndex));
+            assertThrows(ParseException.class, invalidIndexMessage, () -> NoteParserUtil.parseNoteIndex(noteIndex));
         }
-        assertThrows(ParseException.class, RegisteredNotes.MESSAGE_CONSTRAINTS, () ->
-                NoteParserUtil.parseNoteIndex("1001"));
+        String invalidRangeMessage = NoteParserUtil.MESSAGE_INVALID_NOTE_INDEX + RegisteredNotes.MESSAGE_CONSTRAINTS;
+        assertThrows(ParseException.class, invalidRangeMessage, () -> NoteParserUtil.parseNoteIndex("1001"));
     }
 
     @Test

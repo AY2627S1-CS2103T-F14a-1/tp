@@ -69,20 +69,9 @@ public class EditNoteCommandTest {
     @Test
     public void execute_missingNoteIndex_reportsNoChange() {
         Model model = createModelWithNotes();
-        Student studentToUpdate = model.getFilteredStudentList().get(INDEX_FIRST_STUDENT.getZeroBased());
         EditNoteCommand command = new EditNoteCommand(INDEX_FIRST_STUDENT, INDEX_THIRD_NOTE, UPDATED_NOTE);
-        Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
 
-        assertCommandSuccess(
-                command,
-                model,
-                new CommandResult(
-                        String.format(
-                                EditNoteCommand.MESSAGE_INDEX_NOT_RECORDED,
-                                studentToUpdate.getName(),
-                                INDEX_THIRD_NOTE.getOneBased()),
-                        studentToUpdate),
-                expectedModel);
+        assertCommandFailure(command, model, EditNoteCommand.MESSAGE_INDEX_NOT_RECORDED);
     }
 
     @Test

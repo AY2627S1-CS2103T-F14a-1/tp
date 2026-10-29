@@ -61,21 +61,11 @@ public class DeleteNoteCommandTest {
     }
 
     @Test
-    public void execute_missingNote_reportsNoChange() throws Exception {
+    public void execute_missingNote_reportsNoChange() {
         Model model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
-        Student studentToUpdate = model.getFilteredStudentList().get(INDEX_FIRST_STUDENT.getZeroBased());
         DeleteNoteCommand command = new DeleteNoteCommand(INDEX_FIRST_STUDENT, INDEX_FIRST_NOTE);
-        Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
 
-        assertCommandSuccess(
-                command,
-                model,
-                new CommandResult(
-                        String.format(
-                                DeleteNoteCommand.MESSAGE_ALREADY_NOT_RECORDED,
-                                studentToUpdate.getName()),
-                        studentToUpdate),
-                expectedModel);
+        assertCommandFailure(command, model, DeleteNoteCommand.MESSAGE_INDEX_NOT_RECORDED);
     }
 
     @Test
