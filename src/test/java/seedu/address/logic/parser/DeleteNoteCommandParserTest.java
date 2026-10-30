@@ -13,6 +13,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import seedu.address.logic.commands.DeleteNoteCommand;
+import seedu.address.logic.parser.util.NoteParserUtil;
 import seedu.address.logic.parser.util.ParserUtil;
 import seedu.address.model.student.RegisteredNotes;
 
@@ -46,10 +47,12 @@ public class DeleteNoteCommandParserTest {
     public void parse_invalidNoteIndex_reportsApplicableConstraint() {
         for (String noteIndex : List.of("0", "-1", "1.5", "abc", "2147483648")) {
             assertParseFailure(parser, "id/1 ni/" + noteIndex,
-                    ParserUtil.MESSAGE_INVALID_INDEX + MESSAGE_SEE_USAGE + DeleteNoteCommand.MESSAGE_USAGE);
+                    NoteParserUtil.MESSAGE_INVALID_NOTE_INDEX + ParserUtil.MESSAGE_INVALID_INDEX
+                            + MESSAGE_SEE_USAGE + DeleteNoteCommand.MESSAGE_USAGE);
         }
         assertParseFailure(parser, "id/1 ni/1001",
-                RegisteredNotes.MESSAGE_CONSTRAINTS + MESSAGE_SEE_USAGE + DeleteNoteCommand.MESSAGE_USAGE);
+                NoteParserUtil.MESSAGE_INVALID_NOTE_INDEX + RegisteredNotes.MESSAGE_CONSTRAINTS
+                        + MESSAGE_SEE_USAGE + DeleteNoteCommand.MESSAGE_USAGE);
     }
 
     @Test

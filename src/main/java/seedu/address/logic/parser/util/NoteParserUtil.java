@@ -12,6 +12,8 @@ import seedu.address.model.student.RegisteredNotes;
  */
 public final class NoteParserUtil {
 
+    public static final String MESSAGE_INVALID_NOTE_INDEX = "The note index provided is invalid: ";
+
     /**
      * Parses a {@code String note index} into a {@code Index} and returns it.
      *
@@ -19,9 +21,14 @@ public final class NoteParserUtil {
      */
     public static Index parseNoteIndex(String noteIndexStr) throws ParseException {
         requireNonNull(noteIndexStr);
-        Index noteIndex = ParserUtil.parseIndex(noteIndexStr);
+        Index noteIndex;
+        try {
+            noteIndex = ParserUtil.parseIndex(noteIndexStr);
+        } catch (ParseException pe) {
+            throw new ParseException(MESSAGE_INVALID_NOTE_INDEX + pe.getMessage());
+        }
         if (!RegisteredNotes.isValidNoteIndex(noteIndex)) {
-            throw new ParseException(RegisteredNotes.MESSAGE_CONSTRAINTS);
+            throw new ParseException(MESSAGE_INVALID_NOTE_INDEX + RegisteredNotes.MESSAGE_CONSTRAINTS);
         }
         return noteIndex;
     }

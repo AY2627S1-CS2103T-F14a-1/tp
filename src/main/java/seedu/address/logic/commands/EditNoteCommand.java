@@ -23,14 +23,14 @@ public class EditNoteCommand extends Command {
     public static final String COMMAND_WORD = "editnote";
 
     public static final String MESSAGE_INDEX_NOT_RECORDED =
-            "%1$s does not have a registered note with index %2$d. No changes made.";
+            "The note index provided doesn't exist.";
     public static final String MESSAGE_SAME_NOTE =
             "%1$s’s note with index %2$d is already the same. No changes made.";
     public static final String MESSAGE_SUCCESS =
             "Edited %1$s's note with index %2$d.";
     public static final String MESSAGE_USAGE = COMMAND_WORD
             + ": Edits a registered note for the selected student.\n"
-            + "Parameters: " + PREFIX_INDEX + "INDEX " + PREFIX_NOTE_INDEX + "index " + PREFIX_NOTE_TEXT + "TEXT\n"
+            + "Parameters: " + PREFIX_INDEX + "INDEX " + PREFIX_NOTE_INDEX + "NOTE_INDEX " + PREFIX_NOTE_TEXT + "TEXT\n"
             + "INDEX must be a positive integer identifying a displayed student.\n"
             + "NOTE_INDEX must be a positive integer less than or equal to "
             + RegisteredNotes.MAX_NOTE_INDEX + " inclusive.\n"
@@ -64,8 +64,7 @@ public class EditNoteCommand extends Command {
         Student studentToUpdate = getStudentAtDisplayedIndex(model, targetIndex);
         RegisteredNotes registeredNotes = studentToUpdate.getRegisteredNotes();
         if (!registeredNotes.hasNote(noteIndex)) {
-            return new CommandResult(String.format(MESSAGE_INDEX_NOT_RECORDED, studentToUpdate.getName(),
-                    noteIndex.getOneBased()), studentToUpdate);
+            throw new CommandException(MESSAGE_INDEX_NOT_RECORDED);
         }
 
         if (registeredNotes.hasMatchingNote(noteIndex, updatedNote)) {

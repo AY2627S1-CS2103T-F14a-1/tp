@@ -20,6 +20,10 @@ public class DeleteNoteCommand extends Command {
 
     public static final String COMMAND_WORD = "delnote";
 
+    public static final String MESSAGE_INDEX_NOT_RECORDED =
+            "The note index provided doesn't exist.";
+    public static final String MESSAGE_SUCCESS =
+            "Deleted %1$s's note at index %2$d.";
     public static final String MESSAGE_USAGE = COMMAND_WORD
             + ": Deletes a note for the selected student.\n"
             + "Parameters: " + PREFIX_INDEX + "INDEX " + PREFIX_NOTE_INDEX + "NOTE_INDEX\n"
@@ -28,11 +32,6 @@ public class DeleteNoteCommand extends Command {
             + RegisteredNotes.MAX_NOTE_INDEX + " inclusive.\n"
             + "Example: " + COMMAND_WORD + " " + PREFIX_INDEX + "1 "
             + PREFIX_NOTE_INDEX + "3";
-
-    public static final String MESSAGE_SUCCESS =
-            "Deleted %1$s's note at index %2$d.";
-    public static final String MESSAGE_ALREADY_NOT_RECORDED =
-            "%1$s’s note index does not exist. No changes made.";
 
     private final Index targetIndex;
     private final Index noteIndex;
@@ -57,8 +56,7 @@ public class DeleteNoteCommand extends Command {
         RegisteredNotes registeredNotes = studentToUpdate.getRegisteredNotes();
 
         if (!registeredNotes.hasNote(noteIndex)) {
-            return new CommandResult(String.format(MESSAGE_ALREADY_NOT_RECORDED, studentToUpdate.getName()),
-                    studentToUpdate);
+            throw new CommandException(MESSAGE_INDEX_NOT_RECORDED);
         }
 
         Student updatedStudent = studentToUpdate.withRegisteredNotes(
