@@ -29,7 +29,9 @@ public class StudioRecordParserUtilTest {
     @Test
     public void parseWeek_validInput_returnsWeek() throws Exception {
         assertEquals(0, StudioRecordParserUtil.parseWeek("0"));
+        assertEquals(1, StudioRecordParserUtil.parseWeek("1"));
         assertEquals(3, StudioRecordParserUtil.parseWeek("3"));
+        assertEquals(12, StudioRecordParserUtil.parseWeek("12"));
         assertEquals(13, StudioRecordParserUtil.parseWeek("13"));
         assertEquals(3, StudioRecordParserUtil.parseWeek(" \t3 "));
     }
@@ -52,9 +54,12 @@ public class StudioRecordParserUtilTest {
     @Test
     public void parseEffortScore_validInput_returnsEffortScore() throws Exception {
         assertEquals(0, StudioRecordParserUtil.parseEffortScore("0"));
+        assertEquals(1, StudioRecordParserUtil.parseEffortScore("1"));
         assertEquals(50, StudioRecordParserUtil.parseEffortScore("50"));
         assertEquals(Integer.MAX_VALUE, StudioRecordParserUtil.parseEffortScore(
                 String.valueOf(Integer.MAX_VALUE)));
+        assertEquals(Integer.MAX_VALUE - 1, StudioRecordParserUtil.parseEffortScore(
+                String.valueOf(Integer.MAX_VALUE - 1)));
         assertEquals(50, StudioRecordParserUtil.parseEffortScore(" \t50 "));
     }
 }
