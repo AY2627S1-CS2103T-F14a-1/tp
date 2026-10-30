@@ -25,6 +25,20 @@ student 2 has no notes.
 | NOTE-VIEW-003 | Run `view id/1` again. | Both notes reappear once each in insertion order, without duplicated or stale rows. |
 | NOTE-VIEW-004 | Resize the window from narrow to wide and back while viewing student 1. | Note text wraps within the Notes table and no horizontal scrollbar appears. |
 
+## Notes stress tests
+
+Use an isolated dataset containing one student with no notes. Prepare 1,000
+distinct `addnote id/1 nt/TEXT` commands, where each `TEXT` is exactly 1,000
+valid characters. Record the time from submitting each command until its
+success feedback appears. Close other resource-intensive applications before
+testing so that unrelated system load does not distort the observations.
+
+| ID | Steps | Expected result |
+| --- | --- | --- |
+| NOTE-STRESS-001 | Submit all 1,000 prepared commands in order. After the final command, run `view id/1`. | Every command completes without noticeable input lag. The profile contains exactly 1,000 notes in insertion order, and each note retains all 1,000 characters. |
+| NOTE-STRESS-002 | While viewing student 1, drag the profile scrollbar continuously from top to bottom and back to the top. Repeat using the mouse wheel or trackpad. | Scrolling remains responsive, the viewport follows the input without visible freezes, and notes 1 and 1,000 are reachable. |
+| NOTE-STRESS-003 | Exit and restart the application, run `view id/1`, then repeat NOTE-STRESS-002. | Startup restores all 1,000 notes unchanged and scrolling remains responsive after reload. |
+
 ## Edit-note command regression
 
 Start with two students. Give student 1 two notes at indexes 1 and 2, and leave

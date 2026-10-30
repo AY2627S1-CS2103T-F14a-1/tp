@@ -1,9 +1,11 @@
 package seedu.address.ui;
 
+import static java.time.Duration.ofSeconds;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTimeout;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.testutil.TypicalStudents.AMY;
 
@@ -21,11 +23,14 @@ import org.junit.jupiter.api.Test;
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import seedu.address.model.masterycheck.MasteryCheck;
 import seedu.address.model.mission.Mission;
 import seedu.address.model.mission.MissionId;
+import seedu.address.model.student.Note;
+import seedu.address.model.student.RegisteredNotes;
 import seedu.address.model.student.RegisteredStudioRecords;
 import seedu.address.model.student.Student;
 import seedu.address.model.student.StudioRecord;
@@ -34,6 +39,8 @@ import seedu.address.testutil.StudentBuilder;
 import seedu.address.testutil.StudentBuilder.StudioRecordSet;
 
 public class StudentDetailsPanelTest {
+
+    private static final int MAXIMUM_NOTES_RENDER_AND_SCROLL_TIMEOUT_SECONDS = 10;
 
     @BeforeAll
     public static void setUpJavaFx() throws Exception {
@@ -242,6 +249,48 @@ public class StudentDetailsPanelTest {
             int displayedWeeks = RegisteredStudioRecords.MAX_WEEK - RegisteredStudioRecords.MIN_WEEK + 1;
             assertEquals((displayedWeeks + 1) * 3, grid.getChildren().size());
         });
+    }
+
+    @Test
+    public void showStudent_thousandMaximumLengthNotes_rendersAndScrollsWithoutSignificantLag() throws Exception {
+        List<Note> notes = createMaximumLengthNotes();
+        Student student = AMY.withRegisteredNotes(new RegisteredNotes(notes));
+
+        runOnJavaFxThread(() -> assertTimeout(ofSeconds(MAXIMUM_NOTES_RENDER_AND_SCROLL_TIMEOUT_SECONDS), () -> {
+            StudentDetailsPanel panel = new StudentDetailsPanel();
+            new Scene(panel.getRoot(), 1000, 700);
+            panel.showStudent(student, List.of());
+            panel.getRoot().applyCss();
+            panel.getRoot().layout();
+
+            GridPane notesGrid = (GridPane) panel.getRoot().lookup("#notesGrid");
+            ScrollPane scrollPane = (ScrollPane) panel.getRoot().lookup("#studentDetailsScrollPane");
+            assertEquals(2 * (RegisteredNotes.MAX_NOTE_INDEX + 1), notesGrid.getChildren().size());
+
+            for (int i = 0; i < RegisteredNotes.MAX_NOTE_INDEX; i++) {
+                scrollPane.setVvalue((double) i / (RegisteredNotes.MAX_NOTE_INDEX - 1));
+                scrollPane.layout();
+            }
+
+            assertEquals(1.0, scrollPane.getVvalue());
+            assertEquals(String.valueOf(RegisteredNotes.MAX_NOTE_INDEX),
+                    getGridCell(notesGrid, 0, RegisteredNotes.MAX_NOTE_INDEX));
+            assertEquals(Note.MAX_NOTE_LENGTH,
+                    getGridCell(notesGrid, 1, RegisteredNotes.MAX_NOTE_INDEX).length());
+        }));
+    }
+
+    /**
+     * Creates the maximum supported number of maximum-length notes.
+     *
+     * @return Notes with distinct text and the maximum valid length.
+     */
+    private static List<Note> createMaximumLengthNotes() {
+        return java.util.stream.IntStream.range(0, RegisteredNotes.MAX_NOTE_INDEX)
+                .mapToObj(index -> String.format("%04d", index))
+                .map(prefix -> prefix + "x".repeat(Note.MAX_NOTE_LENGTH - prefix.length()))
+                .map(Note::new)
+                .toList();
     }
 
     /**
