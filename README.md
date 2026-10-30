@@ -5,9 +5,10 @@
 
 ![Ui](docs/images/Ui.png)
 
-AvengerHub is a desktop address book application tailored for CS1101S tutors. It combines
+AvengerHub is a desktop address book application. 
+It is tailored for tutors of the Programming Methodology class CS1101S in the National University of Singapore (NUS). It combines
 the speed of a command-line interface with the convenience of a graphical user
-interface, helping tutors keep student details from different tutorial groups
+interface, helping tutors keep student details from different studio groups
 organized in one place.
 
 ## Features
@@ -22,7 +23,7 @@ organized in one place.
 - [User Guide](https://ay2627s1-cs2103t-f14a-1.github.io/tp/UserGuide.html)
 - [Developer Guide](https://ay2627s1-cs2103t-f14a-1.github.io/tp/DeveloperGuide.html)
 
-`AvengerHub` is named for its goal of consolidating a tutor's duties in one
+`AvengerHub` is named for its goal of consolidating the duties of an NUS tutor for CS1101S, also known as an Avenger, in one
 place.
 
 Made with ❤️ by the AY2627S1-CS2103T-F14a-1 team.
