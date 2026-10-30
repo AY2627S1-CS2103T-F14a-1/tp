@@ -15,6 +15,10 @@
 
 * _This project is based on the AddressBook-Level3 project created by the [SE-EDU initiative](https://se-education.org)._
 
+Notable uses of AI:
+
+* ChatGPT Codex was used by @BrianLim35 to assist with writing test cases, guide documentation, and input validation.
+
 --------------------------------------------------------------------------------------------------------------------
 
 ## **Setting up, getting started**
