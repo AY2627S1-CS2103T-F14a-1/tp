@@ -11,7 +11,9 @@ import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_STUDENT;
 import org.junit.jupiter.api.Test;
 
 import seedu.address.logic.commands.DeleteStudioRecordCommand;
+import seedu.address.logic.commands.DeleteStudioRecordCommand;
 import seedu.address.logic.parser.util.ParserUtil;
+import seedu.address.model.student.StudioRecord;
 
 /**
  * Tests argument structure and value-parser integration for delstudiorecord.
@@ -24,13 +26,20 @@ public class DeleteStudioRecordCommandParserTest {
 
     @Test
     public void parse_validArguments_returnsCommand() {
-        DeleteStudioRecordCommand expected = new DeleteStudioRecordCommand(INDEX_FIRST_STUDENT, 3);
+        assertParseSuccess(parser, "id/1 w/0",
+                new DeleteStudioRecordCommand(INDEX_FIRST_STUDENT, 0));
+        assertParseSuccess(parser, "id/1 w/1",
+                new DeleteStudioRecordCommand(INDEX_FIRST_STUDENT, 1));
+        assertParseSuccess(parser, "id/1 w/6",
+                new DeleteStudioRecordCommand(INDEX_FIRST_STUDENT, 6));
+        assertParseSuccess(parser, "id/1 w/12",
+                new DeleteStudioRecordCommand(INDEX_FIRST_STUDENT, 12));
+        assertParseSuccess(parser, "id/1 w/13",
+                new DeleteStudioRecordCommand(INDEX_FIRST_STUDENT, 13));
 
-        assertParseSuccess(parser, "id/1 w/3", expected);
+        DeleteStudioRecordCommand expected = new DeleteStudioRecordCommand(INDEX_FIRST_STUDENT, 3);
         assertParseSuccess(parser, "  id/1   w/ 3  ", expected);
         assertParseSuccess(parser, "id/1\tw/3", expected);
-        assertParseSuccess(parser, "id/1 w/3", new DeleteStudioRecordCommand(INDEX_FIRST_STUDENT, 3));
-        assertParseSuccess(parser, "id/1 w/13", new DeleteStudioRecordCommand(INDEX_FIRST_STUDENT, 13));
     }
 
     @Test
@@ -43,7 +52,7 @@ public class DeleteStudioRecordCommandParserTest {
                 bothMissing + USAGE_SUFFIX);
         for (String input : new String[]{"w/", "w/3", "w/ 3"}) {
             assertParseFailure(parser, input,
-                CliSyntax.PREFIX_INDEX.getMissingMessage() + USAGE_SUFFIX);
+                    CliSyntax.PREFIX_INDEX.getMissingMessage() + USAGE_SUFFIX);
         }
     }
 
@@ -111,7 +120,7 @@ public class DeleteStudioRecordCommandParserTest {
 
         for (String input : inputs) {
             assertParseFailure(parser, input,
-                MESSAGE_INVALID_WEEK + USAGE_SUFFIX);
+                    MESSAGE_INVALID_WEEK + USAGE_SUFFIX);
         }
     }
 }
