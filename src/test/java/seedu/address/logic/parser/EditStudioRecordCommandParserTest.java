@@ -48,8 +48,8 @@ public class EditStudioRecordCommandParserTest {
 
         EditStudioRecordCommand expected = new EditStudioRecordCommand(INDEX_FIRST_STUDENT, 3,
                 new StudioRecord(50));
-        assertParseSuccess(parser, "  id/1   w/ 3  ", expected);
-        assertParseSuccess(parser, "id/1\tw/3", expected);
+        assertParseSuccess(parser, "  id/1   w/ 3  ef/50", expected);
+        assertParseSuccess(parser, "id/1\tw/3 ef/50", expected);
     }
 
     @Test
