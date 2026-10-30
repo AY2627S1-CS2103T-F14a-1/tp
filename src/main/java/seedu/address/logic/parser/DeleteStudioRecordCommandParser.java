@@ -16,7 +16,7 @@ import seedu.address.logic.parser.util.StudioRecordParserUtil;
 public class DeleteStudioRecordCommandParser implements Parser<DeleteStudioRecordCommand> {
 
     /**
-     * Parses the student index and tutorial week.
+     * Parses the student index and studio week.
      *
      * @param args Arguments following the command word.
      * @return A command containing the validated index and week.
