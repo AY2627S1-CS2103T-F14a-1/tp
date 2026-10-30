@@ -542,8 +542,9 @@ reports that no changes were made.
 
 Example: `unmarkmission id/1 m/M01`, followed by `view id/1`, displays M01 as Not submitted.
 
-The profile displays configured mission descriptions and deadlines. An empty catalogue shows
-“No missions configured.”
+The Mission Submissions table displays configured mission descriptions and deadlines. Its
+`Mission` and `Status` headers remain visible when the catalogue is empty, with
+“No missions configured.” shown across both columns.
 
 ![result for unmarking a mission](images/unmarkMissionResult.png)
 
