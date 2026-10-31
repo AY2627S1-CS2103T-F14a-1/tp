@@ -32,7 +32,7 @@ public class StudentDetailsPanel extends UiPart<Region> {
 
     private static final String FXML = "StudentDetailsPanel.fxml";
     private static final DateTimeFormatter APPOINTMENT_TIME_FORMATTER =
-            DateTimeFormatter.ofPattern("MMM d, HH:mm", Locale.ENGLISH);
+            DateTimeFormatter.ofPattern("d MMMM uuuu, HH:mm", Locale.ENGLISH);
     private static final DateTimeFormatter MISSION_DEADLINE_FORMATTER =
             DateTimeFormatter.ofPattern("d MMMM uuuu", Locale.ENGLISH);
 

@@ -4,11 +4,10 @@ import static java.util.Objects.requireNonNull;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.DateTimeParseException;
 import java.time.format.ResolverStyle;
-import java.time.temporal.ChronoField;
 import java.util.Locale;
 
 import seedu.address.logic.parser.exceptions.ParseException;
@@ -23,15 +22,16 @@ public final class MasteryCheckParserUtil {
             "Provided mastery check number is smaller than or equal to 0.";
     public static final String MESSAGE_ERROR_NON_NUMBER =
             "Provided mastery check number value is not a valid integer.";
-    public static final String MESSAGE_INVALID_MASTERY_CHECK_DATETIME = "Provided date value is invalid.";
 
-    /** Strict input formatter whose default year is captured when this class is initialized. */
-    private static final DateTimeFormatter MASTERY_CHECK_DATETIME_FORMATTER =
-            new DateTimeFormatterBuilder()
-                    .appendPattern("dd-MM'|'HH:mm")
-                    .parseDefaulting(ChronoField.YEAR, LocalDate.now().getYear())
-                    .toFormatter(Locale.ROOT)
-                    .withResolverStyle(ResolverStyle.STRICT);
+    public static final String MESSAGE_INVALID_MASTERY_CHECK_DATE = "Provided date value is invalid. "
+            + "Date segment must use YYYY-MM-DD format, for example 2026-10-20.";
+    public static final String MESSAGE_INVALID_MASTERY_CHECK_TIME = "Provided time value is invalid. "
+            + "Time segment must use HH:MM 24-hour format, for example 14:30.";
+    public static final String MESSAGE_INVALID_MASTERY_CHECK_DATETIME_FORMAT = "Provided datetime format is invalid.";
+
+    /** Strict formatter for a 24-hour appointment time without seconds. */
+    private static final DateTimeFormatter MASTERY_CHECK_TIME_FORMATTER =
+            DateTimeFormatter.ofPattern("HH:mm", Locale.ROOT).withResolverStyle(ResolverStyle.STRICT);
 
     /**
      * Parses a positive mastery check number, trimming leading and trailing whitespace.
@@ -55,9 +55,9 @@ public final class MasteryCheckParserUtil {
     }
 
     /**
-     * Parses an appointment in dd-MM|HH:mm format using strict date and time validation.
-     * Leading and trailing whitespace is trimmed. The omitted year defaults to the system's
-     * local year when this class is initialized, as captured by the shared formatter.
+     * Parses an appointment in yyyy-MM-dd|HH:mm format using strict ISO date and 24-hour time validation.
+     * Leading and trailing whitespace is trimmed.
+     * Format errors take precedence over invalid dates, which take precedence over invalid times.
      *
      * @param dateTime The appointment date and 24-hour time separated by a vertical bar.
      * @return The validated appointment date and time.
@@ -66,12 +66,24 @@ public final class MasteryCheckParserUtil {
      */
     public static LocalDateTime parseMasteryCheckDateTime(String dateTime) throws ParseException {
         requireNonNull(dateTime);
-        String trimmedDateTime = dateTime.trim();
+        String[] parts = dateTime.trim().split("\\|", -1);
+        if (parts.length != 2 || !parts[0].matches("[0-9]{4}-[0-9]{2}-[0-9]{2}")
+                || !parts[1].matches("[0-9]{2}:[0-9]{2}")) {
+            throw new ParseException(MESSAGE_INVALID_MASTERY_CHECK_DATETIME_FORMAT);
+        }
+
+        LocalDate date;
         try {
-            return LocalDateTime.parse(trimmedDateTime, MASTERY_CHECK_DATETIME_FORMATTER);
+            date = LocalDate.parse(parts[0], DateTimeFormatter.ISO_LOCAL_DATE);
         } catch (DateTimeParseException e) {
-            throw new ParseException(MESSAGE_INVALID_MASTERY_CHECK_DATETIME);
+            throw new ParseException(MESSAGE_INVALID_MASTERY_CHECK_DATE);
+        }
+
+        try {
+            LocalTime time = LocalTime.parse(parts[1], MASTERY_CHECK_TIME_FORMATTER);
+            return LocalDateTime.of(date, time);
+        } catch (DateTimeParseException e) {
+            throw new ParseException(MESSAGE_INVALID_MASTERY_CHECK_TIME);
         }
     }
-
 }

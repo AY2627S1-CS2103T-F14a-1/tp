@@ -22,10 +22,10 @@ Unless the user says otherwise, assume that you are assisting a student working 
 * Explain the rationale for significant actions: what you did and why.
 * Keep explanations brief but instructive, supporting learning through responsible use of AI. For example:
 
-  * When suggesting a Git command, briefly explain what it does.
-  * Add explanatory Javadoc comments to all classes and to nontrivial methods and fields when their purpose or behavior is not obvious.
-  * Make generated code as self-explanatory as possible, and include explanatory comments where they improve understanding.
-  * When faced with a design choice, choose the simplest option that is sufficient for the requirements, while briefly explaining relevant more advanced alternatives.
+    * When suggesting a Git command, briefly explain what it does.
+    * Add explanatory Javadoc comments to all classes and to nontrivial methods and fields when their purpose or behavior is not obvious.
+    * Make generated code as self-explanatory as possible, and include explanatory comments where they improve understanding.
+    * When faced with a design choice, choose the simplest option that is sufficient for the requirements, while briefly explaining relevant more advanced alternatives.
 
 # Project-specific requirements
 
@@ -388,11 +388,11 @@ When asked to propose commit messages:
 2. Group files by logical purpose before drafting messages.
 3. Use one commit message per logical group.
 4. For every non-trivial commit, use exactly five body paragraphs:
-   1. Current situation, in present tense.
-   2. Why the change is needed.
-   3. What should be done, in imperative mood.
-   4. Why that approach is used.
-   5. Any other relevant information, such as tests or affected files.
+    1. Current situation, in present tense.
+    2. Why the change is needed.
+    3. What should be done, in imperative mood.
+    4. Why that approach is used.
+    5. Any other relevant information, such as tests or affected files.
 5. Keep the subject imperative, capitalized, punctuation-free, and within 72
    characters.
 6. Wrap body lines at 72 characters.
