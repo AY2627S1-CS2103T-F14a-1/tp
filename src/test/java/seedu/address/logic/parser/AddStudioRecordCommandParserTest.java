@@ -14,7 +14,6 @@ import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_STUDENT;
 import org.junit.jupiter.api.Test;
 
 import seedu.address.logic.commands.AddStudioRecordCommand;
-import seedu.address.logic.commands.AddStudioRecordCommand;
 import seedu.address.model.student.StudioRecord;
 
 /**
@@ -115,16 +114,6 @@ public class AddStudioRecordCommandParserTest {
     }
 
     @Test
-    public void parse_invalidWeek_reportsInvalidEffort() {
-        String[] weeks = {"$", "1 2", "-1", "1.5", "abc", "14"};
-
-        for (String week : weeks) {
-            assertParseFailure(parser, "id/1 w/" + week + " ef/40",
-                    MESSAGE_INVALID_WEEK + USAGE_SUFFIX);
-        }
-    }
-
-    @Test
     public void parse_missingWeekPrefix_reportsMissingPrefix() {
         assertParseFailure(parser, "id/1 ef/50",
                 PREFIX_WEEK.getMissingMessage() + USAGE_SUFFIX);
@@ -137,6 +126,16 @@ public class AddStudioRecordCommandParserTest {
 
         for (String input : inputs) {
             assertParseFailure(parser, input, expected);
+        }
+    }
+
+    @Test
+    public void parse_invalidWeek_reportsInvalidEffort() {
+        String[] weeks = {"$", "1 2", "-1", "1.5", "abc", "14"};
+
+        for (String week : weeks) {
+            assertParseFailure(parser, "id/1 w/" + week + " ef/40",
+                    MESSAGE_INVALID_WEEK + USAGE_SUFFIX);
         }
     }
 
