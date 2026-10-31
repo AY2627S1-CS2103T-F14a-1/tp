@@ -79,6 +79,16 @@ public class EditStudioRecordCommandParserTest {
     }
 
     @Test
+    public void parse_emptyRequiredPrefix_reportsMissingArgument() {
+        assertParseFailure(parser, "id/ w/3 ef/50",
+                "Prefix id/ is missing its argument." + USAGE_SUFFIX);
+        assertParseFailure(parser, "id/1 w/ ef/50",
+                "Prefix w/ is missing its argument." + USAGE_SUFFIX);
+        assertParseFailure(parser, "id/1 w/3 ef/",
+                "Prefix ef/ is missing its argument." + USAGE_SUFFIX);
+    }
+
+    @Test
     public void parse_reorderedPrefixes_returnsCommand() {
         assertParseSuccess(parser, "ef/50 w/0 id/1",
                 new EditStudioRecordCommand(INDEX_FIRST_STUDENT, 0, new StudioRecord(50)));
@@ -110,12 +120,6 @@ public class EditStudioRecordCommandParserTest {
     }
 
     @Test
-    public void parse_emptyWeek_reportsMissingArgument() {
-        assertParseFailure(parser, "id/1 w/ ef/50",
-                "Prefix w/ is missing its argument." + USAGE_SUFFIX);
-    }
-
-    @Test
     public void parse_repeatedWeek_reportsDuplicateWeek() {
         String[] inputs = {"id/1 ef/50 w/3 w/3", "id/1 ef/50 w/ w/3"};
         String expected = CliSyntax.PREFIX_WEEK.getDuplicateMessage() + USAGE_SUFFIX;
@@ -139,12 +143,6 @@ public class EditStudioRecordCommandParserTest {
     public void parse_missingEffortPrefix_reportsMissingPrefix() {
         assertParseFailure(parser, "id/1 w/3",
                 PREFIX_STUDIO_EFFORT.getMissingMessage() + USAGE_SUFFIX);
-    }
-
-    @Test
-    public void parse_emptyEffort_reportsMissingArgument() {
-        assertParseFailure(parser, "id/1 w/3 ef/",
-                "Prefix ef/ is missing its argument." + USAGE_SUFFIX);
     }
 
     @Test

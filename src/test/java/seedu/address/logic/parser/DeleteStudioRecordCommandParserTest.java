@@ -2,7 +2,6 @@ package seedu.address.logic.parser;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_STUDIO_EFFORT;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_WEEK;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
@@ -64,6 +63,14 @@ public class DeleteStudioRecordCommandParserTest {
     @Test
     public void parse_nullArgument_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> parser.parse(null));
+    }
+
+    @Test
+    public void parse_emptyRequiredPrefix_reportsMissingArgument() {
+        assertParseFailure(parser, "id/ w/3",
+                "Prefix id/ is missing its argument." + USAGE_SUFFIX);
+        assertParseFailure(parser, "id/1 w/",
+                "Prefix w/ is missing its argument." + USAGE_SUFFIX);
     }
 
     @Test
