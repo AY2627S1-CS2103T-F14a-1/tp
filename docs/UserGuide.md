@@ -118,7 +118,7 @@ WARNING:
 Extra arguments were ignored. The list command takes no arguments.
 ```
 
-To list mission submissions, use `listmissions m/M01`.
+To list mission submissions, use `listmissions m/MISSION_ID`. See its section below.
 
 ### Viewing a student: `view`
 
@@ -349,7 +349,7 @@ Format: `addmc id/INDEX num/NUMBER dt/DATE-TIME`
 
 * `INDEX` must be a positive integer identifying a student in the **currently displayed list**, including `find` results.
 * `NUMBER` must be an integer from **1 to 2147483647**, inclusive. Numbers are unique within each student's appointments.
-* `DATE-TIME` must be a real date and 24-hour time in `dd-MM|HH:mm` format, such as `29-10|13:30`.
+* `DATE-TIME` must be a real date and 24-hour time in `YYYY-MM-DD|HH:mm` format, such as `2026-10-20|13:30`.
   The current year is filled in automatically. Impossible dates, `24:00`, and times with seconds are rejected.
 * Supply `id/`, `num/`, and `dt/` exactly once each, in any letter case and in any order. Do not put text before the first prefix.
 * New mastery checks show **Not completed**. Adding an existing number leaves its time and status unchanged.
@@ -361,7 +361,7 @@ Run `view id/INDEX` to inspect the Number, Appointment time, and Status columns.
 
 Example: 
 
-`addmc id/1 num/2 dt/29-10|13:30`, followed by `view id/1`, shows mastery check 2 at `Oct 29, 13:30` as Not completed.
+`addmc id/1 num/2 dt/2026-10-27|13:30`, followed by `view id/1`, shows mastery check 2 at `27 October 2026, 13:30` as Not completed.
 
 ### Deleting a mastery check: `delmc`
 
@@ -703,7 +703,7 @@ Failed commands do not save. A missing file instead loads the sample data.
 ## FAQ
 
 **Q**: How do I transfer my data to another computer?<br>
-**A**: Install the app on the other computer and overwrite the data file it creates with the data file from your previous AvengerHub home folder.
+**A**: Install the app on the other computer. Either overwrite the data file it creates with the data file from your previous AvengerHub home folder, or create a `data` folder in the same directory as `avengerhub.jar` and place the data file in the `data` folder **before the first launch of the app**.
 
 --------------------------------------------------------------------------------------------------------------------
 
@@ -716,30 +716,30 @@ Failed commands do not save. A missing file instead loads the sample data.
 
 ## Command summary
 
-Action     | Format, Examples                                                                                                                                                   
------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Action     | Format, Examples                                                                                                                                                                                          
+-----------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 **Add student**    | `addstudent n/NAME mtc/MATRICULATION_NUMBER p/PHONE_NUMBER e/EMAIL [t/TAG]... g/STUDIO_GROUP` <br> e.g., `addstudent n/James Ho mtc/A0205429T p/22224444 e/jamesho@example.com  t/smart t/talkative g/1A` 
-**Delete student** | `delstudent id/INDEX`<br> e.g., `delstudent id/3`                                                                                                                     
-**View student** | `view id/INDEX`<br> e.g., `view id/1`                                                                                                                                 
-**Edit student**   | `editstudent id/INDEX [n/NAME] [mtc/MATRICULATION_NUMBER] [p/PHONE_NUMBER] [e/EMAIL] [t/TAG]... [g/STUDIO_GROUP]`<br> e.g.,`editstudent id/2 n/James Lee e/jameslee@example.com g/1A`                       
-**Add studio record** | `addstudiorecord id/INDEX w/WEEK ef/EFFORT`<br> e.g., `addstudiorecord id/1 w/3 ef/30`                                                                             
-**Delete studio record** | `delstudiorecord id/INDEX w/WEEK`<br> e.g., `delstudiorecord id/1 w/3`                                                                                             
-**Edit studio record** | `editstudiorecord id/INDEX w/WEEK ef/EFFORT`<br> e.g., `editstudiorecord id/1 w/3 ef/30`                                                                           
-**Add note** | `addnote id/INDEX nt/TEXT`<br> e.g., `addnote id/1 nt/hello`                                                                           
-**Delete note** | `delnote id/INDEX ni/NOTE_INDEX`<br> e.g., `delnote id/1 ni/1`                                                                           
-**Edit note** | `editnote id/INDEX ni/NOTE_INDEX nt/TEXT`<br> e.g., `editnote id/1 ni/1 nt/hello`                                                                           
-**Add mastery check** | `addmc id/INDEX num/NUMBER dt/DATE-TIME`<br> e.g., `addmc id/1 num/2 dt/29-09\|23:59`                                                                              
-**Delete mastery check** | `delmc id/INDEX num/NUMBER`<br> e.g. `delmc id/1 num/2`                                                                                                               
-**Mark mastery check** | `markmc id/INDEX num/NUMBER`<br> e.g. `markmc id/1 num/2`                                                                                                             
-**Unmark mastery check** | `unmarkmc id/INDEX num/NUMBER`<br> e.g. `unmarkmc id/1 num/2`                                                                                                         
-**Add mission** | `addmission m/MISSION_ID n/NAME d/DEADLINE`<br> e.g., `addmission m/M01 n/Rune Reading d/2026-10-20`
-**Delete mission** | `delmission m/MISSION_ID`<br> e.g., `delmission m/M03`
-**Record mission submission** | `markmission id/INDEX m/MISSION_ID`<br> e.g., `markmission id/1 m/M01`                                                                                                
-**Remove mission submission** | `unmarkmission id/INDEX m/MISSION_ID`<br> e.g., `unmarkmission id/1 m/M01`                                                                                            
-**Edit mission** | `editmission m/MISSION_ID [n/NAME] [d/DEADLINE]`<br> e.g., `editmission m/M01 n/Rune Reading d/2026-10-22`                                                          
-**List missions and statuses** | `listmissions [m/MISSION_ID] [s/STATUS]`<br> `STATUS`: `submitted` or `overdue`<br> e.g., `listmissions`, `listmissions m/M01`, `listmissions s/overdue`
-**Clear**  | `clear`                                                                                                                                                            
-**Find**   | `find [NAME_WORDS [, MORE_NAME_WORDS]...] [g/STUDIO_GROUP]...`<br> e.g., `find James Jake`
-**List**   | `list`                                                                                                                                                             
-**Help**   | `help`                                                                                                                                                             
-**Exit**   | `exit`
+**Delete student** | `delstudent id/INDEX`<br> e.g., `delstudent id/3`                                                                                                                                                         
+**View student** | `view id/INDEX`<br> e.g., `view id/1`                                                                                                                                                                     
+**Edit student**   | `editstudent id/INDEX [n/NAME] [mtc/MATRICULATION_NUMBER] [p/PHONE_NUMBER] [e/EMAIL] [t/TAG]... [g/STUDIO_GROUP]`<br> e.g.,`editstudent id/2 n/James Lee e/jameslee@example.com g/1A`                     
+**Add studio record** | `addstudiorecord id/INDEX w/WEEK ef/EFFORT`<br> e.g., `addstudiorecord id/1 w/3 ef/30`                                                                                                                    
+**Delete studio record** | `delstudiorecord id/INDEX w/WEEK`<br> e.g., `delstudiorecord id/1 w/3`                                                                                                                                    
+**Edit studio record** | `editstudiorecord id/INDEX w/WEEK ef/EFFORT`<br> e.g., `editstudiorecord id/1 w/3 ef/30`                                                                                                                  
+**Add note** | `addnote id/INDEX nt/TEXT`<br> e.g., `addnote id/1 nt/hello`                                                                                                                                              
+**Delete note** | `delnote id/INDEX ni/NOTE_INDEX`<br> e.g., `delnote id/1 ni/1`                                                                                                                                            
+**Edit note** | `editnote id/INDEX ni/NOTE_INDEX nt/TEXT`<br> e.g., `editnote id/1 ni/1 nt/hello`                                                                                                                         
+**Add mastery check** | `addmc id/INDEX num/NUMBER dt/DATE-TIME`<br> e.g., `addmc id/1 num/2 dt/2026-09-29\|23:59`                                                                                                                
+**Delete mastery check** | `delmc id/INDEX num/NUMBER`<br> e.g. `delmc id/1 num/2`                                                                                                                                                   
+**Mark mastery check** | `markmc id/INDEX num/NUMBER`<br> e.g. `markmc id/1 num/2`                                                                                                                                                 
+**Unmark mastery check** | `unmarkmc id/INDEX num/NUMBER`<br> e.g. `unmarkmc id/1 num/2`                                                                                                                                             
+**Add mission** | `addmission m/MISSION_ID n/NAME d/DEADLINE`<br> e.g., `addmission m/M01 n/Rune Reading d/2026-10-20`                                                                                                      
+**Delete mission** | `delmission m/MISSION_ID`<br> e.g., `delmission m/M03`                                                                                                                                                    
+**Record mission submission** | `markmission id/INDEX m/MISSION_ID`<br> e.g., `markmission id/1 m/M01`                                                                                                                                    
+**Remove mission submission** | `unmarkmission id/INDEX m/MISSION_ID`<br> e.g., `unmarkmission id/1 m/M01`                                                                                                                                
+**Edit mission** | `editmission m/MISSION_ID [n/NAME] [d/DEADLINE]`<br> e.g., `editmission m/M01 n/Rune Reading d/2026-10-22`                                                                                                
+**List missions and statuses** | `listmissions [m/MISSION_ID] [s/STATUS]`<br> `STATUS`: `submitted` or `overdue`<br> e.g., `listmissions`, `listmissions m/M01`, `listmissions s/overdue`                                                  
+**Clear**  | `clear`                                                                                                                                                                                                   
+**Find**   | `find [NAME_WORDS [, MORE_NAME_WORDS]...] [g/STUDIO_GROUP]...`<br> e.g., `find James Jake`                                                                                                                
+**List**   | `list`                                                                                                                                                                                                    
+**Help**   | `help`                                                                                                                                                                                                    
+**Exit**   | `exit`                                                                                                                                                                                                    
