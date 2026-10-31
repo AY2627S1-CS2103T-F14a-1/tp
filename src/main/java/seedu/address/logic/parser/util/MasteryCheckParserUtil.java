@@ -22,10 +22,11 @@ public final class MasteryCheckParserUtil {
             "Provided mastery check number is smaller than or equal to 0.";
     public static final String MESSAGE_ERROR_NON_NUMBER =
             "Provided mastery check number value is not a valid integer.";
-    public static final String MESSAGE_INVALID_MASTERY_CHECK_DATETIME = "Provided date value is invalid.";
 
-    public static final String MESSAGE_INVALID_MASTERY_CHECK_DATE = "Provided date value is invalid.";
-    public static final String MESSAGE_INVALID_MASTERY_CHECK_TIME = "Provided time value is invalid.";
+    public static final String MESSAGE_INVALID_MASTERY_CHECK_DATE = "Provided date value is invalid. "
+            + "Date segment must use YYYY-MM-DD format, for example 2026-10-20.";
+    public static final String MESSAGE_INVALID_MASTERY_CHECK_TIME = "Provided time value is invalid. "
+            + "Time segment must use HH:MM 24-hour format, for example 14:30.";
     public static final String MESSAGE_INVALID_MASTERY_CHECK_DATETIME_FORMAT = "Provided datetime format is invalid.";
 
     /** Strict formatter for a 24-hour appointment time without seconds. */
