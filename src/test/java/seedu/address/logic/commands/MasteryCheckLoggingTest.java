@@ -45,12 +45,13 @@ public class MasteryCheckLoggingTest {
      */
     private void assertOutcomeLogs(Command command, Class<?> commandClass, boolean initiallyComplete) throws Exception {
         Model model = new ModelManager();
-        Student first = new StudentBuilder().withName("Alice Example").build();
+        Student first = new StudentBuilder().withMatricNumber("A0000100A").withName("Alice Example").build();
         MasteryCheck check = new MasteryCheck(LocalDateTime.of(2026, 8, 18, 14, 30));
         if (initiallyComplete) {
             check.markComplete();
         }
-        Student selected = new StudentBuilder().withName("Bob Example").withMasteryChecks(Map.of(1, check)).build();
+        Student selected = new StudentBuilder().withMatricNumber("A0000101A")
+                .withName("Bob Example").withMasteryChecks(Map.of(1, check)).build();
         model.addStudent(first);
         model.addStudent(selected);
         model.updateFilteredStudentList(student -> student.getName().equals(selected.getName()));

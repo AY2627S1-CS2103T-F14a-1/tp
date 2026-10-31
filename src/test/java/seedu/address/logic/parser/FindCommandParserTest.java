@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
+import static seedu.address.logic.parser.util.ParserUtil.MESSAGE_SEE_USAGE;
 import static seedu.address.testutil.TypicalStudents.getTypicalAddressBook;
 
 import java.util.List;
@@ -26,6 +27,8 @@ import seedu.address.model.student.StudioGroupContainsKeywordsPredicate;
 import seedu.address.testutil.StudentBuilder;
 
 public class FindCommandParserTest {
+
+    private static final String USAGE_SUFFIX = MESSAGE_SEE_USAGE + FindCommand.MESSAGE_USAGE;
 
     private final FindCommandParser parser = new FindCommandParser();
 
@@ -104,7 +107,7 @@ public class FindCommandParserTest {
         assertParseFailure(
                 parser,
                 "g/1a",
-                StudioGroup.MESSAGE_CONSTRAINTS);
+                StudioGroup.MESSAGE_CONSTRAINTS + USAGE_SUFFIX);
     }
 
     @Test
@@ -112,12 +115,12 @@ public class FindCommandParserTest {
         assertParseFailure(
                 parser,
                 "g/abc",
-                StudioGroup.MESSAGE_CONSTRAINTS);
+                StudioGroup.MESSAGE_CONSTRAINTS + USAGE_SUFFIX);
 
         assertParseFailure(
                 parser,
                 "g/1",
-                StudioGroup.MESSAGE_CONSTRAINTS);
+                StudioGroup.MESSAGE_CONSTRAINTS + USAGE_SUFFIX);
     }
 
     @Test
@@ -125,7 +128,7 @@ public class FindCommandParserTest {
         assertParseFailure(
                 parser,
                 "g/",
-                StudioGroup.MESSAGE_CONSTRAINTS);
+                StudioGroup.MESSAGE_CONSTRAINTS + USAGE_SUFFIX);
     }
 
     @Test
@@ -133,12 +136,12 @@ public class FindCommandParserTest {
         assertParseFailure(
                 parser,
                 "g/1A Alice",
-                StudioGroup.MESSAGE_CONSTRAINTS);
+                StudioGroup.MESSAGE_CONSTRAINTS + USAGE_SUFFIX);
 
         assertParseFailure(
                 parser,
                 "g/1A 1B",
-                StudioGroup.MESSAGE_CONSTRAINTS);
+                StudioGroup.MESSAGE_CONSTRAINTS + USAGE_SUFFIX);
     }
 
     @Test
@@ -214,9 +217,12 @@ public class FindCommandParserTest {
 
     @Test
     public void execute_nameAlternativesAndGroup_appliesGroupToEveryAlternative() throws ParseException {
-        Student alex = new StudentBuilder().withName("Alex Tan").withStudioGroup("1A").build();
-        Student brian = new StudentBuilder().withName("Brian Lim").withStudioGroup("2B").build();
-        Student brianInGroup = new StudentBuilder().withName("Brian Lee").withStudioGroup("1A").build();
+        Student alex = new StudentBuilder().withMatricNumber("A0000100A")
+                .withName("Alex Tan").withStudioGroup("1A").build();
+        Student brian = new StudentBuilder().withMatricNumber("A0000101A")
+                .withName("Brian Lim").withStudioGroup("2B").build();
+        Student brianInGroup = new StudentBuilder().withMatricNumber("A0000102A")
+                .withName("Brian Lee").withStudioGroup("1A").build();
 
         AddressBook addressBook = new AddressBook();
         addressBook.addStudent(alex);
@@ -240,5 +246,37 @@ public class FindCommandParserTest {
         assertThrows(ParseException.class, () -> parser.parse("Alice, g/1A"));
 
         assertEquals(previousResults, model.getFilteredStudentList());
+    }
+
+    @Test
+    public void execute_repeatedWordsAndAlternatives_filtersWithoutChangingRecords() throws ParseException {
+        Student alex = new StudentBuilder().withMatricNumber("A0000103A")
+                .withName("Alex Yeoh").withStudioGroup("1A").build();
+        Student repeatedAlex = new StudentBuilder().withMatricNumber("A0000104A")
+                .withName("Alex Alexander").withStudioGroup("1A").build();
+        Student repeatedAlexOtherGroup =
+                new StudentBuilder().withMatricNumber("A0000105A").withName("Alex Alex").withStudioGroup("1B").build();
+        Student betsy = new StudentBuilder().withMatricNumber("A0000106A")
+                .withName("Betsy Crowe").withStudioGroup("1A").build();
+        AddressBook addressBook = new AddressBook();
+        addressBook.addStudent(alex);
+        addressBook.addStudent(repeatedAlex);
+        addressBook.addStudent(repeatedAlexOtherGroup);
+        addressBook.addStudent(betsy);
+        Model model = new ModelManager(addressBook, new UserPrefs());
+
+        CommandResult repeatedResult = parser.parse("  ALEX \t alex  ").execute(model);
+        assertEquals("2 student(s) listed!", repeatedResult.getFeedbackToUser());
+        assertEquals(List.of(repeatedAlex, repeatedAlexOtherGroup), model.getFilteredStudentList());
+
+        parser.parse("alex, alex").execute(model);
+        assertEquals(List.of(alex, repeatedAlex, repeatedAlexOtherGroup), model.getFilteredStudentList());
+
+        CommandResult groupedResult = parser.parse("alex alex, betsy g/1A").execute(model);
+        assertEquals("2 student(s) listed!", groupedResult.getFeedbackToUser());
+        assertEquals(List.of(repeatedAlex, betsy), model.getFilteredStudentList());
+
+        assertEquals(List.of(alex, repeatedAlex, repeatedAlexOtherGroup, betsy),
+                model.getAddressBook().getStudentList());
     }
 }

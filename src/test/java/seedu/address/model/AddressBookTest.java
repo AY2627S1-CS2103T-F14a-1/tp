@@ -103,11 +103,6 @@ public class AddressBookTest {
         }
 
         @Override
-        public long getNextMissionNumber() {
-            return 1;
-        }
-
-        @Override
         public ObservableList<Student> getStudentList() {
             return students;
         }

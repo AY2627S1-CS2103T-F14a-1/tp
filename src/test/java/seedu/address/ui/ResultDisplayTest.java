@@ -1,7 +1,9 @@
 package seedu.address.ui;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -17,7 +19,10 @@ import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Region;
+import javafx.scene.paint.Color;
 import seedu.address.model.mission.Mission;
 import seedu.address.model.mission.MissionId;
 
@@ -52,6 +57,27 @@ public class ResultDisplayTest extends GuiUnitTest {
         guiRobot.interact(() -> resultDisplay.setFeedbackToUser("Dummy feedback to user"));
         guiRobot.pauseForHuman();
         assertEquals("Dummy feedback to user", resultDisplayHandle.getText());
+    }
+
+    @Test
+    public void setFeedbackToUser_withWarnings_displaysYellowWarningSeparately() {
+        guiRobot.interact(() -> resultDisplay.setFeedbackToUser(
+                "Note added successfully.", List.of("A matching note text exists.")));
+        guiRobot.pauseForHuman();
+
+        Label resultLabel = getChildNode(resultDisplay.getRoot(), "#resultDisplay");
+        Label warningLabel = getChildNode(resultDisplay.getRoot(), "#warningDisplay");
+        assertEquals("Note added successfully.", resultLabel.getText());
+        assertEquals("WARNING:\nA matching note text exists.", warningLabel.getText());
+        assertTrue(warningLabel.isVisible());
+        assertTrue(warningLabel.isManaged());
+        assertTrue(warningLabel.getStyleClass().contains("command-warning"));
+        assertEquals(Color.web("#ffd54f"), warningLabel.getTextFill());
+
+        guiRobot.interact(() -> resultDisplay.setFeedbackToUser("Next result."));
+        assertFalse(warningLabel.isVisible());
+        assertFalse(warningLabel.isManaged());
+        assertEquals("", warningLabel.getText());
     }
 
     private static GridPane getMissionTable(StudentDetailsPanel panel) {
@@ -202,5 +228,87 @@ public class ResultDisplayTest extends GuiUnitTest {
 
         Platform.runLater(task);
         task.get(10, TimeUnit.SECONDS);
+    }
+
+    @Test
+    public void resultHeight_longThenShortFeedback_growsThenShrinks() throws Exception {
+        runOnJavaFxThread(() -> {
+            ResultDisplay display = new ResultDisplay();
+            display.getRoot().setMaxHeight(160);
+
+            display.setFeedbackToUser("Short feedback.");
+            layoutResultDisplay(display, 400);
+            double shortHeight = display.getRoot().getHeight();
+
+            display.setFeedbackToUser("Mission submission result\n".repeat(40));
+            layoutResultDisplay(display, 400);
+            assertTrue(display.getRoot().getHeight() > shortHeight);
+            assertTrue(display.getRoot().getHeight() <= 160);
+
+            display.setFeedbackToUser("Short feedback.");
+            layoutResultDisplay(display, 400);
+            assertEquals(shortHeight, display.getRoot().getHeight(), 1);
+        });
+    }
+
+    @Test
+    public void resultHeight_warningsAddedAndRemoved_updatesHeight() throws Exception {
+        runOnJavaFxThread(() -> {
+            ResultDisplay display = new ResultDisplay();
+            display.getRoot().setMaxHeight(400);
+
+            display.setFeedbackToUser("Feedback.");
+            layoutResultDisplay(display, 400);
+            double feedbackHeight = display.getRoot().getHeight();
+
+            display.setFeedbackToUser("Feedback.", List.of("Check this warning."));
+            layoutResultDisplay(display, 400);
+            assertTrue(display.getRoot().getHeight() > feedbackHeight);
+
+            display.setFeedbackToUser("Feedback.");
+            layoutResultDisplay(display, 400);
+            assertEquals(feedbackHeight, display.getRoot().getHeight(), 1);
+        });
+    }
+
+    @Test
+    public void setFeedbackToUser_afterScrolling_returnsToTop() throws Exception {
+        runOnJavaFxThread(() -> {
+            ResultDisplay display = new ResultDisplay();
+            display.getRoot().setMaxHeight(100);
+            display.setFeedbackToUser("Mission submission result\n".repeat(40));
+            layoutResultDisplay(display, 400);
+
+            ScrollPane scrollPane =
+                    (ScrollPane) display.getRoot().lookup("#resultScrollPane");
+
+            assertTrue(scrollPane.getContent().getLayoutBounds().getHeight()
+                    > scrollPane.getViewportBounds().getHeight());
+
+            scrollPane.setVvalue(scrollPane.getVmax());
+            display.setFeedbackToUser("Next result.");
+
+            assertEquals(scrollPane.getVmin(), scrollPane.getVvalue());
+        });
+    }
+
+    /**
+     * Lays out a result display at a fixed width.
+     * Repeats layout so viewport width changes can update wrapped content.
+     *
+     * @param display Display to lay out.
+     * @param width Available width.
+     */
+    private static void layoutResultDisplay(ResultDisplay display, double width) {
+        Region root = display.getRoot();
+        if (root.getScene() == null) {
+            new Scene(root);
+        }
+
+        root.applyCss();
+        for (int pass = 0; pass < 3; pass++) {
+            root.resize(width, root.prefHeight(width));
+            root.layout();
+        }
     }
 }

@@ -17,10 +17,13 @@ import seedu.address.commons.exceptions.IllegalValueException;
 import seedu.address.model.masterycheck.MasteryCheck;
 import seedu.address.model.mission.MissionId;
 import seedu.address.model.student.Email;
+import seedu.address.model.student.MatriculationNumber;
 import seedu.address.model.student.MissionSubmissions;
 import seedu.address.model.student.Name;
+import seedu.address.model.student.Note;
 import seedu.address.model.student.Phone;
 import seedu.address.model.student.RegisteredMasteryChecks;
+import seedu.address.model.student.RegisteredNotes;
 import seedu.address.model.student.RegisteredStudioRecords;
 import seedu.address.model.student.Student;
 import seedu.address.model.student.StudioGroup;
@@ -35,6 +38,7 @@ class JsonAdaptedStudent {
     public static final String MISSING_FIELD_MESSAGE_FORMAT = "Student's %s field is missing!";
 
     private final String name;
+    private final String matricNumber;
     private final String phone;
     private final String email;
     private final List<JsonAdaptedTag> tags = new ArrayList<>();
@@ -42,13 +46,15 @@ class JsonAdaptedStudent {
     private final List<Object> missionSubmissions = new ArrayList<>();
     private final List<Object> registeredStudioRecords = new ArrayList<>();
     private final List<Object> registeredMasteryChecks = new ArrayList<>();
+    private final List<Object> registeredNotes = new ArrayList<>();
 
     /**
      * Constructs a storage representation, deferring validation until model conversion.
-     * Missing or null mission submissions, studio records, and mastery check registrations
-     * default to empty collections.
+     * Missing or null mission submissions, studio records, mastery check registrations,
+     * and notes default to empty collections.
      *
      * @param name Student's name.
+     * @param matricNumber Saved matriculation number text; missing or invalid values fail model conversion.
      * @param phone Student's phone number.
      * @param email Student's email address.
      * @param tags Student's tags, or null for no tags.
@@ -57,15 +63,18 @@ class JsonAdaptedStudent {
      * @param missionSubmissions Recorded mission IDs, or null for no submissions.
      * @param registeredMasteryChecks Saved records containing a number, ISO local date-time string,
      *         and completion flag, or null for no appointments.
+     * @param registeredNotes Saved note text strings in display order, or null for no notes.
      */
     @JsonCreator
-    public JsonAdaptedStudent(@JsonProperty("name") String name, @JsonProperty("phone") String phone,
-            @JsonProperty("email") String email,
+    public JsonAdaptedStudent(@JsonProperty("name") String name, @JsonProperty("matricNumber") String matricNumber,
+            @JsonProperty("phone") String phone, @JsonProperty("email") String email,
             @JsonProperty("tags") List<JsonAdaptedTag> tags, @JsonProperty("studio group") String studioGroup,
             @JsonProperty("missionSubmissions") List<?> missionSubmissions,
             @JsonProperty("registeredStudioRecords") List<?> registeredStudioRecords,
-            @JsonProperty("registeredMasteryChecks") List<?> registeredMasteryChecks) {
+            @JsonProperty("registeredMasteryChecks") List<?> registeredMasteryChecks,
+            @JsonProperty("registeredNotes") List<?> registeredNotes) {
         this.name = name;
+        this.matricNumber = matricNumber;
         this.phone = phone;
         this.email = email;
         if (tags != null) {
@@ -81,6 +90,9 @@ class JsonAdaptedStudent {
         if (registeredMasteryChecks != null) {
             this.registeredMasteryChecks.addAll(registeredMasteryChecks);
         }
+        if (registeredNotes != null) {
+            this.registeredNotes.addAll(registeredNotes);
+        }
     }
 
     /**
@@ -93,6 +105,7 @@ class JsonAdaptedStudent {
      */
     public JsonAdaptedStudent(Student source) {
         name = source.getName().fullName;
+        matricNumber = source.getMatricNumber().matricNumber;
         phone = source.getPhone().value;
         email = source.getEmail().value;
         tags.addAll(source.getTags().stream()
@@ -116,6 +129,10 @@ class JsonAdaptedStudent {
                         List.of(entry.getKey(),
                                 entry.getValue().getAppointmentTime().toString(),
                                 entry.getValue().isComplete()))
+                .collect(Collectors.toList()));
+        registeredNotes.addAll(source.getRegisteredNotes().getRegisteredNotes()
+                .stream()
+                .map(Note::getNoteText)
                 .collect(Collectors.toList()));
     }
 
@@ -141,6 +158,15 @@ class JsonAdaptedStudent {
             throw new IllegalValueException(Name.MESSAGE_CONSTRAINTS);
         }
         final Name modelName = new Name(name);
+
+        if (matricNumber == null) {
+            throw new IllegalValueException(
+                    String.format(MISSING_FIELD_MESSAGE_FORMAT, MatriculationNumber.class.getSimpleName()));
+        }
+        if (!MatriculationNumber.isValidMatricNumber(matricNumber)) {
+            throw new IllegalValueException(MatriculationNumber.MESSAGE_CONSTRAINTS);
+        }
+        final MatriculationNumber modelMatricNumber = new MatriculationNumber(matricNumber);
 
         if (phone == null) {
             throw new IllegalValueException(String.format(MISSING_FIELD_MESSAGE_FORMAT, Phone.class.getSimpleName()));
@@ -171,15 +197,17 @@ class JsonAdaptedStudent {
         final MissionSubmissions modelMissionSubmissions = toModelMissionSubmissions();
         final RegisteredStudioRecords modelRegisteredStudioRecords = toModelRegisteredStudioRecords();
         final RegisteredMasteryChecks modelRegisteredMasteryChecks = toModelRegisteredMasteryChecks();
-        return new Student(modelName, modelPhone, modelEmail, modelTags, modelStudioGroup,
-                modelMissionSubmissions, modelRegisteredStudioRecords, modelRegisteredMasteryChecks);
+        final RegisteredNotes modelRegisteredNotes = toModelRegisteredNotes();
+        return new Student(modelName, modelMatricNumber, modelPhone, modelEmail, modelTags, modelStudioGroup,
+                modelMissionSubmissions, modelRegisteredStudioRecords, modelRegisteredMasteryChecks,
+                modelRegisteredNotes);
     }
 
     /**
      * Validates saved mission IDs and creates immutable submission records.
      *
      * @return Unique submitted mission IDs.
-     * @throws IllegalValueException If a saved value is not a canonical mission ID string.
+     * @throws IllegalValueException If a saved value is not a valid mission ID string.
      */
     public MissionSubmissions toModelMissionSubmissions() throws IllegalValueException {
         Set<MissionId> submittedIds = new HashSet<>();
@@ -268,5 +296,27 @@ class JsonAdaptedStudent {
             }
         }
         return new RegisteredMasteryChecks(masteryAppointments);
+    }
+
+    /**
+     * Validates saved note text strings in display order. Missing or null note lists are
+     * treated as empty by the storage constructor.
+     *
+     * @return Registered notes containing the saved note text in its original order.
+     * @throws IllegalValueException If there are too many notes or an entry is not valid note text.
+     */
+    public RegisteredNotes toModelRegisteredNotes() throws IllegalValueException {
+        if (registeredNotes.size() > RegisteredNotes.MAX_NOTE_INDEX) {
+            throw new IllegalValueException(RegisteredNotes.MESSAGE_CONSTRAINTS);
+        }
+
+        List<Note> notes = new ArrayList<>();
+        for (Object value : registeredNotes) {
+            if (!(value instanceof String noteText) || !Note.isValidNoteText(noteText)) {
+                throw new IllegalValueException(Note.MESSAGE_CONSTRAINTS);
+            }
+            notes.add(new Note(noteText));
+        }
+        return new RegisteredNotes(notes);
     }
 }

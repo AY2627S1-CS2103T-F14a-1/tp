@@ -195,6 +195,48 @@ public class RegisteredStudioRecordsTest {
     }
 
     @Test
+    public void hasMatchingStudioRecord_matchingRecord_returnsTrue() {
+        RegisteredStudioRecords registeredStudioRecords = new RegisteredStudioRecords(
+                Map.of(RegisteredStudioRecords.MIN_WEEK, ZERO_EFFORT_RECORD));
+
+        assertTrue(registeredStudioRecords.hasMatchingStudioRecord(
+                RegisteredStudioRecords.MIN_WEEK, new StudioRecord(0)));
+    }
+
+    @Test
+    public void hasMatchingStudioRecord_differentRecord_returnsFalse() {
+        RegisteredStudioRecords registeredStudioRecords = new RegisteredStudioRecords(
+                Map.of(RegisteredStudioRecords.MIN_WEEK, ZERO_EFFORT_RECORD));
+
+        assertFalse(registeredStudioRecords.hasMatchingStudioRecord(
+                RegisteredStudioRecords.MIN_WEEK, FULL_EFFORT_RECORD));
+    }
+
+    @Test
+    public void hasMatchingStudioRecord_missingWeek_returnsFalse() {
+        RegisteredStudioRecords registeredStudioRecords = new RegisteredStudioRecords(
+                Map.of(RegisteredStudioRecords.MIN_WEEK, ZERO_EFFORT_RECORD));
+
+        assertFalse(registeredStudioRecords.hasMatchingStudioRecord(
+                RegisteredStudioRecords.MAX_WEEK, ZERO_EFFORT_RECORD));
+    }
+
+    @Test
+    public void hasMatchingStudioRecord_nullRecordOrInvalidWeek_throwsException() {
+        RegisteredStudioRecords registeredStudioRecords = new RegisteredStudioRecords(
+                Map.of(RegisteredStudioRecords.MIN_WEEK, ZERO_EFFORT_RECORD));
+
+        assertThrows(NullPointerException.class, () ->
+                registeredStudioRecords.hasMatchingStudioRecord(RegisteredStudioRecords.MIN_WEEK, null));
+        assertThrows(IllegalArgumentException.class, () ->
+                registeredStudioRecords.hasMatchingStudioRecord(
+                        RegisteredStudioRecords.MIN_WEEK - 1, ZERO_EFFORT_RECORD));
+        assertThrows(IllegalArgumentException.class, () ->
+                registeredStudioRecords.hasMatchingStudioRecord(
+                        RegisteredStudioRecords.MAX_WEEK + 1, ZERO_EFFORT_RECORD));
+    }
+
+    @Test
     public void editStudioRecord_weekExists_returnsNewRegisteredStudentRecords() {
         RegisteredStudioRecords registeredStudioRecords = new RegisteredStudioRecords()
                 .withStudioRecord(RegisteredStudioRecords.MIN_WEEK, ZERO_EFFORT_RECORD);

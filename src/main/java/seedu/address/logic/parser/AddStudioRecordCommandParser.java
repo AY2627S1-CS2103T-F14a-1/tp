@@ -1,10 +1,15 @@
 package seedu.address.logic.parser;
 
+import static java.util.Objects.requireNonNull;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_INDEX;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_STUDIO_EFFORT;
-import static seedu.address.logic.parser.ParserUtil.parseEffortScore;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_WEEK;
 
+import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.AddStudioRecordCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.logic.parser.util.ParserUtil;
+import seedu.address.logic.parser.util.StudioRecordParserUtil;
 import seedu.address.model.student.StudioRecord;
 
 /**
@@ -22,11 +27,19 @@ public class AddStudioRecordCommandParser implements Parser<AddStudioRecordComma
      */
     @Override
     public AddStudioRecordCommand parse(String args) throws ParseException {
-        WeeklyTaskParser taskParser = new WeeklyTaskParser(args,
-                AddStudioRecordCommand.MESSAGE_USAGE, PREFIX_STUDIO_EFFORT);
-        int effortScore = parseEffortScore(
-                    taskParser.getPrefixValue(PREFIX_STUDIO_EFFORT));
-        return new AddStudioRecordCommand(taskParser.getIndex(),
-                taskParser.getWeek(), new StudioRecord(effortScore));
+        requireNonNull(args);
+        try {
+            ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
+                    args, PREFIX_INDEX, PREFIX_WEEK, PREFIX_STUDIO_EFFORT);
+
+            Index index = ParserUtil.parseIndex(argMultimap.getRequiredValue(PREFIX_INDEX));
+            int week = StudioRecordParserUtil.parseWeek(argMultimap.getRequiredValue(PREFIX_WEEK));
+            int effortScore = StudioRecordParserUtil.parseEffortScore(
+                    argMultimap.getRequiredValue(PREFIX_STUDIO_EFFORT));
+            return new AddStudioRecordCommand(index, week, new StudioRecord(effortScore));
+        } catch (ParseException e) {
+            throw new ParseException(e.getMessage()
+                    + ParserUtil.MESSAGE_SEE_USAGE + AddStudioRecordCommand.MESSAGE_USAGE);
+        }
     }
 }

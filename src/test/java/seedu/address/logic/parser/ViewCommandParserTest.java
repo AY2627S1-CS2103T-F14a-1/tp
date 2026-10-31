@@ -1,30 +1,36 @@
 package seedu.address.logic.parser;
 
-import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
+import static seedu.address.logic.parser.util.ParserUtil.MESSAGE_SEE_USAGE;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_STUDENT;
 
 import org.junit.jupiter.api.Test;
 
 import seedu.address.logic.commands.ViewCommand;
+import seedu.address.logic.parser.util.ParserUtil;
 
 public class ViewCommandParserTest {
+
+    private static final String USAGE_SUFFIX = MESSAGE_SEE_USAGE + ViewCommand.MESSAGE_USAGE;
 
     private final ViewCommandParser parser = new ViewCommandParser();
 
     @Test
     public void parse_validArgs_returnsViewCommand() {
-        assertParseSuccess(parser, "1", new ViewCommand(INDEX_FIRST_STUDENT));
-        assertParseSuccess(parser, "  1  ", new ViewCommand(INDEX_FIRST_STUDENT));
+        assertParseSuccess(parser, "id/1", new ViewCommand(INDEX_FIRST_STUDENT));
+        assertParseSuccess(parser, "  id/1  ", new ViewCommand(INDEX_FIRST_STUDENT));
     }
 
     @Test
     public void parse_invalidArgs_throwsParseException() {
-        String expected = String.format(MESSAGE_INVALID_COMMAND_FORMAT, ViewCommand.MESSAGE_USAGE);
-        assertParseFailure(parser, "0", expected);
-        assertParseFailure(parser, "-1", expected);
-        assertParseFailure(parser, "abc", expected);
-        assertParseFailure(parser, "", expected);
+        assertParseFailure(parser, "id/0",
+                ParserUtil.MESSAGE_INVALID_INDEX + USAGE_SUFFIX);
+        assertParseFailure(parser, "id/-1",
+                ParserUtil.MESSAGE_INVALID_INDEX + USAGE_SUFFIX);
+        assertParseFailure(parser, "id/abc",
+                ParserUtil.MESSAGE_INVALID_INDEX + USAGE_SUFFIX);
+        assertParseFailure(parser, "",
+                CliSyntax.PREFIX_INDEX.getMissingMessage() + USAGE_SUFFIX);
     }
 }

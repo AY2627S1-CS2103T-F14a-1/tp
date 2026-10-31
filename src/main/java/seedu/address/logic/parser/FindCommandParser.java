@@ -10,6 +10,8 @@ import java.util.function.Predicate;
 
 import seedu.address.logic.commands.FindCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.logic.parser.util.ParserUtil;
+import seedu.address.logic.parser.util.StudentParserUtil;
 import seedu.address.model.student.NameContainsKeywordsPredicate;
 import seedu.address.model.student.Student;
 import seedu.address.model.student.StudioGroup;
@@ -43,7 +45,11 @@ public class FindCommandParser implements Parser<FindCommand> {
         List<StudioGroup> studioGroups = new ArrayList<>();
 
         for (String groupKeyword : groupKeywords) {
-            studioGroups.add(ParserUtil.parseStudioGroup(groupKeyword));
+            try {
+                studioGroups.add(StudentParserUtil.parseStudioGroup(groupKeyword));
+            } catch (ParseException e) {
+                throw new ParseException(e.getMessage() + ParserUtil.MESSAGE_SEE_USAGE + FindCommand.MESSAGE_USAGE);
+            }
         }
 
         if (nameKeywords.isEmpty() && studioGroups.isEmpty()) {

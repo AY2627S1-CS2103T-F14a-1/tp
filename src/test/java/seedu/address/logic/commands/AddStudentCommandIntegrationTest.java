@@ -45,4 +45,22 @@ public class AddStudentCommandIntegrationTest {
                 AddStudentCommand.MESSAGE_DUPLICATE_STUDENT);
     }
 
+
+    @Test
+    public void execute_sameMatricNumberDifferentName_rejectsWithoutChangingModel() {
+        Student existing = model.getAddressBook().getStudentList().get(0);
+        Student duplicate = new StudentBuilder(existing).withName("Different Name").build();
+        assertCommandFailure(new AddStudentCommand(duplicate), model, AddStudentCommand.MESSAGE_DUPLICATE_STUDENT);
+    }
+
+    @Test
+    public void execute_sameNameDifferentMatricNumber_addsStudent() {
+        Student existing = model.getAddressBook().getStudentList().get(0);
+        Student distinct = new StudentBuilder(existing).withMatricNumber("A9999999Z").build();
+        Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
+        expectedModel.addStudent(distinct);
+
+        assertCommandSuccess(new AddStudentCommand(distinct), model,
+                String.format(AddStudentCommand.MESSAGE_SUCCESS, Messages.format(distinct)), expectedModel);
+    }
 }

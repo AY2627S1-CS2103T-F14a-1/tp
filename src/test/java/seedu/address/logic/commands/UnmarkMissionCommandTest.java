@@ -40,7 +40,7 @@ public class UnmarkMissionCommandTest {
         AddressBook book = new AddressBook(model.getAddressBook());
         book.restoreMissions(List.of(3, 4, 5, 13).stream()
                 .map(number -> new Mission(new MissionId(String.format("M%02d", number)),
-                        "Mission " + number, LocalDate.of(2026, 10, 15))).toList(), 14);
+                        "Mission " + number, LocalDate.of(2026, 10, 15))).toList());
         model.setAddressBook(book);
     }
 
@@ -68,8 +68,11 @@ public class UnmarkMissionCommandTest {
 
         String feedback = String.format(UnmarkMissionCommand.MESSAGE_SUCCESS, student.getName(), "M03");
 
-        assertCommandSuccess(new UnmarkMissionCommand(INDEX_FIRST_STUDENT, new MissionId("M03")),
-                model, feedback, expectedModel);
+        assertCommandSuccess(
+                new UnmarkMissionCommand(INDEX_FIRST_STUDENT, new MissionId("M03")),
+                model,
+                new CommandResult(feedback, updated),
+                expectedModel);
         assertTrue(student.getMissionSubmissions().hasSubmission(new MissionId("M03")));
     }
 
@@ -100,16 +103,21 @@ public class UnmarkMissionCommandTest {
         Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
         String feedback = String.format(UnmarkMissionCommand.MESSAGE_NOT_RECORDED, student.getName(), "M03");
 
-        assertCommandSuccess(new UnmarkMissionCommand(INDEX_FIRST_STUDENT, new MissionId("M03")),
-                model, feedback, expectedModel);
+        assertCommandSuccess(
+                new UnmarkMissionCommand(INDEX_FIRST_STUDENT, new MissionId("M03")),
+                model,
+                new CommandResult(feedback, student),
+                expectedModel);
     }
 
     @Test
     public void execute_invalidIndex_leavesModelUnchanged() {
         Index invalidIndex = Index.fromOneBased(model.getFilteredStudentList().size() + 1);
+        String expectedMessage = Messages.MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX
+                + "\n\n" + UnmarkMissionCommand.MESSAGE_USAGE;
 
         assertCommandFailure(new UnmarkMissionCommand(invalidIndex, new MissionId("M03")),
-                model, Messages.MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX);
+                model, expectedMessage);
     }
 
     @Test
@@ -127,8 +135,11 @@ public class UnmarkMissionCommandTest {
 
         String feedback = String.format(UnmarkMissionCommand.MESSAGE_SUCCESS, student.getName(), "M03");
 
-        assertCommandSuccess(new UnmarkMissionCommand(INDEX_FIRST_STUDENT, new MissionId("M03")),
-                model, feedback, expectedModel);
+        assertCommandSuccess(
+                new UnmarkMissionCommand(INDEX_FIRST_STUDENT, new MissionId("M03")),
+                model,
+                new CommandResult(feedback, updated),
+                expectedModel);
         assertEquals(1, model.getFilteredStudentList().size());
         assertEquals(updated, model.getFilteredStudentList().get(0));
     }
@@ -136,9 +147,11 @@ public class UnmarkMissionCommandTest {
     @Test
     public void execute_indexOutsideFilteredList_leavesModelUnchanged() {
         showStudentAtIndex(model, INDEX_FIRST_STUDENT);
+        String expectedMessage = Messages.MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX
+                + "\n\n" + UnmarkMissionCommand.MESSAGE_USAGE;
 
         assertCommandFailure(new UnmarkMissionCommand(INDEX_SECOND_STUDENT, new MissionId("M03")),
-                model, Messages.MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX);
+                model, expectedMessage);
     }
 
     @Test

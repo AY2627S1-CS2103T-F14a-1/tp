@@ -1,7 +1,6 @@
 package seedu.address.logic.parser;
 
 import static java.util.Objects.requireNonNull;
-import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_DATE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_MISSION;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
@@ -9,6 +8,8 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
 import seedu.address.logic.commands.EditMissionCommand;
 import seedu.address.logic.commands.EditMissionCommand.EditMissionDescriptor;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.logic.parser.util.MissionParserUtil;
+import seedu.address.logic.parser.util.ParserUtil;
 import seedu.address.model.mission.MissionId;
 
 /**
@@ -28,30 +29,28 @@ public class EditMissionCommandParser implements Parser<EditMissionCommand> {
     public EditMissionCommand parse(String args) throws ParseException {
         requireNonNull(args);
 
-        ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(
-                args, PREFIX_MISSION, PREFIX_NAME, PREFIX_DATE);
-        if (!argMultimap.getPreamble().isEmpty()
-                || argMultimap.getValue(PREFIX_MISSION).isEmpty()) {
-            throw new ParseException(String.format(
-                    MESSAGE_INVALID_COMMAND_FORMAT, EditMissionCommand.MESSAGE_USAGE));
+        try {
+            ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructureWithOptionals(
+                    args,
+                    new Prefix[]{PREFIX_MISSION},
+                    new Prefix[]{PREFIX_MISSION, PREFIX_NAME, PREFIX_DATE},
+                    PREFIX_MISSION, PREFIX_NAME, PREFIX_DATE);
+            EditMissionDescriptor editMissionDescriptor = new EditMissionDescriptor();
+            if (argMultimap.getValue(PREFIX_NAME).isPresent()) {
+                editMissionDescriptor.setName(MissionParserUtil.parseMissionName(
+                        argMultimap.getRequiredValue(PREFIX_NAME)));
+            }
+            if (argMultimap.getValue(PREFIX_DATE).isPresent()) {
+                editMissionDescriptor.setDeadline(MissionParserUtil.parseMissionDeadline(
+                        argMultimap.getRequiredValue(PREFIX_DATE)));
+            }
+            if (!editMissionDescriptor.isAnyFieldEdited()) {
+                throw new ParseException(EditMissionCommand.MESSAGE_NOT_EDITED);
+            }
+            MissionId missionId = MissionParserUtil.parseMissionId(argMultimap.getRequiredValue(PREFIX_MISSION));
+            return new EditMissionCommand(missionId, editMissionDescriptor);
+        } catch (ParseException e) {
+            throw new ParseException(e.getMessage() + ParserUtil.MESSAGE_SEE_USAGE + EditMissionCommand.MESSAGE_USAGE);
         }
-
-        argMultimap.verifyNoDuplicatePrefixesFor(PREFIX_MISSION, PREFIX_NAME, PREFIX_DATE);
-        MissionId missionId = MissionParser.parseMissionId(
-                argMultimap.getValue(PREFIX_MISSION).orElseThrow());
-        EditMissionDescriptor editMissionDescriptor = new EditMissionDescriptor();
-        if (argMultimap.getValue(PREFIX_NAME).isPresent()) {
-            editMissionDescriptor.setName(ParserUtil.parseMissionName(
-                    argMultimap.getValue(PREFIX_NAME).orElseThrow()));
-        }
-        if (argMultimap.getValue(PREFIX_DATE).isPresent()) {
-            editMissionDescriptor.setDeadline(ParserUtil.parseMissionDeadline(
-                    argMultimap.getValue(PREFIX_DATE).orElseThrow()));
-        }
-        if (!editMissionDescriptor.isAnyFieldEdited()) {
-            throw new ParseException(EditMissionCommand.MESSAGE_NOT_EDITED);
-        }
-
-        return new EditMissionCommand(missionId, editMissionDescriptor);
     }
 }

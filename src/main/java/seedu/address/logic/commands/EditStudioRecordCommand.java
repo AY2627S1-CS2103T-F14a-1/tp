@@ -2,8 +2,11 @@ package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.AppUtil.checkArgument;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_INDEX;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_STUDIO_EFFORT;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_WEEK;
+
+import java.util.Objects;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.ToStringBuilder;
@@ -25,11 +28,11 @@ public class EditStudioRecordCommand extends Command {
             "Edited %1$s's studio record for studio week %2$d.";
     public static final String MESSAGE_USAGE = COMMAND_WORD
             + ": Edits a week's studio record for the selected student.\n"
-            + "Parameters: INDEX " + PREFIX_WEEK + "WEEK " + PREFIX_STUDIO_EFFORT + "EFFORT\n"
+            + "Parameters: " + PREFIX_INDEX + "INDEX " + PREFIX_WEEK + "WEEK " + PREFIX_STUDIO_EFFORT + "EFFORT\n"
             + "INDEX must be a positive integer identifying a displayed student.\n"
             + "WEEK must be between " + RegisteredStudioRecords.MIN_WEEK
             + " and " + RegisteredStudioRecords.MAX_WEEK + " inclusive.\n"
-            + "Example: " + COMMAND_WORD + " 1 " + PREFIX_WEEK + "3 " + PREFIX_STUDIO_EFFORT + "30";
+            + "Example: " + COMMAND_WORD + " " + PREFIX_INDEX + "1 " + PREFIX_WEEK + "3 " + PREFIX_STUDIO_EFFORT + "30";
     public static final String MESSAGE_WEEK_NOT_RECORDED =
             "%1$s’s studio for studio week %2$d was not already recorded. No changes made.";
 
@@ -69,27 +72,19 @@ public class EditStudioRecordCommand extends Command {
         RegisteredStudioRecords registeredStudioRecords = studentToUpdate.getRegisteredStudioRecords();
 
         if (!registeredStudioRecords.hasStudioRecord(week)) {
-            return new CommandResult(String.format(MESSAGE_WEEK_NOT_RECORDED, studentToUpdate.getName(), week));
+            return new CommandResult(String.format(MESSAGE_WEEK_NOT_RECORDED, studentToUpdate.getName(), week),
+                    studentToUpdate);
         }
 
-        // if studio record to update is equal to current
-        if (registeredStudioRecords.getRecordsByWeek().get(week).equals(studioRecord)) {
-            return new CommandResult(String.format(MESSAGE_ALREADY_RECORDED, studentToUpdate.getName(), week));
+        if (registeredStudioRecords.hasMatchingStudioRecord(week, studioRecord)) {
+            return new CommandResult(String.format(MESSAGE_ALREADY_RECORDED, studentToUpdate.getName(), week),
+                    studentToUpdate);
         }
 
-        Student updatedStudent = createUpdatedStudent(
-                studentToUpdate, registeredStudioRecords.editStudioRecord(week, studioRecord));
+        Student updatedStudent = studentToUpdate.withRegisteredStudioRecords(
+                registeredStudioRecords.editStudioRecord(week, studioRecord));
         model.setStudent(studentToUpdate, updatedStudent);
-        return new CommandResult(String.format(MESSAGE_SUCCESS, studentToUpdate.getName(), week));
-    }
-
-    private Student createUpdatedStudent(Student student, RegisteredStudioRecords registeredStudioRecords) {
-        assert student != null;
-        assert registeredStudioRecords != null;
-
-        return new Student(student.getName(), student.getPhone(), student.getEmail(),
-                student.getTags(), student.getStudioGroup(), student.getMissionSubmissions(),
-                registeredStudioRecords, student.getRegisteredMasteryChecks());
+        return new CommandResult(String.format(MESSAGE_SUCCESS, studentToUpdate.getName(), week), updatedStudent);
     }
 
     @Override
@@ -106,6 +101,11 @@ public class EditStudioRecordCommand extends Command {
         return targetIndex.equals(otherEditStudioRecordCommand.targetIndex)
                 && week == otherEditStudioRecordCommand.week
                 && studioRecord.equals(otherEditStudioRecordCommand.studioRecord);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(targetIndex, week, studioRecord);
     }
 
     @Override

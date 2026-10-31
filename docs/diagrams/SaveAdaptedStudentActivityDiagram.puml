@@ -13,7 +13,7 @@ if () then ([storage preparation succeeds])
         For each Student, JsonSerializableAddressBook calls
         public JsonAdaptedStudent(Student source)
     end note
-    :Include missions and the next mission number;
+    :Include missions with their user-supplied IDs;
     :Serialize the address book to JSON and write the file;
     note right
         Done by Jackson.

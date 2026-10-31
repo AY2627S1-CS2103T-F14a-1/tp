@@ -3,24 +3,27 @@ package seedu.address.model.mission;
 import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.AppUtil.checkArgument;
 
+import java.util.Locale;
+
 /**
  * Identifies a mission independently of its name and deadline.
  */
 public final class MissionId {
 
     public static final String MESSAGE_CONSTRAINTS =
-            "Invalid Mission ID. Mission IDs must start with 'M' followed by a "
+            "Mission IDs must start with 'M' followed by a "
                     + "positive integer of at least two digits, with no unnecessary "
-                    + "leading zeros (e.g., M01, M02, M105).";
+                    + "leading zeros (e.g., M01, M02, M105). The number must not exceed "
+                    + "9223372036854775807.";
 
-    private static final String VALIDATION_REGEX = "M(?:0[1-9]|[1-9][0-9]+)";
+    private static final String VALIDATION_REGEX = "(?i)M(?:0[1-9]|[1-9][0-9]+)";
 
     private final String value;
 
     /**
      * Creates a mission ID.
      *
-     * @param value Canonical mission ID.
+     * @param value Mission ID in the required format; lowercase input is normalized.
      * @throws NullPointerException If {@code value} is null.
      * @throws IllegalArgumentException If {@code value} is invalid.
      */
@@ -32,13 +35,13 @@ public final class MissionId {
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException(MESSAGE_CONSTRAINTS, e);
         }
-        this.value = value;
+        this.value = value.toUpperCase(Locale.ROOT);
     }
 
     /**
-     * Returns the numeric part used to validate the allocation counter.
+     * Returns the numeric component for ordering mission IDs.
      *
-     * @return Positive mission number.
+     * @return Positive numeric component.
      */
     public long getNumber() {
         return Long.parseLong(value.substring(1));

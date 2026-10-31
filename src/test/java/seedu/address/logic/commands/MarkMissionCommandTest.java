@@ -40,7 +40,7 @@ public class MarkMissionCommandTest {
         AddressBook book = new AddressBook(model.getAddressBook());
         book.restoreMissions(List.of(3, 4, 5, 13).stream()
                 .map(number -> new Mission(new MissionId(String.format("M%02d", number)),
-                        "Mission " + number, LocalDate.of(2026, 10, 15))).toList(), 14);
+                        "Mission " + number, LocalDate.of(2026, 10, 15))).toList());
         model.setAddressBook(book);
     }
 
@@ -68,8 +68,11 @@ public class MarkMissionCommandTest {
 
         String feedback = String.format(MarkMissionCommand.MESSAGE_SUCCESS, student.getName(), "M03");
 
-        assertCommandSuccess(new MarkMissionCommand(INDEX_FIRST_STUDENT, new MissionId("M03")),
-                model, feedback, expectedModel);
+        assertCommandSuccess(
+                new MarkMissionCommand(INDEX_FIRST_STUDENT, new MissionId("M03")),
+                model,
+                new CommandResult(feedback, updated),
+                expectedModel);
         assertFalse(student.getMissionSubmissions().hasSubmission(new MissionId("M03")));
     }
 
@@ -100,16 +103,21 @@ public class MarkMissionCommandTest {
         Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
         String feedback = String.format(MarkMissionCommand.MESSAGE_ALREADY_RECORDED, student.getName(), "M03");
 
-        assertCommandSuccess(new MarkMissionCommand(INDEX_FIRST_STUDENT, new MissionId("M03")),
-                model, feedback, expectedModel);
+        assertCommandSuccess(
+                new MarkMissionCommand(INDEX_FIRST_STUDENT, new MissionId("M03")),
+                model,
+                new CommandResult(feedback, student),
+                expectedModel);
     }
 
     @Test
     public void execute_invalidIndex_leavesModelUnchanged() {
         Index invalidIndex = Index.fromOneBased(model.getFilteredStudentList().size() + 1);
+        String expectedMessage = Messages.MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX
+                + "\n\n" + MarkMissionCommand.MESSAGE_USAGE;
 
         assertCommandFailure(new MarkMissionCommand(invalidIndex, new MissionId("M03")),
-                model, Messages.MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX);
+                model, expectedMessage);
     }
 
     @Test
@@ -127,8 +135,11 @@ public class MarkMissionCommandTest {
 
         String feedback = String.format(MarkMissionCommand.MESSAGE_SUCCESS, student.getName(), "M03");
 
-        assertCommandSuccess(new MarkMissionCommand(INDEX_FIRST_STUDENT, new MissionId("M03")),
-                model, feedback, expectedModel);
+        assertCommandSuccess(
+                new MarkMissionCommand(INDEX_FIRST_STUDENT, new MissionId("M03")),
+                model,
+                new CommandResult(feedback, updated),
+                expectedModel);
         assertEquals(1, model.getFilteredStudentList().size());
         assertEquals(updated, model.getFilteredStudentList().get(0));
     }
@@ -136,9 +147,11 @@ public class MarkMissionCommandTest {
     @Test
     public void execute_indexOutsideFilteredList_leavesModelUnchanged() {
         showStudentAtIndex(model, INDEX_FIRST_STUDENT);
+        String expectedMessage = Messages.MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX
+                + "\n\n" + MarkMissionCommand.MESSAGE_USAGE;
 
         assertCommandFailure(new MarkMissionCommand(INDEX_SECOND_STUDENT, new MissionId("M03")),
-                model, Messages.MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX);
+                model, expectedMessage);
     }
 
     @Test

@@ -31,9 +31,9 @@ AvengerHub is a **desktop address book application for managing students, optimi
 
    * `list` : Lists all students.
 
-   * `addstudent n/John Doe p/98765432 e/johnd@example.com g/1A` : Adds a student named `John Doe` to the Address Book.
+   * `addstudent n/John Doe mtc/A0409127H p/98765432 e/johnd@example.com g/1A` : Adds a student named `John Doe` to the Address Book.
 
-   * `delstudent 3` : Deletes the 3rd student shown in the current list.
+   * `delstudent id/3` : Deletes the 3rd student shown in the current list.
 
    * `clear` : Deletes all students.
 
@@ -58,18 +58,25 @@ AvengerHub is a **desktop address book application for managing students, optimi
 * Items followed by `...` can appear zero or more times.<br>
   For example, `[t/TAG]... ` may be omitted, or written as `t/friend` or `t/friend t/family`.
 
-* Prefixed parameters can be in any order unless a command states otherwise. An `INDEX`, when required, comes first.<br>
+* Prefixed parameters can be in any order unless a command states otherwise.<br>
   For example, if the command specifies `n/NAME p/PHONE_NUMBER`, `p/PHONE_NUMBER n/NAME` is also acceptable.
 
-* Extraneous parameters for commands that take no parameters, such as `help`, `list`, `exit`, and `clear`, are ignored.<br>
-  For example, `help 123` is interpreted as `help`.
+* Prefixes are case-insensitive.<br>
+  For example, `n/John Doe` and `N/John Doe` both specify the same name parameter.
+
+* Commands that take no parameters ignore extra arguments.<br>
+  The `list` command displays a warning when extra arguments are ignored.
+  The other commands ignore extra arguments without a warning.<br>
+  For example, `help 123` is interpreted as `help` without a warning.
 
 * If you are using a PDF version of this document, be careful when copying and pasting commands that span multiple lines as space characters surrounding line-breaks may be omitted when copied over to the application.
 </box>
 
 ### Viewing help: `help`
 
-Shows a message explaining how to access the help page.
+Opens the help window containing usage instructions for the commands.
+
+Any arguments provided after `help` are ignored.
 
 ![help message](images/helpMessage.png)
 
@@ -80,7 +87,9 @@ Format: `help`
 
 Adds a student to the address book.
 
-Format: `addstudent n/NAME p/PHONE_NUMBER e/EMAIL [t/TAG]... g/STUDIO_GROUP`
+Format: `addstudent n/NAME mtc/MATRICULATION_NUMBER p/PHONE_NUMBER e/EMAIL [t/TAG]... g/STUDIO_GROUP`
+
+* `MATRICULATION_NUMBER` is that supplied by NUS for every student, starting with A followed by seven digits, then an uppercase letter from A-Z. This must be unique for each student, otherwise the command will be rejected.
 
 <box type="tip" seamless>
 
@@ -88,8 +97,8 @@ Format: `addstudent n/NAME p/PHONE_NUMBER e/EMAIL [t/TAG]... g/STUDIO_GROUP`
 </box>
 
 Examples:
-* `addstudent n/John Doe p/98765432 e/johnd@example.com g/1A`
-* `addstudent n/Betsy Crowe t/talkative e/betsycrowe@example.com p/1234567 t/smart g/1A`
+* `addstudent n/John Doe mtc/A0123456C p/98765432 e/johnd@example.com g/1A`
+* `addstudent n/Betsy Crowe t/talkative mtc/A0312777K e/betsycrowe@example.com p/1234567 t/smart g/1A`
 
 ### Listing all students: `list`
 
@@ -97,17 +106,31 @@ Shows a list of all students in the address book.
 
 Format: `list`
 
+* Resets the current student filter to show all students.
+* Extra arguments are ignored with a warning; the command still lists all students.
+* Surrounding whitespace does not trigger a warning.
+
+For example, `list missions m/01` lists all students and displays:
+
+```text
+Listed all students.
+WARNING:
+Extra arguments were ignored. The list command takes no arguments.
+```
+
+To list mission submissions, use `listmissions m/M01`.
+
 ### Viewing a student: `view`
 
 Displays the profile of a student in the currently displayed student list.
 
-Format: `view INDEX`
+Format: `view id/INDEX`
 
 * `INDEX` refers to the student's index in the currently displayed list,
   including results from `find`.
 * The index must be a positive integer identifying a displayed student.
 * The profile displays the student's name, studio group, phone number,
-  email address, tags, and configured missions with their submission statuses.
+  email address, tags, studio records, missions, mastery checks, and notes.
 * Mission statuses are `Submitted` or `Not submitted`, based on the records
   maintained in AvengerHub.
 * An empty mission catalogue displays `No missions configured.`
@@ -117,8 +140,8 @@ Format: `view INDEX`
 
 Examples:
 
-* `list`, followed by `view 2`, displays the second student's profile.
-* `find Betsy Crowe`, followed by `view 1`, displays the first student
+* `list`, followed by `view id/2`, displays the second student's profile.
+* `find Betsy Crowe`, followed by `view id/1`, displays the first student
   in those search results.
 
 For example, viewing Amy Lee displays the feedback:
@@ -127,21 +150,22 @@ For example, viewing Amy Lee displays the feedback:
 Showing profile of Amy Lee
 ```
 
-### Editing a student: `edit`
+### Editing a student: `editstudent`
 
 Edits an existing student in the address book.
 
-Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [t/TAG]... [g/STUDIO_GROUP]`
+Format: `editstudent id/INDEX [n/NAME] [mtc/MATRICULATION_NUMBER] [p/PHONE] [e/EMAIL] [t/TAG]... [g/STUDIO_GROUP]`
 
 * Edits the student at the specified `INDEX`. The index refers to the index number shown in the displayed student list. The index **must be a positive integer** 1, 2, 3, ...
 * At least one of the optional fields must be provided.
+* Matriculation number cannot be changed to another address book student's matriculation number.
 * Existing values will be updated to the input values.
 * When editing tags, all of the student's existing tags are removed; adding tags is not cumulative.
 * To remove all of a student's tags, enter `t/` without a tag after it.
 
 Examples:
-*  `edit 1 p/91234567 e/johndoe@example.com` Edits the phone number and email address of the 1st student to be `91234567` and `johndoe@example.com` respectively.
-*  `edit 2 n/Betsy Crower t/` Edits the name of the 2nd student to be `Betsy Crower` and clears all existing tags.
+*  `editstudent id/1 p/91234567 e/johndoe@example.com` Edits the phone number and email address of the 1st student to be `91234567` and `johndoe@example.com` respectively.
+*  `editstudent id/2 n/Betsy Crower t/` Edits the name of the 2nd student to be `Betsy Crower` and clears all existing tags.
 
 ### Locating students by name: `find`
 
@@ -152,6 +176,11 @@ Format: `find [NAME_WORDS [, MORE_NAME_WORDS]...] [g/STUDIO_GROUP]...`
 * Provide at least one name alternative or studio group.
 * Name matching is case-insensitive and allows partial matches.
 * Spaces mean AND: `alex lee` requires both words, in any order.
+* Repeating a word within an alternative requires separate, non-overlapping
+  occurrences, ignoring case. For example, `alex alex` matches `Alex Alex`
+  and `Alex Alexander`, but not `Alex Yeoh`.
+* Comma-separated alternatives are independent: `alex, alex` has the same
+  effect as `alex`.
 * Commas mean OR: `alex lee, brian` matches both `alex` and `lee`,
   or matches `brian`.
 * Spaces around commas are optional.
@@ -173,21 +202,21 @@ Examples:
 
 Deletes the specified student from the address book.
 
-Format: `delstudent INDEX`
+Format: `delstudent id/INDEX`
 
 * Deletes the student at the specified `INDEX`.
 * The index refers to the index number shown in the displayed student list.
 * The index **must be a positive integer** 1, 2, 3, ...
 
 Examples:
-* `list` followed by `delstudent 2` deletes the 2nd student in the address book.
-* `find Betsy` followed by `delstudent 1` deletes the 1st student in the results of the `find` command.
+* `list` followed by `delstudent id/2` deletes the 2nd student in the address book.
+* `find Betsy` followed by `delstudent id/1` deletes the 1st student in the results of the `find` command.
 
 ### Adding studio records: `addstudiorecord`
 
 Records a student's studio attendance and effort for a studio week.
 
-Format: `addstudiorecord INDEX w/WEEK ef/EFFORT`
+Format: `addstudiorecord id/INDEX w/WEEK ef/EFFORT`
 
 * Adds a studio record for the student at the specified `INDEX` for the specified `WEEK`, with the specified `EFFORT` score.
 * The index refers to the index number shown in the displayed student list. 
@@ -195,15 +224,15 @@ Format: `addstudiorecord INDEX w/WEEK ef/EFFORT`
 * The week must be an integer from **0 to 13**, inclusive.
 * The effort score must be a whole number from **0 to 2147483647**, inclusive.
 * Weeks without a record shown are considered absent with an effort score of `0`.
-* Adding an existing record leaves both attendance and the effort score unchanged, even if a different score is supplied.
+* If the studio record was already recorded, the records remain unchanged.
 * The current list filter stays active.
 
 Examples:
 
-* `list` followed by `addstudiorecord 1 w/3 ef/30` records attendance and an effort score of 30 for week 3 for the first student displayed, if any.
-* `find Betsy` followed by `addstudiorecord 1 w/13 ef/0` records attendance and an effort score of 0 for week 13 for the first student in the search results, if any.
+* `list` followed by `addstudiorecord id/1 w/3 ef/30` records attendance and an effort score of 30 for week 3 for the first student displayed, if any.
+* `find Betsy` followed by `addstudiorecord id/1 w/13 ef/0` records attendance and an effort score of 0 for week 13 for the first student in the search results, if any.
 
-For example, if the first student is Amy Bee and her week 3 studio record is not yet recorded, `addstudiorecord 1 w/3 ef/30` displays:
+For example, if the first student is Amy Bee and her week 3 studio record is not yet recorded, `addstudiorecord id/1 w/3 ef/30` displays:
 
 ```text
 Added Amy Bee's studio record for studio week 3.
@@ -213,7 +242,7 @@ Added Amy Bee's studio record for studio week 3.
 
 Removes a student's attendance record and effort score for a studio week. The student remains in the address book.
 
-Format: `delstudiorecord INDEX w/WEEK`
+Format: `delstudiorecord id/INDEX w/WEEK`
 
 * Deletes a studio record for the student at the specified `INDEX` for the specified `WEEK`.
 * The index refers to the index number shown in the displayed student list.
@@ -224,10 +253,10 @@ Format: `delstudiorecord INDEX w/WEEK`
 
 Examples:
 
-* `list` followed by `delstudiorecord 1 w/3` removes the first student's week 3 studio record, if recorded, if any.
-* `find Betsy` followed by `delstudiorecord 1 w/13` removes the week 13 studio record for the first student in the search results, if any.
+* `list` followed by `delstudiorecord id/1 w/3` removes the first student's week 3 studio record, if recorded, if any.
+* `find Betsy` followed by `delstudiorecord id/1 w/13` removes the week 13 studio record for the first student in the search results, if any.
 
-For example, if the first student is Amy Bee and her week 3 studio record is recorded, `delstudiorecord 1 w/3` displays:
+For example, if the first student is Amy Bee and her week 3 studio record is recorded, `delstudiorecord id/1 w/3` displays:
 
 ```text
 Removed Amy Bee's record for studio week 3.
@@ -237,109 +266,193 @@ Removed Amy Bee's record for studio week 3.
 
 Edit a student's studio effort for a studio week.
 
-Format: `editstudiorecord INDEX w/WEEK ef/EFFORT`
+Format: `editstudiorecord id/INDEX w/WEEK ef/EFFORT`
 
-* `INDEX` identifies a student in the **currently displayed list**, including results from `find`. It must be a positive integer that corresponds to a displayed student.
-* `WEEK` must be an integer from **0 to 13**, inclusive. AvengerHub uses these week numbers to allow tutors to flexibly mark studio records across the semester's 13 weeks. Use the actual week number as defined in the NUS student calendar.
-* Weeks outside this range, such as `-1` or `14`, are rejected with an error message. The existing studio records remain unchanged.
-* `EFFORT` is the student's effort score for that studio week. It must be a whole number from **0 to 2147483647**, inclusive. Negative numbers, decimals, non-numeric values, and values above this range are rejected without changing existing records.
-* All three arguments are required. Put `INDEX` before the prefixed arguments, and specify `w/` and `ef/` exactly once each. Extra arguments are rejected. Omitting `ef/EFFORT` displays `Specify an effort score using ef/EFFORT.`
-* Enter `INDEX` and `WEEK` as integers without signs, decimal points, or leading zeros. For example, use `3`, not `+3`, `3.0`, or `03`.
-* The command word and the `w/` and `ef/` prefixes are case-insensitive: `EDITSTUDIORECORD 1 W/3 EF/30` is also accepted.
-* If the studio record was initially not recorded, the records remain unchanged and a message explains that no changes were made.
+* Edits a studio record for the student at the specified `INDEX` for the specified `WEEK`, with the specified `EFFORT` score.
+* The index refers to the index number shown in the displayed student list.
+* The index **must be a positive integer** 1, 2, 3, ...
+* The week must be an integer from **0 to 13**, inclusive.
+* The effort score must be a whole number from **0 to 2147483647**, inclusive.
+* If the studio record was already not recorded, the records remain unchanged.
+* If the studio record's existing effort score is the same as the specified effort score, the records remain unchanged.
 * The current list filter stays active.
 
 Examples:
 
-* `list` followed by `editstudiorecord 1 w/3 ef/30` edits studio record's effort score to 30 for week 3 for the first student displayed, if any.
-* `find Betsy` followed by `editstudiorecord 1 w/13 ef/0` edits studio's effort score to 0 for week 13 for the first student in the search results, if any.
+* `list` followed by `editstudiorecord id/1 w/3 ef/30` edits studio record's effort score to 30 for week 3 for the first student displayed, if any.
+* `find Betsy` followed by `editstudiorecord id/1 w/13 ef/0` edits studio's effort score to 0 for week 13 for the first student in the search results, if any.
 
-For example, if the first student is Amy Bee and her week 3 studio record is recorded, `editstudiorecord 1 w/3 ef/30` displays:
+For example, if the first student is Amy Bee and her week 3 studio record is recorded, `editstudiorecord id/1 w/3 ef/30` displays:
 
 ```text
 Edited Amy Bee's studio record for studio week 3.
 ```
 
+### Adding a student note: `addnote`
+
+Adds a note for an existing student in the address book.
+
+Format: `addnote id/INDEX nt/TEXT`
+
+* Adds a note with text `TEXT` for the student at the specified `INDEX`.
+* The index refers to the index number shown in the displayed student list.
+* The index **must be a positive integer** 1, 2, 3, ...
+* The text should only contain alphanumeric characters and spaces, should not be blank, and be less than or equal to 100 characters.
+* A student can have up to 10 notes.
+* The current list filter stays active.
+
+Examples:
+*  `addnote id/1 nt/hello` Adds a note with text `hello` for the 1st student.
+
+
+### Deleting a student note: `delnote`
+
+Deletes a note for an existing student in the address book.
+
+Format: `delnote id/INDEX ni/NOTE_INDEX`
+
+* Deletes a note with index `NOTE_INDEX` for the student at the specified `INDEX`.
+* The index refers to the index number shown in the displayed student list.
+* The index **must be a positive integer** 1, 2, 3, ...
+* The note index refers to the index number shown in the list of notes for a given student in the display panel.
+* The note index must be an integer from 1 to 10, inclusive.
+* If the note index doesn't match any existing notes for the given student, the notes will be unchanged.
+* The current list filter stays active.
+
+Examples:
+*  `delnote id/1 ni/1` Deletes the first note for the 1st student.
+
+
+### Editing a student note: `editnote`
+
+Edits a note for an existing student in the address book.
+
+Format: `editnote id/INDEX ni/NOTE_INDEX nt/TEXT`
+
+* Edits a note with index `NOTE_INDEX`, replacing its text with `TEXT` for the student at the specified `INDEX`.
+* The index refers to the index number shown in the displayed student list.
+* The index **must be a positive integer** 1, 2, 3, ...
+* The note index refers to the index number shown in the list of notes for a given student in the display panel.
+* The note index must be an integer from 1 to 10, inclusive.
+* The text should only contain alphanumeric characters and spaces, should not be blank, and be less than or equal to 100 characters.
+* If the note index doesn't match any existing notes for the given student, or matches the existing text, the notes will be unchanged.
+* The current list filter stays active.
+
+Examples:
+*  `editnote id/1 ni/1 nt/hello` Edits the first note, replacing its text with `hello` for the 1st student.
+
 ### Adding a mastery check: `addmc`
 
 Adds a numbered mastery check appointment for a student.
 
-Format: `addmc INDEX num/NUMBER dt/DATE-TIME`
+Format: `addmc id/INDEX num/NUMBER dt/DATE-TIME`
 
 * `INDEX` must be a positive integer identifying a student in the **currently displayed list**, including `find` results.
 * `NUMBER` must be an integer from **1 to 2147483647**, inclusive. Numbers are unique within each student's appointments.
 * `DATE-TIME` must be a real date and 24-hour time in `dd-MM|HH:mm` format, such as `29-10|13:30`.
   The current year is filled in automatically. Impossible dates, `24:00`, and times with seconds are rejected.
-* Supply lowercase `num/` and `dt/` exactly once each, in either order, after `INDEX`.
-* New appointments show **Not completed**. Adding an existing number leaves its time and status unchanged.
+* Supply `id/`, `num/`, and `dt/` exactly once each, in any letter case and in any order. Do not put text before the first prefix.
+* New mastery checks show **Not completed**. Adding an existing number leaves its time and status unchanged.
 * Any invalid input produces an error without changing records.
 
 All four mastery check commands use the same `INDEX` and `NUMBER` rules. They preserve other student records
 and the current list filter. Changes are saved automatically and retained after restart.
-Run `view INDEX` to inspect the Number, Appointment time, and Status columns.
+Run `view id/INDEX` to inspect the Number, Appointment time, and Status columns.
 
 Example: 
 
-`addmc 1 num/2 dt/29-10|13:30`, followed by `view 1`, shows appointment 2 at `Oct 29, 13:30` as Not completed.
+`addmc id/1 num/2 dt/29-10|13:30`, followed by `view id/1`, shows mastery check 2 at `Oct 29, 13:30` as Not completed.
 
 ### Deleting a mastery check: `delmc`
 
 Removes a numbered mastery check appointment for a student, including its completion status.
 
-Format: `delmc INDEX num/NUMBER`
+Format: `delmc id/INDEX num/NUMBER`
 
 * `INDEX` must be a positive integer identifying a student in the **currently displayed list**, including `find` results.
 * `NUMBER` must be an integer from **1 to 2147483647**, inclusive. Numbers are unique within each student's appointments.
-* Supply the lowercase `num/` prefix exactly once.
+* Supply the `id/` and `num/` prefixes exactly once, in any letter case. Do not put text before the first prefix.
 * If the number is not registered for that student, the command reports that no changes were made.
-* Other appointments and the student remain in the address book.
+* Other mastery check appointments and the student remain in the address book.
 * Any invalid input produces an error without changing records.
 
 Example: 
 
-`delmc 1 num/2` removes appointment 2 from the first displayed student, if registered.
+`delmc id/1 num/2` removes mastery check 2 from the first displayed student, if registered.
 
 ### Marking a mastery check as completed: `markmc`
 
-Marks an existing appointment as **Completed** without changing its appointment time.
+Marks an existing mastery check appointment as **Completed** without changing its appointment time.
 
-Format: `markmc INDEX num/NUMBER`
+Format: `markmc id/INDEX num/NUMBER`
 
 * `INDEX` must be a positive integer identifying a student in the **currently displayed list**, including `find` results.
 * `NUMBER` must be an integer from **1 to 2147483647**, inclusive. Numbers are unique within each student's appointments.
-* Supply the lowercase `num/` prefix exactly once. The number must be registered for that student.
-* Marking an already completed appointment reports that no changes were made.
+* Supply the `id/` and `num/` prefixes exactly once, in any letter case. Do not put text before the first prefix.
+* Marking an already completed mastery check reports that no changes were made.
 * Any invalid input produces an error without changing records.
 
 Example: 
 
-`markmc 1 num/2`, followed by `view 1`, shows appointment 2 as Completed.
+`markmc id/1 num/2`, followed by `view id/1`, shows mastery check 2 as Completed.
 
 ### Unmarking a mastery check as completed: `unmarkmc`
 
-Changes an existing appointment's status to **Not completed** without deleting it or changing its time.
+Changes an existing mastery check appointment's status to **Not completed** without deleting it or changing its time.
 
-Format: `unmarkmc INDEX num/NUMBER`
+Format: `unmarkmc id/INDEX num/NUMBER`
 
 * `INDEX` must be a positive integer identifying a student in the **currently displayed list**, including `find` results.
 * `NUMBER` must be an integer from **1 to 2147483647**, inclusive. Numbers are unique within each student's appointments.
 * Uses the same index, number, and registration rules as `markmc`. 
-* Unmarking an appointment that is already incomplete reports that no changes were made. 
+* Unmarking a mastery check that is already incomplete reports that no changes were made. 
 * Any invalid input produces an error without changing records.
 
 Example: 
 
-`unmarkmc 1 num/2`, followed by `view 1`, shows appointment 2 as Not completed.
+`unmarkmc id/1 num/2`, followed by `view id/1`, shows appointment 2 as Not completed.
+
+### Listing Upcoming Mastery Checks: `listmc`
+
+Lists all upcoming mastery-check appointments for students in the
+currently filtered student list.
+
+Only appointments after the current date and time are shown. Results are
+sorted chronologically.
+
+Any arguments provided after `listmc` are ignored.
+
+`listmc` is a read-only command. It does not change student data,
+mastery-check records, or the current filter.
+
+Format: `listmc`
+
+Example output:
+```text
+Listed all upcoming mastery checks as of 29 Oct 2026, 12:00:
+1 | Bernice Yu | 02 Nov 2026, 10:00 | Not completed
+2 | Alex Tan | 03 Nov 2026, 15:30 | Completed
+```
+
+If there are no upcoming mastery checks:
+```text
+No upcoming mastery checks in the current student list.
+```
 
 ### Adding a mission: `addmission`
 
 Creates one mission shared by all students. Adding a mission does not mark anyone as having
 submitted it; students without a submission record show **Not submitted**.
 
-Format: `addmission n/NAME d/DEADLINE`
+Format: `addmission m/MISSION_ID n/NAME d/DEADLINE`
 
-* Supply exactly one lowercase `n/` and one lowercase `d/`, in either order. Do not put text
+* Supply exactly one `m/`, `n/`, and `d/` prefix, in any letter case and in either order. Do not put text
   before the first prefix. The command word is case-insensitive.
+* `MISSION_ID` must start with `M` followed by a positive integer of at least two digits,
+  without unnecessary leading zeros. For example, `M01`, `M02`, and `M105` are valid;
+  `M1` and `M00` are not. The number must not exceed `9223372036854775807` (the
+  largest supported value, with up to 19 digits). IDs must be unique among configured
+  missions. Exceeding the limit reports the same mission-ID constraint message.
 * `NAME` must not be blank. Multiple words and ordinary punctuation are allowed.
   Leading and trailing whitespace is removed, and internal whitespace becomes a single space.
   Letter case and punctuation are preserved for display and saving.
@@ -350,78 +463,84 @@ Format: `addmission n/NAME d/DEADLINE`
 * `DEADLINE` must be a real calendar date in `YYYY-MM-DD` format. For example, `2024-02-29`
   is valid but `2026-15-32` is not. Times and single-digit months or days are rejected.
   Past deadlines are accepted for recording existing assignments.
-* The app assigns an ID such as `M01`. Use the ID shown in the success message for submission commands.
+* Whitespace inside any `MISSION_ID` is ignored before validation. For this command, whitespace
+  inside `DEADLINE` is also ignored.
+* Choose the ID yourself; the application does not assign IDs automatically. Existing mission
+  IDs do not change when another mission is deleted. A deleted ID can be chosen again afterward,
+  but its previous submission records are removed and are not restored.
 * Successful additions are saved automatically. Invalid or duplicate additions do not change
-  the catalogue, consume an ID, or save the data file. Existing students and their list filter are preserved.
+  the catalogue or save the data file. Existing students and their list filter are preserved.
 
 Examples:
 
-* `addmission n/Rune Reading d/2026-10-20`
-* `addmission d/2024-02-29 n/Mission 1:  Rune Reading!` stores the name `Mission 1: Rune Reading!`.
+* `addmission m/M01 n/Rune Reading d/2026-10-20`
+* `addmission d/2024-02-29 m/M105 n/Mission 1:  Rune Reading!` stores the name `Mission 1: Rune Reading!`.
 
-For an empty catalogue with its allocation counter at 1, the first example displays:
+The first example displays:
 
 ```text
 New mission added: M01 · Rune Reading (Due: 2026-10-20)
 ```
 
-Missing or blank names produce `Provide a mission name using n/NAME.` A valid name without
+Missing IDs produce `Specify a mission ID using m/MISSION_ID.` Invalid IDs show the ID format
+constraint. Missing or blank names produce `Provide a mission name using n/NAME.` A valid name without
 a deadline produces `Specify a deadline in YYYY-MM-DD format using d/DEADLINE.` Unexpected text
 before the prefixes produces a format error with usage instructions. Repeated prefixes identify the repeated fields;
 invalid dates
 produce their respective constraint messages. An existing name produces
-`This mission already exists in the mission list.`
-
-If all mission IDs have been allocated, the command reports
-`No further mission IDs can be allocated.` and leaves the catalogue and saved file unchanged.
+`This mission already exists in the mission list.` An ID already used by a configured mission produces
+`A mission with this ID already exists.`
 
 ![result for adding a mission](images/addMissionResult.png)
 
 ### Deleting a mission: `delmission`
 
-Format: `delmission m/MISSIONID`
+Format: `delmission m/MISSION_ID`
 
 Example: `delmission m/M03`
 
-Use exactly one lowercase `m/` prefix. Mission IDs are case-insensitive, so `m/m03` also
+Use exactly one `m/` prefix, in any letter case. Mission IDs are case-insensitive, so `m/m03` also
 identifies `M03`. Numeric-only values such as `m/3` are rejected. Use the stable mission ID,
 not a student index or a position in the displayed list.
 
 Deletion removes the mission and its submission records from **every student**, including
 students hidden by the current filter. Student details, studio records, and other missions are
 preserved. The current student filter stays active. The result area shows deletion feedback;
-run `view INDEX` to see the updated profile. Deletion is automatically saved and survives restart.
-Deleted IDs are not reused. Unknown or invalid IDs leave data unchanged.
+run `view id/INDEX` to see the updated profile. Deletion is automatically saved and survives restart.
+The deleted ID can be explicitly reused by a later `addmission` command, but the old submission
+records are not restored. Unknown or invalid IDs leave data unchanged.
 
 ![result for deleting a mission](images/delMissionResult.png)
 
 ### Recording a mission submission: `markmission`
 
-Format: `markmission INDEX m/MISSION_ID`
+Format: `markmission id/INDEX m/MISSION_ID`
 
 * `INDEX` identifies a student in the **currently displayed list**, including `find` results.
-* The index must be a positive integer without a sign or leading zeros.
+* The index must be a positive integer without a sign. Whitespace within the index is ignored,
+  and leading zeros are accepted.
+* Whitespace inside `MISSION_ID` is ignored before validation.
 * `MISSION_ID` must identify a configured mission, for example `M01` or `M105`.
-* Use the lowercase `m/` prefix exactly once. Mission IDs are case-insensitive: `m/m01` and `m/M01` both identify `M01`. IDs are displayed and saved in uppercase.
+* Use the `m/` prefix exactly once, in any letter case. Mission IDs are case-insensitive: `m/m01` and `m/M01` both identify `M01`. IDs are displayed and saved in uppercase.
 * Each mission ID identifies one configured assignment.
 * Repeated marking reports that the submission is already recorded and changes nothing.
 * Other students, other submissions, studio records, and the current student filter are preserved.
 * Records are maintained manually. Not submitted means no submission is recorded in AvengerHub.
 
-Example: `markmission 1 m/M01`, followed by `view 1`, displays M01 as Submitted.
-An unknown mission ID or invalid command leaves existing records unchanged.
+Example: `markmission id/1 m/M01`, followed by `view id/1`, displays M01 as Submitted.
+An unknown mission ID or invalid command leaves existing records unchanged. Malformed arguments display an error with command usage. A positive index that does not identify a student in the currently displayed list is rejected during execution with an index error followed by the command's usage; check the current list and use an index shown there. The same applies to `unmarkmission`.
 
 ![result for marking a mission](images/markMissionResult.png)
 
 ### Removing a submission record: `unmarkmission`
 
-Format: `unmarkmission INDEX m/MISSION_ID`
+Format: `unmarkmission id/INDEX m/MISSION_ID`
 
 Uses the same index and mission ID rules as `markmission`. This removes only the selected student's
 submission record; it does not delete the student or the mission. Unmarking an unrecorded submission
 reports that no changes were made.
 
-Example: `unmarkmission 1 m/M01`, followed by `view 1`, displays M01 as Not submitted.
+Example: `unmarkmission id/1 m/M01`, followed by `view id/1`, displays M01 as Not submitted.
 
 The profile displays configured mission descriptions and deadlines. An empty catalogue shows
 “No missions configured.”
@@ -434,8 +553,8 @@ Changes a shared mission's name, deadline, or both.
 
 Format: `editmission m/MISSION_ID [n/NAME] [d/DEADLINE]`
 
-* Supply exactly one lowercase `m/` prefix and an existing mission ID.
-* Supply at least one lowercase `n/` or `d/` prefix. Each may appear once.
+* Supply exactly one `m/` prefix and an existing mission ID; prefix matching ignores letter case.
+* Supply at least one `n/` or `d/` prefix. Each may appear once.
 * Prefixes may appear in any order. Do not put text before the first prefix.
 * The command word and mission ID are case-insensitive.
 * Names and deadlines follow the same validation rules as `addmission`.
@@ -448,7 +567,7 @@ Format: `editmission m/MISSION_ID [n/NAME] [d/DEADLINE]`
   student, including students hidden by the current filter.
 * An unchanged name and deadline produce no-change feedback.
 * Successful edits are saved automatically. Invalid edits leave records unchanged.
-* Run `view INDEX` again to inspect updated mission details.
+* Run `view id/INDEX` again to inspect updated mission details.
 
 Examples:
 
@@ -456,64 +575,95 @@ Examples:
 * `editmission m/M01 d/2026-10-22`
 * `editmission m/M01 n/Rune Reading d/2026-10-22`
 
-### Listing overdue submissions: `listoverdue`
+### Listing missions and submission statuses: `listmissions`
 
-Shows missing mission submissions for students in the currently displayed
-student list, where the mission deadline has passed.
+Lists mission summaries or student submission statuses, optionally filtered
+by mission ID and status.
 
-Format: `listoverdue`
+Format: `listmissions [m/MISSION_ID] [s/STATUS]`
 
-* Only students in the currently displayed student list are included.
-  Students hidden by `find` are excluded.
-* A submission is overdue when no submission is recorded for the student
-  and today's date is after the mission's deadline.
-* A mission due today or in the future is not overdue.
-* Today's date follows your computer's local date and time zone.
-* Each result row identifies a student and a missing mission, including
-  the mission's name and deadline.
-* A student can appear more than once if they have multiple overdue submissions.
-* Student numbers match the indexes in the displayed student list.
-  Use `view INDEX` to inspect a student's profile.
-* Results are ordered by displayed student index, then numeric mission ID.
-* Recording a submission removes it from subsequent overdue results.
-  Submission timestamps are not recorded, so this report does not identify
-  submissions that were completed late.
-* If no overdue submissions exist within the current student list, the command
-  displays `No overdue submissions in the current student list.`
-* Student records, mission definitions, submission records, and the current
+* The command word, `m/` prefix, and mission ID are case-insensitive.
+* Student records, submission records, mission definitions, and the current
   student filter remain unchanged.
-* Run `list` first to include all students.
-* Like `list`, this command ignores extra arguments.
+* Without either argument, displays all mission summaries with submission counts.
+* With `m/MISSION_ID`, displays statuses for that mission.
+* With `s/submitted` or `s/overdue` but no mission ID, displays matching
+  submissions across all missions.
+* When both prefixes are supplied, applies the status filter to the selected mission.
+
+Without a mission ID:
+
+* Lists all missions in ascending numeric ID order, showing each mission's
+  ID, name, deadline, and submitted/total student count.
+* `Submitted: X/Y` means X of the Y currently displayed students have a
+  recorded submission for that mission.
+* All missions remain visible regardless of the student filter, but counts
+  include only currently displayed students.
+* An empty student list produces `Submitted: 0/0`.
+* Deadlines before the computer's current local date are labelled
+  `Deadline passed`, even if every student has submitted.
+  Missions due today are not labelled.
+* If no missions exist, displays `No missions configured.`
+
+With `m/MISSION_ID`:
+
+* Supply exactly one `m/` prefix and an existing mission ID.
+* Lists every currently displayed student's status for that mission,
+  including their displayed index, name, and studio group.
+* A recorded submission is `Submitted`, regardless of the deadline.
+* A missing submission is `Overdue` when the deadline is before the
+  computer's current local date; otherwise it is `Not submitted`.
+  Missions due today are not overdue.
+* Students hidden by `find` are excluded.
+* Result numbers retain displayed student indexes. A result numbered `3`
+  can therefore be inspected using `view id/3`.
+* An empty student list produces `No students in the current student list.`
+* Statuses reflect recorded submissions; an absent record does not confirm
+  that a student has not actually submitted.
+* Optionally supply `s/submitted` or `s/overdue` to show only that status.
+  Status values are case-insensitive, and `m/` and `s/` may appear in either order.
+* Supply each prefix at most once. Empty or unsupported status values are rejected.
+* If students are displayed but none match the status filter, reports
+  `No submissions match the selected status.`
+
+With `s/STATUS` only:
+
+* Each row represents one student–mission pair and includes the mission's
+  ID, name, and deadline.
+* Rows are ordered by numeric mission ID, then displayed student order.
+* A student may appear more than once when multiple missions match.
+  Their index always refers to the left student list.
+* Only currently displayed students are included. Records and the student
+  filter remain unchanged.
+* If no missions exist, displays `No missions configured.`
+
+Run `list` first to include all students in counts and status results.
+Rerun `listmissions` with the desired arguments to refresh its output.
+
+Command results appear above the student panels. The results area grows
+with its content up to a height limit; scroll within it to read longer
+reports. Shorter feedback shrinks the area again, leaving more room for
+student details. Each new result starts at the top.
 
 Examples:
 
-* `list`, followed by `listoverdue`, shows overdue submissions for all students.
-* `find g/1A`, followed by `listoverdue`, shows overdue submissions only for
-  students in studio group 1A.
-* `find Betsy Crowe`, followed by `listoverdue`, shows overdue submissions
-  for students matching that name.
-### Listing mission submissions: `listmissions`
-
-Shows which students in the currently displayed student list submitted a mission.
-
-Format: `listmissions m/MISSION_ID`
-
-* Supply exactly one lowercase `m/` prefix and an existing mission ID.
-* The command word and mission ID are case-insensitive.
-* Students hidden by `find` are excluded.
-* Result numbers retain the indexes in the displayed student list.
-  A result numbered `3` can therefore be inspected using `view 3`.
-* The student filter, submission records, and mission catalogue are unchanged.
-* If no displayed students submitted the mission, the command reports that no
-  submissions are recorded within the current student list.
-* Run `list` first to include all students.
-
-Example: `find g/1A`, followed by `listmissions m/M01`, lists students in
-studio group 1A with a recorded submission for M01.
+* `listmissions` displays all missions with submitted/total counts for
+  the currently displayed students.
+* `find g/1A`, followed by `listmissions m/M01`, shows M01 statuses for
+  the currently displayed students in studio group 1A.
+* `listmissions m/M01 s/submitted` lists recorded M01 submissions among
+  currently displayed students.
+* `listmissions m/M01 s/overdue` lists currently displayed students missing
+  M01 after its deadline.
+* `listmissions s/submitted` shows recorded submissions across all missions
+  for currently displayed students.
+* `listmissions s/overdue` shows missing submissions whose deadlines have
+  passed across all missions for currently displayed students.
 
 ### Clearing all entries: `clear`
 
-Clears all entries from the address book.
+Clears all student records and the shared mission catalogue, including the students' associated
+studio records, notes, mastery checks, and submission records.
 
 Format: `clear`
 
@@ -531,7 +681,11 @@ Mission submission marking and unmarking are saved automatically and retained wh
 
 ### Editing the data file
 
-AvengerHub's address book data is saved automatically as a JSON file `[JAR file location]/data/addressbook.json`. Advanced users are welcome to update data directly by editing that data file.
+AvengerHub's address book data is saved automatically as the JSON file
+`data/addressbook.json`, relative to the application's working directory (the
+directory from which it is launched). When following the Quick start
+instructions, this is the folder containing the JAR file. Advanced users can
+update data directly by editing that file.
 
 <box type="warning" seamless>
 
@@ -562,23 +716,30 @@ Failed commands do not save. A missing file instead loads the sample data.
 
 ## Command summary
 
-Action     | Format, Examples
------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-**Add student**    | `addstudent n/NAME p/PHONE_NUMBER e/EMAIL [t/TAG]... g/STUDIO_GROUP` <br> e.g., `addstudent n/James Ho p/22224444 e/jamesho@example.com  t/smart t/talkative g/1A`
-**Delete student** | `delstudent INDEX`<br> e.g., `delstudent 3`
-**View student** | `view INDEX`<br> e.g., `view 1`
-**Edit student**   | `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [t/TAG]... [g/STUDIO_GROUP]`<br> e.g.,`edit 2 n/James Lee e/jameslee@example.com g/1A`
-**Add studio record** | `addstudiorecord INDEX w/WEEK ef/EFFORT`<br> e.g., `addstudiorecord 1 w/3 ef/30`
-**Delete studio record** | `delstudiorecord INDEX w/WEEK`<br> e.g., `delstudiorecord 1 w/3`
-**Edit studio record** | `editstudiorecord INDEX w/WEEK ef/EFFORT`<br> e.g., `editstudiorecord 1 w/3 ef/30`
-**Add mission** | `addmission n/NAME d/DEADLINE`<br> e.g., `addmission n/Rune Reading d/2026-10-20`
-**Delete mission** | `delmission m/MISSIONID`<br> e.g., `delmission m/M03`
-**Record mission submission** | `markmission INDEX m/MISSION_ID`<br> e.g., `markmission 1 m/M01`
-**Remove mission submission** | `unmarkmission INDEX m/MISSION_ID`<br> e.g., `unmarkmission 1 m/M01`
-**Edit mission** | `editmission m/MISSION_ID [n/NAME] [d/DEADLINE]`<br> e.g., `editmission m/M01 n/Rune Reading d/2026-10-22`
-**List overdue submissions** | `listoverdue`
-**List mission submissions** | `listmissions m/MISSION_ID`<br> e.g., `listmissions m/M01`
-**Clear**  | `clear`
-**Find**   | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find James Jake`
-**List**   | `list`
-**Help**   | `help`
+Action     | Format, Examples                                                                                                                                                   
+-----------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+**Add student**    | `addstudent n/NAME mtc/MATRICULATION_NUMBER p/PHONE_NUMBER e/EMAIL [t/TAG]... g/STUDIO_GROUP` <br> e.g., `addstudent n/James Ho mtc/A0205429T p/22224444 e/jamesho@example.com  t/smart t/talkative g/1A` 
+**Delete student** | `delstudent id/INDEX`<br> e.g., `delstudent id/3`                                                                                                                     
+**View student** | `view id/INDEX`<br> e.g., `view id/1`                                                                                                                                 
+**Edit student**   | `editstudent id/INDEX [n/NAME] [mtc/MATRICULATION_NUMBER] [p/PHONE_NUMBER] [e/EMAIL] [t/TAG]... [g/STUDIO_GROUP]`<br> e.g.,`editstudent id/2 n/James Lee e/jameslee@example.com g/1A`                       
+**Add studio record** | `addstudiorecord id/INDEX w/WEEK ef/EFFORT`<br> e.g., `addstudiorecord id/1 w/3 ef/30`                                                                             
+**Delete studio record** | `delstudiorecord id/INDEX w/WEEK`<br> e.g., `delstudiorecord id/1 w/3`                                                                                             
+**Edit studio record** | `editstudiorecord id/INDEX w/WEEK ef/EFFORT`<br> e.g., `editstudiorecord id/1 w/3 ef/30`                                                                           
+**Add note** | `addnote id/INDEX nt/TEXT`<br> e.g., `addnote id/1 nt/hello`                                                                           
+**Delete note** | `delnote id/INDEX ni/NOTE_INDEX`<br> e.g., `delnote id/1 ni/1`                                                                           
+**Edit note** | `editnote id/INDEX ni/NOTE_INDEX nt/TEXT`<br> e.g., `editnote id/1 ni/1 nt/hello`                                                                           
+**Add mastery check** | `addmc id/INDEX num/NUMBER dt/DATE-TIME`<br> e.g., `addmc id/1 num/2 dt/29-09\|23:59`                                                                              
+**Delete mastery check** | `delmc id/INDEX num/NUMBER`<br> e.g. `delmc id/1 num/2`                                                                                                               
+**Mark mastery check** | `markmc id/INDEX num/NUMBER`<br> e.g. `markmc id/1 num/2`                                                                                                             
+**Unmark mastery check** | `unmarkmc id/INDEX num/NUMBER`<br> e.g. `unmarkmc id/1 num/2`                                                                                                         
+**Add mission** | `addmission m/MISSION_ID n/NAME d/DEADLINE`<br> e.g., `addmission m/M01 n/Rune Reading d/2026-10-20`
+**Delete mission** | `delmission m/MISSION_ID`<br> e.g., `delmission m/M03`
+**Record mission submission** | `markmission id/INDEX m/MISSION_ID`<br> e.g., `markmission id/1 m/M01`                                                                                                
+**Remove mission submission** | `unmarkmission id/INDEX m/MISSION_ID`<br> e.g., `unmarkmission id/1 m/M01`                                                                                            
+**Edit mission** | `editmission m/MISSION_ID [n/NAME] [d/DEADLINE]`<br> e.g., `editmission m/M01 n/Rune Reading d/2026-10-22`                                                          
+**List missions and statuses** | `listmissions [m/MISSION_ID] [s/STATUS]`<br> `STATUS`: `submitted` or `overdue`<br> e.g., `listmissions`, `listmissions m/M01`, `listmissions s/overdue`
+**Clear**  | `clear`                                                                                                                                                            
+**Find**   | `find [NAME_WORDS [, MORE_NAME_WORDS]...] [g/STUDIO_GROUP]...`<br> e.g., `find James Jake`
+**List**   | `list`                                                                                                                                                             
+**Help**   | `help`                                                                                                                                                             
+**Exit**   | `exit`

@@ -14,6 +14,8 @@ import seedu.address.model.student.Student;
  */
 public class TestUtil {
 
+    public static final String WHITESPACE = " \t\r\n";
+
     /**
      * Folder used for temp files created during testing. Ignored by Git.
      */

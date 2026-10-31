@@ -16,7 +16,6 @@ public final class RegisteredStudioRecords {
     public static final int MIN_WEEK = 0;
     public static final int MAX_WEEK = 13;
 
-    public static final String STUDIORECORD_MARKER = "Studio records: ";
     public static final String MESSAGE_CONSTRAINTS =
             "Studio week must be between " + MIN_WEEK + " and " + MAX_WEEK + " inclusive";
 
@@ -56,6 +55,22 @@ public final class RegisteredStudioRecords {
     public boolean hasStudioRecord(int week) {
         checkArgument(isValidWeek(week), MESSAGE_CONSTRAINTS);
         return recordsByWeek.containsKey(week);
+    }
+
+    /**
+     * Returns whether the same studio status has been recorded for the given week.
+     *
+     * @param week Studio week to check.
+     * @param studioRecord Studio record to check.
+     * @return True if the same studio status has been recorded for the given week.
+     * @throws IllegalArgumentException If {@code week} is outside the valid studio-week range.
+     * @throws NullPointerException If {@code studioRecord} is {@code null}.
+     */
+    public boolean hasMatchingStudioRecord(int week, StudioRecord studioRecord) {
+        requireNonNull(studioRecord);
+        checkArgument(isValidWeek(week), MESSAGE_CONSTRAINTS);
+
+        return recordsByWeek.containsKey(week) && recordsByWeek.get(week).equals(studioRecord);
     }
 
     /**
@@ -110,7 +125,7 @@ public final class RegisteredStudioRecords {
             return this;
         }
 
-        if (getRecordsByWeek().get(week).equals(studioRecord)) {
+        if (hasMatchingStudioRecord(week, studioRecord)) {
             return this;
         }
 

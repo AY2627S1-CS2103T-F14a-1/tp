@@ -28,8 +28,8 @@ public class MissionEditingTest {
     @BeforeEach
     public void setUp() {
         model = new ModelManager();
-        target = model.addMission("Runes", LocalDate.of(2026, 10, 20));
-        model.addMission("Curves", LocalDate.of(2026, 10, 21));
+        target = model.addMission(new MissionId("M01"), "Runes", LocalDate.of(2026, 10, 20));
+        model.addMission(new MissionId("M02"), "Curves", LocalDate.of(2026, 10, 21));
         john = new StudentBuilder().withName("John Doe")
                 .withMissionSubmissions("M01").build();
         model.addStudent(john);
@@ -37,7 +37,7 @@ public class MissionEditingTest {
     }
 
     @Test
-    public void setMission_validReplacement_preservesSubmissionsFilterPositionAndCounter() {
+    public void setMission_validReplacement_preservesSubmissionsFilterAndPosition() {
         Mission editedMission = new Mission(target.getId(), "New Runes",
                 LocalDate.of(2026, 10, 22));
 
@@ -49,7 +49,6 @@ public class MissionEditingTest {
         assertTrue(model.getAddressBook().getStudentList().getFirst()
                 .getMissionSubmissions().hasSubmission(target.getId()));
         assertTrue(model.getFilteredStudentList().isEmpty());
-        assertEquals(3, model.getAddressBook().getNextMissionNumber());
     }
 
     @Test

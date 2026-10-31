@@ -2,6 +2,8 @@ package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_EMAIL;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_INDEX;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_MATRIC_NUMBER;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PHONE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_STUDIO_GROUP;
@@ -21,6 +23,7 @@ import seedu.address.logic.Messages;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 import seedu.address.model.student.Email;
+import seedu.address.model.student.MatriculationNumber;
 import seedu.address.model.student.Name;
 import seedu.address.model.student.Phone;
 import seedu.address.model.student.Student;
@@ -30,20 +33,21 @@ import seedu.address.model.tag.Tag;
 /**
  * Edits the details of an existing student in the address book.
  */
-public class EditCommand extends Command {
+public class EditStudentCommand extends Command {
 
-    public static final String COMMAND_WORD = "edit";
+    public static final String COMMAND_WORD = "editstudent";
 
     public static final String MESSAGE_USAGE = COMMAND_WORD + ": Edits the details of the student identified "
             + "by the index number used in the displayed student list. "
             + "Existing values will be overwritten by the input values.\n"
-            + "Parameters: INDEX (must be a positive integer) "
+            + "Parameters: " + PREFIX_INDEX + "INDEX (must be a positive integer) "
             + "[" + PREFIX_NAME + "NAME] "
+            + "[" + PREFIX_MATRIC_NUMBER + "MATRICULATION NUMBER] "
             + "[" + PREFIX_PHONE + "PHONE] "
             + "[" + PREFIX_EMAIL + "EMAIL] "
             + "[" + PREFIX_TAG + "TAG]... "
             + "[" + PREFIX_STUDIO_GROUP + "STUDIO GROUP]\n"
-            + "Example: " + COMMAND_WORD + " 1 "
+            + "Example: " + COMMAND_WORD + " " + PREFIX_INDEX + "1 "
             + PREFIX_PHONE + "91234567 "
             + PREFIX_EMAIL + "johndoe@example.com";
 
@@ -58,7 +62,7 @@ public class EditCommand extends Command {
      * @param index of the student in the filtered student list to edit
      * @param editStudentDescriptor details to edit the student with
      */
-    public EditCommand(Index index, EditStudentDescriptor editStudentDescriptor) {
+    public EditStudentCommand(Index index, EditStudentDescriptor editStudentDescriptor) {
         requireNonNull(index);
         requireNonNull(editStudentDescriptor);
 
@@ -79,30 +83,32 @@ public class EditCommand extends Command {
 
         model.setStudent(studentToEdit, editedStudent);
         model.updateFilteredStudentList(PREDICATE_SHOW_ALL_STUDENTS);
-        return new CommandResult(String.format(MESSAGE_EDIT_STUDENT_SUCCESS, Messages.format(editedStudent)));
+        return new CommandResult(String.format(MESSAGE_EDIT_STUDENT_SUCCESS, Messages.format(editedStudent)),
+                editedStudent);
     }
 
     /**
-     * Creates and returns a {@code Student} with the details of {@code studentToEdit}
-     * edited with {@code editStudentDescriptor}, preserving studio group and mission submissions.
+     * Copies a student with the supplied profile edits, retaining fields not specified in the descriptor.
+     * Mission submissions, studio records, mastery checks, and notes are preserved.
      *
-     * @param studentToEdit Student whose details are being edited.
-     * @param editStudentDescriptor Details to replace on the student.
-     * @return A student with the requested edits and the original studio group, mission submissions, studio records,
-     *      and mastery checks.
+     * @param studentToEdit Non-null student whose profile is being edited.
+     * @param editStudentDescriptor Non-null descriptor containing profile values to replace.
+     * @return A student with the supplied profile edits and original activity records.
      */
     private static Student createEditedStudent(Student studentToEdit, EditStudentDescriptor editStudentDescriptor) {
         assert studentToEdit != null;
 
         Name updatedName = editStudentDescriptor.getName().orElse(studentToEdit.getName());
+        MatriculationNumber updatedMatricNumber =
+                editStudentDescriptor.getMatricNumber().orElse(studentToEdit.getMatricNumber());
         Phone updatedPhone = editStudentDescriptor.getPhone().orElse(studentToEdit.getPhone());
         Email updatedEmail = editStudentDescriptor.getEmail().orElse(studentToEdit.getEmail());
         Set<Tag> updatedTags = editStudentDescriptor.getTags().orElse(studentToEdit.getTags());
         StudioGroup updatedStudioGroup = editStudentDescriptor.getStudioGroup().orElse(studentToEdit.getStudioGroup());
 
-        return new Student(updatedName, updatedPhone, updatedEmail, updatedTags,
+        return new Student(updatedName, updatedMatricNumber, updatedPhone, updatedEmail, updatedTags,
                 updatedStudioGroup, studentToEdit.getMissionSubmissions(), studentToEdit.getRegisteredStudioRecords(),
-                studentToEdit.getRegisteredMasteryChecks());
+                studentToEdit.getRegisteredMasteryChecks(), studentToEdit.getRegisteredNotes());
     }
 
     @Override
@@ -112,12 +118,12 @@ public class EditCommand extends Command {
         }
 
         // instanceof handles nulls
-        if (!(other instanceof EditCommand otherEditCommand)) {
+        if (!(other instanceof EditStudentCommand otherEditStudentCommand)) {
             return false;
         }
 
-        return index.equals(otherEditCommand.index)
-                && editStudentDescriptor.equals(otherEditCommand.editStudentDescriptor);
+        return index.equals(otherEditStudentCommand.index)
+                && editStudentDescriptor.equals(otherEditStudentCommand.editStudentDescriptor);
     }
 
     @Override
@@ -134,6 +140,7 @@ public class EditCommand extends Command {
      */
     public static class EditStudentDescriptor {
         private Name name;
+        private MatriculationNumber matricNumber;
         private Phone phone;
         private Email email;
         private Set<Tag> tags;
@@ -147,6 +154,7 @@ public class EditCommand extends Command {
          */
         public EditStudentDescriptor(EditStudentDescriptor toCopy) {
             setName(toCopy.name);
+            setMatricNumber(toCopy.matricNumber);
             setPhone(toCopy.phone);
             setEmail(toCopy.email);
             setTags(toCopy.tags);
@@ -157,7 +165,7 @@ public class EditCommand extends Command {
          * Returns true if at least one field is edited.
          */
         public boolean isAnyFieldEdited() {
-            return CollectionUtil.isAnyNonNull(name, phone, email, tags, studioGroup);
+            return CollectionUtil.isAnyNonNull(name, matricNumber, phone, email, tags, studioGroup);
         }
 
         public void setName(Name name) {
@@ -166,6 +174,14 @@ public class EditCommand extends Command {
 
         public Optional<Name> getName() {
             return Optional.ofNullable(name);
+        }
+
+        public void setMatricNumber(MatriculationNumber matricNumber) {
+            this.matricNumber = matricNumber;
+        }
+
+        public Optional<MatriculationNumber> getMatricNumber() {
+            return Optional.ofNullable(matricNumber);
         }
 
         public void setPhone(Phone phone) {
@@ -221,6 +237,7 @@ public class EditCommand extends Command {
             }
 
             return Objects.equals(name, otherEditStudentDescriptor.name)
+                    && Objects.equals(matricNumber, otherEditStudentDescriptor.matricNumber)
                     && Objects.equals(phone, otherEditStudentDescriptor.phone)
                     && Objects.equals(email, otherEditStudentDescriptor.email)
                     && Objects.equals(tags, otherEditStudentDescriptor.tags)
@@ -231,6 +248,7 @@ public class EditCommand extends Command {
         public String toString() {
             return new ToStringBuilder(this)
                     .add("name", name)
+                    .add("matriculation number", matricNumber)
                     .add("phone", phone)
                     .add("email", email)
                     .add("tags", tags)

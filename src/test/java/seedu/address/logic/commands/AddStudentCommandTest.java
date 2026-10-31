@@ -70,6 +70,9 @@ public class AddStudentCommandTest {
         // same values -> returns true
         AddStudentCommand addAliceCommandCopy = new AddStudentCommand(alice);
         assertTrue(addAliceCommand.equals(addAliceCommandCopy));
+        assertEquals(
+                addAliceCommandCopy.hashCode(),
+                addAliceCommand.hashCode());
 
         // different types -> returns false
         assertFalse(addAliceCommand.equals(1));
@@ -98,7 +101,7 @@ public class AddStudentCommandTest {
         }
 
         @Override
-        public Mission addMission(String description, LocalDate deadline) {
+        public Mission addMission(MissionId id, String description, LocalDate deadline) {
             throw new AssertionError("Unexpected mission creation");
         }
 

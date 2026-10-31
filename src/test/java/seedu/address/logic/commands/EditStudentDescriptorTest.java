@@ -13,7 +13,7 @@ import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_HUSBAND;
 
 import org.junit.jupiter.api.Test;
 
-import seedu.address.logic.commands.EditCommand.EditStudentDescriptor;
+import seedu.address.logic.commands.EditStudentCommand.EditStudentDescriptor;
 import seedu.address.testutil.EditStudentDescriptorBuilder;
 
 public class EditStudentDescriptorTest {
@@ -61,7 +61,8 @@ public class EditStudentDescriptorTest {
     public void toStringMethod() {
         EditStudentDescriptor editStudentDescriptor = new EditStudentDescriptor();
         String expected = EditStudentDescriptor.class.getCanonicalName() + "{name="
-                + editStudentDescriptor.getName().orElse(null) + ", phone="
+                + editStudentDescriptor.getName().orElse(null) + ", matriculation number="
+                + editStudentDescriptor.getMatricNumber().orElse(null) + ", phone="
                 + editStudentDescriptor.getPhone().orElse(null) + ", email="
                 + editStudentDescriptor.getEmail().orElse(null) + ", tags="
                 + editStudentDescriptor.getTags().orElse(null) + ", studio group="

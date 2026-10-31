@@ -1,7 +1,11 @@
 package seedu.address.ui;
 
+import static java.time.Duration.ofSeconds;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTimeout;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.testutil.TypicalStudents.AMY;
 
@@ -11,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -18,15 +23,24 @@ import org.junit.jupiter.api.Test;
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import seedu.address.model.masterycheck.MasteryCheck;
 import seedu.address.model.mission.Mission;
 import seedu.address.model.mission.MissionId;
+import seedu.address.model.student.Note;
+import seedu.address.model.student.RegisteredNotes;
+import seedu.address.model.student.RegisteredStudioRecords;
 import seedu.address.model.student.Student;
+import seedu.address.model.student.StudioRecord;
+import seedu.address.model.tag.Tag;
 import seedu.address.testutil.StudentBuilder;
+import seedu.address.testutil.StudentBuilder.StudioRecordSet;
 
 public class StudentDetailsPanelTest {
+
+    private static final int MAXIMUM_NOTES_RENDER_AND_SCROLL_TIMEOUT_SECONDS = 10;
 
     @BeforeAll
     public static void setUpJavaFx() throws Exception {
@@ -59,6 +73,10 @@ public class StudentDetailsPanelTest {
 
             panel.showStudent(student, List.of());
 
+            String studentTags = student.getTags().stream()
+                    .map(Tag::toString)
+                    .collect(Collectors.joining(", "));
+
             assertEquals(
                     student.getName().fullName,
                     getLabel(panel, "#studentName").getText());
@@ -77,7 +95,7 @@ public class StudentDetailsPanelTest {
                     getLabel(panel, "#email").getText());
 
             assertEquals(
-                    "Tags: " + student.getTags(),
+                    "Tags: " + (studentTags.isEmpty() ? "-" : studentTags),
                     getLabel(panel, "#tags").getText());
 
             assertTrue(
@@ -132,7 +150,7 @@ public class StudentDetailsPanelTest {
                     missionName.getText());
 
             assertEquals(
-                    "Due: 2026-10-20",
+                    "Due: 20 October 2026",
                     deadline.getText());
         });
     }
@@ -185,6 +203,106 @@ public class StudentDetailsPanelTest {
         });
     }
 
+    @Test
+    public void showStudent_studioRecords_displaysAttendanceFromRecordPresence() throws Exception {
+        runOnJavaFxThread(() -> {
+            Student student = new StudentBuilder(AMY)
+                    .withStudioRecords(
+                            new StudioRecordSet(3, new StudioRecord(50)),
+                            new StudioRecordSet(4, new StudioRecord(0)))
+                    .build();
+            StudentDetailsPanel panel = new StudentDetailsPanel();
+
+            panel.showStudent(student, List.of());
+
+            GridPane grid = getStudioRecordGrid(panel);
+            assertEquals("Week", getGridCell(grid, 0, 0));
+            assertEquals("Attendance", getGridCell(grid, 1, 0));
+            assertEquals("Effort Score", getGridCell(grid, 2, 0));
+            assertEquals("Attended", getGridCell(grid, 1, getStudioRow(3)));
+            assertEquals("50", getGridCell(grid, 2, getStudioRow(3)));
+            assertEquals("Attended", getGridCell(grid, 1, getStudioRow(4)));
+            assertEquals("0", getGridCell(grid, 2, getStudioRow(4)));
+            assertEquals("Not attended", getGridCell(grid, 1, getStudioRow(5)));
+            assertEquals("0", getGridCell(grid, 2, getStudioRow(5)));
+        });
+    }
+
+    @Test
+    public void showStudent_switchStudents_refreshesStudioAttendance() throws Exception {
+        runOnJavaFxThread(() -> {
+            Student attendedStudent = new StudentBuilder(AMY)
+                    .withStudioRecords(new StudioRecordSet(3, new StudioRecord(50)))
+                    .build();
+            Student studentWithoutRecords = new StudentBuilder(AMY).withStudioRecords().build();
+            StudentDetailsPanel panel = new StudentDetailsPanel();
+
+            panel.showStudent(attendedStudent, List.of());
+            GridPane grid = getStudioRecordGrid(panel);
+            assertEquals("Attended", getGridCell(grid, 1, getStudioRow(3)));
+
+            panel.showStudent(studentWithoutRecords, List.of());
+            assertEquals("Not attended", getGridCell(grid, 1, getStudioRow(3)));
+
+            panel.showStudent(attendedStudent, List.of());
+            assertEquals("Attended", getGridCell(grid, 1, getStudioRow(3)));
+            int displayedWeeks = RegisteredStudioRecords.MAX_WEEK - RegisteredStudioRecords.MIN_WEEK + 1;
+            assertEquals((displayedWeeks + 1) * 3, grid.getChildren().size());
+        });
+    }
+
+    @Test
+    public void showStudent_thousandMaximumLengthNotes_rendersAndScrollsWithoutSignificantLag() throws Exception {
+        List<Note> notes = createMaximumLengthNotes();
+        Student student = AMY.withRegisteredNotes(new RegisteredNotes(notes));
+
+        runOnJavaFxThread(() -> assertTimeout(ofSeconds(MAXIMUM_NOTES_RENDER_AND_SCROLL_TIMEOUT_SECONDS), () -> {
+            StudentDetailsPanel panel = new StudentDetailsPanel();
+            new Scene(panel.getRoot(), 1000, 700);
+            panel.showStudent(student, List.of());
+            panel.getRoot().applyCss();
+            panel.getRoot().layout();
+
+            GridPane notesGrid = (GridPane) panel.getRoot().lookup("#notesGrid");
+            ScrollPane scrollPane = (ScrollPane) panel.getRoot().lookup("#studentDetailsScrollPane");
+            assertEquals(2 * (RegisteredNotes.MAX_NOTE_INDEX + 1), notesGrid.getChildren().size());
+
+            for (int i = 0; i < RegisteredNotes.MAX_NOTE_INDEX; i++) {
+                scrollPane.setVvalue((double) i / (RegisteredNotes.MAX_NOTE_INDEX - 1));
+                scrollPane.layout();
+            }
+
+            assertEquals(1.0, scrollPane.getVvalue());
+            assertEquals(String.valueOf(RegisteredNotes.MAX_NOTE_INDEX),
+                    getGridCell(notesGrid, 0, RegisteredNotes.MAX_NOTE_INDEX));
+            assertEquals(Note.MAX_NOTE_LENGTH,
+                    getGridCell(notesGrid, 1, RegisteredNotes.MAX_NOTE_INDEX).length());
+        }));
+    }
+
+    /**
+     * Creates the maximum supported number of maximum-length notes.
+     *
+     * @return Notes with distinct text and the maximum valid length.
+     */
+    private static List<Note> createMaximumLengthNotes() {
+        return java.util.stream.IntStream.range(0, RegisteredNotes.MAX_NOTE_INDEX)
+                .mapToObj(index -> String.format("%04d", index))
+                .map(prefix -> prefix + "x".repeat(Note.MAX_NOTE_LENGTH - prefix.length()))
+                .map(Note::new)
+                .toList();
+    }
+
+    /**
+     * Returns the studio grid row corresponding to the specified week.
+     *
+     * @param week Studio week whose row is required.
+     * @return One-based data-row index for the specified week.
+     */
+    private static int getStudioRow(int week) {
+        return week - RegisteredStudioRecords.MIN_WEEK + 1;
+    }
+
     private static GridPane getMissionGrid(
             StudentDetailsPanel panel) {
 
@@ -192,6 +310,11 @@ public class StudentDetailsPanelTest {
 
         return (GridPane) panel.getRoot()
                 .lookup("#missionSubmissionsGrid");
+    }
+
+    private static GridPane getStudioRecordGrid(StudentDetailsPanel panel) {
+        prepareRoot(panel);
+        return (GridPane) panel.getRoot().lookup("#studioRecordGrid");
     }
 
     private static Label getLabel(
@@ -283,10 +406,73 @@ public class StudentDetailsPanelTest {
             assertEquals(6, grid.getChildren().size());
             assertEquals("Completed", getMasteryCell(grid, 2, 1));
             panel.showStudent(null, List.of());
-            assertFalse(panel.getRoot().lookup("#studentDetailsScrollPane").isVisible());
+
+            assertTrue(
+                    panel.getRoot()
+                            .lookup("#studentDetailsScrollPane")
+                            .isVisible());
+
             panel.showStudent(student, List.of());
+            prepareRoot(panel);
             assertEquals(6, grid.getChildren().size());
             assertEquals("Completed", getMasteryCell(grid, 2, 1));
+        });
+    }
+
+    @Test
+    public void getDisplayedStudent_afterShowStudent_returnsDisplayedStudent() throws Exception {
+        runOnJavaFxThread(() -> {
+            StudentDetailsPanel panel = new StudentDetailsPanel();
+
+            Student student = new StudentBuilder(AMY).build();
+            panel.showStudent(student, List.of());
+
+            assertSame(student, panel.getDisplayedStudent());
+        });
+    }
+
+    @Test
+    public void updateMissions_withDisplayedStudent_refreshesMissionStatuses() throws Exception {
+        runOnJavaFxThread(() -> {
+            Mission mission = new Mission(
+                    new MissionId("M01"),
+                    "Runes",
+                    LocalDate.of(2026, 10, 20));
+
+            Student student = new StudentBuilder(AMY)
+                    .withMissionSubmissions("M01")
+                    .build();
+
+            StudentDetailsPanel panel = new StudentDetailsPanel();
+            panel.showStudent(student, List.of());
+            panel.updateMissions(List.of(mission));
+
+            GridPane missionGrid = getMissionGrid(panel);
+
+            Label status = (Label) missionGrid.getChildren().get(3);
+            assertEquals("Submitted", status.getText());
+        });
+    }
+
+    @Test
+    public void updateMissions_withoutDisplayedStudent_doesNothing()
+            throws Exception {
+        runOnJavaFxThread(() -> {
+            StudentDetailsPanel panel = new StudentDetailsPanel();
+
+            int childrenBefore =
+                    getMissionGrid(panel).getChildren().size();
+
+            panel.updateMissions(List.of(
+                    new Mission(
+                            new MissionId("M01"),
+                            "Runes",
+                            LocalDate.of(2026, 10, 20))));
+
+            assertNull(panel.getDisplayedStudent());
+            assertEquals(
+                    childrenBefore,
+                    getMissionGrid(panel).getChildren().size());
         });
     }
 
@@ -299,6 +485,18 @@ public class StudentDetailsPanelTest {
      * @return Text displayed in the specified grid cell.
      */
     private static String getMasteryCell(GridPane grid, int column, int row) {
+        return getGridCell(grid, column, row);
+    }
+
+    /**
+     * Returns the text of a label at the specified grid coordinates.
+     *
+     * @param grid Grid containing the labels.
+     * @param column Zero-based column index.
+     * @param row Zero-based row index.
+     * @return Text displayed in the specified grid cell.
+     */
+    private static String getGridCell(GridPane grid, int column, int row) {
         return grid.getChildren().stream()
                 .filter(node -> Integer.valueOf(column).equals(GridPane.getColumnIndex(node))
                         && Integer.valueOf(row).equals(GridPane.getRowIndex(node)))

@@ -67,8 +67,13 @@ public class AddMasteryCheckCommandTest {
         Student updated = new StudentBuilder(student).withMasteryChecks(Map.of(1, first, 2, second)).build();
         Model expected = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
         expected.setStudent(student, updated);
-        assertCommandSuccess(new AddMasteryCheckCommand(INDEX_FIRST_STUDENT, 1, first), model,
-                "Added " + student.getName() + "'s mastery check 1 at Aug 18, 14:30.", expected);
+        String expectedMessage =
+                "Added " + student.getName() + "'s mastery check 1 at Aug 18, 14:30.";
+        assertCommandSuccess(
+                new AddMasteryCheckCommand(INDEX_FIRST_STUDENT, 1, first),
+                model,
+                new CommandResult(expectedMessage, updated),
+                expected);
         assertFalse(student.getRegisteredMasteryChecks().hasMasteryCheck(1));
     }
 
@@ -91,7 +96,8 @@ public class AddMasteryCheckCommandTest {
         Model expected = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
         assertCommandSuccess(new AddMasteryCheckCommand(INDEX_FIRST_STUDENT, 1,
                 new MasteryCheck(APPOINTMENT.plusDays(1))), model,
-                String.format(AddMasteryCheckCommand.MESSAGE_ALREADY_RECORDED, student.getName(), 1), expected);
+                new CommandResult(String.format(AddMasteryCheckCommand.MESSAGE_ALREADY_RECORDED, student.getName(), 1),
+                student), expected);
     }
 
     @Test
@@ -117,8 +123,20 @@ public class AddMasteryCheckCommandTest {
         Student updated = new StudentBuilder(student)
                 .withMasteryChecks(Map.of(1, new MasteryCheck(APPOINTMENT))).build();
         expected.setStudent(student, updated);
-        assertCommandSuccess(new AddMasteryCheckCommand(INDEX_FIRST_STUDENT, 1, new MasteryCheck(APPOINTMENT)), model,
-                String.format(AddMasteryCheckCommand.MESSAGE_SUCCESS, student.getName(), 1, "Aug 18, 14:30"), expected);
+        String expectedMessage = String.format(
+                AddMasteryCheckCommand.MESSAGE_SUCCESS,
+                student.getName(),
+                1,
+                "Aug 18, 14:30");
+
+        assertCommandSuccess(
+                new AddMasteryCheckCommand(
+                        INDEX_FIRST_STUDENT,
+                        1,
+                        new MasteryCheck(APPOINTMENT)),
+                model,
+                new CommandResult(expectedMessage, updated),
+                expected);
         assertEquals(1, model.getFilteredStudentList().size());
     }
 
@@ -133,7 +151,14 @@ public class AddMasteryCheckCommandTest {
     public void equals_indexNumberTimeAndCompletion_returnsExpectedEquality() {
         AddMasteryCheckCommand command =
                 new AddMasteryCheckCommand(INDEX_FIRST_STUDENT, 1, new MasteryCheck(APPOINTMENT));
-        assertEquals(new AddMasteryCheckCommand(INDEX_FIRST_STUDENT, 1, new MasteryCheck(APPOINTMENT)), command);
+        AddMasteryCheckCommand equalCommand =
+                new AddMasteryCheckCommand(
+                        INDEX_FIRST_STUDENT,
+                        1,
+                        new MasteryCheck(APPOINTMENT));
+
+        assertEquals(equalCommand, command);
+        assertEquals(equalCommand.hashCode(), command.hashCode());
         assertNotEquals(new AddMasteryCheckCommand(INDEX_SECOND_STUDENT, 1, new MasteryCheck(APPOINTMENT)), command);
         assertNotEquals(new AddMasteryCheckCommand(INDEX_FIRST_STUDENT, 2, new MasteryCheck(APPOINTMENT)), command);
         assertNotEquals(command, new AddMasteryCheckCommand(INDEX_FIRST_STUDENT, 1,

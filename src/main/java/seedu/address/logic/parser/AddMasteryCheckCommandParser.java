@@ -1,7 +1,8 @@
 package seedu.address.logic.parser;
 
-import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
+import static java.util.Objects.requireNonNull;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_DATETIME;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_INDEX;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NUMBER;
 
 import java.time.LocalDateTime;
@@ -9,12 +10,15 @@ import java.time.LocalDateTime;
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.AddMasteryCheckCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.logic.parser.util.MasteryCheckParserUtil;
+import seedu.address.logic.parser.util.ParserUtil;
 import seedu.address.model.masterycheck.MasteryCheck;
 
 /**
  * Parses a displayed student index and the number and appointment time of a mastery check to register.
  */
 public class AddMasteryCheckCommandParser implements Parser<AddMasteryCheckCommand> {
+
     /**
      * Parses the student index, mastery check number, and the appointment date-time.
      *
@@ -26,25 +30,19 @@ public class AddMasteryCheckCommandParser implements Parser<AddMasteryCheckComma
      */
     @Override
     public AddMasteryCheckCommand parse(String args) throws ParseException {
-        ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args, PREFIX_NUMBER, PREFIX_DATETIME);
-        Index index;
-
+        requireNonNull(args);
         try {
-            index = ParserUtil.parseIndex(argMultimap.getPreamble());
-        } catch (ParseException pe) {
-            throw new ParseException(
-                    String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddMasteryCheckCommand.MESSAGE_USAGE), pe);
+            ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
+                    args, PREFIX_INDEX, PREFIX_NUMBER, PREFIX_DATETIME);
+
+            Index index = ParserUtil.parseIndex(argMultimap.getRequiredValue(PREFIX_INDEX));
+            int number = MasteryCheckParserUtil.parseMasteryCheckNumber(argMultimap.getRequiredValue(PREFIX_NUMBER));
+            LocalDateTime dateTime = MasteryCheckParserUtil.parseMasteryCheckDateTime(argMultimap
+                    .getRequiredValue(PREFIX_DATETIME));
+            return new AddMasteryCheckCommand(index, number, new MasteryCheck(dateTime));
+        } catch (ParseException e) {
+            throw new ParseException(e.getMessage()
+                    + ParserUtil.MESSAGE_SEE_USAGE + AddMasteryCheckCommand.MESSAGE_USAGE);
         }
-
-        if (!argMultimap.arePrefixesPresent(PREFIX_NUMBER, PREFIX_DATETIME)) {
-            throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT,
-                    AddMasteryCheckCommand.MESSAGE_USAGE));
-        }
-
-        argMultimap.verifyNoDuplicatePrefixesFor(PREFIX_NUMBER, PREFIX_DATETIME);
-        int number = ParserUtil.parseMasteryCheckNumber(argMultimap.getValue(PREFIX_NUMBER).get());
-        LocalDateTime dateTime = ParserUtil.parseMasteryCheckDateTime(argMultimap.getValue(PREFIX_DATETIME).get());
-
-        return new AddMasteryCheckCommand(index, number, new MasteryCheck(dateTime));
     }
 }

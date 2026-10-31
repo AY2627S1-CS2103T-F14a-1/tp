@@ -52,7 +52,13 @@ public class DeleteMissionCommand extends Command {
 
         Mission deleted = model.deleteMission(missionId);
         logger.info("Deleted mission " + missionId + " and its submission records from the in-memory address book.");
-        return new CommandResult(String.format(MESSAGE_SUCCESS, Messages.format(deleted)));
+        return new CommandResult(
+                String.format(
+                        MESSAGE_SUCCESS,
+                        Messages.format(deleted)),
+                null,
+                model.getMissionList(),
+                true);
     }
 
     @Override

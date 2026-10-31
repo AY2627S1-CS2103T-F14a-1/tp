@@ -2,8 +2,10 @@ package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.AppUtil.checkArgument;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_INDEX;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NUMBER;
 
+import java.util.Objects;
 import java.util.logging.Logger;
 
 import seedu.address.commons.core.LogsCenter;
@@ -23,10 +25,10 @@ public class UnmarkMasteryCheckCommand extends Command {
 
     public static final String MESSAGE_USAGE = COMMAND_WORD
             + ": Revokes completion status for the numbered mastery check of the selected student.\n"
-            + "Parameters: INDEX" + PREFIX_NUMBER + "NUMBER\n"
+            + "Parameters: " + PREFIX_INDEX + "INDEX " + PREFIX_NUMBER + "NUMBER\n"
             + "INDEX must be a positive integer identifying a displayed student.\n"
             + "NUMBER must be a positive integer identifying a mastery check.\n"
-            + "Example: " + COMMAND_WORD + " 1 num/2";
+            + "Example: " + COMMAND_WORD + " " + PREFIX_INDEX + "1 " + PREFIX_NUMBER + "2";
 
     public static final String MESSAGE_SUCCESS =
             "Marked %1$s’s mastery check %2$s as incomplete.";
@@ -35,7 +37,7 @@ public class UnmarkMasteryCheckCommand extends Command {
             "%1$s’s mastery check %2$s is already incomplete. No changes made.";
 
     public static final String MESSAGE_MASTERY_CHECK_NOT_FOUND =
-            "Mastery check %1$s does not exist for %2$s.";
+            "Mastery check %1$s does not exist for %2$s. You can add one using the addmc command.";
 
     private static final Logger logger = LogsCenter.getLogger(UnmarkMasteryCheckCommand.class);
 
@@ -86,7 +88,8 @@ public class UnmarkMasteryCheckCommand extends Command {
             logger.fine("UnmarkMasteryCheckCommand made no changes for mastery check " + number
                     + " for student " + studentToUpdate.getName()
                     + " at displayed student index " + targetIndex.getOneBased() + ".");
-            return new CommandResult(String.format(MESSAGE_ALREADY_MARKED, studentToUpdate.getName(), number));
+            return new CommandResult(String.format(MESSAGE_ALREADY_MARKED, studentToUpdate.getName(), number),
+                    studentToUpdate);
         }
 
         Student updatedStudent = studentToUpdate.withRegisteredMasteryChecks(
@@ -95,7 +98,7 @@ public class UnmarkMasteryCheckCommand extends Command {
         logger.info("Revoked completion for mastery check " + number
                 + " for student " + studentToUpdate.getName()
                 + " at displayed student index " + targetIndex.getOneBased() + " in memory.");
-        return new CommandResult(String.format(MESSAGE_SUCCESS, studentToUpdate.getName(), number));
+        return new CommandResult(String.format(MESSAGE_SUCCESS, studentToUpdate.getName(), number), updatedStudent);
     }
 
     /**
@@ -117,6 +120,11 @@ public class UnmarkMasteryCheckCommand extends Command {
 
         return targetIndex.equals(otherUnmarkMasteryCheckCommand.targetIndex)
                 && number == otherUnmarkMasteryCheckCommand.number;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(targetIndex, number);
     }
 
     /**

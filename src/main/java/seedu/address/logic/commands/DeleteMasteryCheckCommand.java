@@ -2,7 +2,10 @@ package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.AppUtil.checkArgument;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_INDEX;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NUMBER;
+
+import java.util.Objects;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.ToStringBuilder;
@@ -20,10 +23,10 @@ public class DeleteMasteryCheckCommand extends Command {
 
     public static final String MESSAGE_USAGE = COMMAND_WORD
             + ": Removes a numbered mastery check for the selected student.\n"
-            + "Parameters: INDEX " + PREFIX_NUMBER + "NUMBER\n"
+            + "Parameters: " + PREFIX_INDEX + "INDEX " + PREFIX_NUMBER + "NUMBER\n"
             + "INDEX must be a positive integer identifying a displayed student.\n"
             + "NUMBER must be a positive integer identifying a mastery check.\n"
-            + "Example: " + COMMAND_WORD + " 1 num/2";
+            + "Example: " + COMMAND_WORD + " " + PREFIX_INDEX + "1 " + PREFIX_NUMBER + "2";
 
     public static final String MESSAGE_SUCCESS =
             "Removed %1$s's mastery check numbered %2$d.";
@@ -67,13 +70,14 @@ public class DeleteMasteryCheckCommand extends Command {
         RegisteredMasteryChecks registeredMasteryChecks = studentToUpdate.getRegisteredMasteryChecks();
 
         if (!registeredMasteryChecks.hasMasteryCheck(number)) {
-            return new CommandResult(String.format(MESSAGE_NOT_FOUND, studentToUpdate.getName(), number));
+            return new CommandResult(String.format(MESSAGE_NOT_FOUND, studentToUpdate.getName(), number),
+                    studentToUpdate);
         }
 
         Student updatedStudent = studentToUpdate.withRegisteredMasteryChecks(
                 registeredMasteryChecks.withoutMasteryCheck(number));
         model.setStudent(studentToUpdate, updatedStudent);
-        return new CommandResult(String.format(MESSAGE_SUCCESS, studentToUpdate.getName(), number));
+        return new CommandResult(String.format(MESSAGE_SUCCESS, studentToUpdate.getName(), number), updatedStudent);
     }
 
     /**
@@ -95,6 +99,11 @@ public class DeleteMasteryCheckCommand extends Command {
 
         return targetIndex.equals(otherDeleteMasteryCheckCommand.targetIndex)
                 && number == otherDeleteMasteryCheckCommand.number;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(targetIndex, number);
     }
 
     /**

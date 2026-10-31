@@ -1,43 +1,41 @@
 package seedu.address.logic.parser;
 
-import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
+import static java.util.Objects.requireNonNull;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_DATE;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_MISSION;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
 
 import java.time.LocalDate;
 
 import seedu.address.logic.commands.AddMissionCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.logic.parser.util.MissionParserUtil;
+import seedu.address.logic.parser.util.ParserUtil;
+import seedu.address.model.mission.MissionId;
 
-/** Parses the name and calendar deadline of a shared mission. */
+/** Parses the ID, name, and calendar deadline of a shared mission. */
 public class AddMissionCommandParser implements Parser<AddMissionCommand> {
 
-    public static final String MESSAGE_MISSING_DEADLINE =
-            "Specify a deadline in YYYY-MM-DD format using d/DEADLINE.";
-
     /**
-     * Parses exactly one name and deadline without consulting or changing the model.
+     * Parses exactly one mission ID, name, and deadline without consulting or changing the model.
      *
      * @param args Arguments after the command word.
-     * @return Command containing trimmed name and date.
+     * @return Command containing the mission ID, trimmed name, and date.
      * @throws ParseException If a field is missing, repeated, empty, or invalid, or a preamble exists.
      */
     @Override
     public AddMissionCommand parse(String args) throws ParseException {
-        ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args, PREFIX_NAME, PREFIX_DATE);
+        requireNonNull(args);
+        try {
+            ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
+                    args, PREFIX_MISSION, PREFIX_NAME, PREFIX_DATE);
 
-        if (!argMultimap.getPreamble().isEmpty()) {
-            throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT,
-                    AddMissionCommand.MESSAGE_USAGE));
+            MissionId missionId = MissionParserUtil.parseMissionId(argMultimap.getRequiredValue(PREFIX_MISSION));
+            String name = MissionParserUtil.parseMissionName(argMultimap.getRequiredValue(PREFIX_NAME));
+            LocalDate deadline = MissionParserUtil.parseMissionDeadline(argMultimap.getRequiredValue(PREFIX_DATE));
+            return new AddMissionCommand(missionId, name, deadline);
+        } catch (ParseException e) {
+            throw new ParseException(e.getMessage() + ParserUtil.MESSAGE_SEE_USAGE + AddMissionCommand.MESSAGE_USAGE);
         }
-
-        argMultimap.verifyNoDuplicatePrefixesFor(PREFIX_NAME, PREFIX_DATE);
-        String name = ParserUtil.parseMissionName(argMultimap.getValue(PREFIX_NAME).orElse(""));
-        if (!argMultimap.arePrefixesPresent(PREFIX_DATE)) {
-            throw new ParseException(MESSAGE_MISSING_DEADLINE);
-        }
-        LocalDate deadline = ParserUtil.parseMissionDeadline(argMultimap.getValue(PREFIX_DATE).get());
-
-        return new AddMissionCommand(name, deadline);
     }
 }

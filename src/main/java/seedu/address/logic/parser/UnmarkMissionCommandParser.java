@@ -1,7 +1,15 @@
 package seedu.address.logic.parser;
 
+import static java.util.Objects.requireNonNull;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_INDEX;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_MISSION;
+
+import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.UnmarkMissionCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.logic.parser.util.MissionParserUtil;
+import seedu.address.logic.parser.util.ParserUtil;
+import seedu.address.model.mission.MissionId;
 
 /**
  * Parses input arguments and creates a new {@code UnmarkMissionCommand}.
@@ -18,7 +26,17 @@ public class UnmarkMissionCommandParser implements Parser<UnmarkMissionCommand> 
      */
     @Override
     public UnmarkMissionCommand parse(String args) throws ParseException {
-        MissionParser arguments = new MissionParser(args, UnmarkMissionCommand.MESSAGE_USAGE);
-        return new UnmarkMissionCommand(arguments.getIndex(), arguments.getMissionId());
+        requireNonNull(args);
+        try {
+            ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
+                    args, PREFIX_INDEX, PREFIX_MISSION);
+
+            Index index = ParserUtil.parseIndex(argMultimap.getRequiredValue(PREFIX_INDEX));
+            MissionId missionId = MissionParserUtil.parseMissionId(argMultimap.getRequiredValue(PREFIX_MISSION));
+            return new UnmarkMissionCommand(index, missionId);
+        } catch (ParseException e) {
+            throw new ParseException(e.getMessage()
+                    + ParserUtil.MESSAGE_SEE_USAGE + UnmarkMissionCommand.MESSAGE_USAGE);
+        }
     }
 }

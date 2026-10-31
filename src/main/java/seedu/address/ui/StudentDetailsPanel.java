@@ -4,6 +4,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javafx.fxml.FXML;
 import javafx.geometry.VPos;
@@ -18,22 +19,31 @@ import seedu.address.model.masterycheck.MasteryCheck;
 import seedu.address.model.mission.Mission;
 import seedu.address.model.mission.MissionId;
 import seedu.address.model.student.MissionSubmissions;
+import seedu.address.model.student.Note;
 import seedu.address.model.student.RegisteredStudioRecords;
 import seedu.address.model.student.Student;
 import seedu.address.model.student.StudioRecord;
 
 /**
  * UI panel that displays the selected student's profile, attendance,
- * mission-submission information, and mastery check appointments.
+ * notes, mission-submission information, and mastery check appointments.
  */
 public class StudentDetailsPanel extends UiPart<Region> {
 
     private static final String FXML = "StudentDetailsPanel.fxml";
     private static final DateTimeFormatter APPOINTMENT_TIME_FORMATTER =
             DateTimeFormatter.ofPattern("MMM d, HH:mm", Locale.ENGLISH);
+    private static final DateTimeFormatter MISSION_DEADLINE_FORMATTER =
+            DateTimeFormatter.ofPattern("d MMMM uuuu", Locale.ENGLISH);
+
+    private Student displayedStudent;
+    private List<Mission> displayedMissions = List.of();
 
     @FXML
     private Label studentName;
+
+    @FXML
+    private Label matricNumber;
 
     @FXML
     private Label studioGroup;
@@ -55,6 +65,9 @@ public class StudentDetailsPanel extends UiPart<Region> {
 
     @FXML
     private GridPane studioRecordGrid;
+
+    @FXML
+    private GridPane notesGrid;
 
     @FXML
     private GridPane missionSubmissionsGrid;
@@ -87,9 +100,11 @@ public class StudentDetailsPanel extends UiPart<Region> {
             List<Mission> missions) {
 
         if (student == null) {
-            clearStudent();
             return;
         }
+
+        displayedStudent = student;
+        displayedMissions = List.copyOf(missions);
 
         emptyMessage.setVisible(false);
         emptyMessage.setManaged(false);
@@ -100,22 +115,57 @@ public class StudentDetailsPanel extends UiPart<Region> {
         studentDetails.setVisible(true);
         studentDetails.setManaged(true);
 
+        String studentTags = student.getTags().stream()
+                .map(tag -> tag.tagName)
+                .collect(Collectors.joining(", "));
+
         studentName.setText(student.getName().fullName);
+        matricNumber.setText(student.getMatricNumber().matricNumber);
         studioGroup.setText(
                 "Studio group: " + student.getStudioGroup().studioGroup);
         phone.setText("Phone: " + student.getPhone().value);
         email.setText("Email: " + student.getEmail().value);
-        tags.setText("Tags: " + student.getTags());
+        tags.setText("Tags: " + (studentTags.isEmpty() ? "-" : studentTags));
 
+        populateNotes(student);
         populateMissionSubmissions(student, missions);
         populateStudioRecord(student);
         populateMasteryChecks(student);
     }
 
     /**
+     * Populates the notes grid with notes in ascending note index order.
+     * Displays an empty-state message when the student has no notes.
+     *
+     * @param student Student whose notes are displayed.
+     */
+    private void populateNotes(Student student) {
+        notesGrid.getChildren().clear();
+        addGridLabel(notesGrid, "Index", 0, 0, true);
+        addGridLabel(notesGrid, "Note", 1, 0, true);
+
+        List<Note> notes = student.getRegisteredNotes().getRegisteredNotes();
+        if (notes.isEmpty()) {
+            addGridLabel(notesGrid, "No notes recorded.", 0, 1, false);
+            GridPane.setColumnSpan(notesGrid.getChildren().getLast(), 2);
+            return;
+        }
+
+        int row = 1;
+        for (int i = 1; i <= notes.size(); i++) {
+            addGridLabel(notesGrid, String.valueOf(i), 0, row, false);
+            addGridLabel(notesGrid, notes.get(i - 1).getNoteText(), 1, row, false);
+            row++;
+        }
+    }
+
+    /**
      * Resets the panel to its default state where no student is selected.
      */
     public void clearStudent() {
+        displayedStudent = null;
+        displayedMissions = List.of();
+
         emptyMessage.setVisible(true);
         emptyMessage.setManaged(true);
 
@@ -196,8 +246,9 @@ public class StudentDetailsPanel extends UiPart<Region> {
     /**
      * Populates the studio-record grid for the specified student.
      *
-     * <p>Each supported week is displayed with its corresponding effort
-     * score. A score of zero is displayed when no record exists.</p>
+     * <p>Each supported week is displayed with its attendance and corresponding
+     * effort score. A week is attended when a record exists. Otherwise, it is
+     * not attended and has a displayed score of zero.</p>
      *
      * @param student student whose studio records are displayed
      */
@@ -217,8 +268,15 @@ public class StudentDetailsPanel extends UiPart<Region> {
 
         addGridLabel(
                 studioRecordGrid,
-                "Effort Score",
+                "Attendance",
                 1,
+                0,
+                true);
+
+        addGridLabel(
+                studioRecordGrid,
+                "Effort Score",
+                2,
                 0,
                 true);
 
@@ -238,8 +296,15 @@ public class StudentDetailsPanel extends UiPart<Region> {
 
             addGridLabel(
                     studioRecordGrid,
-                    String.valueOf(score),
+                    hasAttended ? "Attended" : "Not attended",
                     1,
+                    row,
+                    false);
+
+            addGridLabel(
+                    studioRecordGrid,
+                    String.valueOf(score),
+                    2,
                     row,
                     false);
 
@@ -336,9 +401,10 @@ public class StudentDetailsPanel extends UiPart<Region> {
             int row) {
 
         VBox missionDetails = new VBox(2);
-
         missionDetails.getStyleClass().add("grid-cell");
+
         missionDetails.setMaxWidth(Double.MAX_VALUE);
+        missionDetails.setFillWidth(true);
 
         Label missionName = new Label(
                 mission.getId()
@@ -346,13 +412,16 @@ public class StudentDetailsPanel extends UiPart<Region> {
                         + mission.getName());
 
         Label deadline = new Label(
-                "Due: " + mission.getDeadline());
+                "Due: " + mission.getDeadline().format(MISSION_DEADLINE_FORMATTER));
 
         missionName.getStyleClass().add("grid-value");
         deadline.getStyleClass().add("mission-deadline");
 
         missionName.setWrapText(true);
         deadline.setWrapText(true);
+
+        missionName.setMinHeight(Region.USE_PREF_SIZE);
+        deadline.setMinHeight(Region.USE_PREF_SIZE);
 
         missionName.setMaxWidth(Double.MAX_VALUE);
         deadline.setMaxWidth(Double.MAX_VALUE);
@@ -363,12 +432,38 @@ public class StudentDetailsPanel extends UiPart<Region> {
 
         GridPane.setHgrow(
                 missionDetails,
-                javafx.scene.layout.Priority.ALWAYS);
+                Priority.ALWAYS);
 
         GridPane.setFillWidth(
                 missionDetails,
                 true);
 
         grid.add(missionDetails, 0, row);
+    }
+
+    /**
+     * Updates the mission-submission display for the currently displayed student.
+     *
+     * <p>If no student is currently displayed, this method does nothing.</p>
+     *
+     * @param missions updated missions to display
+     */
+    public void updateMissions(List<Mission> missions) {
+        if (displayedStudent == null) {
+            clearStudent();
+            return;
+        }
+
+        displayedMissions = List.copyOf(missions);
+        populateMissionSubmissions(displayedStudent, displayedMissions);
+    }
+
+    /**
+     * Returns the student currently displayed in the details panel.
+     *
+     * @return the displayed student, or {@code null} if no student is displayed
+     */
+    public Student getDisplayedStudent() {
+        return displayedStudent;
     }
 }

@@ -30,19 +30,19 @@ public class MissionStorageTest {
     @Test
     public void saveAndLoad_catalogueWithMissionSubmissions_preservesAllRecords() throws Exception {
         AddressBook original = new AddressBook();
-        Student student = new Student(ALICE.getName(), ALICE.getPhone(), ALICE.getEmail(),
+        Student student = new Student(ALICE.getName(), ALICE.getMatricNumber(), ALICE.getPhone(), ALICE.getEmail(),
                 ALICE.getTags(), ALICE.getStudioGroup(), new MissionSubmissions(Set.of(new MissionId("M105"))),
                 ALICE.getRegisteredStudioRecords(),
-                ALICE.getRegisteredMasteryChecks());
+                ALICE.getRegisteredMasteryChecks(), ALICE.getRegisteredNotes());
         original.addStudent(student);
-        original.restoreMissions(List.of(), 105);
-        original.addMission("Curve Manipulation", LocalDate.of(2026, 10, 15));
+        original.addMission(new MissionId("M105"), "Curve Manipulation", LocalDate.of(2026, 10, 15));
         Path file = temporaryDirectory.resolve("nested/addressbook.json");
         JsonAddressBookStorage storage = new JsonAddressBookStorage(file);
         storage.saveAddressBook(original);
         AddressBook restored = new AddressBook(new JsonAddressBookStorage(file).readAddressBook().orElseThrow());
         assertEquals(original, restored);
-        assertEquals(new MissionId("M106"), restored.addMission("Runes", LocalDate.of(2026, 10, 16)).getId());
+        assertEquals(new MissionId("M106"),
+                restored.addMission(new MissionId("M106"), "Runes", LocalDate.of(2026, 10, 16)).getId());
         assertEquals(Set.of(new MissionId("M105")),
                 restored.getStudentList().getFirst().getMissionSubmissions().getSubmittedMissionIds());
     }
@@ -59,12 +59,12 @@ public class MissionStorageTest {
 
     @Test
     public void readAddressBook_danglingSubmission_rejectsWithoutChangingFile() throws Exception {
-        Student student = new Student(ALICE.getName(), ALICE.getPhone(), ALICE.getEmail(),
+        Student student = new Student(ALICE.getName(), ALICE.getMatricNumber(), ALICE.getPhone(), ALICE.getEmail(),
                 ALICE.getTags(), ALICE.getStudioGroup(), new MissionSubmissions(Set.of(new MissionId("M05"))),
                 ALICE.getRegisteredStudioRecords(),
-                ALICE.getRegisteredMasteryChecks());
+                ALICE.getRegisteredMasteryChecks(), ALICE.getRegisteredNotes());
         String json = "{\"students\":[" + JsonUtil.toJsonString(new JsonAdaptedStudent(student))
-                + "],\"missions\":[],\"nextMissionNumber\":1}";
+                + "],\"missions\":[]}";
         Path file = temporaryDirectory.resolve("dangling.json");
         Files.writeString(file, json);
         JsonAddressBookStorage storage = new JsonAddressBookStorage(file);
@@ -87,29 +87,14 @@ public class MissionStorageTest {
     }
 
     @Test
-    public void readAddressBook_invalidCounter_preservesSourceFile() throws Exception {
-        for (String counter : List.of("0", "-1", "1.5", "\"2\"", "true", "null", "9223372036854775808")) {
-            String json = "{\"students\":[],\"missions\":[],\"nextMissionNumber\":" + counter + "}";
-            Path file = temporaryDirectory.resolve("invalid.json");
-            Files.writeString(file, json);
-            JsonAddressBookStorage storage = new JsonAddressBookStorage(file);
-            assertThrows(DataLoadingException.class, storage::readAddressBook);
-            assertEquals(json, Files.readString(file));
-        }
-    }
-
-    @Test
     public void toModelType_invalidCatalogue_rejectsReplacement() throws Exception {
         String mission = "{\"id\":\"M01\",\"name\":\"Runes\",\"deadline\":\"2026-10-15\"}";
-        String catalogueMessage = "Mission catalogue requires missions and an integer nextMissionNumber.";
+        String catalogueMessage = "Mission catalogue is required.";
         String[][] cases = {
-            {"{\"students\":[],\"missions\":[" + mission + "," + mission + "],\"nextMissionNumber\":2}",
+            {"{\"students\":[],\"missions\":[" + mission + "," + mission + "]}",
                 "Duplicate mission ID: M01"},
-            {"{\"students\":[],\"missions\":[" + mission + "],\"nextMissionNumber\":1}",
-                "Next mission number must be greater than every saved mission ID."},
-            {"{\"students\":[],\"missions\":[null],\"nextMissionNumber\":2}", "Mission records must not be null."},
-            {"{\"students\":[],\"missions\":[]}", catalogueMessage},
-            {"{\"students\":[],\"nextMissionNumber\":2}", catalogueMessage}
+            {"{\"students\":[],\"missions\":[null]}", "Mission records must not be null."},
+            {"{\"students\":[]}", catalogueMessage}
         };
         for (String[] testCase : cases) {
             JsonSerializableAddressBook saved = JsonUtil.fromJsonString(testCase[0], JsonSerializableAddressBook.class);
@@ -119,13 +104,15 @@ public class MissionStorageTest {
     }
 
     @Test
-    public void saveAndLoad_emptyCatalogueWithUsedIds_preservesCounter() throws Exception {
+    public void saveAndLoad_emptyCatalogue_doesNotPersistIdCounter() throws Exception {
         AddressBook original = new AddressBook();
-        original.restoreMissions(List.of(), 9);
         Path file = temporaryDirectory.resolve("empty.json");
         JsonAddressBookStorage storage = new JsonAddressBookStorage(file);
         storage.saveAddressBook(original);
         AddressBook restored = new AddressBook(storage.readAddressBook().orElseThrow());
-        assertEquals(new MissionId("M09"), restored.addMission("Runes", LocalDate.of(2026, 10, 15)).getId());
+        String savedJson = Files.readString(file);
+        org.junit.jupiter.api.Assertions.assertFalse(savedJson.contains("nextMissionNumber"));
+        MissionId id = new MissionId("M09");
+        assertEquals(id, restored.addMission(id, "Runes", LocalDate.of(2026, 10, 15)).getId());
     }
 }

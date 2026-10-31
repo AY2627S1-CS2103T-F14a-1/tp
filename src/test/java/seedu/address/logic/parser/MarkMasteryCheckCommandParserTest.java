@@ -1,22 +1,24 @@
 package seedu.address.logic.parser;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
+import static seedu.address.logic.parser.util.ParserUtil.MESSAGE_SEE_USAGE;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_STUDENT;
 
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import seedu.address.logic.Messages;
 import seedu.address.logic.commands.MarkMasteryCheckCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
-import seedu.address.model.student.RegisteredMasteryChecks;
+import seedu.address.logic.parser.util.MasteryCheckParserUtil;
+import seedu.address.logic.parser.util.ParserUtil;
 
 /** Tests completion-command syntax, caller-specific feedback, and shared parser validation. */
 public class MarkMasteryCheckCommandParserTest {
+
+    private static final String USAGE_SUFFIX = MESSAGE_SEE_USAGE + MarkMasteryCheckCommand.MESSAGE_USAGE;
     private final MarkMasteryCheckCommandParser parser = new MarkMasteryCheckCommandParser();
 
     @Test
@@ -26,49 +28,53 @@ public class MarkMasteryCheckCommandParserTest {
 
     @Test
     public void parse_validNumbersAndWhitespace_returnsExpectedCommand() {
-        assertParseSuccess(parser, "1 num/1", new MarkMasteryCheckCommand(INDEX_FIRST_STUDENT, 1));
-        assertParseSuccess(parser, "  1  num/ 14  ", new MarkMasteryCheckCommand(INDEX_FIRST_STUDENT, 14));
-        assertParseSuccess(parser, "1 num/2147483647",
+        assertParseSuccess(parser, "id/1 num/1", new MarkMasteryCheckCommand(INDEX_FIRST_STUDENT, 1));
+        assertParseSuccess(parser, "  id/1  num/ 14  ", new MarkMasteryCheckCommand(INDEX_FIRST_STUDENT, 14));
+        assertParseSuccess(parser, "id/1 num/2147483647",
                 new MarkMasteryCheckCommand(INDEX_FIRST_STUDENT, Integer.MAX_VALUE));
-    }
-
-    @Test
-    public void parse_missingIndex_reportsMissingIndex() {
-        for (String input : List.of("", "  ", "num/1")) {
-            assertParseFailure(parser, input, MasteryCheckParser.MESSAGE_MISSING_INDEX);
-        }
     }
 
     @Test
     public void parse_invalidIndex_reportsIndexConstraint() {
         for (String index : List.of("0", "-1", "abc", "1.5", "1 extra", "2147483648")) {
-            assertParseFailure(parser, index + " num/1", ParserUtil.MESSAGE_INVALID_INDEX);
+            assertParseFailure(parser, "id/" + index + " num/1",
+                ParserUtil.MESSAGE_INVALID_INDEX + USAGE_SUFFIX);
         }
     }
 
     @Test
-    public void parse_missingNumberPrefix_reportsOwnCommandUsage() {
-        assertParseFailure(parser, "1",
-                String.format(MESSAGE_INVALID_COMMAND_FORMAT, MarkMasteryCheckCommand.MESSAGE_USAGE));
+    public void parse_missingNumberPrefix_reportsMissingPrefix() {
+        assertParseFailure(parser, "id/1",
+                CliSyntax.PREFIX_NUMBER.getMissingMessage() + USAGE_SUFFIX);
     }
 
     @Test
-    public void parse_invalidNumber_reportsMasteryCheckConstraint() {
-        for (String number : List.of("", "0", "-1", "abc", "1.5", "2147483648")) {
-            assertParseFailure(parser, "1 num/" + number, RegisteredMasteryChecks.MESSAGE_CONSTRAINTS);
+    public void parse_nonPositiveNumber_reportsNumberConstraint() {
+        for (String number : List.of("0", "-1", "-2147483648")) {
+            assertParseFailure(parser, "id/1 num/" + number,
+                    MasteryCheckParserUtil.MESSAGE_ERROR_NEGATIVE_NUMBER + USAGE_SUFFIX);
+        }
+    }
+
+    @Test
+    public void parse_nonIntegerOrOverflowingNumber_reportsNonNumberMessage() {
+        for (String number : List.of("1.5", "abc", "2147483648")) {
+            assertParseFailure(parser, "id/1 num/" + number + "",
+                    MasteryCheckParserUtil.MESSAGE_ERROR_NON_NUMBER + USAGE_SUFFIX);
         }
     }
 
     @Test
     public void parse_duplicatePrefix_reportsRepeatedNumberPrefix() {
-        for (String input : List.of("1 num/1 num/2", "1 num/1 num/1", "1 num/ num/1")) {
-            assertParseFailure(parser, input, Messages.getErrorMessageForDuplicatePrefixes(CliSyntax.PREFIX_NUMBER));
+        for (String input : List.of("id/1 num/1 num/2", "id/1 num/1 num/1", "id/1 num/ num/1")) {
+            assertParseFailure(parser, input,
+                CliSyntax.PREFIX_NUMBER.getDuplicateMessage() + USAGE_SUFFIX);
         }
     }
 
     @Test
     public void parse_extraArguments_throwsParseException() {
-        for (String input : List.of("1 num/1 extra", "1 num/1 dt/18-08|14:30", "1num/1")) {
+        for (String input : List.of("id/1 num/1 extra", "id/1 num/1 dt/18-08|14:30", "id/1num/1")) {
             assertThrows(ParseException.class, () -> parser.parse(input));
         }
     }

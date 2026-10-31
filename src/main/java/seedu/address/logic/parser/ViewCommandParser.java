@@ -1,10 +1,12 @@
 package seedu.address.logic.parser;
 
-import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
+import static java.util.Objects.requireNonNull;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_INDEX;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.ViewCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.logic.parser.util.ParserUtil;
 
 /**
  * Parses input arguments and creates a new ViewCommand object
@@ -18,14 +20,15 @@ public class ViewCommandParser implements Parser<ViewCommand> {
      * @throws ParseException if the user input does not conform to the expected format
      */
     public ViewCommand parse(String args) throws ParseException {
+        requireNonNull(args);
         try {
-            Index index = ParserUtil.parseIndex(args);
+            ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
+                    args, PREFIX_INDEX);
+            Index index = ParserUtil.parseIndex(argMultimap.getRequiredValue(PREFIX_INDEX));
             return new ViewCommand(index);
-        } catch (ParseException pe) {
-            throw new ParseException(
-                    String.format(MESSAGE_INVALID_COMMAND_FORMAT, ViewCommand.MESSAGE_USAGE), pe);
+        } catch (ParseException e) {
+            throw new ParseException(e.getMessage() + ParserUtil.MESSAGE_SEE_USAGE + ViewCommand.MESSAGE_USAGE);
         }
     }
 
 }
-

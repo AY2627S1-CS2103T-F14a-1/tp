@@ -17,7 +17,8 @@ public class Messages {
     public static final String MESSAGE_DUPLICATE_MISSION = "This mission already exists in the mission list.";
 
     public static final String MESSAGE_UNKNOWN_COMMAND = "Unknown command.";
-    public static final String MESSAGE_INVALID_COMMAND_FORMAT = "Invalid command format!\n%1$s";
+    public static final String MESSAGE_INVALID_COMMAND = "Invalid command format!";
+    public static final String MESSAGE_INVALID_COMMAND_FORMAT = "Invalid command format!\n\n%1$s";
     public static final String MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX = "The student index provided is invalid.";
     public static final String MESSAGE_STUDENTS_LISTED_OVERVIEW = "%1$d student(s) listed!";
     public static final String MESSAGE_DUPLICATE_FIELDS =
@@ -51,10 +52,27 @@ public class Messages {
     }
 
     /**
-     * Formats the {@code mission} for display to the user.
+     * Formats mission details without a deadline-status label.
+     *
+     * @param mission Mission to format.
+     * @return Mission ID, name, and deadline.
      */
     public static String format(Mission mission) {
-        return mission.getId() + " · " + mission.getName() + " (Due: " + mission.getDeadline() + ")";
+        return format(mission, false);
+    }
+
+    /**
+     * Formats mission details with an optional deadline-status label.
+     *
+     * @param mission Mission to format.
+     * @param isPastDeadline Whether the mission's deadline has passed.
+     * @return Mission ID, name, and deadline with the requested status label.
+     */
+    public static String format(Mission mission, boolean isPastDeadline) {
+        String deadlineStatus = isPastDeadline ? " — Deadline passed" : "";
+
+        return mission.getId() + " · " + mission.getName()
+                + " (Due: " + mission.getDeadline() + deadlineStatus + ")";
     }
 
     /**

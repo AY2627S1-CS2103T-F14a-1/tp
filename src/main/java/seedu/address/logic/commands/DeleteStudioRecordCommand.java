@@ -2,6 +2,10 @@ package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.AppUtil.checkArgument;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_INDEX;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_WEEK;
+
+import java.util.Objects;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.ToStringBuilder;
@@ -19,11 +23,11 @@ public class DeleteStudioRecordCommand extends Command {
 
     public static final String MESSAGE_USAGE = COMMAND_WORD
             + ": Removes a week's studio record for the selected student.\n"
-            + "Parameters: INDEX w/WEEK\n"
+            + "Parameters: " + PREFIX_INDEX + "INDEX w/WEEK\n"
             + "INDEX must be a positive integer identifying a displayed student.\n"
             + "WEEK must be between " + RegisteredStudioRecords.MIN_WEEK
             + " and " + RegisteredStudioRecords.MAX_WEEK + " inclusive.\n"
-            + "Example: " + COMMAND_WORD + " 1 w/3";
+            + "Example: " + COMMAND_WORD + " " + PREFIX_INDEX + "1 " + PREFIX_WEEK + "3";
 
     public static final String MESSAGE_SUCCESS =
             "Removed %1$s's record for studio week %2$d.";
@@ -60,13 +64,14 @@ public class DeleteStudioRecordCommand extends Command {
         RegisteredStudioRecords registeredStudioRecords = studentToUpdate.getRegisteredStudioRecords();
 
         if (!registeredStudioRecords.hasStudioRecord(week)) {
-            return new CommandResult(String.format(MESSAGE_ALREADY_NOT_RECORDED, studentToUpdate.getName(), week));
+            return new CommandResult(String.format(MESSAGE_ALREADY_NOT_RECORDED, studentToUpdate.getName(), week),
+                    studentToUpdate);
         }
 
         Student updatedStudent = studentToUpdate.withRegisteredStudioRecords(
                 registeredStudioRecords.withoutStudioRecord(week));
         model.setStudent(studentToUpdate, updatedStudent);
-        return new CommandResult(String.format(MESSAGE_SUCCESS, studentToUpdate.getName(), week));
+        return new CommandResult(String.format(MESSAGE_SUCCESS, studentToUpdate.getName(), week), updatedStudent);
     }
 
     @Override
@@ -82,6 +87,11 @@ public class DeleteStudioRecordCommand extends Command {
 
         return targetIndex.equals(otherDeleteStudioRecordCommand.targetIndex)
                 && week == otherDeleteStudioRecordCommand.week;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(targetIndex, week);
     }
 
     @Override

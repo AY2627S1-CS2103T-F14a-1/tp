@@ -25,6 +25,7 @@ import seedu.address.model.AddressBook;
 import seedu.address.model.Model;
 import seedu.address.model.ReadOnlyUserPrefs;
 import seedu.address.model.UserPrefs;
+import seedu.address.model.mission.MissionId;
 import seedu.address.model.util.SampleDataUtil;
 import seedu.address.storage.JsonAddressBookStorage;
 import seedu.address.storage.JsonUserPrefsStorage;
@@ -62,7 +63,7 @@ public class MainAppMissionStorageTest {
         Storage storage = createStorage(file);
         Model model = initialize(storage);
         new LogicManager(model, storage).execute(
-                "addstudent n/New Student p/91234567 e/new@example.com g/1A");
+                "addstudent n/New Student mtc/A0123456B p/91234567 e/new@example.com g/1A");
         assertEquals(1, model.getAddressBook().getStudentList().size());
         assertEquals(model.getAddressBook(), storage.readAddressBook().orElseThrow());
     }
@@ -80,7 +81,7 @@ public class MainAppMissionStorageTest {
         Storage storage = createStorage(file);
         AddressBook book = new AddressBook();
         book.addStudent(ALICE);
-        book.addMission("Runes", LocalDate.of(2026, 10, 15));
+        book.addMission(new MissionId("M01"), "Runes", LocalDate.of(2026, 10, 15));
         storage.saveAddressBook(book);
         String original = Files.readString(file);
         assertEquals(book, initialize(storage).getAddressBook());
@@ -97,7 +98,7 @@ public class MainAppMissionStorageTest {
         Path fixture = temporaryDirectory.resolve("fixture.json");
         AddressBook book = new AddressBook();
         book.addStudent(ALICE);
-        book.addMission("Runes", LocalDate.of(2026, 10, 15));
+        book.addMission(new MissionId("M01"), "Runes", LocalDate.of(2026, 10, 15));
         new JsonAddressBookStorage(fixture).saveAddressBook(book);
         ObjectNode valid = JsonUtil.fromJsonString(Files.readString(fixture), ObjectNode.class);
         String student = valid.path("students").get(0).toString();
@@ -107,7 +108,7 @@ public class MainAppMissionStorageTest {
                 "[" + student + "," + student + "]",
                 "[" + student + "," + student.replace(ALICE.getEmail().value, "invalid") + "]",
                 "[" + student + ",{}]")) {
-            documents.add("{\"students\":" + students + ",\"missions\":[],\"nextMissionNumber\":1}");
+            documents.add("{\"students\":" + students + ",\"missions\":[]}");
         }
         ObjectNode nullTag = valid.deepCopy();
         ObjectNode studentWithNullTag = (ObjectNode) nullTag.path("students").get(0);
@@ -116,13 +117,11 @@ public class MainAppMissionStorageTest {
         for (String missions : List.of("null", "{}", "[" + mission + ",null]",
                 "[" + mission + "," + mission + "]",
                 "[" + mission.replace("2026-10-15", "2026-02-30") + "]")) {
-            documents.add("{\"students\":[" + student + "],\"missions\":" + missions
-                    + ",\"nextMissionNumber\":2}");
+            documents.add("{\"students\":[" + student + "],\"missions\":" + missions + "}");
         }
-        documents.add(valid.deepCopy().put("nextMissionNumber", 0).toString());
         String duplicateName = mission.replace("M01", "M02").replace("Runes", " RUNES ");
         documents.add("{\"students\":[" + student + "],\"missions\":[" + mission + "," + duplicateName
-                + "],\"nextMissionNumber\":3}");
+                + "]}");
         return documents;
     }
 

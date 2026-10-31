@@ -1,19 +1,23 @@
 package seedu.address.logic.parser;
 
-import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
+import static java.util.Objects.requireNonNull;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_INDEX;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NUMBER;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.DeleteMasteryCheckCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.logic.parser.util.MasteryCheckParserUtil;
+import seedu.address.logic.parser.util.ParserUtil;
 
 /**
  * Parses a displayed student index and mastery check number into a deletion command.
  */
 public class DeleteMasteryCheckCommandParser implements Parser<DeleteMasteryCheckCommand> {
+
     /**
-     * Parses the student index from the preamble and the mastery check number from the num/ prefix.
-     * Rejects missing or repeated number prefixes and invalid index or number text.
+     * Parses the student index from the id/ prefix and the mastery check number from the num/ prefix.
+     * Rejects preambles, missing or repeated prefixes, and invalid index or number text.
      *
      * @param args Arguments following the delete mastery check command word.
      * @return A command targeting the parsed student index and mastery check number.
@@ -23,23 +27,17 @@ public class DeleteMasteryCheckCommandParser implements Parser<DeleteMasteryChec
      */
     @Override
     public DeleteMasteryCheckCommand parse(String args) throws ParseException {
-        ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args, PREFIX_NUMBER);
-        Index index;
-
+        requireNonNull(args);
         try {
-            index = ParserUtil.parseIndex(argMultimap.getPreamble());
-        } catch (ParseException pe) {
-            throw new ParseException(
-                    String.format(MESSAGE_INVALID_COMMAND_FORMAT, DeleteMasteryCheckCommand.MESSAGE_USAGE), pe);
-        }
+            ArgumentMultimap argMultimap = ArgumentStructureValidator.validateStructure(
+                    args, PREFIX_INDEX, PREFIX_NUMBER);
 
-        if (!argMultimap.arePrefixesPresent(PREFIX_NUMBER)) {
-            throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT,
-                    DeleteMasteryCheckCommand.MESSAGE_USAGE));
+            Index index = ParserUtil.parseIndex(argMultimap.getRequiredValue(PREFIX_INDEX));
+            int number = MasteryCheckParserUtil.parseMasteryCheckNumber(argMultimap.getRequiredValue(PREFIX_NUMBER));
+            return new DeleteMasteryCheckCommand(index, number);
+        } catch (ParseException e) {
+            throw new ParseException(e.getMessage()
+                    + ParserUtil.MESSAGE_SEE_USAGE + DeleteMasteryCheckCommand.MESSAGE_USAGE);
         }
-
-        argMultimap.verifyNoDuplicatePrefixesFor(PREFIX_NUMBER);
-        int number = ParserUtil.parseMasteryCheckNumber(argMultimap.getValue(PREFIX_NUMBER).get());
-        return new DeleteMasteryCheckCommand(index, number);
     }
 }

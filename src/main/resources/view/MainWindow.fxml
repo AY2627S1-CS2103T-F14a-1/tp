@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.net.URL?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.Scene?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.image.Image?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
@@ -17,13 +18,14 @@
          xmlns:fx="http://javafx.com/fxml/1"
          onCloseRequest="#handleExit">
   <icons>
-    <Image url="@/images/address_book_32.png" />
+    <Image url="@/images/address_book_32.png"/>
   </icons>
+
   <scene>
     <Scene>
       <stylesheets>
-        <URL value="@LightTheme.css" />
-        <URL value="@Extensions.css" />
+        <URL value="@LightTheme.css"/>
+        <URL value="@Extensions.css"/>
       </stylesheets>
 
       <VBox>
@@ -45,13 +47,9 @@
         <VBox spacing="5"
               styleClass="app-header"
               VBox.vgrow="NEVER">
-
-          <HBox alignment="BASELINE_LEFT"
-                spacing="8">
-
+          <HBox alignment="BASELINE_LEFT" spacing="8">
             <Label text="AvengerHub"
                    styleClass="app-title"/>
-
             <Label text="CS1101S student manager"
                    styleClass="app-subtitle"/>
           </HBox>
@@ -60,44 +58,48 @@
         <VBox spacing="5"
               styleClass="command-section"
               VBox.vgrow="NEVER">
-
-          <HBox spacing="8"
-                alignment="CENTER_LEFT">
-
+          <HBox spacing="8" alignment="CENTER_LEFT">
             <Label text="Command entered:"
                    styleClass="command-label"/>
-
             <Label fx:id="lastCommandLabel"
                    styleClass="last-command-label"/>
           </HBox>
 
           <StackPane fx:id="commandBoxPlaceholder"
                      styleClass="pane-with-border"/>
-
-          <StackPane fx:id="resultDisplayPlaceholder"
-                     maxWidth="Infinity"
-                     styleClass="result-display-container"/>
         </VBox>
 
-        <SplitPane fx:id="mainSplitPane"
-                   dividerPositions="0.24"
-                   VBox.vgrow="ALWAYS">
-
-          <VBox minWidth="180"
-                prefWidth="240"
-                maxWidth="320"
-                styleClass="student-list-container">
-
-            <StackPane fx:id="studentListPanelPlaceholder"
-                       VBox.vgrow="ALWAYS"/>
-          </VBox>
-
-          <StackPane fx:id="studentDetailsPanelPlaceholder"
-                     alignment="CENTER"
+        <VBox fx:id="resultsAndDetails"
+              minHeight="0"
+              VBox.vgrow="ALWAYS">
+          <StackPane fx:id="resultDisplayPlaceholder"
+                     minHeight="0"
                      maxWidth="Infinity"
-                     maxHeight="Infinity"
-                     styleClass="student-details-container"/>
-        </SplitPane>
+                     styleClass="result-display-container">
+            <padding>
+              <Insets top="0" right="10" bottom="10" left="10"/>
+            </padding>
+          </StackPane>
+
+          <SplitPane fx:id="mainSplitPane"
+                     minHeight="0"
+                     dividerPositions="0.24"
+                     VBox.vgrow="ALWAYS">
+            <VBox minWidth="180"
+                  prefWidth="240"
+                  maxWidth="320"
+                  styleClass="student-list-container">
+              <StackPane fx:id="studentListPanelPlaceholder"
+                         VBox.vgrow="ALWAYS"/>
+            </VBox>
+
+            <StackPane fx:id="studentDetailsPanelPlaceholder"
+                       alignment="CENTER"
+                       maxWidth="Infinity"
+                       maxHeight="Infinity"
+                       styleClass="student-details-container"/>
+          </SplitPane>
+        </VBox>
 
         <StackPane fx:id="statusbarPlaceholder"
                    VBox.vgrow="NEVER"/>
