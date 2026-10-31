@@ -25,8 +25,8 @@ You can reach us at the email `ay2627s1-cs2103t-f14a-1[at]nusu.onmicrosoft.com`
 
 [[github](http://github.com/brianlim35)]
 
-* Role: Code quality
-* Responsibilities: Checking of code readability
+* Role: Milestone closure and PR integration
+* Responsibilities: Ensure milestones are closed on time; review and merge pull requests for integration.
 
 ### Charis Tan
 
