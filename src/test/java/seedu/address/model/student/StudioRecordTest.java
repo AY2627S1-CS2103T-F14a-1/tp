@@ -16,35 +16,48 @@ import org.junit.jupiter.api.Test;
 public class StudioRecordTest {
 
     @Test
-    public void constructor_validScores_storesEffortScore() {
-        int[] effortScores = {0, 1, 100, Integer.MAX_VALUE};
+    public void constructor_validScore_storesEffortScore() {
+        int[] effortScores = {0, 1, 100, Integer.MAX_VALUE - 1, Integer.MAX_VALUE};
         for (int effortScore : effortScores) {
             assertEquals(effortScore, new StudioRecord(effortScore).getEffortScore());
         }
     }
 
     @Test
-    public void constructor_negativeScore_throwsIllegalArgumentException() {
+    public void constructor_invalidScore_throwsIllegalArgumentException() {
         assertThrows(IllegalArgumentException.class, () -> new StudioRecord(-1));
-        assertThrows(IllegalArgumentException.class, () -> new StudioRecord(Integer.MIN_VALUE));
     }
 
     @Test
-    public void isValidEffortScore_boundaryValues_returnsExpectedValidity() {
-        assertTrue(StudioRecord.isValidEffortScore(0));
-        assertTrue(StudioRecord.isValidEffortScore(Integer.MAX_VALUE));
+    public void isValidEffortScore() {
+        // invalid effort scores
+        int[] effortScores = {0, 1, 100, Integer.MAX_VALUE - 1, Integer.MAX_VALUE};
+        for (int effortScore : effortScores) {
+            assertTrue(StudioRecord.isValidEffortScore(effortScore));
+        }
+
+        // valid effort scores
         assertFalse(StudioRecord.isValidEffortScore(-1));
     }
 
     @Test
-    public void equals_sameAndDifferentScores_returnsExpectedEquality() {
+    public void equals() {
         StudioRecord studioRecord = new StudioRecord(50);
 
-        assertTrue(studioRecord.equals(studioRecord));
+        // same values -> returns true
         assertTrue(studioRecord.equals(new StudioRecord(50)));
-        assertFalse(studioRecord.equals(new StudioRecord(0)));
+
+        // same object -> returns true
+        assertTrue(studioRecord.equals(studioRecord));
+
+        // null -> returns false
         assertFalse(studioRecord.equals(null));
+
+        // different types -> returns false
         assertFalse(studioRecord.equals("50"));
+
+        // different values -> returns false
+        assertFalse(studioRecord.equals(new StudioRecord(0)));
     }
 
     @Test

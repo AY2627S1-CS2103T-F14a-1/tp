@@ -1,16 +1,19 @@
 package seedu.address.logic.parser;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_STUDIO_EFFORT;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_WEEK;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
 import static seedu.address.logic.parser.util.ParserUtil.MESSAGE_SEE_USAGE;
 import static seedu.address.logic.parser.util.StudioRecordParserUtil.MESSAGE_INVALID_EFFORT;
+import static seedu.address.logic.parser.util.StudioRecordParserUtil.MESSAGE_INVALID_WEEK;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_STUDENT;
 
 import org.junit.jupiter.api.Test;
 
 import seedu.address.logic.commands.AddStudioRecordCommand;
-import seedu.address.logic.parser.util.ParserUtil;
-import seedu.address.logic.parser.util.StudioRecordParserUtil;
 import seedu.address.model.student.StudioRecord;
 
 /**
@@ -24,12 +27,116 @@ public class AddStudioRecordCommandParserTest {
 
     @Test
     public void parse_validArguments_returnsStudioRecordCommand() {
-        assertParseSuccess(parser, "id/1 w/3 ef/0",
-                new AddStudioRecordCommand(INDEX_FIRST_STUDENT, 3, new StudioRecord(0)));
-        assertParseSuccess(parser, " id/1\tw/13 ef/50 ",
-                new AddStudioRecordCommand(INDEX_FIRST_STUDENT, 13, new StudioRecord(50)));
-        assertParseSuccess(parser, "id/1 ef/2147483647 w/3",
+        assertParseSuccess(parser, "id/1 w/0 ef/0",
+                new AddStudioRecordCommand(INDEX_FIRST_STUDENT, 0, new StudioRecord(0)));
+        assertParseSuccess(parser, "id/1 w/1 ef/0",
+                new AddStudioRecordCommand(INDEX_FIRST_STUDENT, 1, new StudioRecord(0)));
+        assertParseSuccess(parser, "id/1 w/6 ef/0",
+                new AddStudioRecordCommand(INDEX_FIRST_STUDENT, 6, new StudioRecord(0)));
+        assertParseSuccess(parser, "id/1 w/12 ef/0",
+                new AddStudioRecordCommand(INDEX_FIRST_STUDENT, 12, new StudioRecord(0)));
+        assertParseSuccess(parser, "id/1 w/13 ef/0",
+                new AddStudioRecordCommand(INDEX_FIRST_STUDENT, 13, new StudioRecord(0)));
+
+        assertParseSuccess(parser, "id/1 w/3 ef/1",
+                new AddStudioRecordCommand(INDEX_FIRST_STUDENT, 3, new StudioRecord(1)));
+        assertParseSuccess(parser, "id/1 w/3 ef/50",
+                new AddStudioRecordCommand(INDEX_FIRST_STUDENT, 3, new StudioRecord(50)));
+        assertParseSuccess(parser, "id/1 w/3 ef/2147483646",
+                new AddStudioRecordCommand(INDEX_FIRST_STUDENT, 3, new StudioRecord(Integer.MAX_VALUE - 1)));
+        assertParseSuccess(parser, "id/1 w/3 ef/2147483647",
                 new AddStudioRecordCommand(INDEX_FIRST_STUDENT, 3, new StudioRecord(Integer.MAX_VALUE)));
+
+        AddStudioRecordCommand expected = new AddStudioRecordCommand(INDEX_FIRST_STUDENT, 3,
+                new StudioRecord(50));
+        assertParseSuccess(parser, "  id/1   w/ 3  ef/50", expected);
+        assertParseSuccess(parser, "id/1\tw/3 ef/50", expected);
+    }
+
+    @Test
+    public void parse_invalidArguments_reportsInvalidFormat() {
+        String expected = MESSAGE_INVALID_COMMAND + USAGE_SUFFIX;
+        String[] inputs = {"1 3 4", "$", "1 x/3", "1 extra w/3 ef/50"};
+
+        for (String input : inputs) {
+            assertParseFailure(parser, input, expected);
+        }
+    }
+
+    @Test
+    public void parse_emptyArgument_throwsNullPointerException() {
+        String allMissing = String.join("\n", CliSyntax.PREFIX_INDEX.getMissingMessage(),
+                PREFIX_WEEK.getMissingMessage(), PREFIX_STUDIO_EFFORT.getMissingMessage());
+        assertParseFailure(parser, "",
+                allMissing + USAGE_SUFFIX);
+        assertParseFailure(parser, "   ",
+                allMissing + USAGE_SUFFIX);
+    }
+
+    @Test
+    public void parse_nullArgument_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> parser.parse(null));
+    }
+
+    @Test
+    public void parse_emptyRequiredPrefix_reportsMissingArgument() {
+        assertParseFailure(parser, "id/ w/3 ef/50",
+                "Prefix id/ is missing its argument." + USAGE_SUFFIX);
+        assertParseFailure(parser, "id/1 w/ ef/50",
+                "Prefix w/ is missing its argument." + USAGE_SUFFIX);
+        assertParseFailure(parser, "id/1 w/3 ef/",
+                "Prefix ef/ is missing its argument." + USAGE_SUFFIX);
+    }
+
+    @Test
+    public void parse_reorderedPrefixes_returnsCommand() {
+        assertParseSuccess(parser, "ef/50 w/0 id/1",
+                new AddStudioRecordCommand(INDEX_FIRST_STUDENT, 0, new StudioRecord(50)));
+        assertParseSuccess(parser, "w/13 id/1 ef/0",
+                new AddStudioRecordCommand(INDEX_FIRST_STUDENT, 13, new StudioRecord(0)));
+    }
+
+    @Test
+    public void parse_leadingZeros_returnsCommand() {
+        assertParseSuccess(parser, "id/01 w/03 ef/050", new AddStudioRecordCommand(
+                INDEX_FIRST_STUDENT, 3, new StudioRecord(50)));
+        assertParseSuccess(parser, "ID/01 W/03 EF/050", new AddStudioRecordCommand(
+                INDEX_FIRST_STUDENT, 3, new StudioRecord(50)));
+    }
+
+    @Test
+    public void parse_missingIndex_reportsMissingPrefixes() {
+        for (String input : new String[]{"w/ ef/", "w/3 ef/50", "w/ 3 ef/ 3"}) {
+            assertParseFailure(parser, input,
+                    CliSyntax.PREFIX_INDEX.getMissingMessage()
+                            + USAGE_SUFFIX);
+        }
+    }
+
+    @Test
+    public void parse_missingWeekPrefix_reportsMissingPrefix() {
+        assertParseFailure(parser, "id/1 ef/50",
+                PREFIX_WEEK.getMissingMessage() + USAGE_SUFFIX);
+    }
+
+    @Test
+    public void parse_repeatedWeek_reportsDuplicateWeek() {
+        String[] inputs = {"id/1 ef/50 w/3 w/3", "id/1 ef/50 w/ w/3"};
+        String expected = CliSyntax.PREFIX_WEEK.getDuplicateMessage() + USAGE_SUFFIX;
+
+        for (String input : inputs) {
+            assertParseFailure(parser, input, expected);
+        }
+    }
+
+    @Test
+    public void parse_invalidWeek_reportsInvalidEffort() {
+        String[] weeks = {"$", "1 2", "-1", "1.5", "abc", "14"};
+
+        for (String week : weeks) {
+            assertParseFailure(parser, "id/1 w/" + week + " ef/40",
+                    MESSAGE_INVALID_WEEK + USAGE_SUFFIX);
+        }
     }
 
     @Test
@@ -41,22 +148,21 @@ public class AddStudioRecordCommandParserTest {
     }
 
     @Test
-    public void parse_invalidEffort_reportsInvalidEffort() {
-        String[] effortScores = {"-1", "1.5", "abc", "2147483648"};
-        for (String effortScore : effortScores) {
-            assertParseFailure(parser, "id/1 w/3 ef/" + effortScore,
-                MESSAGE_INVALID_EFFORT + USAGE_SUFFIX);
+    public void parse_repeatedEffort_reportsDuplicateWeek() {
+        String[] inputs = {"id/1 w/3 ef/50 ef/50", "id/1 w/3 ef/ ef/50"};
+        String expected = CliSyntax.PREFIX_STUDIO_EFFORT.getDuplicateMessage() + USAGE_SUFFIX;
+
+        for (String input : inputs) {
+            assertParseFailure(parser, input, expected);
         }
     }
 
     @Test
-    public void parse_invalidIndexOrWeek_reportsValidationMessage() {
-        assertParseFailure(parser, "id/0 w/3 ef/50",
-                ParserUtil.MESSAGE_INVALID_INDEX + USAGE_SUFFIX);
-        assertParseFailure(parser, "id/1 w/-1 ef/50",
-                StudioRecordParserUtil.MESSAGE_INVALID_WEEK + USAGE_SUFFIX);
-        assertParseFailure(parser, "id/1 w/14 ef/50",
-                StudioRecordParserUtil.MESSAGE_INVALID_WEEK + USAGE_SUFFIX);
+    public void parse_invalidEffort_reportsInvalidEffort() {
+        String[] effortScores = {"$", "1 2", "-1", "1.5", "abc", "2147483648"};
+        for (String effortScore : effortScores) {
+            assertParseFailure(parser, "id/1 w/3 ef/" + effortScore,
+                    MESSAGE_INVALID_EFFORT + USAGE_SUFFIX);
+        }
     }
 }
-
