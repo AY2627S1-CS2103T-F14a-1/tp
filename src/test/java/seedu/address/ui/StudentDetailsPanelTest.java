@@ -363,10 +363,10 @@ public class StudentDetailsPanelTest {
             assertEquals("Appointment time", getMasteryCell(grid, 1, 0));
             assertEquals("Status", getMasteryCell(grid, 2, 0));
             assertEquals("1", getMasteryCell(grid, 0, 1));
-            assertEquals("Aug 18, 14:30", getMasteryCell(grid, 1, 1));
+            assertEquals("18 August 2026, 14:30", getMasteryCell(grid, 1, 1));
             assertEquals("Not completed", getMasteryCell(grid, 2, 1));
             assertEquals("2", getMasteryCell(grid, 0, 2));
-            assertEquals("Aug 19, 00:05", getMasteryCell(grid, 1, 2));
+            assertEquals("19 August 2026, 00:05", getMasteryCell(grid, 1, 2));
             assertEquals("Completed", getMasteryCell(grid, 2, 2));
         });
     }

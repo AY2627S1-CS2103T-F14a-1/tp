@@ -68,7 +68,7 @@ public class AddMasteryCheckCommandTest {
         Model expected = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
         expected.setStudent(student, updated);
         String expectedMessage =
-                "Added " + student.getName() + "'s mastery check 1 at Aug 18 2026, 14:30.";
+                "Added " + student.getName() + "'s mastery check 1 at 18 August 2026, 14:30.";
         assertCommandSuccess(
                 new AddMasteryCheckCommand(INDEX_FIRST_STUDENT, 1, first),
                 model,
@@ -127,7 +127,7 @@ public class AddMasteryCheckCommandTest {
                 AddMasteryCheckCommand.MESSAGE_SUCCESS,
                 student.getName(),
                 1,
-                "Aug 18 2026, 14:30");
+                "18 August 2026, 14:30");
 
         assertCommandSuccess(
                 new AddMasteryCheckCommand(

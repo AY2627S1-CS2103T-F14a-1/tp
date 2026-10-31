@@ -380,7 +380,7 @@ public class LogicManagerTest {
         model.addStudent(BOB);
         LocalDateTime firstTime = LocalDateTime.of(2026, 8, 18, 14, 30);
         JsonAddressBookStorage storage = new JsonAddressBookStorage(temporaryFolder.resolve("addressBook.json"));
-        assertEquals("Added Amy Bee's mastery check 1 at Aug 18 2026, 14:30.",
+        assertEquals("Added Amy Bee's mastery check 1 at 18 August 2026, 14:30.",
                 logic.execute("addmc id/1 num/1 dt/2026-08-18|14:30").getFeedbackToUser());
         Student expected = new StudentBuilder(original)
                 .withMasteryChecks(Map.of(1, new MasteryCheck(firstTime))).build();
@@ -411,7 +411,7 @@ public class LogicManagerTest {
                 restoredLogic.execute("addmc id/1 num/1 dt/2026-08-19|14:30").getFeedbackToUser());
         assertEquals(saved, Files.readString(storage.getAddressBookFilePath()));
         assertStudioState(restored, storage, expected);
-        assertEquals("Added Amy Bee's mastery check 2 at Aug 19 2026, 14:30.",
+        assertEquals("Added Amy Bee's mastery check 2 at 19 August 2026, 14:30.",
                 restoredLogic.execute("addmc id/1 num/2 dt/2026-08-19|14:30").getFeedbackToUser());
         Student withBoth = new StudentBuilder(original).withMasteryChecks(Map.of(1, new MasteryCheck(firstTime),
                 2, new MasteryCheck(firstTime.plusDays(1)))).build();
