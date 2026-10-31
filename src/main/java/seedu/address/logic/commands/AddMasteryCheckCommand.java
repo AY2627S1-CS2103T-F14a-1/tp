@@ -29,9 +29,9 @@ public class AddMasteryCheckCommand extends Command {
             + ": Records a mastery check appointment for the selected student.\n"
             + "Parameters: " + PREFIX_INDEX + "INDEX " + PREFIX_NUMBER + "NUMBER " + PREFIX_DATETIME + "DATE-TIME\n"
             + "NUMBER must be a positive integer identifying a mastery check.\n"
-            + "DATE-TIME must be a real date in dd-MM|HH:mm format.\n"
+            + "DATE-TIME must be a real date in YYYY-MM-DD|HH:mm format.\n"
             + "Example: " + COMMAND_WORD + " " + PREFIX_INDEX + "1 " + PREFIX_NUMBER + "1 " + PREFIX_DATETIME
-            + "27-09|23:59";
+            + "2026-10-14|23:59";
 
     public static final String MESSAGE_SUCCESS =
             "Added %1$s's mastery check %2$s at %3$s.";
@@ -40,7 +40,7 @@ public class AddMasteryCheckCommand extends Command {
             "%1$s’s mastery check has already been recorded for number %2$d. No changes made.";
 
     private static final DateTimeFormatter APPOINTMENT_TIME_FORMATTER =
-            DateTimeFormatter.ofPattern("MMM d, HH:mm", Locale.ENGLISH);
+            DateTimeFormatter.ofPattern("d MMMM uuuu, HH:mm", Locale.ENGLISH);
 
     private final Index targetIndex;
     private final int number;

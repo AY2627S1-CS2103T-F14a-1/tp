@@ -237,17 +237,17 @@ Run the complete UI plan below to check existing studio behavior.
 
 ## Mastery-check datetime parsing regression
 
-Run the `parseMasteryCheckDateTime_*` cases in `ParserUtilTest` for parser-level coverage.
-The following sequence uses the current-year DD-MM|HH:MM input format.
+Run the `parseMasteryCheckDateTime_*` cases in `MasteryCheckParserUtilTest` for parser-level coverage.
+The following sequence uses the YYYY-MM-DD|HH:mm input format.
 After each rejected command, view the student and verify existing appointments are unchanged.
 
 | ID | Steps | Expected result |
 | --- | --- | --- |
-| MC-DATETIME-001 | Add an appointment using `28-02\|00:00`; in a leap year also use `29-02\|00:00`. | The appointment is accepted at midnight in the current year; February 29 is accepted only in leap years. |
-| MC-DATETIME-002 | Attempt another appointment using `30-02\|12:30` or `31-04\|12:30`, then view the student. | Invalid-datetime feedback; existing appointments remain unchanged. |
-| MC-DATETIME-003 | Add another appointment using `31-12\|23:59`. | The appointment is accepted at 23:59. |
-| MC-DATETIME-004 | Attempt appointments with `24:00`, `23:60`, a missing or repeated separator, or seconds; view the student after each attempt. | Invalid-datetime feedback; existing appointments remain unchanged. |
-| MC-DATETIME-005 | Add an appointment with surrounding whitespace around `20-10\|09:05`. | Surrounding whitespace is trimmed and the appointment is accepted. |
+| MC-DATETIME-001 | Add appointments using `2026-02-28\|00:00` and `2024-02-29\|00:00`. | Both appointments are accepted at midnight in their specified years. |
+| MC-DATETIME-002 | Attempt another appointment using `2026-02-30\|12:30` or `2026-04-31\|12:30`, then view the student. | `Provided date value is invalid.` feedback; existing appointments remain unchanged. |
+| MC-DATETIME-003 | Add another appointment using `2026-12-31\|23:59`. | The appointment is accepted at 23:59. |
+| MC-DATETIME-004 | Attempt appointments with `24:00` or `23:60` after a valid ISO date; then try a missing or repeated separator, or seconds. View the student after each attempt. | Impossible times produce time errors; malformed inputs produce format errors. Existing appointments remain unchanged. |
+| MC-DATETIME-005 | Add an appointment with surrounding whitespace around `2026-10-20\|09:05`. | Surrounding whitespace is trimmed and the appointment is accepted. |
 
 ## Mastery-check registration and details regression
 
@@ -257,10 +257,10 @@ round trips, and preservation by other commands. JavaFX cases run on the JavaFX 
 
 | ID | Steps | Expected result |
 | --- | --- | --- |
-| MC-ADD-001 | Start with two students. Run `addmc id/1 num/1 dt/18-08\|14:30`, then view student 1. | Feedback identifies appointment 1 at `Aug 18, 14:30`. The grid has Number, Appointment time, and Status columns and shows Not completed. Student 2 is unchanged. |
-| MC-ADD-002 | Run `addmc id/1 num/2 dt/31-04\|14:30`, then view student 1. | Invalid-datetime feedback; appointment 1 and saved data are unchanged. |
-| MC-ADD-003 | Run `addmc id/1 num/2 dt/19-08\|00:05`, exit, restart, and view student 1. | Numbers 1 and 2 appear in ascending order with the saved times. |
-| MC-ADD-004 | Run `addmc id/1 num/1 dt/20-08\|15:00`, then view student 1. | Duplicate-number feedback; number 1 retains its original time and status. |
+| MC-ADD-001 | Start with two students. Run `addmc id/1 num/1 dt/2026-08-18\|14:30`, then view student 1. | Feedback identifies appointment 1 at `Aug 18 2026, 14:30`. The grid has Number, Appointment time, and Status columns and shows Not completed. Student 2 is unchanged. |
+| MC-ADD-002 | Run `addmc id/1 num/2 dt/2026-04-31\|14:30`, then view student 1. | `Provided date value is invalid.` feedback; appointment 1 and saved data are unchanged. |
+| MC-ADD-003 | Run `addmc id/1 num/2 dt/2026-08-19\|00:05`, exit, restart, and view student 1. | Numbers 1 and 2 appear in ascending order with the saved times. |
+| MC-ADD-004 | Run `addmc id/1 num/1 dt/2026-08-20\|15:00`, then view student 1. | Duplicate-number feedback; number 1 retains its original time and status. |
 | MC-STATE-001 | Edit a student, add/delete a studio record, mark/unmark a mission, and delete the mission. Restart and view the student. | Mastery-check numbers, appointment times, and completion statuses remain unchanged. |
 | MC-VIEW-001 | View a student with appointments, then a student without appointments, then the first student again. | The empty student shows the headers and No mastery checks registered. Returning restores only the correct rows, without duplicates. |
 | MC-STORAGE-001 | Load a fixture containing completed and incomplete mastery checks, save, and reload. Separately attempt to load malformed number, datetime, and status records. | Valid times, including seconds and fractional seconds, and completion flags survive reloading. Malformed files produce a loading error and remain unchanged. |
@@ -439,7 +439,7 @@ duplicate-prefix and value-validation messages also end with the relevant comman
 | ID | Steps | Expected result |
 | --- | --- | --- |
 | MISSING-USAGE-001 | Run `addmc id/1`, then `view id/1`. | Missing number and timing messages appear in prefix order, followed by the complete addmc usage exactly once. Student records remain unchanged. |
-| MISSING-USAGE-002 | Run `addmc id/1 num/1 dt/27-09\|23:59`, then `view id/1`. | Valid syntax is accepted; the record is added or existing-record feedback appears. |
+| MISSING-USAGE-002 | Run `addmc id/1 num/1 dt/2026-09-27\|23:59`, then `view id/1`. | Valid syntax is accepted; the record is added or existing-record feedback appears. |
 | MISSING-USAGE-003 | Run `addmc id/1 num/1`, then `view id/1`. | The missing timing message is followed by addmc usage exactly once; existing records remain unchanged. |
 
 ## Optional-prefix structure regression
@@ -489,7 +489,7 @@ Command parser errors must append the corresponding command usage.
 
 | ID | Steps | Expected result |
 | --- | --- | --- |
-| MC-NUMBER-001 | Register appointment 1 using `addmc id/1 num/1 dt/18-08|14:30`, then view the student. | Appointment 1 is registered and incomplete. |
+| MC-NUMBER-001 | Register appointment 1 using `addmc id/1 num/1 dt/2026-08-18|14:30`, then view the student. | Appointment 1 is registered and incomplete. |
 | MC-NUMBER-002 | Run each of addmc, delmc, markmc, and unmarkmc with `id/1 num/0` and `id/1 num/-1`; include a valid dt/ argument for addmc. Inspect saved data and view the student after each attempt. | Each error identifies a non-positive integer and includes its command usage. Records and saved data are unchanged. |
 | MC-NUMBER-003 | Run `markmc id/1 num/1`, then view the student. | Appointment 1 is completed. |
 | MC-NUMBER-004 | Repeat the four-command rejection sequence with blank num/, abc, 1.5, and 2147483648. Inspect saved data and view the student after each attempt. | Blank num/ uses `Prefix num/ is missing its argument.`; abc, 1.5, and 2147483648 use the non-integer message. Every error includes its command usage. Appointment 1 remains completed; other records and saved data are unchanged. |
@@ -514,10 +514,10 @@ existing blank-status and blank-mission-ID diagnostics.
 
 | ID | Steps | Expected result |
 | --- | --- | --- |
-| REQUIRED-VALUE-001 | Run `addmc id/1 num/1 dt/18-08\|14:30`, then `view id/1`. | Appointment 1 is added or already-recorded feedback appears. Record its time and completion status. |
+| REQUIRED-VALUE-001 | Run `addmc id/1 num/1 dt/2026-08-18\|14:30`, then `view id/1`. | Appointment 1 is added or already-recorded feedback appears. Record its time and completion status. |
 | REQUIRED-VALUE-002 | Run `addmc id/ num/ dt/`, then `view id/1`. | `Prefix id/ is missing its argument.` appears with addmc usage. Appointments and saved data are unchanged. |
 | REQUIRED-VALUE-003 | Run `markmc id/1 num/1`, then `view id/1`. | Appointment 1 is complete; its time is unchanged. |
-| REQUIRED-VALUE-004 | Run `addmc id/1 num/ dt/18-08\|14:30` and `addmc id/1 num/2 dt/`, viewing student 1 after each. | The respective errors identify num/ and dt/ as missing their arguments. Appointment 1 and saved data remain unchanged. |
+| REQUIRED-VALUE-004 | Run `addmc id/1 num/ dt/2026-08-18\|14:30` and `addmc id/1 num/2 dt/`, viewing student 1 after each. | The respective errors identify num/ and dt/ as missing their arguments. Appointment 1 and saved data remain unchanged. |
 | REQUIRED-VALUE-005 | Run `unmarkmc id/1 num/1`, then `view id/1`. | Appointment 1 is incomplete with its original time. |
 | REQUIRED-VALUE-006 | Run delmc, markmc, and unmarkmc with `id/1 num/`; also run `view id/` and `delstudent id/`. Verify student 1 after each. | Each error identifies the blank prefix and includes the calling command usage. Both students and saved data are unchanged. |
 | REQUIRED-VALUE-007 | Run `editstudent id/1 p/91234567`, then `view id/1`. | Only the phone changes. |
@@ -551,3 +551,14 @@ ASCII validation, and preservation of matriculation numbers by student-copy meth
 | MATRIC-INTEGRATION-005 | Run editstudent id/1 mtc/A0000003B, then view id/1. | Only the matriculation number changes. |
 | MATRIC-INTEGRATION-006 | Run editstudent id/1 mtc/A0000002Z, then try mtc/a0000003B, blank mtc/, and repeated mtc/ values. Verify both students after each rejection. | Duplicate-student or parser feedback appears; both profiles remain unchanged. |
 | MATRIC-INTEGRATION-007 | Edit only student 1's phone, restart, then view both students. | Both matriculation numbers persist unchanged; the phone edit also persists. |
+
+### Mastery check ISO date and time validation
+
+| ID | Steps | Expected result |
+| --- | --- | --- |
+| MC-ISO-001 | Run `addmc id/1 num/10 dt/2024-02-29\|00:00`, then view student 1. | Appointment 10 is added at Feb 29 2024, 00:00. |
+| MC-ISO-002 | Run `addmc id/1 num/11 dt/2026-02-29\|14:30`, then view student 1 and inspect saved data. | Date error with usage; existing appointments and saved data are unchanged. |
+| MC-ISO-003 | Run `addmc id/1 num/11 dt/2026-12-31\|23:59`, then view student 1. | Appointment 11 is added at Dec 31 2026, 23:59. |
+| MC-ISO-004 | Run `addmc id/1 num/12 dt/2026-08-18\|24:00`, then view student 1 and inspect saved data. | Time error with usage; existing appointments and saved data are unchanged. |
+| MC-ISO-005 | Run `addmc id/1 num/12 dt/18-08\|14:30`, then repeat with `dt/2026-08-18\|14:30extra` and `dt/2026-08-18\|`. View student 1 and inspect saved data after each attempt. | Format error with usage each time; existing appointments and saved data are unchanged. |
+| MC-ISO-006 | Run `addmc id/1 num/12 dt/2026-04-31\|24:0`, then `addmc id/1 num/12 dt/2026-04-31\|24:00`. View student 1 after each attempt. | Format error first, date error second; no appointment is added. |

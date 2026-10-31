@@ -47,7 +47,7 @@ public class RequiredPrefixCommandParserTest {
                         CliSyntax.PREFIX_EMAIL, CliSyntax.PREFIX_STUDIO_GROUP),
                 List.of("Alice", "A0123456B", "91234567", "alice@example.com", "1A"));
         verifyRequiredPrefixes(new AddMasteryCheckCommandParser(), AddMasteryCheckCommand.MESSAGE_USAGE,
-                List.of(PREFIX_INDEX, PREFIX_NUMBER, PREFIX_DATETIME), List.of("1", "1", "18-08|14:30"));
+                List.of(PREFIX_INDEX, PREFIX_NUMBER, PREFIX_DATETIME), List.of("1", "1", "2026-08-18|14:30"));
         verifyRequiredPrefixes(new DeleteMasteryCheckCommandParser(), DeleteMasteryCheckCommand.MESSAGE_USAGE,
                 List.of(PREFIX_INDEX, PREFIX_NUMBER), List.of("1", "1"));
         verifyRequiredPrefixes(new MarkMasteryCheckCommandParser(), MarkMasteryCheckCommand.MESSAGE_USAGE,

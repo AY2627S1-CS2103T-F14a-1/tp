@@ -378,25 +378,29 @@ public class LogicManagerTest {
         Student original = new StudentBuilder(AMY).withMasteryChecks(Map.of()).build();
         model.addStudent(original);
         model.addStudent(BOB);
-        LocalDateTime firstTime = LocalDateTime.of(LocalDate.now().getYear(), 8, 18, 14, 30);
+        LocalDateTime firstTime = LocalDateTime.of(2026, 8, 18, 14, 30);
         JsonAddressBookStorage storage = new JsonAddressBookStorage(temporaryFolder.resolve("addressBook.json"));
-        assertEquals("Added Amy Bee's mastery check 1 at Aug 18, 14:30.",
-                logic.execute("addmc id/1 num/1 dt/18-08|14:30").getFeedbackToUser());
+        assertEquals("Added Amy Bee's mastery check 1 at Aug 18 2026, 14:30.",
+                logic.execute("addmc id/1 num/1 dt/2026-08-18|14:30").getFeedbackToUser());
         Student expected = new StudentBuilder(original)
                 .withMasteryChecks(Map.of(1, new MasteryCheck(firstTime))).build();
         assertStudioState(model, storage, expected);
 
         String saved = Files.readString(storage.getAddressBookFilePath());
-        for (String invalid : List.of("addmc id/1 num/2 dt/31-04|14:30", "addmc id/1 num/2 dt/18-08|24:00")) {
+        String[][] invalidAppointments = {
+            {"2026-04-31|14:30", MasteryCheckParserUtil.MESSAGE_INVALID_MASTERY_CHECK_DATE},
+            {"2026-08-18|24:00", MasteryCheckParserUtil.MESSAGE_INVALID_MASTERY_CHECK_TIME},
+            {"18-08|14:30", MasteryCheckParserUtil.MESSAGE_INVALID_MASTERY_CHECK_DATETIME_FORMAT}
+        };
+        for (String[] invalid : invalidAppointments) {
             assertThrows(ParseException.class,
-                MasteryCheckParserUtil.MESSAGE_INVALID_MASTERY_CHECK_DATETIME
-                        + MESSAGE_SEE_USAGE + AddMasteryCheckCommand.MESSAGE_USAGE, () ->
-                    logic.execute(invalid));
+                    invalid[1] + MESSAGE_SEE_USAGE + AddMasteryCheckCommand.MESSAGE_USAGE, () ->
+                    logic.execute("addmc id/1 num/2 dt/" + invalid[0]));
             assertEquals(saved, Files.readString(storage.getAddressBookFilePath()));
             assertStudioState(model, storage, expected);
         }
         assertThrows(CommandException.class, MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX, () ->
-                logic.execute("addmc id/3 num/2 dt/19-08|14:30"));
+                logic.execute("addmc id/3 num/2 dt/2026-08-19|14:30"));
         assertEquals(saved, Files.readString(storage.getAddressBookFilePath()));
         assertStudioState(model, storage, expected);
 
@@ -404,11 +408,11 @@ public class LogicManagerTest {
         Logic restoredLogic = new LogicManager(restored, new StorageManager(storage,
                 new JsonUserPrefsStorage(temporaryFolder.resolve("restoredPrefs.json"))));
         assertEquals("Amy Bee’s mastery check has already been recorded for number 1. No changes made.",
-                restoredLogic.execute("addmc id/1 num/1 dt/19-08|14:30").getFeedbackToUser());
+                restoredLogic.execute("addmc id/1 num/1 dt/2026-08-19|14:30").getFeedbackToUser());
         assertEquals(saved, Files.readString(storage.getAddressBookFilePath()));
         assertStudioState(restored, storage, expected);
-        assertEquals("Added Amy Bee's mastery check 2 at Aug 19, 14:30.",
-                restoredLogic.execute("addmc id/1 num/2 dt/19-08|14:30").getFeedbackToUser());
+        assertEquals("Added Amy Bee's mastery check 2 at Aug 19 2026, 14:30.",
+                restoredLogic.execute("addmc id/1 num/2 dt/2026-08-19|14:30").getFeedbackToUser());
         Student withBoth = new StudentBuilder(original).withMasteryChecks(Map.of(1, new MasteryCheck(firstTime),
                 2, new MasteryCheck(firstTime.plusDays(1)))).build();
         assertStudioState(restored, storage, withBoth);
