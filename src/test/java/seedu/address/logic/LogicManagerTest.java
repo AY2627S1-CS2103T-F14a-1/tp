@@ -1,7 +1,6 @@
 package seedu.address.logic;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static seedu.address.logic.Messages.MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX;
 import static seedu.address.logic.Messages.MESSAGE_UNKNOWN_COMMAND;
 import static seedu.address.logic.commands.CommandTestUtil.EMAIL_DESC_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.MATRIC_NUMBER_DESC_AMY;
@@ -91,7 +90,7 @@ public class LogicManagerTest {
     @Test
     public void execute_commandExecutionError_throwsCommandException() {
         String deleteStudentCommand = "delstudent id/9";
-        assertCommandException(deleteStudentCommand, MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX);
+        assertCommandException(deleteStudentCommand, "Index 9 is out of bounds for currently displayed list of size 0");
     }
 
     @Test
@@ -318,7 +317,8 @@ public class LogicManagerTest {
                 reloadedLogic.execute("markmission id/1 m/M04").getFeedbackToUser());
         savedJson = Files.readString(filePath);
         assertThrows(CommandException.class,
-                MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX + "\n\n" + MarkMissionCommand.MESSAGE_USAGE, () ->
+                "Index 2 is out of bounds for currently displayed list of size 1\n\n"
+                        + MarkMissionCommand.MESSAGE_USAGE, () ->
                 reloadedLogic.execute("markmission id/2 m/M05"));
         assertEquals(savedJson, Files.readString(filePath));
         assertEquals(Set.of(new MissionId("M05"), new MissionId("M03"), new MissionId("M04")),
@@ -360,7 +360,8 @@ public class LogicManagerTest {
         assertEquals(expected, storage.readAddressBook().orElseThrow().getStudentList().get(0));
         savedJson = Files.readString(filePath);
         assertThrows(CommandException.class,
-                MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX + "\n\n" + UnmarkMissionCommand.MESSAGE_USAGE, () ->
+                "Index 2 is out of bounds for currently displayed list of size 1\n\n"
+                        + UnmarkMissionCommand.MESSAGE_USAGE, () ->
                 reloadedLogic.execute("unmarkmission id/2 m/M13"));
         assertEquals(savedJson, Files.readString(filePath));
         assertEquals(expected, reloadedModel.getFilteredStudentList().get(0));
@@ -395,7 +396,7 @@ public class LogicManagerTest {
             assertEquals(saved, Files.readString(storage.getAddressBookFilePath()));
             assertStudioState(model, storage, expected);
         }
-        assertThrows(CommandException.class, MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX, () ->
+        assertThrows(CommandException.class, "Index 3 is out of bounds for currently displayed list of size 2", () ->
                 logic.execute("addmc id/3 num/2 dt/19-08|14:30"));
         assertEquals(saved, Files.readString(storage.getAddressBookFilePath()));
         assertStudioState(model, storage, expected);
@@ -476,7 +477,7 @@ public class LogicManagerTest {
         Student empty = new StudentBuilder(original).withMasteryChecks(Map.of()).build();
         assertStudioState(restored, storage, empty);
         String savedAfterDeletion = Files.readString(storage.getAddressBookFilePath());
-        assertThrows(CommandException.class, MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX, () ->
+        assertThrows(CommandException.class, "Index 3 is out of bounds for currently displayed list of size 2", () ->
                 restoredLogic.execute("delmc id/3 num/1"));
         assertEquals(savedAfterDeletion, Files.readString(storage.getAddressBookFilePath()));
         assertStudioState(restored, storage, empty);
@@ -520,7 +521,7 @@ public class LogicManagerTest {
         assertStudioState(restored, storage, withoutNotes);
 
         String savedAfterDeletion = Files.readString(storage.getAddressBookFilePath());
-        assertThrows(CommandException.class, MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX, () ->
+        assertThrows(CommandException.class, "Index 3 is out of bounds for currently displayed list of size 2", () ->
                 restoredLogic.execute("delnote id/3 ni/1"));
         assertEquals(savedAfterDeletion, Files.readString(storage.getAddressBookFilePath()));
         assertStudioState(restored, storage, withoutNotes);
@@ -575,7 +576,8 @@ public class LogicManagerTest {
         assertEquals(unmarkedJson, Files.readString(storage.getAddressBookFilePath()));
         assertStudioState(restored, storage, original);
         for (String command : List.of("markmc id/3 num/1", "unmarkmc id/3 num/1")) {
-            assertThrows(CommandException.class, MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX, () ->
+            assertThrows(CommandException.class,
+                "Index 3 is out of bounds for currently displayed list of size 2", () ->
                     restoredLogic.execute(command));
             assertEquals(unmarkedJson, Files.readString(storage.getAddressBookFilePath()));
             assertStudioState(restored, storage, original);
