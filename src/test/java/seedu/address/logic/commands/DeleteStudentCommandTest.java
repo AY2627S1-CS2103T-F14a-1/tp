@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandFailure;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandSuccess;
+import static seedu.address.logic.commands.CommandTestUtil.getOutOfBoundsStudentIndexMessage;
 import static seedu.address.logic.commands.CommandTestUtil.showStudentAtIndex;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_STUDENT;
 import static seedu.address.testutil.TypicalIndexes.INDEX_SECOND_STUDENT;
@@ -46,7 +47,7 @@ public class DeleteStudentCommandTest {
         Index outOfBoundIndex = Index.fromOneBased(model.getFilteredStudentList().size() + 1);
         DeleteStudentCommand deleteStudentCommand = new DeleteStudentCommand(outOfBoundIndex);
 
-        assertCommandFailure(deleteStudentCommand, model, Messages.MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX);
+        assertCommandFailure(deleteStudentCommand, model, getOutOfBoundsStudentIndexMessage(outOfBoundIndex, model));
     }
 
     @Test
@@ -76,7 +77,7 @@ public class DeleteStudentCommandTest {
 
         DeleteStudentCommand deleteStudentCommand = new DeleteStudentCommand(outOfBoundIndex);
 
-        assertCommandFailure(deleteStudentCommand, model, Messages.MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX);
+        assertCommandFailure(deleteStudentCommand, model, getOutOfBoundsStudentIndexMessage(outOfBoundIndex, model));
     }
 
     @Test

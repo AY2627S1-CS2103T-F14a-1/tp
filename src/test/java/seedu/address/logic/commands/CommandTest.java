@@ -2,6 +2,7 @@ package seedu.address.logic.commands;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static seedu.address.logic.commands.CommandTestUtil.getOutOfBoundsStudentIndexMessage;
 import static seedu.address.logic.commands.CommandTestUtil.showStudentAtIndex;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_STUDENT;
 import static seedu.address.testutil.TypicalIndexes.INDEX_SECOND_STUDENT;
@@ -10,7 +11,6 @@ import static seedu.address.testutil.TypicalStudents.getTypicalAddressBook;
 import org.junit.jupiter.api.Test;
 
 import seedu.address.commons.core.index.Index;
-import seedu.address.logic.Messages;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.AddressBook;
 import seedu.address.model.Model;
@@ -42,7 +42,7 @@ public class CommandTest {
         CommandException exception = assertThrows(CommandException.class, () ->
                 command.getStudentAtDisplayedIndexForTest(model, invalidIndex));
 
-        assertEquals(Messages.MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX, exception.getMessage());
+        assertEquals(getOutOfBoundsStudentIndexMessage(invalidIndex, model), exception.getMessage());
     }
 
     @Test
@@ -52,7 +52,7 @@ public class CommandTest {
         CommandException exception = assertThrows(CommandException.class, () ->
                 command.getStudentAtDisplayedIndexForTest(emptyModel, INDEX_FIRST_STUDENT));
 
-        assertEquals(Messages.MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX, exception.getMessage());
+        assertEquals(getOutOfBoundsStudentIndexMessage(INDEX_FIRST_STUDENT, emptyModel), exception.getMessage());
     }
 
     @Test
