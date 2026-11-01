@@ -32,7 +32,7 @@ public class StudentDetailsPanel extends UiPart<Region> {
 
     private static final String FXML = "StudentDetailsPanel.fxml";
     private static final DateTimeFormatter APPOINTMENT_TIME_FORMATTER =
-            DateTimeFormatter.ofPattern("MMM d, HH:mm", Locale.ENGLISH);
+            DateTimeFormatter.ofPattern("d MMMM uuuu, HH:mm", Locale.ENGLISH);
     private static final DateTimeFormatter MISSION_DEADLINE_FORMATTER =
             DateTimeFormatter.ofPattern("d MMMM uuuu", Locale.ENGLISH);
 
@@ -191,16 +191,6 @@ public class StudentDetailsPanel extends UiPart<Region> {
 
         missionSubmissionsGrid.getChildren().clear();
 
-        if (missions.isEmpty()) {
-            addGridLabel(
-                    missionSubmissionsGrid,
-                    "No missions configured.",
-                    0,
-                    0,
-                    false);
-            return;
-        }
-
         addGridLabel(
                 missionSubmissionsGrid,
                 "Mission",
@@ -214,6 +204,17 @@ public class StudentDetailsPanel extends UiPart<Region> {
                 1,
                 0,
                 true);
+
+        if (missions.isEmpty()) {
+            addGridLabel(
+                    missionSubmissionsGrid,
+                    "No missions configured.",
+                    0,
+                    1,
+                    false);
+            GridPane.setColumnSpan(missionSubmissionsGrid.getChildren().getLast(), 2);
+            return;
+        }
 
         MissionSubmissions submissions =
                 student.getMissionSubmissions();

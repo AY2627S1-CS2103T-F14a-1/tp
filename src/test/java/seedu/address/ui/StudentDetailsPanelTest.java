@@ -156,7 +156,7 @@ public class StudentDetailsPanelTest {
     }
 
     @Test
-    public void showStudent_withNoMissions_displaysMessage()
+    public void showStudent_noMissions_displaysHeadersAndSpanningEmptyMessage()
             throws Exception {
 
         runOnJavaFxThread(() -> {
@@ -170,14 +170,13 @@ public class StudentDetailsPanelTest {
             GridPane missionGrid =
                     getMissionGrid(panel);
 
-            assertEquals(1, missionGrid.getChildren().size());
-
-            Label message =
-                    (Label) missionGrid.getChildren().get(0);
-
+            assertEquals(3, missionGrid.getChildren().size());
+            assertEquals("Mission", getGridCell(missionGrid, 0, 0));
+            assertEquals("Status", getGridCell(missionGrid, 1, 0));
             assertEquals(
                     "No missions configured.",
-                    message.getText());
+                    getGridCell(missionGrid, 0, 1));
+            assertEquals(2, GridPane.getColumnSpan(missionGrid.getChildren().getLast()));
         });
     }
 
@@ -363,10 +362,10 @@ public class StudentDetailsPanelTest {
             assertEquals("Appointment time", getMasteryCell(grid, 1, 0));
             assertEquals("Status", getMasteryCell(grid, 2, 0));
             assertEquals("1", getMasteryCell(grid, 0, 1));
-            assertEquals("Aug 18, 14:30", getMasteryCell(grid, 1, 1));
+            assertEquals("18 August 2026, 14:30", getMasteryCell(grid, 1, 1));
             assertEquals("Not completed", getMasteryCell(grid, 2, 1));
             assertEquals("2", getMasteryCell(grid, 0, 2));
-            assertEquals("Aug 19, 00:05", getMasteryCell(grid, 1, 2));
+            assertEquals("19 August 2026, 00:05", getMasteryCell(grid, 1, 2));
             assertEquals("Completed", getMasteryCell(grid, 2, 2));
         });
     }
