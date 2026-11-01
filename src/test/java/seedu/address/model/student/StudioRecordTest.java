@@ -30,13 +30,13 @@ public class StudioRecordTest {
 
     @Test
     public void isValidEffortScore() {
-        // invalid effort scores
+        // valid effort scores
         int[] effortScores = {0, 1, 100, Integer.MAX_VALUE - 1, Integer.MAX_VALUE};
         for (int effortScore : effortScores) {
             assertTrue(StudioRecord.isValidEffortScore(effortScore));
         }
 
-        // valid effort scores
+        // invalid effort scores
         assertFalse(StudioRecord.isValidEffortScore(-1));
     }
 
@@ -53,11 +53,14 @@ public class StudioRecordTest {
         // null -> returns false
         assertFalse(studioRecord.equals(null));
 
+
         // different types -> returns false
         assertFalse(studioRecord.equals("50"));
 
         // different values -> returns false
         assertFalse(studioRecord.equals(new StudioRecord(0)));
+        assertFalse(studioRecord.equals(new StudioRecord(49)));
+        assertFalse(studioRecord.equals(new StudioRecord(51)));
     }
 
     @Test
