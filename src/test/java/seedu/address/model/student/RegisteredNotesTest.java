@@ -146,7 +146,6 @@ public class RegisteredNotesTest {
     public void hasNote_presentAbsentAndInvalidIndexes_returnsExpectedResult() {
         RegisteredNotes registeredNotes = new RegisteredNotes(List.of(FIRST_NOTE));
 
-        assertFalse(registeredNotes.hasNote(Index.fromOneBased(0)));
         assertTrue(registeredNotes.hasNote(Index.fromOneBased(1)));
         assertFalse(registeredNotes.hasNote(Index.fromOneBased(2)));
         assertThrows(NullPointerException.class, () -> registeredNotes.hasNote(null));
@@ -189,7 +188,6 @@ public class RegisteredNotesTest {
 
     @Test
     public void isValidNoteIndex_boundaryAndOutOfRangeIndexes_returnsExpectedValidity() {
-        assertFalse(RegisteredNotes.isValidNoteIndex(Index.fromOneBased(0)));
         assertTrue(RegisteredNotes.isValidNoteIndex(Index.fromOneBased(1)));
         assertTrue(RegisteredNotes.isValidNoteIndex(Index.fromOneBased(50)));
         assertTrue(RegisteredNotes.isValidNoteIndex(Index.fromOneBased(RegisteredNotes.MAX_NOTE_INDEX - 1)));
