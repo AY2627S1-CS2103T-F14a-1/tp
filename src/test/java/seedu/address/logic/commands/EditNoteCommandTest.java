@@ -19,6 +19,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import seedu.address.commons.core.index.Index;
+import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.UserPrefs;
@@ -72,6 +73,30 @@ public class EditNoteCommandTest {
         EditNoteCommand command = new EditNoteCommand(INDEX_FIRST_STUDENT, INDEX_THIRD_NOTE, UPDATED_NOTE);
 
         assertCommandFailure(command, model, EditNoteCommand.MESSAGE_INDEX_NOT_RECORDED);
+    }
+
+    @Test
+    public void execute_matchingNoteText_appendsNoteAndReturnsWarning() throws CommandException {
+        Note note = new Note("Review lecture notes");
+        Note noteToEdit = new Note("Review");
+        Model model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
+        Student studentToUpdate = model.getFilteredStudentList().get(INDEX_FIRST_STUDENT.getZeroBased());
+        RegisteredNotes existingNotes = new RegisteredNotes(List.of(note, noteToEdit));
+        Student studentWithNote = studentToUpdate.withRegisteredNotes(existingNotes);
+        model.setStudent(studentToUpdate, studentWithNote);
+        Index noteToEditIndex = Index.fromOneBased(2);
+        Note newNote = new Note("Review lecture notes");
+        EditNoteCommand command = new EditNoteCommand(
+                INDEX_FIRST_STUDENT, noteToEditIndex, newNote);
+
+        CommandResult result = command.execute(model);
+        Student expectedStudent = studentWithNote.withRegisteredNotes(existingNotes.editNote(noteToEditIndex, newNote));
+
+        assertEquals(String.format(EditNoteCommand.MESSAGE_SUCCESS, studentToUpdate.getName(), 2),
+                result.getFeedbackToUser());
+        assertEquals(List.of(String.format(
+                EditNoteCommand.MESSAGE_WARNING_MATCHING_TEXT, studentToUpdate.getName())), result.getWarnings());
+        assertEquals(expectedStudent, model.getFilteredStudentList().get(INDEX_FIRST_STUDENT.getZeroBased()));
     }
 
     @Test

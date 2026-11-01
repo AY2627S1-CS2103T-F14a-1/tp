@@ -28,6 +28,7 @@ public class EditNoteCommand extends Command {
             "%1$s’s note with index %2$d is already the same. No changes made.";
     public static final String MESSAGE_SUCCESS =
             "Edited %1$s's note with index %2$d.";
+    public static final String MESSAGE_WARNING_MATCHING_TEXT = "%1$s already has a matching note text.";
     public static final String MESSAGE_USAGE = COMMAND_WORD
             + ": Edits a registered note for the selected student.\n"
             + "Parameters: " + PREFIX_INDEX + "INDEX " + PREFIX_NOTE_INDEX + "NOTE_INDEX " + PREFIX_NOTE_TEXT + "TEXT\n"
@@ -72,13 +73,18 @@ public class EditNoteCommand extends Command {
                     studentToUpdate.getName(), noteIndex.getOneBased()), studentToUpdate);
         }
 
+        boolean hasMatchingNoteText = registeredNotes.hasNoteText(updatedNote.getNoteText());
         Student updatedStudent = studentToUpdate.withRegisteredNotes(
                 registeredNotes.editNote(noteIndex, updatedNote));
         model.setStudent(studentToUpdate, updatedStudent);
-        return new CommandResult(String.format(MESSAGE_SUCCESS,
+        CommandResult result = new CommandResult(String.format(MESSAGE_SUCCESS,
                 studentToUpdate.getName(),
                 noteIndex.getOneBased()),
                 updatedStudent);
+        if (hasMatchingNoteText) {
+            return result.withWarning(String.format(MESSAGE_WARNING_MATCHING_TEXT, studentToUpdate.getName()));
+        }
+        return result;
     }
 
     @Override

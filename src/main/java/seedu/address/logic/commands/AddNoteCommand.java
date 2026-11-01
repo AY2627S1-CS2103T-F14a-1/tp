@@ -33,7 +33,7 @@ public class AddNoteCommand extends Command {
             "Added %1$s's note.";
     public static final String MESSAGE_MAXIMUM_NOTES_REACHED =
             "%1$s already has the maximum of %2$d notes. No changes made.";
-    public static final String MESSAGE_WARNING_MATCHING_TEXT = "%1$s has a matching note text.";
+    public static final String MESSAGE_WARNING_MATCHING_TEXT = "%1$s already has a matching note text.";
 
     private final Index targetIndex;
     private final Note note;
