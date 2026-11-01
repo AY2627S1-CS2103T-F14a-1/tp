@@ -927,20 +927,18 @@ are excluded, regardless of when they were recorded.
 ### Non-Functional Requirements
 
 1. Should work on any _mainstream OS_ as long as it has Java `25` or above installed.
-2. Should start within 5 seconds on an _average university student's desktop_.
-3. Should behave consistently when launched from IDE, command line, or by double-clicking the jar file.
-4. Should be able to hold up to 1000 students without noticeable sluggishness (no more than 2 seconds delay) in performance for typical usage.
+2. Should start within 10 seconds on an _average university student's desktop_.
+3. Should behave consistently when launched from command line.
+4. Should be able to hold up to 1000 students without noticeable sluggishness (no more than 3 seconds delay) in performance for typical usage.
 5. A user with _above average typing speed_ for regular English text (i.e. not code, not system admin commands) should be able to accomplish most of the tasks faster using commands than using the mouse.
-6. GUI should be _usable_ from screen resolutions 1280x720 and higher and screen scales of 100%, 125%, and 150%.
+6. GUI should be _usable_ from screen resolutions 1280x720 and higher.
 7. No additional installer should be required for the software.
 8. Should be _usable_ without Internet access.
 9. Character encoding for data saved to disk should be UTF-8.
-10. Commands and error messages should use consistent terminology and clearly identify the invalid field or input.
-11. Dates, times, and identifiers should be displayed in a consistent and unambiguous format.
-12. All commands should be typed into a single interface.
-13. Records should be preserved after closing and reopening the application.
-14. Should retain previously saved data even if an operation fails.
-15. If a stored record is invalid, the system logs the loading error and starts with an empty address book. The saved file remains unchanged until a command executes successfully.
+10. All commands should be typed into a single interface.
+11. Records should be preserved after closing and reopening the application.
+12. Should retain previously saved data even if an operation fails.
+13. If a stored record is invalid, the system logs the loading error and starts with an empty address book. The saved file remains unchanged until a command executes successfully.
 
 ### Glossary
 
@@ -950,9 +948,11 @@ are excluded, regardless of when they were recorded.
 * **AvengerHub**: The name of the application.
 * **Tutor**: The TAs (teaching assistants) in the CS1101S course that handle the tutorial sessions. Also known as "Avengers" by the course.
 * **Mission**: The CS1101S term for homework assignments. A mission submission usually happens via the course website.
+* **Studio**: The CS1101S term for tutorials.
 * **Studio group**: The CS1101S term for tutorial groups.
 * **Studio week**: Equivalent to a tutorial week. They are numbered weeks of the term.
 * **Studio effort**: The score given by an Avenger to students for each studio.
+* **Studio record**: The record of a student's attendance and effort for a given studio week.
 * **Mastery check/Mastery check appointment**: A CS1101S assessment where the tutor conducts an oral interview with a pair of students to ensure they have understood the course content. The date and time of the assessment is decided jointly by the students and the tutor.
 * **Record(s)**: The list of all student information. This is saved on the disk and exists in memory as well when the application is running.
 * **Mission catalogue**: The list of missions, visible and standard across all students.
