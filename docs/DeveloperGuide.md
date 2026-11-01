@@ -18,6 +18,7 @@
 Notable uses of AI:
 
 * ChatGPT Codex was used by @BrianLim35 to assist with writing test cases, guide documentation, and input validation.
+* ChatGPT Codex was used by @nuggettowin to generate most non-GUI tests, and studio record and note representation in the UI.
 
 --------------------------------------------------------------------------------------------------------------------
 
@@ -346,7 +347,7 @@ The query changes only the displayed student filter. It does not modify student 
 
 **Target user profile**:
 
-* serves as tutor for CS1101S tutorial(s)
+* serves as tutor for the National University of Singapore's CS1101S course.
 * has a need to manage students across one or more tutorial groups assigned to them
 * has a need to keep track of administrative information relevant to conducting and managing their tutorials
 * prefers desktop apps over other types of applications
@@ -364,15 +365,21 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 | Priority | As a …                         | I want to …                                                              | So that I can…                                                                       |
 |----------|--------------------------------|--------------------------------------------------------------------------|--------------------------------------------------------------------------------------|
 | `* * *`  | TA                             | add a new student to a studio group                                      | start tracking them from day one at the start of the semester                        |
-| `* * *`  | TA                             | delete a student from a studio group                                     | keep my records accurate if a student drops the module or when a new semester begins |
+| `* * *`  | TA                             | delete a student from a studio group                                     | keep my records accurate with adjustments to the student roster |
 | `* * *`  | TA                             | search for a student by name                                             | quickly find them without scrolling through the whole list                           |
 | `* * *`  | TA                             | edit a student's information                                             | keep my records accurate when their information changes                              |
+| `* * *`  | TA                             | add a note for a given student of mine                                    | tailor my teaching to their specific need                              |
+| `* * *`  | TA                             | delete a note for a given student of mine                                    | keep my notes for each student accurate over time                              |
+| `* * *`  | TA                             | edit a note for a given student of mine                                    | make direct changes to a note that is still relevant                              |
 | `* * *`  | TA with multiple studio groups | see a combined view of all students across my groups                     | get a holistic view of my overall workload                                           |
-| `* * *`  | TA                             | mark a student as present or absent for a studio                  | maintain an accurate studio record                                                   |
 | `* * *`  | TA                             | add or delete shared missions                                           | manage the missions students need to complete                                        |
-| `* * *`  | TA                             | mark or unmark a student's mission submission                            | see who has submitted each mission                                                   |
+| `* * *`  | TA                             | mark a student's mission submission                            | see who has submitted each mission                                                   |
+| `* * *`  | TA                             | unmark a student's mission submission                            | keep the mission submission record accurate if it was mistakenly marked                        |
 | `* * *`  | TA                             | record a student's mark for a given assessment                           | keep their performance data alongside other student records                          |
 | `* * *`  | TA with multiple studio groups | see which studio group a student belongs to                              | avoid mixing up students across studio groups                                        |
+| `* * *`  | TA                             | add a student's record for a weekly studio                           | keep track of their weekly performance in one place                          |
+| `* * *`  | TA                             | delete a student's record for a weekly studio                           | keep the studio record accurate if it was mistakenly added                          |
+| `* * *`  | TA                             | edit a student's record for a weekly studio                           | edit the student's effort score directly if I changed my mind                          |
 | `* *`    | TA                             | view a summary of a student's studio records, participation, and submissions | understand their overall engagement without checking multiple records                |
 | `* * *`  | TA                             | list submission statuses for a selected mission and filter overdue records | identify students who may need a submission reminder |
 
@@ -493,14 +500,14 @@ submission records, or the current student filter.
 
       Use case resumes at step 3.
 
-**Use case: Mark studio record**
+**Use case: Add studio record**
 
 **MSS**
 
-1. Tutor requests to list students.
-2. AvengerHub shows the list of students.
-3. Tutor requests to mark a specific student in the list as present for a specified tutorial week.
-4. AvengerHub marks the selected student as present for the specified week and confirms success.
+1. Tutor opens AvengerHub.
+2. AvengerHub shows a list of students.
+3. Tutor requests to add a week's studio record for a specific student in the list.
+4. AvengerHub adds the studio record for the student.
 
    Use case ends.
 
@@ -516,20 +523,20 @@ submission records, or the current student filter.
 
       Use case resumes from step 3.
 
-* 3b. The selected student is already marked present for the specified week.
+* 3b. The selected student's studio record is already registered for the specified week.
 
-    * 3b1. AvengerHub informs the tutor that the student is already marked present and leaves the records unchanged.
+    * 3b1. AvengerHub informs the tutor and leaves the records unchanged.
 
       Use case ends.
 
-**Use case: Unmark studio record**
+**Use case: Delete studio record**
 
 **MSS**
 
-1. Tutor requests to list students.
+1. Tutor opens AvengerHub.
 2. AvengerHub shows the list of students.
-3. Tutor requests to mark a specific student in the list as absent for a specified tutorial week.
-4. AvengerHub marks the selected student as absent for the specified week and confirms success.
+3. Tutor requests to delete a week's studio record for a specific student in the list.
+4. AvengerHub deletes the studio record for the student.
 
    Use case ends.
 
@@ -545,11 +552,125 @@ submission records, or the current student filter.
 
       Use case resumes from step 3.
 
-* 3b. The selected student is already absent for the specified week.
+* 3b. The selected student's studio record is already absent for the specified week.
 
-    * 3b1. AvengerHub informs the tutor that the student is already absent and leaves the records unchanged.
+    * 3b1. AvengerHub informs the tutor and leaves the records unchanged.
 
       Use case ends.
+
+**Use case: Edit studio record**
+
+**MSS**
+
+1. Tutor opens AvengerHub.
+2. AvengerHub shows a list of students.
+3. Tutor requests to edit a week's studio record for a specific student in the list.
+4. AvengerHub edits the studio record for the student.
+
+   Use case ends.
+
+**Extensions**
+
+* 2a. The list is empty.
+
+  Use case ends.
+
+* 3a. The tutor provides invalid or incomplete details.
+
+    * 3a1. AvengerHub shows an error message and leaves the records unchanged.
+
+      Use case resumes from step 3.
+
+* 3b. The selected student's studio record does not exist for the specified week.
+
+    * 3b1. AvengerHub informs the tutor and leaves the records unchanged.
+
+      Use case ends.
+
+* 3c. The selected student's studio record exists and has the same details as the tutor's intended edit.
+
+    * 3b1. AvengerHub informs the tutor and leaves the records unchanged.
+
+      Use case ends.
+
+**Use case: Add note**
+
+**MSS**
+
+1. Tutor opens AvengerHub.
+2. AvengerHub shows a list of students.
+3. Tutor requests to add a note for a specific student in the list.
+4. AvengerHub adds the note for the student.
+
+**Extensions**
+
+* 2a. The list is empty.
+
+  Use case ends.
+
+* 3a. The tutor provides invalid or incomplete details.
+
+    * 3a1. AvengerHub shows an error message and leaves the note records unchanged.
+
+      Use case resumes from step 3.
+
+* 3b. The selected student cannot support any more notes.
+
+    * 3b1. AvengerHub informs the tutor and leaves the note records unchanged.
+
+      Use case ends.
+
+* 3c. The selected student already has a note with identical content.
+
+    * 3c1. AvengerHub warns the tutor. Use case resumes at step 4.
+
+**Use case: Delete note**
+
+**MSS**
+
+1. Tutor opens AvengerHub.
+2. AvengerHub shows a list of students.
+3. Tutor requests to delete a note for a specific student in the list.
+4. AvengerHub deletes the note for the student.
+
+**Extensions**
+
+* 2a. The list is empty.
+
+  Use case ends.
+
+* 3a. The tutor provides invalid or incomplete details.
+
+    * 3a1. AvengerHub shows an error message and leaves the note records unchanged.
+
+      Use case resumes from step 3.
+
+**Use case: Edit note**
+
+**MSS**
+
+1. Tutor opens AvengerHub.
+2. AvengerHub shows a list of students.
+3. Tutor requests to edit a note for a specific student in the list.
+4. AvengerHub edits the note for the student.
+
+**Extensions**
+
+* 2a. The list is empty.
+
+  Use case ends.
+
+* 3a. The tutor provides invalid or incomplete details.
+
+    * 3a1. AvengerHub shows an error message and leaves the note records unchanged.
+
+      Use case resumes from step 3.
+
+* 3c. The selected student already has a note with identical content.
+
+    * 3c1. AvengerHub warns the tutor. 
+  
+      Use case resumes at step 4.
 
 **Use case: Add mission**
 
