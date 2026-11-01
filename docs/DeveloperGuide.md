@@ -208,50 +208,40 @@ This section describes some noteworthy details on how certain features are imple
 
 ### Adding a mission
 
-For `addmission m/MISSION_ID n/NAME d/DEADLINE`, `AddressBookParser` delegates to `AddMissionCommandParser`, which validates exactly one mission ID, name, and deadline and creates an `AddMissionCommand`. `MissionParserUtil#parseMissionId(...)` removes whitespace before validating the ID with `MissionId`: it must start with `M`, contain a positive integer of at least two digits with no unnecessary leading zeros, and its numeric value must not exceed `9223372036854775807` (`Long.MAX_VALUE`). IDs with larger numeric values receive the mission-ID constraint message. `MissionParserUtil#parseMissionName(...)` removes surrounding whitespace and collapses repeated whitespace in the name, while preserving case and punctuation. The deadline parser similarly removes whitespace before requiring a real `YYYY-MM-DD` date; past dates are accepted. Missing, repeated, blank, or invalid fields and unexpected preamble text cause a `ParseException`.
+`AddressBookParser` passes the input to `AddMissionCommandParser`, which creates an `AddMissionCommand` from the parsed mission details.
 
-When executed, `AddMissionCommand` checks for an existing ID and calls `Model#hasMissionName(...)` to reject duplicate names, ignoring case and whitespace differences. It then calls `Model#addMission(...)`, which delegates through `ModelManager` and `AddressBook` to `MissionCatalogue`. The catalogue validates uniqueness and stores the supplied ID; it never renumbers missions. The command returns a `CommandResult` containing the added mission.
+When executed, `AddMissionCommand` checks that the mission ID and name are unused, calls `Model#addMission(...)`, and returns a success message in a `CommandResult`.
 
-`MissionCatalogue` also enforces unique IDs and names when adding, editing, and restoring saved data,
+`MissionCatalogue` also enforces unique IDs and names when adding and restoring saved data,
 so callers cannot bypass this rule by accessing the model directly. Restoration validates the
 complete replacement before changing catalogue state. Mission IDs are supplied by the user and
-stored with each mission; there is no allocation counter. Deletion leaves all remaining IDs unchanged
-and removes the deleted ID from every student's submissions.
+stored with each mission.
 
-Mission names share `Mission.normalizeName(...)` for whitespace normalization. Delete and submission-list
-parsers both use `MissionParserUtil#parseMissionId(...)`. Marking, unmarking, and mission deletion use
-`Student#withMissionSubmissions(...)` to preserve all other student fields. Common command feedback is
-defined in `Messages`.
-
-The sequence diagram below illustrates the successful interaction flow using `execute("addmission m/M01 n/Rune Reading d/2026-10-20")`. Here, `missionId` is the parsed `MissionId`, `deadline` is the parsed `LocalDate` value for `2026-10-20`, and `feedback` is the formatted success message.
+The sequence diagram below illustrates the successful interaction flow for adding a mission. Call arguments are abbreviated as `...` for readability.
 
 <puml src="diagrams/AddMissionSequenceDiagram.puml" width="1000" />
 
 ### Deleting a mission
 
-For `delmission m/M03`, `AddressBookParser` delegates to `DeleteMissionCommandParser`. The parser requires exactly one nonblank `m/` value and rejects unexpected preamble text. `MissionParserUtil#parseMissionId(...)` removes whitespace and validates the ID, and `MissionId` normalizes it to uppercase. Thus, `m/m03` and `m/M03` identify the same mission; the ID is not a displayed list position.
+`AddressBookParser` passes the input to `DeleteMissionCommandParser`, which creates a `DeleteMissionCommand` for the requested mission.
 
-When executed, `DeleteMissionCommand` calls `Model#findMission(...)` and rejects a nonexistent mission before making changes. It then calls `Model#deleteMission(...)`. Within the model, `AddressBook` prepares replacement student records without the deleted mission's submission ID and removes the mission from the catalogue. This includes students hidden by the current filter and preserves their other details and submissions. Remaining IDs do not change; a deleted ID may later be explicitly reused. The command returns a `CommandResult` identifying the deleted mission.
+When executed, `DeleteMissionCommand` checks that the mission exists, calls `Model#deleteMission(...)`, and returns a `CommandResult` identifying the deleted mission. The model also removes that mission's submission records from all students.
 
-Deleting a mission removes its submission records from every student. Recreating it uses the ID supplied by the user, which may be the deleted ID, and starts with no submissions recorded. Previous submission records are not restored.
-
-The sequence diagram below illustrates the successful interaction flow using `execute("delmission m/M03")`. Here, `missionId` is the parsed `MissionId` value `M03`, and `feedback` is the formatted success message.
+The sequence diagram below illustrates the successful interaction flow for deleting a mission. Call arguments are abbreviated as `...` for readability.
 
 <puml src="diagrams/DeleteMissionSequenceDiagram.puml" width="1000" />
 
 ### Marking and unmarking mission submissions
 
-For `markmission id/INDEX m/MISSION_ID` or `unmarkmission id/INDEX m/MISSION_ID`, `AddressBookParser` delegates to `MarkMissionCommandParser` or `UnmarkMissionCommandParser`. Both use `ArgumentStructureValidator` to require exactly one `id/` and `m/` value, `ParserUtil#parseIndex(...)` to remove whitespace and validate a positive student index, and `MissionParserUtil#parseMissionId(...)` to remove whitespace and validate the case-insensitive mission ID. They then create the corresponding command. Invalid or extra arguments cause a `ParseException` that includes command usage. A positive index that does not identify a student in the current displayed list is rejected during execution with a `CommandException`; this error also includes the corresponding command usage. A well-formed ID for a mission that does not exist is rejected during execution without changing records.
+`AddressBookParser` delegates each input to its matching parser, which creates a `MarkMissionCommand` or `UnmarkMissionCommand`.
 
-When executed, the command calls `Model#findMission(...)` and retrieves the selected student from `Model#getFilteredStudentList()`. Marking uses `MissionSubmissions#withSubmission(...)`; unmarking uses `MissionSubmissions#withoutSubmission(...)`. Each produces updated immutable submission data, which the command places in a replacement `Student` before calling `Model#setStudent(...)`. Other student details and the current filter are preserved, and the observable student list notifies the UI of the replacement.
+Each command checks that the mission exists, retrieves the displayed students, and selects the student at the requested index. Marking adds the mission ID to the student's submissions; unmarking removes it. If the submission state needs to change, the command updates the student through `Model#setStudent(...)`, then returns a `CommandResult`.
 
-Marking an already recorded submission or unmarking an absent submission returns a no-change `CommandResult` without replacing the student. A missing mission or out-of-range displayed index causes a `CommandException` before any update. The shared mission itself is unchanged by either command.
-
-The sequence diagram below illustrates `execute("markmission id/1 m/M03")` when the mission and student exist and the submission is not yet recorded. Here, `targetIndex` is the parsed one-based index 1, `missionId` is the parsed `MissionId` value `M03`, and `feedback` is the formatted success message. `studentToUpdate` is the selected student and `updatedStudent` is its replacement.
+The sequence diagram below illustrates marking a mission submission when the mission and student exist and the submission is not yet recorded. Call arguments are abbreviated as `...` for readability.
 
 <puml src="diagrams/MissionSubmissionSequenceDiagram.puml" width="1000" />
 
-The corresponding unmarking sequence uses `execute("unmarkmission id/1 m/M03")` when the submission is recorded. The parameter names have the same meanings as above; the replacement student has `M03` removed from its submissions.
+The corresponding unmarking sequence illustrates removing a recorded mission submission. Call arguments are abbreviated as `...` for readability.
 
 <puml src="diagrams/UnmarkMissionSubmissionSequenceDiagram.puml" width="1000" />
 
