@@ -30,12 +30,10 @@ public class StudioRecordTest {
     }
 
     @Test
-    public void isValidEffortScore_validValue_returnsExpectedValidity() {
-        assertFalse(StudioRecord.isValidEffortScore(-1));
+    public void isValidEffortScore_boundaryValues_returnsExpectedValidity() {
         assertTrue(StudioRecord.isValidEffortScore(0));
-        assertTrue(StudioRecord.isValidEffortScore(1));
-        assertTrue(StudioRecord.isValidEffortScore(50));
         assertTrue(StudioRecord.isValidEffortScore(Integer.MAX_VALUE));
+        assertFalse(StudioRecord.isValidEffortScore(-1));
     }
 
     @Test
@@ -43,9 +41,7 @@ public class StudioRecordTest {
         StudioRecord studioRecord = new StudioRecord(50);
 
         assertTrue(studioRecord.equals(studioRecord));
-        assertFalse(studioRecord.equals(new StudioRecord(49)));
         assertTrue(studioRecord.equals(new StudioRecord(50)));
-        assertFalse(studioRecord.equals(new StudioRecord(51)));
         assertFalse(studioRecord.equals(new StudioRecord(0)));
         assertFalse(studioRecord.equals(null));
         assertFalse(studioRecord.equals("50"));

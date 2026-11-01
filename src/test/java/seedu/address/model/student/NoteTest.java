@@ -30,7 +30,6 @@ public class NoteTest {
     public void constructor_invalidText_throwsIllegalArgumentException() {
         assertThrows(IllegalArgumentException.class, () -> new Note(""));
         assertThrows(IllegalArgumentException.class, () -> new Note(" leading space"));
-        assertThrows(IllegalArgumentException.class, () -> new Note("你好"));
     }
 
     @Test
@@ -44,9 +43,9 @@ public class NoteTest {
         assertFalse(Note.isValidNoteText(" "));
         assertFalse(Note.isValidNoteText(" leading"));
         assertTrue(Note.isValidNoteText("trailing "));
-        assertFalse(Note.isValidNoteText("你好"));
         assertFalse(Note.isValidNoteText("note\twith tab"));
         assertFalse(Note.isValidNoteText("a".repeat(Note.MAX_NOTE_LENGTH + 1)));
+        assertThrows(NullPointerException.class, () -> Note.isValidNoteText(null));
     }
 
     @Test

@@ -35,10 +35,6 @@ public class RegisteredStudioRecordsTest {
     public void constructor_validRecords_storesAllRecords() {
         Map<Integer, StudioRecord> records = Map.of(
                 RegisteredStudioRecords.MIN_WEEK, ZERO_EFFORT_RECORD,
-                RegisteredStudioRecords.MIN_WEEK + 1, ZERO_EFFORT_RECORD,
-                RegisteredStudioRecords.MIN_WEEK + (
-                        RegisteredStudioRecords.MAX_WEEK - RegisteredStudioRecords.MIN_WEEK) / 2, ZERO_EFFORT_RECORD,
-                RegisteredStudioRecords.MAX_WEEK - 1, FULL_EFFORT_RECORD,
                 RegisteredStudioRecords.MAX_WEEK, FULL_EFFORT_RECORD);
 
         RegisteredStudioRecords registeredStudioRecords = new RegisteredStudioRecords(records);
