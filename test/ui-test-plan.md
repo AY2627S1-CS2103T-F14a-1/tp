@@ -25,6 +25,15 @@ student 2 has no notes.
 | NOTE-VIEW-003 | Run `view id/1` again. | Both notes reappear once each in insertion order, without duplicated or stale rows. |
 | NOTE-VIEW-004 | Resize the window from narrow to wide and back while viewing student 1. | Note text wraps within the Notes table and no horizontal scrollbar appears. |
 
+## Mission submissions details
+
+Use one student and configure one mission with that student marked as submitted.
+
+| ID | Steps | Expected result |
+| --- | --- | --- |
+| MISSION-VIEW-001 | Delete all missions, then run `view id/1`. | The Mission Submissions table retains its `Mission` and `Status` headers and shows `No missions configured.` across both columns. |
+| MISSION-VIEW-002 | Add mission M01 and run `view id/1`. | The same headers remain, and M01 appears with its deadline and `Submitted` status. |
+
 ## Notes stress tests
 
 Use an isolated dataset containing one student with no notes. Prepare 1,000

@@ -156,7 +156,7 @@ public class StudentDetailsPanelTest {
     }
 
     @Test
-    public void showStudent_withNoMissions_displaysMessage()
+    public void showStudent_noMissions_displaysHeadersAndSpanningEmptyMessage()
             throws Exception {
 
         runOnJavaFxThread(() -> {
@@ -170,14 +170,13 @@ public class StudentDetailsPanelTest {
             GridPane missionGrid =
                     getMissionGrid(panel);
 
-            assertEquals(1, missionGrid.getChildren().size());
-
-            Label message =
-                    (Label) missionGrid.getChildren().get(0);
-
+            assertEquals(3, missionGrid.getChildren().size());
+            assertEquals("Mission", getGridCell(missionGrid, 0, 0));
+            assertEquals("Status", getGridCell(missionGrid, 1, 0));
             assertEquals(
                     "No missions configured.",
-                    message.getText());
+                    getGridCell(missionGrid, 0, 1));
+            assertEquals(2, GridPane.getColumnSpan(missionGrid.getChildren().getLast()));
         });
     }
 
