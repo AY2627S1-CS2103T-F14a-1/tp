@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandFailure;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandSuccess;
+import static seedu.address.logic.commands.CommandTestUtil.getOutOfBoundsStudentIndexMessage;
 import static seedu.address.logic.commands.CommandTestUtil.showStudentAtIndex;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_STUDENT;
 import static seedu.address.testutil.TypicalIndexes.INDEX_SECOND_STUDENT;
@@ -14,7 +15,6 @@ import static seedu.address.testutil.TypicalStudents.getTypicalAddressBook;
 import org.junit.jupiter.api.Test;
 
 import seedu.address.commons.core.index.Index;
-import seedu.address.logic.Messages;
 import seedu.address.model.AddressBook;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
@@ -141,7 +141,7 @@ public class AddStudioRecordCommandTest {
         Index invalidIndex = Index.fromOneBased(model.getFilteredStudentList().size() + 1);
 
         assertCommandFailure(new AddStudioRecordCommand(invalidIndex, 3, studioRecord),
-                model, Messages.MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX);
+                model, getOutOfBoundsStudentIndexMessage(invalidIndex, model));
     }
 
     @Test
@@ -149,7 +149,7 @@ public class AddStudioRecordCommandTest {
         Model emptyModel = new ModelManager(new AddressBook(), new UserPrefs());
 
         assertCommandFailure(new AddStudioRecordCommand(INDEX_FIRST_STUDENT, 3, studioRecord),
-                emptyModel, Messages.MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX);
+                emptyModel, getOutOfBoundsStudentIndexMessage(INDEX_FIRST_STUDENT, emptyModel));
     }
 
     @Test
@@ -184,7 +184,7 @@ public class AddStudioRecordCommandTest {
         showStudentAtIndex(model, INDEX_FIRST_STUDENT);
 
         assertCommandFailure(new AddStudioRecordCommand(INDEX_SECOND_STUDENT, 3, studioRecord),
-                model, Messages.MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX);
+                model, getOutOfBoundsStudentIndexMessage(INDEX_SECOND_STUDENT, model));
     }
 
     @Test

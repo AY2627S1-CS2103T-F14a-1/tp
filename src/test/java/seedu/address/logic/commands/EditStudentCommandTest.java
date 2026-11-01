@@ -11,6 +11,7 @@ import static seedu.address.logic.commands.CommandTestUtil.VALID_STUDIO_GROUP_BO
 import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_HUSBAND;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandFailure;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandSuccess;
+import static seedu.address.logic.commands.CommandTestUtil.getOutOfBoundsStudentIndexMessage;
 import static seedu.address.logic.commands.CommandTestUtil.showStudentAtIndex;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_STUDENT;
 import static seedu.address.testutil.TypicalIndexes.INDEX_SECOND_STUDENT;
@@ -153,7 +154,7 @@ public class EditStudentCommandTest {
         EditStudentDescriptor descriptor = new EditStudentDescriptorBuilder().withName(VALID_NAME_BOB).build();
         EditStudentCommand editStudentCommand = new EditStudentCommand(outOfBoundIndex, descriptor);
 
-        assertCommandFailure(editStudentCommand, model, Messages.MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX);
+        assertCommandFailure(editStudentCommand, model, getOutOfBoundsStudentIndexMessage(outOfBoundIndex, model));
     }
 
     /**
@@ -170,7 +171,7 @@ public class EditStudentCommandTest {
         EditStudentCommand editStudentCommand = new EditStudentCommand(outOfBoundIndex,
                 new EditStudentDescriptorBuilder().withName(VALID_NAME_BOB).build());
 
-        assertCommandFailure(editStudentCommand, model, Messages.MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX);
+        assertCommandFailure(editStudentCommand, model, getOutOfBoundsStudentIndexMessage(outOfBoundIndex, model));
     }
 
     @Test

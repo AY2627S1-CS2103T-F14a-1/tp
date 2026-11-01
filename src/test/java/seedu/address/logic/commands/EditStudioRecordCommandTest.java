@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandFailure;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandSuccess;
+import static seedu.address.logic.commands.CommandTestUtil.getOutOfBoundsStudentIndexMessage;
 import static seedu.address.logic.commands.CommandTestUtil.showStudentAtIndex;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_STUDENT;
 import static seedu.address.testutil.TypicalIndexes.INDEX_SECOND_STUDENT;
@@ -14,7 +15,6 @@ import static seedu.address.testutil.TypicalStudents.getTypicalAddressBook;
 import org.junit.jupiter.api.Test;
 
 import seedu.address.commons.core.index.Index;
-import seedu.address.logic.Messages;
 import seedu.address.model.AddressBook;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
@@ -144,14 +144,14 @@ public class EditStudioRecordCommandTest {
     public void execute_invalidIndex_leavesModelUnchanged() {
         Index invalidIndex = Index.fromOneBased(model.getFilteredStudentList().size() + 1);
         assertCommandFailure(new EditStudioRecordCommand(invalidIndex, 3, updatedRecord),
-                model, Messages.MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX);
+                model, getOutOfBoundsStudentIndexMessage(invalidIndex, model));
     }
 
     @Test
     public void execute_emptyList_reportsInvalidIndex() {
         Model emptyModel = new ModelManager(new AddressBook(), new UserPrefs());
         assertCommandFailure(new EditStudioRecordCommand(INDEX_FIRST_STUDENT, 3, updatedRecord),
-                emptyModel, Messages.MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX);
+                emptyModel, getOutOfBoundsStudentIndexMessage(INDEX_FIRST_STUDENT, emptyModel));
     }
 
     @Test
@@ -185,7 +185,7 @@ public class EditStudioRecordCommandTest {
     public void execute_indexOutsideFilteredList_leavesModelUnchanged() {
         showStudentAtIndex(model, INDEX_FIRST_STUDENT);
         assertCommandFailure(new EditStudioRecordCommand(INDEX_SECOND_STUDENT, 3, updatedRecord),
-                model, Messages.MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX);
+                model, getOutOfBoundsStudentIndexMessage(INDEX_SECOND_STUDENT, model));
     }
 
     @Test
