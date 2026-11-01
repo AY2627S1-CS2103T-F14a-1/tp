@@ -13,6 +13,8 @@ Class AddressBookParser
 Class XYZCommandParser
 Class CliSyntax
 Class ParserUtil
+Class XYZComponentParserUtil
+Class ArgumentStructureValidator
 Class ArgumentMultimap
 Class ArgumentTokenizer
 Class Prefix
@@ -26,13 +28,17 @@ AddressBookParser .down.> XYZCommandParser: <<create>>
 XYZCommandParser ..> XYZCommand : <<create>>
 AddressBookParser ..> Command : <<use>>
 XYZCommandParser .up.|> Parser
+XYZCommandParser .left.> XYZComponentParserUtil
 XYZCommandParser ..> ArgumentMultimap
 XYZCommandParser ..> ArgumentTokenizer
+XYZCommandParser ..> ArgumentStructureValidator
+ArgumentStructureValidator ..> ArgumentTokenizer
+ArgumentStructureValidator ..> ArgumentMultimap
+ArgumentStructureValidator ..> Prefix
 ArgumentTokenizer .left.> ArgumentMultimap
 XYZCommandParser ..> CliSyntax
 CliSyntax ..> Prefix
 XYZCommandParser ..> ParserUtil
-ParserUtil .down.> Prefix
 ArgumentTokenizer .down.> Prefix
 XYZCommand -up-|> Command
 @enduml

@@ -132,6 +132,7 @@ Here are the other classes in `Logic` (omitted from the class diagram above) tha
 How the parsing works:
 * When called upon to parse a user command, the `AddressBookParser` class creates an `XYZCommandParser` (`XYZ` is a placeholder for the specific command name, e.g., `AddStudentCommandParser`). The parser uses the other classes shown above to parse the user command and create an `XYZCommand` object (e.g., `AddStudentCommand`). The `AddressBookParser` returns that object as a `Command` object.
 * All `XYZCommandParser` classes, such as `AddStudentCommandParser` and `DeleteStudentCommandParser`, implement the `Parser` interface so they can be treated similarly where appropriate, for example during testing.
+* The `XYZComponentParserUtil` refers to the `parser.util` class that the `XYZCommandParser` relies on for input validation.
 
 The studio-record parsers share argument-structure validation through `ArgumentStructureValidator` and value parsing through `ParserUtil`. They use the same `parseWeek(...)` helper, while the add and edit parsers also use `parseEffortScore(...)`. The following simplified class diagram shows the classes used by `AddStudioRecordCommandParser`:
 
@@ -201,8 +202,8 @@ The component a developer is most likely to interact with is `JsonAdaptedStudent
 
 We illustrate the involvement of `JsonAdaptedStudent` in both load and save scenarios as such:
 
-<puml src="diagrams/LoadAdaptedStudentActivityDiagram.puml" width="800" />
-<puml src="diagrams/SaveAdaptedStudentActivityDiagram.puml" width="600" />
+<puml src="diagrams/LoadAdaptedStudentActivityDiagram.puml" width="1000" />
+<puml src="diagrams/SaveAdaptedStudentActivityDiagram.puml" width="750" />
 
 ### Common classes
 
