@@ -34,7 +34,8 @@ public abstract class Command {
     protected Student getStudentAtDisplayedIndex(Model model, Index targetIndex) throws CommandException {
         List<Student> lastShownList = model.getFilteredStudentList();
         if (targetIndex.getZeroBased() >= lastShownList.size()) {
-            throw new CommandException(Messages.MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX);
+            throw new CommandException(String.format(Messages.MESSAGE_ERROR_OUT_OF_BOUNDS_STUDENT_INDEX,
+                    targetIndex.getOneBased(), lastShownList.size()));
         }
 
         return lastShownList.get(targetIndex.getZeroBased());

@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandFailure;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandSuccess;
+import static seedu.address.logic.commands.CommandTestUtil.getOutOfBoundsStudentIndexMessage;
 import static seedu.address.logic.commands.CommandTestUtil.showStudentAtIndex;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_STUDENT;
 import static seedu.address.testutil.TypicalIndexes.INDEX_SECOND_STUDENT;
@@ -18,7 +19,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import seedu.address.commons.core.index.Index;
-import seedu.address.logic.Messages;
 import seedu.address.model.AddressBook;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
@@ -113,7 +113,7 @@ public class UnmarkMissionCommandTest {
     @Test
     public void execute_invalidIndex_leavesModelUnchanged() {
         Index invalidIndex = Index.fromOneBased(model.getFilteredStudentList().size() + 1);
-        String expectedMessage = Messages.MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX
+        String expectedMessage = getOutOfBoundsStudentIndexMessage(invalidIndex, model)
                 + "\n\n" + UnmarkMissionCommand.MESSAGE_USAGE;
 
         assertCommandFailure(new UnmarkMissionCommand(invalidIndex, new MissionId("M03")),
@@ -147,7 +147,7 @@ public class UnmarkMissionCommandTest {
     @Test
     public void execute_indexOutsideFilteredList_leavesModelUnchanged() {
         showStudentAtIndex(model, INDEX_FIRST_STUDENT);
-        String expectedMessage = Messages.MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX
+        String expectedMessage = getOutOfBoundsStudentIndexMessage(INDEX_SECOND_STUDENT, model)
                 + "\n\n" + UnmarkMissionCommand.MESSAGE_USAGE;
 
         assertCommandFailure(new UnmarkMissionCommand(INDEX_SECOND_STUDENT, new MissionId("M03")),

@@ -441,55 +441,20 @@ No upcoming mastery checks in the current student list.
 
 ### Adding a mission: `addmission`
 
-Creates one mission shared by all students. Adding a mission does not mark anyone as having
-submitted it; students without a submission record show **Not submitted**.
+Adds a mission shared by all students; it does not mark anyone as submitted.
 
 Format: `addmission m/MISSION_ID n/NAME d/DEADLINE`
 
-* Supply exactly one `m/`, `n/`, and `d/` prefix, in any letter case and in either order. Do not put text
-  before the first prefix. The command word is case-insensitive.
-* `MISSION_ID` must start with `M` followed by a positive integer of at least two digits,
-  without unnecessary leading zeros. For example, `M01`, `M02`, and `M105` are valid;
-  `M1` and `M00` are not. The number must not exceed `9223372036854775807` (the
-  largest supported value, with up to 19 digits). IDs must be unique among configured
-  missions. Exceeding the limit reports the same mission-ID constraint message.
-* `NAME` must not be blank. Multiple words and ordinary punctuation are allowed.
-  Leading and trailing whitespace is removed, and internal whitespace becomes a single space.
-  Letter case and punctuation are preserved for display and saving.
-* Names are unique across the mission catalogue, ignoring case and whitespace differences.
-  `Rune Reading` and `rune reading` are duplicates, even with different deadlines.
-  Adding extra spaces before, after, or between the words also counts as the same name.
-  `RuneReading` and `Rune Reading!` remain different names.
-* `DEADLINE` must be a real calendar date in `YYYY-MM-DD` format. For example, `2024-02-29`
-  is valid but `2026-15-32` is not. Times and single-digit months or days are rejected.
-  Past deadlines are accepted for recording existing assignments.
-* Whitespace inside any `MISSION_ID` is ignored before validation. For this command, whitespace
-  inside `DEADLINE` is also ignored.
-* Choose the ID yourself; the application does not assign IDs automatically. Existing mission
-  IDs do not change when another mission is deleted. A deleted ID can be chosen again afterward,
-  but its previous submission records are removed and are not restored.
-* Successful additions are saved automatically. Invalid or duplicate additions do not change
-  the catalogue or save the data file. Existing students and their list filter are preserved.
+* Provide each prefix once, in any order. The command and ID are case-insensitive.
+* Use a unique ID in `M` + positive integer format with at least two digits (e.g. `M01`, not `M1`).
+* Names must be nonblank and unique, ignoring case and whitespace.
+* Deadlines must be real dates in `YYYY-MM-DD` format. Past dates are allowed.
+* IDs are chosen manually. Reusing a deleted ID does not restore its submissions.
+* Successful additions are saved automatically; rejected commands leave data unchanged.
 
-Examples:
+Example: `addmission m/M01 n/Rune Reading d/2026-10-20`
 
-* `addmission m/M01 n/Rune Reading d/2026-10-20`
-* `addmission d/2024-02-29 m/M105 n/Mission 1:  Rune Reading!` stores the name `Mission 1: Rune Reading!`.
-
-The first example displays:
-
-```text
-New mission added: M01 · Rune Reading (Due: 2026-10-20)
-```
-
-Missing IDs produce `Specify a mission ID using m/MISSION_ID.` Invalid IDs show the ID format
-constraint. Missing or blank names produce `Provide a mission name using n/NAME.` A valid name without
-a deadline produces `Specify a deadline in YYYY-MM-DD format using d/DEADLINE.` Unexpected text
-before the prefixes produces a format error with usage instructions. Repeated prefixes identify the repeated fields;
-invalid dates
-produce their respective constraint messages. An existing name produces
-`This mission already exists in the mission list.` An ID already used by a configured mission produces
-`A mission with this ID already exists.`
+Missing or invalid fields show an error. Duplicate IDs or names are rejected.
 
 ![result for adding a mission](images/addMissionResult.png)
 
@@ -499,16 +464,16 @@ Format: `delmission m/MISSION_ID`
 
 Example: `delmission m/M03`
 
-Use exactly one `m/` prefix, in any letter case. Mission IDs are case-insensitive, so `m/m03` also
-identifies `M03`. Numeric-only values such as `m/3` are rejected. Use the stable mission ID,
-not a student index or a position in the displayed list.
-
-Deletion removes the mission and its submission records from **every student**, including
-students hidden by the current filter. Student details, studio records, and other missions are
-preserved. The current student filter stays active. The result area shows deletion feedback;
-run `view id/INDEX` to see the updated profile. Deletion is automatically saved and survives restart.
-The deleted ID can be explicitly reused by a later `addmission` command, but the old submission
-records are not restored. Unknown or invalid IDs leave data unchanged.
+* Use exactly one `m/` prefix. Prefixes and mission IDs are case-insensitive; for example,
+  `m/m03` identifies `M03`.
+* Supply a configured mission ID, not a student index or list position. Numeric-only values
+  such as `m/3` are invalid.
+* The mission and its submission records are removed from every student, including students
+  hidden by the current filter. Student details, studio records, other missions, and the filter
+  are unchanged.
+* Deletion is saved automatically. You may reuse the ID later, but its old submission records
+  will not be restored.
+* Unknown or invalid IDs leave data unchanged.
 
 ![result for deleting a mission](images/delMissionResult.png)
 
@@ -536,14 +501,11 @@ An unknown mission ID or invalid command leaves existing records unchanged. Malf
 
 Format: `unmarkmission id/INDEX m/MISSION_ID`
 
-Uses the same index and mission ID rules as `markmission`. This removes only the selected student's
-submission record; it does not delete the student or the mission. Unmarking an unrecorded submission
-reports that no changes were made.
+* Uses the same student index and mission ID rules as `markmission`.
+* Removes only the selected student's submission record; it does not delete the student or mission.
+* If no submission is recorded, the command reports that no changes were made.
 
 Example: `unmarkmission id/1 m/M01`, followed by `view id/1`, displays M01 as Not submitted.
-
-The profile displays configured mission descriptions and deadlines. An empty catalogue shows
-“No missions configured.”
 
 ![result for unmarking a mission](images/unmarkMissionResult.png)
 

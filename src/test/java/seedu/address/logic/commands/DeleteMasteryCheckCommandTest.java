@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandFailure;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandSuccess;
+import static seedu.address.logic.commands.CommandTestUtil.getOutOfBoundsStudentIndexMessage;
 import static seedu.address.logic.commands.CommandTestUtil.showStudentAtIndex;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_STUDENT;
 import static seedu.address.testutil.TypicalIndexes.INDEX_SECOND_STUDENT;
@@ -18,7 +19,6 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 import seedu.address.commons.core.index.Index;
-import seedu.address.logic.Messages;
 import seedu.address.model.AddressBook;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
@@ -152,13 +152,13 @@ public class DeleteMasteryCheckCommandTest {
     public void execute_invalidIndex_leavesModelUnchanged() {
         Index invalidIndex = Index.fromOneBased(model.getFilteredStudentList().size() + 1);
         assertCommandFailure(new DeleteMasteryCheckCommand(invalidIndex, 1), model,
-                Messages.MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX);
+                getOutOfBoundsStudentIndexMessage(invalidIndex, model));
     }
 
     @Test
     public void execute_emptyStudentList_reportsInvalidIndex() {
         assertCommandFailure(new DeleteMasteryCheckCommand(INDEX_FIRST_STUDENT, 1), new ModelManager(),
-                Messages.MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX);
+                "Index 1 is out of bounds for currently displayed list of size 0");
     }
 
     @Test
@@ -191,7 +191,7 @@ public class DeleteMasteryCheckCommandTest {
     public void execute_indexOutsideFilteredList_leavesModelUnchanged() {
         showStudentAtIndex(model, INDEX_FIRST_STUDENT);
         assertCommandFailure(new DeleteMasteryCheckCommand(INDEX_SECOND_STUDENT, 1), model,
-                Messages.MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX);
+                getOutOfBoundsStudentIndexMessage(INDEX_SECOND_STUDENT, model));
     }
 
     @Test

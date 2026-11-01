@@ -1,7 +1,6 @@
 package seedu.address.logic;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static seedu.address.logic.Messages.MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX;
 import static seedu.address.logic.Messages.MESSAGE_UNKNOWN_COMMAND;
 import static seedu.address.logic.commands.CommandTestUtil.EMAIL_DESC_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.MATRIC_NUMBER_DESC_AMY;
@@ -91,7 +90,7 @@ public class LogicManagerTest {
     @Test
     public void execute_commandExecutionError_throwsCommandException() {
         String deleteStudentCommand = "delstudent id/9";
-        assertCommandException(deleteStudentCommand, MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX);
+        assertCommandException(deleteStudentCommand, "Index 9 is out of bounds for currently displayed list of size 0");
     }
 
     @Test
@@ -318,7 +317,8 @@ public class LogicManagerTest {
                 reloadedLogic.execute("markmission id/1 m/M04").getFeedbackToUser());
         savedJson = Files.readString(filePath);
         assertThrows(CommandException.class,
-                MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX + "\n\n" + MarkMissionCommand.MESSAGE_USAGE, () ->
+                "Index 2 is out of bounds for currently displayed list of size 1\n\n"
+                        + MarkMissionCommand.MESSAGE_USAGE, () ->
                 reloadedLogic.execute("markmission id/2 m/M05"));
         assertEquals(savedJson, Files.readString(filePath));
         assertEquals(Set.of(new MissionId("M05"), new MissionId("M03"), new MissionId("M04")),
@@ -360,7 +360,8 @@ public class LogicManagerTest {
         assertEquals(expected, storage.readAddressBook().orElseThrow().getStudentList().get(0));
         savedJson = Files.readString(filePath);
         assertThrows(CommandException.class,
-                MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX + "\n\n" + UnmarkMissionCommand.MESSAGE_USAGE, () ->
+                "Index 2 is out of bounds for currently displayed list of size 1\n\n"
+                        + UnmarkMissionCommand.MESSAGE_USAGE, () ->
                 reloadedLogic.execute("unmarkmission id/2 m/M13"));
         assertEquals(savedJson, Files.readString(filePath));
         assertEquals(expected, reloadedModel.getFilteredStudentList().get(0));
@@ -378,25 +379,29 @@ public class LogicManagerTest {
         Student original = new StudentBuilder(AMY).withMasteryChecks(Map.of()).build();
         model.addStudent(original);
         model.addStudent(BOB);
-        LocalDateTime firstTime = LocalDateTime.of(LocalDate.now().getYear(), 8, 18, 14, 30);
+        LocalDateTime firstTime = LocalDateTime.of(2026, 8, 18, 14, 30);
         JsonAddressBookStorage storage = new JsonAddressBookStorage(temporaryFolder.resolve("addressBook.json"));
-        assertEquals("Added Amy Bee's mastery check 1 at Aug 18, 14:30.",
-                logic.execute("addmc id/1 num/1 dt/18-08|14:30").getFeedbackToUser());
+        assertEquals("Added Amy Bee's mastery check 1 at 18 August 2026, 14:30.",
+                logic.execute("addmc id/1 num/1 dt/2026-08-18|14:30").getFeedbackToUser());
         Student expected = new StudentBuilder(original)
                 .withMasteryChecks(Map.of(1, new MasteryCheck(firstTime))).build();
         assertStudioState(model, storage, expected);
 
         String saved = Files.readString(storage.getAddressBookFilePath());
-        for (String invalid : List.of("addmc id/1 num/2 dt/31-04|14:30", "addmc id/1 num/2 dt/18-08|24:00")) {
+        String[][] invalidAppointments = {
+            {"2026-04-31|14:30", MasteryCheckParserUtil.MESSAGE_INVALID_MASTERY_CHECK_DATE},
+            {"2026-08-18|24:00", MasteryCheckParserUtil.MESSAGE_INVALID_MASTERY_CHECK_TIME},
+            {"18-08|14:30", MasteryCheckParserUtil.MESSAGE_INVALID_MASTERY_CHECK_DATETIME_FORMAT}
+        };
+        for (String[] invalid : invalidAppointments) {
             assertThrows(ParseException.class,
-                MasteryCheckParserUtil.MESSAGE_INVALID_MASTERY_CHECK_DATETIME
-                        + MESSAGE_SEE_USAGE + AddMasteryCheckCommand.MESSAGE_USAGE, () ->
-                    logic.execute(invalid));
+                    invalid[1] + MESSAGE_SEE_USAGE + AddMasteryCheckCommand.MESSAGE_USAGE, () ->
+                    logic.execute("addmc id/1 num/2 dt/" + invalid[0]));
             assertEquals(saved, Files.readString(storage.getAddressBookFilePath()));
             assertStudioState(model, storage, expected);
         }
-        assertThrows(CommandException.class, MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX, () ->
-                logic.execute("addmc id/3 num/2 dt/19-08|14:30"));
+        assertThrows(CommandException.class, "Index 3 is out of bounds for currently displayed list of size 2", () ->
+                logic.execute("addmc id/3 num/2 dt/2026-08-19|14:30"));
         assertEquals(saved, Files.readString(storage.getAddressBookFilePath()));
         assertStudioState(model, storage, expected);
 
@@ -404,11 +409,11 @@ public class LogicManagerTest {
         Logic restoredLogic = new LogicManager(restored, new StorageManager(storage,
                 new JsonUserPrefsStorage(temporaryFolder.resolve("restoredPrefs.json"))));
         assertEquals("Amy Bee’s mastery check has already been recorded for number 1. No changes made.",
-                restoredLogic.execute("addmc id/1 num/1 dt/19-08|14:30").getFeedbackToUser());
+                restoredLogic.execute("addmc id/1 num/1 dt/2026-08-19|14:30").getFeedbackToUser());
         assertEquals(saved, Files.readString(storage.getAddressBookFilePath()));
         assertStudioState(restored, storage, expected);
-        assertEquals("Added Amy Bee's mastery check 2 at Aug 19, 14:30.",
-                restoredLogic.execute("addmc id/1 num/2 dt/19-08|14:30").getFeedbackToUser());
+        assertEquals("Added Amy Bee's mastery check 2 at 19 August 2026, 14:30.",
+                restoredLogic.execute("addmc id/1 num/2 dt/2026-08-19|14:30").getFeedbackToUser());
         Student withBoth = new StudentBuilder(original).withMasteryChecks(Map.of(1, new MasteryCheck(firstTime),
                 2, new MasteryCheck(firstTime.plusDays(1)))).build();
         assertStudioState(restored, storage, withBoth);
@@ -476,7 +481,7 @@ public class LogicManagerTest {
         Student empty = new StudentBuilder(original).withMasteryChecks(Map.of()).build();
         assertStudioState(restored, storage, empty);
         String savedAfterDeletion = Files.readString(storage.getAddressBookFilePath());
-        assertThrows(CommandException.class, MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX, () ->
+        assertThrows(CommandException.class, "Index 3 is out of bounds for currently displayed list of size 2", () ->
                 restoredLogic.execute("delmc id/3 num/1"));
         assertEquals(savedAfterDeletion, Files.readString(storage.getAddressBookFilePath()));
         assertStudioState(restored, storage, empty);
@@ -520,7 +525,7 @@ public class LogicManagerTest {
         assertStudioState(restored, storage, withoutNotes);
 
         String savedAfterDeletion = Files.readString(storage.getAddressBookFilePath());
-        assertThrows(CommandException.class, MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX, () ->
+        assertThrows(CommandException.class, "Index 3 is out of bounds for currently displayed list of size 2", () ->
                 restoredLogic.execute("delnote id/3 ni/1"));
         assertEquals(savedAfterDeletion, Files.readString(storage.getAddressBookFilePath()));
         assertStudioState(restored, storage, withoutNotes);
@@ -575,7 +580,8 @@ public class LogicManagerTest {
         assertEquals(unmarkedJson, Files.readString(storage.getAddressBookFilePath()));
         assertStudioState(restored, storage, original);
         for (String command : List.of("markmc id/3 num/1", "unmarkmc id/3 num/1")) {
-            assertThrows(CommandException.class, MESSAGE_INVALID_STUDENT_DISPLAYED_INDEX, () ->
+            assertThrows(CommandException.class,
+                "Index 3 is out of bounds for currently displayed list of size 2", () ->
                     restoredLogic.execute(command));
             assertEquals(unmarkedJson, Files.readString(storage.getAddressBookFilePath()));
             assertStudioState(restored, storage, original);
