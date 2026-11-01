@@ -77,6 +77,18 @@ public class CommandTestUtil {
     }
 
     /**
+     * Returns the expected error for an index outside the currently displayed student list.
+     *
+     * @param index One-based student index supplied to the command.
+     * @param model Model providing the currently displayed list size.
+     * @return Error message identifying the supplied index and displayed list size.
+     */
+    public static String getOutOfBoundsStudentIndexMessage(Index index, Model model) {
+        return String.format("Index %d is out of bounds for currently displayed list of size %d",
+                index.getOneBased(), model.getFilteredStudentList().size());
+    }
+
+    /**
      * Executes the given {@code command}, confirms that <br>
      * - the returned {@link CommandResult} matches {@code expectedCommandResult} <br>
      * - the {@code actualModel} matches {@code expectedModel}

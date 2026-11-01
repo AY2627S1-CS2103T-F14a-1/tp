@@ -4,15 +4,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static seedu.address.testutil.Assert.assertThrows;
 import static seedu.address.testutil.TestUtil.WHITESPACE;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.Year;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
 import seedu.address.logic.parser.exceptions.ParseException;
 
+/** Tests mastery check number validation and strict appointment parsing. */
 public class MasteryCheckParserUtilTest {
 
     @Test
@@ -49,48 +48,61 @@ public class MasteryCheckParserUtilTest {
     }
 
     @Test
-    public void parseMasteryCheckDateTime_validBoundaries_returnsCurrentYearAppointment() throws Exception {
-        int year = LocalDate.now().getYear();
-        assertEquals(LocalDateTime.of(year, 1, 1, 0, 0),
-                MasteryCheckParserUtil.parseMasteryCheckDateTime("01-01|00:00"));
-        assertEquals(LocalDateTime.of(year, 12, 31, 23, 59),
-                MasteryCheckParserUtil.parseMasteryCheckDateTime("31-12|23:59"));
-        assertEquals(LocalDateTime.of(year, 2, 28, 12, 30),
-                MasteryCheckParserUtil.parseMasteryCheckDateTime("28-02|12:30"));
-        if (Year.isLeap(year)) {
-            assertEquals(LocalDateTime.of(year, 2, 29, 12, 30),
-                    MasteryCheckParserUtil.parseMasteryCheckDateTime("29-02|12:30"));
-        } else {
-            assertThrows(ParseException.class, MasteryCheckParserUtil.MESSAGE_INVALID_MASTERY_CHECK_DATETIME, () ->
-                    MasteryCheckParserUtil.parseMasteryCheckDateTime("29-02|12:30"));
-        }
+    public void parseMasteryCheckDateTime_validBoundaries_returnsSpecifiedYearAppointment() throws Exception {
+        assertEquals(LocalDateTime.of(2026, 1, 1, 0, 0),
+                MasteryCheckParserUtil.parseMasteryCheckDateTime("2026-01-01|00:00"));
+        assertEquals(LocalDateTime.of(2026, 12, 31, 23, 59),
+                MasteryCheckParserUtil.parseMasteryCheckDateTime("2026-12-31|23:59"));
+        assertEquals(LocalDateTime.of(2024, 2, 29, 12, 30),
+                MasteryCheckParserUtil.parseMasteryCheckDateTime("2024-02-29|12:30"));
+        assertEquals(LocalDateTime.of(2000, 2, 29, 12, 30),
+                MasteryCheckParserUtil.parseMasteryCheckDateTime("2000-02-29|12:30"));
     }
 
     @Test
     public void parseMasteryCheckDateTime_surroundingWhitespace_returnsTrimmedAppointment() throws Exception {
-        assertEquals(LocalDateTime.of(LocalDate.now().getYear(), 8, 18, 14, 30),
-                MasteryCheckParserUtil.parseMasteryCheckDateTime(WHITESPACE + "18-08|14:30" + WHITESPACE));
+        assertEquals(LocalDateTime.of(2026, 8, 18, 14, 30),
+                MasteryCheckParserUtil.parseMasteryCheckDateTime(WHITESPACE + "2026-08-18|14:30" + WHITESPACE));
     }
 
     @Test
-    public void parseMasteryCheckDateTime_impossibleDatesAndTimes_throwsParseException() {
-        for (String value : List.of("30-02|14:30", "31-04|14:30", "00-08|14:30", "32-08|14:30",
-                "18-00|14:30", "18-13|14:30", "18-08|24:00", "18-08|25:00", "18-08|14:60",
-                "18-08|-1:30", "18-08|14:-1")) {
-            assertThrows(ParseException.class, MasteryCheckParserUtil.MESSAGE_INVALID_MASTERY_CHECK_DATETIME, () ->
+    public void parseMasteryCheckDateTime_impossibleDates_reportsDateConstraint() {
+        for (String value : List.of("2026-02-30|14:30", "2026-04-31|14:30", "2026-08-00|14:30",
+                "2026-08-32|14:30", "2026-00-18|14:30", "2026-13-18|14:30", "2026-02-29|14:30",
+                "1900-02-29|14:30")) {
+            assertThrows(ParseException.class, MasteryCheckParserUtil.MESSAGE_INVALID_MASTERY_CHECK_DATE, () ->
                     MasteryCheckParserUtil.parseMasteryCheckDateTime(value));
         }
     }
 
     @Test
-    public void parseMasteryCheckDateTime_malformedInput_throwsParseException() {
-        for (String value : List.of("", WHITESPACE, "18-08", "14:30", "18-08|", "|14:30", "18-08||14:30",
-                "18-08T14:30", "18-08 14:30", "8-08|14:30", "18-8|14:30", "18-08|4:30", "18-08|14:3",
-                "18-08 |14:30", "18-08| 14:30", "18-08|14:30:00", "18-08|14:30Z", "18-08|14:30extra",
-                "2026-08-18|14:30")) {
-            assertThrows(ParseException.class, MasteryCheckParserUtil.MESSAGE_INVALID_MASTERY_CHECK_DATETIME, () ->
+    public void parseMasteryCheckDateTime_impossibleTimes_reportsTimeConstraint() {
+        for (String value : List.of("2026-08-18|24:00", "2026-08-18|25:00", "2026-08-18|14:60",
+                "2026-08-18|99:99")) {
+            assertThrows(ParseException.class, MasteryCheckParserUtil.MESSAGE_INVALID_MASTERY_CHECK_TIME, () ->
                     MasteryCheckParserUtil.parseMasteryCheckDateTime(value));
         }
     }
 
+    @Test
+    public void parseMasteryCheckDateTime_malformedInput_reportsFormatConstraint() {
+        for (String value : List.of("", WHITESPACE, "2026-08-18", "14:30", "2026-08-18|", "|14:30",
+                "2026-08-18||14:30", "2026-08-18T14:30", "2026-08-18 14:30", "18-08|14:30",
+                "26-08-18|14:30", "2026-8-18|14:30", "2026-08-8|14:30", "2026-08-18|4:30",
+                "2026-08-18|14:3", "2026-08-18 |14:30", "2026-08-18| 14:30", "2026-08-18|14:30:00",
+                "2026-08-18|14:30Z", "2026-08-18|14:30extra", "2026-08-18|-1:30", "2026-08-18|14:-1",
+                "2026/08/18|14:30", "2026-aa-18|14:30", "2026-08-18|aa:30")) {
+            assertThrows(ParseException.class,
+                    MasteryCheckParserUtil.MESSAGE_INVALID_MASTERY_CHECK_DATETIME_FORMAT, () ->
+                    MasteryCheckParserUtil.parseMasteryCheckDateTime(value));
+        }
+    }
+
+    @Test
+    public void parseMasteryCheckDateTime_multipleInvalidParts_reportsFormatThenDateBeforeTime() {
+        assertThrows(ParseException.class, MasteryCheckParserUtil.MESSAGE_INVALID_MASTERY_CHECK_DATETIME_FORMAT, () ->
+                MasteryCheckParserUtil.parseMasteryCheckDateTime("2026-04-31|24:0"));
+        assertThrows(ParseException.class, MasteryCheckParserUtil.MESSAGE_INVALID_MASTERY_CHECK_DATE, () ->
+                MasteryCheckParserUtil.parseMasteryCheckDateTime("2026-04-31|24:00"));
+    }
 }

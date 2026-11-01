@@ -9,7 +9,6 @@ import static seedu.address.logic.parser.util.ParserUtil.MESSAGE_SEE_USAGE;
 import static seedu.address.testutil.Assert.assertThrows;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_STUDENT;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -272,17 +271,17 @@ public class AddressBookParserTest {
     @Test
     public void parseCommand_masteryCheck_dispatchesCaseInsensitiveCommand() throws Exception {
         AddMasteryCheckCommand expected = new AddMasteryCheckCommand(INDEX_FIRST_STUDENT, 1,
-                new MasteryCheck(LocalDateTime.of(LocalDate.now().getYear(), 8, 18, 14, 30)));
-        assertEquals(expected, parser.parseCommand("addmc id/1 num/1 dt/18-08|14:30"));
-        assertEquals(expected, parser.parseCommand("ADDMC id/1 num/1 dt/18-08|14:30"));
+                new MasteryCheck(LocalDateTime.of(2026, 8, 18, 14, 30)));
+        assertEquals(expected, parser.parseCommand("addmc id/1 num/1 dt/2026-08-18|14:30"));
+        assertEquals(expected, parser.parseCommand("ADDMC id/1 num/1 dt/2026-08-18|14:30"));
     }
 
     @Test
     public void parseCommand_masteryCheckInvalidDate_throwsParseException() {
         assertThrows(ParseException.class,
-                MasteryCheckParserUtil.MESSAGE_INVALID_MASTERY_CHECK_DATETIME
+                MasteryCheckParserUtil.MESSAGE_INVALID_MASTERY_CHECK_DATE
                         + MESSAGE_SEE_USAGE + AddMasteryCheckCommand.MESSAGE_USAGE, () ->
-                parser.parseCommand("addmc id/1 num/1 dt/31-04|14:30"));
+                parser.parseCommand("addmc id/1 num/1 dt/2026-04-31|14:30"));
     }
 
 
