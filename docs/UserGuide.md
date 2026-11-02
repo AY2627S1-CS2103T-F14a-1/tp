@@ -169,7 +169,8 @@ Examples:
 
 ### Locating students by name: `find`
 
-Finds students whose names contain any of the given keywords.
+Finds students whose names match all keywords within at least one
+comma-separated alternative, optionally restricted to studio groups.
 
 Format: `find [NAME_WORDS [, MORE_NAME_WORDS]...] [g/STUDIO_GROUP]...`
 
@@ -553,7 +554,7 @@ Format: `listmissions [m/MISSION_ID] [s/STATUS]`
   submissions across all missions.
 * When both prefixes are supplied, applies the status filter to the selected mission.
 
-Without a mission ID:
+Without arguments (`listmissions`):
 
 * Lists all missions in ascending numeric ID order, showing each mission's
   ID, name, deadline, and submitted/total student count.
