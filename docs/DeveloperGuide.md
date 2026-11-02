@@ -147,7 +147,7 @@ How the parsing works:
 ### Model component
 **API** : [`Model.java`](https://github.com/AY2627S1-CS2103T-F14a-1/tp/blob/master/src/main/java/seedu/address/model/Model.java)
 
-<puml src="diagrams/ModelClassDiagram.puml" width="650" />
+<puml src="diagrams/ModelClassDiagram.puml" width="1650" />
 
 The `Model` component,
 
