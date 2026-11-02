@@ -202,6 +202,8 @@ public class StudentDetailsPanelTest {
         });
     }
 
+    //@@author nuggettowin-reused
+    //Reused from AB4
     @Test
     public void showStudent_studioRecords_displaysAttendanceFromRecordPresence() throws Exception {
         runOnJavaFxThread(() -> {
@@ -324,6 +326,7 @@ public class StudentDetailsPanelTest {
 
         return (Label) panel.getRoot().lookup(selector);
     }
+    //@@author
 
     private static void prepareRoot(
             StudentDetailsPanel panel) {
@@ -502,5 +505,4 @@ public class StudentDetailsPanelTest {
                 .map(node -> ((Label) node).getText())
                 .findFirst().orElseThrow();
     }
-
 }

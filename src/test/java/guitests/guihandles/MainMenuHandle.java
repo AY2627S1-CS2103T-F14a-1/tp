@@ -9,6 +9,9 @@ import javafx.scene.input.KeyCode;
  * Provides a handle to the main menu of the app.
  */
 public class MainMenuHandle extends NodeHandle<Node> {
+
+    //@@author nuggettowin-reused
+    //Reused from AB4
     public static final String MENU_BAR_ID = "#menuBar";
 
     public MainMenuHandle(Node mainMenuNode) {
@@ -36,4 +39,5 @@ public class MainMenuHandle extends NodeHandle<Node> {
     private void clickOnMenuItemsSequentially(String... menuItems) {
         Arrays.stream(menuItems).forEach(guiRobot::clickOn);
     }
+    //@@author
 }
