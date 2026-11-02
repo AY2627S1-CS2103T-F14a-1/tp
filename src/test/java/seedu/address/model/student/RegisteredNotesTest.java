@@ -49,8 +49,8 @@ public class RegisteredNotesTest {
     public void constructor_tooManyNotes_throwsIllegalArgumentException() {
         List<Note> notes = Collections.nCopies(RegisteredNotes.MAX_NOTE_INDEX + 1, FIRST_NOTE);
 
-        IllegalArgumentException exception = assertThrows(
-                IllegalArgumentException.class, () -> new RegisteredNotes(notes));
+        IllegalStateException exception = assertThrows(
+                IllegalStateException.class, () -> new RegisteredNotes(notes));
         assertEquals(RegisteredNotes.MESSAGE_CONSTRAINTS, exception.getMessage());
     }
 
