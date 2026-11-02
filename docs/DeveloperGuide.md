@@ -421,7 +421,7 @@ validation, result construction, and the common saving step are omitted.
 
 **Target user profile**:
 
-* serves as tutor for the National University of Singapore's CS1101S course.
+* serves as tutor for the National University of Singapore's CS1101S course
 * has a need to manage students across one or more tutorial groups assigned to them
 * has a need to keep track of administrative information relevant to conducting and managing their tutorials
 * prefers desktop apps over other types of applications
