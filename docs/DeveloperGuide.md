@@ -298,9 +298,11 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 | `* * *`  | TA                             | delete a note for a given student of mine                                    | keep my notes for each student accurate over time                              |
 | `* * *`  | TA                             | edit a note for a given student of mine                                    | make direct changes to a note that is still relevant                              |
 | `* * *`  | TA with multiple studio groups | see a combined view of all students across my groups                     | get a holistic view of my overall workload                                           |
-| `* * *`  | TA                             | add or delete shared missions                                           | manage the missions students need to complete                                        |
+| `* * *`  | TA                             | add shared missions                                                      | make new missions available for students to complete                                |
+| `* * *`  | TA                             | delete shared missions                                                   | remove missions that students no longer need to complete                            |
 | `* * *`  | TA                             | mark a student's mission submission                            | see who has submitted each mission                                                   |
 | `* * *`  | TA                             | unmark a student's mission submission                            | keep the mission submission record accurate if it was mistakenly marked                        |
+| `*`      | TA with multiple studio groups | view a graph of mission submissions across tutorial groups        | compare submission progress between my groups                                         |
 | `* * *`  | TA                             | record a student's mark for a given assessment                           | keep their performance data alongside other student records                          |
 | `* * *`  | TA with multiple studio groups | see which studio group a student belongs to                              | avoid mixing up students across studio groups                                        |
 | `* * *`  | TA                             | add a student's record for a weekly studio                           | keep track of their weekly performance in one place                          |
@@ -690,7 +692,7 @@ submission records, or the current student filter.
 
 1. Tutor requests to list students.
 2. AvengerHub shows the list of students.
-3. Tutor requests to add a mission submission record for a specific student in the list for a specified mission ID.
+3. Tutor requests to add a mission submission record for a specific student.
 4. AvengerHub adds the selected student’s mission submission record for the specified mission and confirms success.
 
    Use case ends.
@@ -719,7 +721,7 @@ submission records, or the current student filter.
 
 1. Tutor requests to list students.
 2. AvengerHub shows the list of students.
-3. Tutor requests to delete a mission submission record for a specific student in the list for a specified mission ID.
+3. Tutor requests to delete a mission submission record for a specific student.
 4. AvengerHub removes the selected student’s mission submission record for the specified mission and confirms success.
 
    Use case ends.
