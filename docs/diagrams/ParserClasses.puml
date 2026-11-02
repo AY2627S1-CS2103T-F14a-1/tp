@@ -14,6 +14,7 @@ Class XYZCommandParser
 Class CliSyntax
 Class ParserUtil
 Class XYZComponentParserUtil
+note top of XYZComponentParserUtil: eg. NoteParserUtil, \nMissionParserUtil, etc
 Class ArgumentStructureValidator
 Class ArgumentMultimap
 Class ArgumentTokenizer
@@ -29,7 +30,6 @@ XYZCommandParser ..> XYZCommand : <<create>>
 AddressBookParser .right.> Command : <<use>>
 XYZCommandParser .up.|> Parser
 XYZCommandParser .left.> XYZComponentParserUtil
-note bottom of XYZComponentParserUtil: eg. NoteParserUtil, \nMissionParserUtil, etc
 XYZCommandParser ..> ArgumentMultimap
 XYZCommandParser ..> ArgumentTokenizer
 XYZCommandParser ..> ArgumentStructureValidator
