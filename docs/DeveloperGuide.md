@@ -18,6 +18,7 @@
 Notable uses of AI:
 
 * ChatGPT Codex was used by @BrianLim35 to assist with writing test cases, guide documentation, and input validation.
+* ChatGPT Codex was used by @zRayhhh to generate most tests and assist with documentation and code refactoring.
 * ChatGPT Codex was used by @plutonaruto to help with writing test cases, review and identify any inconsistencies in documentation as well as suggest validation improvements.
 * ChatGPT Codex was used by @nuggettowin to generate most non-GUI tests, and studio record and note representation in the UI.
 
@@ -138,6 +139,7 @@ Here are the other classes in `Logic` (omitted from the class diagram above) tha
 How the parsing works:
 * When called upon to parse a user command, the `AddressBookParser` class creates an `XYZCommandParser` (`XYZ` is a placeholder for the specific command name, e.g., `AddStudentCommandParser`). The parser uses the other classes shown above to parse the user command and create an `XYZCommand` object (e.g., `AddStudentCommand`). The `AddressBookParser` returns that object as a `Command` object.
 * All `XYZCommandParser` classes, such as `AddStudentCommandParser` and `DeleteStudentCommandParser`, implement the `Parser` interface so they can be treated similarly where appropriate, for example during testing.
+* The `XYZComponentParserUtil` refers to the `parser.util` class that the `XYZCommandParser` relies on for input validation.
 * Simpler `XYZCommandParser` classes, such as `DeleteStudentCommandParser`, do not require use of its component's parser util class (e.g., `StudentParserUtil`), as there are no component specific strings to parse.
 
 
@@ -193,8 +195,8 @@ The component a developer is most likely to interact with is `JsonAdaptedStudent
 
 We illustrate the involvement of `JsonAdaptedStudent` in both load and save scenarios as such:
 
-<puml src="diagrams/LoadAdaptedStudentActivityDiagram.puml" width="800" />
-<puml src="diagrams/SaveAdaptedStudentActivityDiagram.puml" width="600" />
+<puml src="diagrams/LoadAdaptedStudentActivityDiagram.puml" width="1000" />
+<puml src="diagrams/SaveAdaptedStudentActivityDiagram.puml" width="750" />
 
 ### Common classes
 
