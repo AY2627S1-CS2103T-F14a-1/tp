@@ -207,6 +207,31 @@ Classes used by multiple components are in the `seedu.address.commons` package.
 
 This section describes some noteworthy details on how certain features are implemented.
 
+### Parsing workflow
+
+When adding a command, the developer must also create a parser for that command. This section covers the general structure for command parsers.
+
+We describe here 3 command parsing archetypes of different complexity:
+1. **Simple**: a command such as `list` that requires no arguments and hence no additional parsing;
+2. **Standard**: a command such as `addmc` that requires a certain number of mandatory arguments;
+3. **Complex**: a command such as `find` or `edit` that have optional arguments.
+
+**Simple** commands are self-explanatory, so we omit them from discussion.
+
+Both **Standard** and **Complex** commands generally follow the same structure:
+1. Use the relevant `ArgumentStructureValidator` method to tokenize the user input line. This catches missing or malformed prefixes, as well as prefixes with empty values following them, such as in `edit id/`.
+2. Extract values from the `ArgumentMultimap` returned in [1]:
+* 2a. **Standard** command: all prefixes are expected to be present, so use `ArgumentMultimap#getRequiredValue` and pass the obtained value through the relevant `XYZParserUtil` method.
+* 2b. **Complex** command: some prefixes may be optional, so first check whether the prefix is present before getting. Pass the obtained value through the relevant `XYZParserUtil` method.
+3. Return a new `XYZCommand` with the relevant values.
+4. Wrap the parsing in a `try-catch` block to append usage messages.
+
+For reference, we recommend checking out the implementations:
+* **Standard**: `AddMissionCommandParser`
+* **Complex**: `EditStudentCommandParser`
+
+Other commands like `FindCommand` do not use the `Prefix` system and hence may be implemented in different ways.
+
 ### Adding a mission
 
 `AddressBookParser` passes the input to `AddMissionCommandParser`, which creates an `AddMissionCommand` from the parsed mission details.
