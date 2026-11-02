@@ -130,10 +130,7 @@ Format: `view id/INDEX`
   including results from `find`.
 * The index must be a positive integer identifying a displayed student.
 * The profile displays the student's name, studio group, phone number,
-  email address, tags, studio records, missions, mastery checks, and notes.
-* Mission statuses are `Submitted` or `Not submitted`, based on the records
-  maintained in AvengerHub.
-* An empty mission catalogue displays `No missions configured.`
+  email address, tags, studio records, mission submissions, mastery checks, and notes.
 * Viewing preserves student records, submission records, and the current filter.
 * Missing, invalid, or out-of-range indexes produce an error without changing
   stored records.
@@ -452,18 +449,23 @@ Format: `addmission m/MISSION_ID n/NAME d/DEADLINE`
 * Deadlines must be real dates in `YYYY-MM-DD` format. Past dates are allowed.
 * IDs are chosen manually. Reusing a deleted ID does not restore its submissions.
 * Successful additions are saved automatically; rejected commands leave data unchanged.
+* Missing or invalid fields show an error. Duplicate IDs or names are rejected.
 
 Example: `addmission m/M01 n/Rune Reading d/2026-10-20`
 
-Missing or invalid fields show an error. Duplicate IDs or names are rejected.
+Execution of the above example adds the mission and displays:
+
+```text
+New mission added: M01 · Rune Reading (Due: 2026-10-20).
+```
 
 ![result for adding a mission](images/addMissionResult.png)
 
 ### Deleting a mission: `delmission`
 
-Format: `delmission m/MISSION_ID`
+Deletes a mission and its submission records from every student.
 
-Example: `delmission m/M03`
+Format: `delmission m/MISSION_ID`
 
 * Use exactly one `m/` prefix. Prefixes and mission IDs are case-insensitive; for example,
   `m/m03` identifies `M03`.
@@ -476,9 +478,18 @@ Example: `delmission m/M03`
   will not be restored.
 * Unknown or invalid IDs leave data unchanged.
 
-![result for deleting a mission](images/delMissionResult.png)
+Example: `delmission m/M01`
+
+For example, if mission M01 is named Rune Reading and is due 2026-10-20,
+`delmission m/M01` deletes the mission and displays:
+
+```text
+Deleted mission: M01 · Rune Reading (Due: 2026-10-20).
+```
 
 ### Recording a mission submission: `markmission`
+
+Marks a student's mission as submitted.
 
 Format: `markmission id/INDEX m/MISSION_ID`
 
@@ -493,12 +504,20 @@ Format: `markmission id/INDEX m/MISSION_ID`
 * Other students, other submissions, studio records, and the current student filter are preserved.
 * Records are maintained manually. Not submitted means no submission is recorded in AvengerHub.
 
-Example: `markmission id/1 m/M01`, followed by `view id/1`, displays M01 as Submitted.
-An unknown mission ID or invalid command leaves existing records unchanged. Malformed arguments display an error with command usage. A positive index that does not identify a student in the currently displayed list is rejected during execution with an index error followed by the command's usage; check the current list and use an index shown there. The same applies to `unmarkmission`.
+Example: `markmission id/1 m/M01`
+
+For example, if the first student is Amy Bee and mission M01 is configured,
+`markmission id/1 m/M01` marks mission M01 as submitted for Amy Bee, and displays:
+
+```text
+Added Amy Bee's mission submission for mission M01.
+```
 
 ![result for marking a mission](images/markMissionResult.png)
 
 ### Removing a submission record: `unmarkmission`
+
+Removes a student's recorded mission submission.
 
 Format: `unmarkmission id/INDEX m/MISSION_ID`
 
@@ -508,7 +527,12 @@ Format: `unmarkmission id/INDEX m/MISSION_ID`
 
 Example: `unmarkmission id/1 m/M01`, followed by `view id/1`, displays M01 as Not submitted.
 
-![result for unmarking a mission](images/unmarkMissionResult.png)
+For example, if the first student is Amy Bee and mission M01 is configured,
+`unmarkmission id/1 m/M01` marks mission M01 as not submitted for Amy Bee, and displays:
+
+```text
+Removed Amy Bee's mission submission for mission M01.
+```
 
 ### Editing a mission: `editmission`
 
