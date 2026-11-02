@@ -298,7 +298,7 @@ Format: `addnote id/INDEX nt/TEXT`
 * Adds a note with text `TEXT` for the student at the specified `INDEX`.
 * The index refers to the index number shown in the displayed student list.
 * The index **must be a positive integer** 1, 2, 3, ...
-* The text should only contain alphanumeric characters and spaces, should not be blank, and be less than or equal to 100 characters.
+* The text should only contain alphanumeric characters and spaces, should not be blank, and be less than or equal to 1000 characters.
 * A student can have up to 10 notes.
 * The current list filter stays active.
 
@@ -335,7 +335,7 @@ Format: `editnote id/INDEX ni/NOTE_INDEX nt/TEXT`
 * The index **must be a positive integer** 1, 2, 3, ...
 * The note index refers to the index number shown in the list of notes for a given student in the display panel.
 * The note index must be an integer from 1 to 10, inclusive.
-* The text should only contain alphanumeric characters and spaces, should not be blank, and be less than or equal to 100 characters.
+* The text should only contain alphanumeric characters and spaces, should not be blank, and be less than or equal to 1000 characters.
 * If the note index doesn't match any existing notes for the given student, or matches the existing text, the notes will be unchanged.
 * The current list filter stays active.
 
