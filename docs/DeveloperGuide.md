@@ -150,28 +150,17 @@ How the parsing works:
 
 The `Model` component,
 
-* stores the address book data: students in a `UniqueStudentList` and shared missions in a `MissionCatalogue`.
+* stores address book data: students in a `UniqueStudentList` and shared missions in a `MissionCatalogue`.
 * maintains a filtered student list, exposed as an unmodifiable `ObservableList<Student>` for the UI to observe.
 * stores user preferences in `UserPrefs`, exposed as `ReadOnlyUserPrefs`.
 * does not depend on the other components.
-
-Each student has one `RegisteredStudioRecords` object containing an immutable
-map from studio weeks 0 through 13 to `StudioRecord` objects. Each recorded
-week has one record containing a non-negative effort score. The week is the map
-key; the presence of a record indicates attendance, even when its effort score
-is zero. Weeks without a record are displayed as absent with an effort score
-of zero. Each student also has one `RegisteredNotes` object containing at most
-1,000 notes, one `RegisteredMasteryChecks` object containing numbered
-appointments, and one `MissionSubmissions` object containing zero or more
-submitted mission IDs. The notes list and mastery-check registration map are
-unmodifiable; mastery-check appointment objects retain mutable completion
-status. The `1` multiplicities count the per-student containers, not the
-records inside them.
-
-Composition diamonds show conceptual ownership of student records and mission
-definitions; immutable values may be reused internally when records are
-replaced. Submission IDs reference shared mission definitions rather than
-owning them.
+* maintains the following records for each student:
+  * `RegisteredStudioRecords` contains an immutable map from studio weeks 0 through 13 to `StudioRecord` objects.
+  * `RegisteredNotes` contains at most 1,000 notes.
+  * `RegisteredMasteryChecks` contains numbered appointments. Its registration map is unmodifiable, while appointment objects retain mutable completion status.
+  * `MissionSubmissions` contains zero or more submitted mission IDs.
+* represents conceptual ownership with composition diamonds. Immutable values may be reused internally when records are replaced, and submission IDs reference shared mission definitions rather than owning them.
+* uses `1` multiplicities to count per-student containers, not the records inside them.
 
 <box type="info" seamless>
 
