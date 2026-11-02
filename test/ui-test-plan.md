@@ -117,25 +117,32 @@ Commands with extra arguments should display:
 
 ## Mission regression sequence
 
-Use a temporary data directory with two students and an empty catalogue. After each rejected
-command, run `view 1` and compare the catalogue and submission statuses with the previous state.
-Inspect the saved file before running that verification command to ensure rejection did not save.
+Use an isolated dataset with exactly two students, John Doe and Betsy
+Crowe, in that order, and an empty mission catalogue. Run `list` before
+starting.
+
+After every rejected command, inspect the saved file before running a
+verification command. Confirm that rejection did not modify the file.
+Then run `listmissions` and `view id/1` to verify existing state.
+
+Run the main sequence in the order shown. MISSION-010 and MISSION-011
+use separate disposable datasets.
 
 | ID | Steps | Expected result |
 | --- | --- | --- |
-| MISSION-001 | Run `addmission`, `addmission m/M01`, and `addmission m/M01 n/Runes`. | Reports the missing prefixes using their `CliSyntax` messages; no mission is added. |
-| MISSION-002 | Run `addmission m/M01 n/Rune Reading d/2026-10-20`, then view student 1. | Creates M01, Rune Reading, due 2026-10-20, not submitted. The Mission submissions panel shows `Due: 20 October 2026`. |
-| MISSION-003 | Run `addmission m/M02 n/ RUNE   READING d/2026-10-21`. | Duplicate-name feedback; M01 and saved state remain unchanged. |
-| MISSION-004 | Run `addmission m/M02 n/Curves d/2026-10-21`, then `editmission m/M02 n/Rune Reading`. | M02 is added; the duplicate edit is rejected. |
-| MISSION-012 | Attempt `addmission m/M01 n/Curves d/2026-10-21`, then `addmission m/M1 n/Curves d/2026-10-21` and `addmission m/M00 n/Curves d/2026-10-21`. | Duplicate ID feedback for M01; malformed IDs are rejected with the ID format constraint. Catalogue and saved data remain unchanged. |
-| MISSION-013 | Add `addmission m/M10 n/Curves d/2026-10-21`, restart, and inspect the catalogue. | M10 is stored and restored unchanged. |
-| MISSION-005 | Run `markmission 1 m/m01`, repeat it, then `unmarkmission 1 m/M99`. | First marks M01, repeat reports no change, unknown ID reports `Mission M99 does not exist.`; student 2 remains unchanged. |
-| MISSION-006 | Filter to student 1; run `listmissions m/M01` and `listmissions s/overdue`. | The mission-specific report retains displayed index 1. Overdue results include only missing submissions whose deadlines have passed. Hidden students are excluded, and the student filter remains unchanged. |
-| MISSION-007 | Run `editmission m/M01 n/New Runes d/2026-10-22`, then restart and view student 1. | ID and submission survive; name and deadline are updated and persisted. |
-| MISSION-008 | Run `unmarkmission 1 m/M01`, then an invalid date edit `editmission m/M01 d/2026-02-30`; restart. | M01 stays not submitted; invalid edit leaves its name/deadline unchanged. |
-| MISSION-009 | Mark M01 for both students; add M10; filter to one student; delete M01. Restart, run `list`, and inspect both profiles. | M10 retains its ID, and M01 plus its submissions are removed from both students. |
-| MISSION-010 | Back up data. In an isolated fixture, give two missions different IDs but equal names ignoring case/spaces. Start the app, inspect file, then run `list`. | Empty-address-book fallback; startup preserves invalid file, successful list saves the empty book. |
-| MISSION-011 | Add M10, delete it, then add `addmission m/M10 n/Limit d/2026-10-20`. | The deleted ID can be explicitly reused; the supplied ID is persisted unchanged. |
+| MISSION-001 | Run `addmission`, `addmission m/M01`, and `addmission m/M01 n/Runes`. | Each command identifies missing required prefixes. The catalogue remains empty. |
+| MISSION-002 | Run `addmission m/M01 n/Rune Reading d/2026-10-20`, then `view id/1`. | M01 is created with the supplied name and deadline. No submission is recorded. The profile shows `Due: 20 October 2026`. |
+| MISSION-003 | Run `addmission m/M02 n/ RUNE   READING d/2026-10-21`. | Duplicate-name feedback appears. M01 and saved data remain unchanged. |
+| MISSION-004 | Run `addmission m/M02 n/Curves d/2026-10-21`, then `editmission m/M02 n/Rune Reading`. | M02 is created. The duplicate-name edit is rejected; M02 remains named Curves. |
+| MISSION-012 | Run `addmission m/M01 n/Unused Name d/2026-10-21`, then repeat with IDs M1 and M00. | M01 produces duplicate-ID feedback. M1 and M00 produce ID-constraint feedback. No mission changes. |
+| MISSION-013 | Run `addmission m/M10 n/Lists d/2026-10-21`, restart, then run `listmissions`. | M01, M02, and M10 are restored with unchanged details and displayed in numeric ID order. |
+| MISSION-005 | Run `markmission id/1 m/m01`, repeat it, then run `unmarkmission id/1 m/M99`. | The first command records M01 for John. Repeating it reports no change. M99 produces unknown-mission feedback. Betsy remains unchanged. |
+| MISSION-006 | Run `find John`, then `listmissions m/M01` and `listmissions s/overdue`. | The mission-specific report shows John as Submitted at index 1. Overdue results include only John's missing submissions with past deadlines. Betsy is excluded and the John filter remains active. |
+| MISSION-007 | Run `editmission m/M01 n/New Runes d/2026-10-22`, restart, then run `list` and `view id/1`. | M01 retains its ID and John's submission. Its new name and deadline persist. M02 and M10 remain unchanged. |
+| MISSION-008 | Run `unmarkmission id/1 m/M01`, then `editmission m/M01 d/2026-02-30`. Restart and inspect John and M01. | The submission removal persists. The invalid edit changes neither name nor deadline. Mission reports show John as Not submitted or Overdue according to the current local date. |
+| MISSION-009 | Run `list`, mark M01 for both students, run `find John`, then `delmission m/M01`. Restart, run `list`, and inspect both profiles and `listmissions`. | M01 and both submission records are removed. M02 and M10 retain their IDs and details. |
+| MISSION-010 | In a separate disposable dataset, back up the saved file and give two missions different IDs but names equal ignoring case and whitespace. Relaunch and inspect the file before running commands, then run `list`. | Startup uses the empty-address-book fallback and preserves the invalid file. The successful list command saves the empty book. |
+| MISSION-011 | In a separate empty catalogue, add `addmission m/M10 n/Limit d/2026-10-20`, delete M10, and repeat the addition. Restart and run `listmissions`. | The deleted ID is reusable. The recreated mission persists without restored submission records. |
 
 ## Mission command whitespace normalization
 
