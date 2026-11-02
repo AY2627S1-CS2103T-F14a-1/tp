@@ -42,7 +42,7 @@ public class DeleteStudioRecordCommand extends Command {
      * Creates a command to delete a week's studio record.
      *
      * @param targetIndex Index of the student in the displayed list.
-     * @param week Tutorial week for the deletion.
+     * @param week Studio week for the deletion.
      */
     public DeleteStudioRecordCommand(Index targetIndex, int week) {
         this.targetIndex = requireNonNull(targetIndex);
