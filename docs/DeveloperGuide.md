@@ -222,204 +222,40 @@ For reference, we recommend checking out the implementations:
 
 Other commands like `FindCommand` do not use the `Prefix` system and hence may be implemented in different ways.
 
-### Adding a mission
+### Mission implementation
 
-`AddressBookParser` passes the input to `AddMissionCommandParser`, which creates an `AddMissionCommand` from the parsed mission details.
+Mission commands share a common parser-command-model flow:
 
-When executed, `AddMissionCommand` checks that the mission ID and name are unused, calls `Model#addMission(...)`, and returns a success message in a `CommandResult`.
+* `AddressBookParser` routes each input to the matching parser, which validates
+  its arguments and creates a command.
+* The command applies the requested operation through `Model` and returns a
+  `CommandResult`.
+* Catalogue commands add, edit, or delete missions through the model.
+  `MissionCatalogue` enforces unique mission IDs and names when adding or
+  restoring saved data, and validates the complete catalogue before replacing
+  its state. Mission IDs are supplied by the user and remain stable when a
+  mission is edited, so student submission records continue to refer to the
+  same mission. Deleting a mission also removes its submission records from
+  students.
+* Submission commands resolve the mission and the selected student from the
+  currently displayed student list. They add or remove the mission ID in that
+  student's submissions and update the student through `Model#setStudent(...)`
+  when the submission state changes.
+* After a mission command succeeds, `LogicManager` saves the current address
+  book before returning the result to the UI. Successful no-change mark or
+  unmark requests are saved as well. The saved data includes the mission
+  catalogue and each student's submitted mission IDs. Parsing and
+  command-validation failures exit before saving; if saving fails,
+  `LogicManager` reports a `CommandException`, but does not roll back the
+  in-memory change. On loading, storage validates the catalogue and requires
+  saved submission IDs to refer to existing missions.
 
-`MissionCatalogue` also enforces unique IDs and names when adding and restoring saved data,
-so callers cannot bypass this rule by accessing the model directly. Restoration validates the
-complete replacement before changing catalogue state. Mission IDs are supplied by the user and
-stored with each mission.
-
-The sequence diagram below illustrates the successful interaction flow for adding a mission. Call arguments are abbreviated as `...` for readability.
+The following sequence diagram illustrates representative mission flows for
+adding a mission. Call arguments are
+abbreviated as `...` for readability.
 
 <puml src="diagrams/AddMissionSequenceDiagram.puml" width="1000" />
 
-### Deleting a mission
-
-`AddressBookParser` passes the input to `DeleteMissionCommandParser`, which creates a `DeleteMissionCommand` for the requested mission.
-
-When executed, `DeleteMissionCommand` checks that the mission exists, calls `Model#deleteMission(...)`, and returns a `CommandResult` identifying the deleted mission. The model also removes that mission's submission records from all students.
-
-The sequence diagram below illustrates the successful interaction flow for deleting a mission. Call arguments are abbreviated as `...` for readability.
-
-<puml src="diagrams/DeleteMissionSequenceDiagram.puml" width="1000" />
-
-### Marking and unmarking mission submissions
-
-`AddressBookParser` delegates each input to its matching parser, which creates a `MarkMissionCommand` or `UnmarkMissionCommand`.
-
-Each command checks that the mission exists, retrieves the displayed students, and selects the student at the requested index. Marking adds the mission ID to the student's submissions; unmarking removes it. If the submission state needs to change, the command updates the student through `Model#setStudent(...)`, then returns a `CommandResult`.
-
-The sequence diagram below illustrates marking a mission submission when the mission and student exist and the submission is not yet recorded. Call arguments are abbreviated as `...` for readability.
-
-<puml src="diagrams/MissionSubmissionSequenceDiagram.puml" width="1000" />
-
-The corresponding unmarking sequence illustrates removing a recorded mission submission. Call arguments are abbreviated as `...` for readability.
-
-<puml src="diagrams/UnmarkMissionSubmissionSequenceDiagram.puml" width="1000" />
-
-### Editing a mission
-
-For `editmission m/MISSION_ID [n/NAME] [d/DEADLINE]`,
-`AddressBookParser` delegates to `EditMissionCommandParser`. The parser
-requires one mission ID and at least one replacement field. It rejects
-unexpected preamble text, repeated prefixes, blank values, and invalid
-mission IDs or deadlines.
-
-The parser stores validated replacement fields in an
-`EditMissionDescriptor`. `EditMissionCommand` makes a defensive copy of
-this descriptor so that subsequent changes to the original descriptor
-cannot alter the command.
-
-During execution, the command resolves the existing mission and constructs
-a replacement retaining its ID and any unspecified fields. A replacement
-name must not duplicate another mission's name, ignoring case and
-whitespace differences. Keeping the mission's own name is allowed,
-including changing only its letter case.
-
-If the replacement equals the original mission, the command returns
-no-change feedback. Otherwise, it calls `Model#setMission(...)`.
-`MissionCatalogue` validates the replacement and preserves its position
-in the catalogue. Student records, submission records, and the current
-student filter remain unchanged.
-
-**Design rationale:** Mission IDs remain stable because student submission
-records refer to these IDs. Replacing the immutable mission allows its name
-and deadline to change without rewriting submission records. The optional
-descriptor fields distinguish omitted values from requested replacements.
-
-The following diagram shows a successful name-only edit of M01 to a name
-not used by another mission. Validation, formatting, logging, result
-construction, and the common saving step are omitted. The model is shown
-as a single participant.
-
-<puml src="diagrams/EditMissionSequenceDiagram.puml" width="850" />
-
-### Saving mission changes
-
-After any of these commands returns successfully, `LogicManager` calls `Storage.saveAddressBook` with the current address book before returning the result to the UI. The saved data contains the mission catalogue and each student's submitted mission IDs. This preserves additions, deletions, and submission changes across restarts. Successful no-change mark/unmark requests also trigger saving.
-
-Parsing and command-validation failures exit before the saving step. If saving itself fails, `LogicManager` reports a `CommandException`; the in-memory change has already occurred and is not rolled back. On loading, storage validates the catalogue and requires saved submission IDs to refer to existing missions.
-
-### Finding students
-
-`FindCommandParser` separates the name portion from repeated `g/`
-studio-group filters. Name alternatives must appear before group filters.
-It splits the name portion at commas and rejects empty alternatives,
-including leading, trailing, and consecutive commas.
-
-`NameContainsKeywordsPredicate` performs case-insensitive partial-name
-matching. Every whitespace-separated keyword within an alternative must
-match; any comma-separated alternative may satisfy the name condition.
-Repeated identical keywords require separate, non-overlapping occurrences.
-Different keywords are matched independently.
-
-Studio-group filters use exact matches, with repeated groups combined
-using OR. When both name alternatives and studio groups are supplied, the
-parser combines the name and group predicates using AND.
-
-`FindCommand#execute(...)` replaces the model's student-list predicate and
-reports the number of matching students. Searching does not modify stored
-student records, mission definitions, or submission records.
-
-**Design rationale:** Spaces allow the tutor to narrow a search using
-multiple parts of a name, while commas express alternatives in one
-command. Predicate composition keeps the name and studio-group matching
-rules separate. The filtered list also provides the displayed indexes
-used by subsequent student commands.
-
-The diagram shows `find alex, brian g/1A`. The parser builds a predicate
-matching either name alternative within group 1A. Predicate construction
-is summarized in a note; validation, formatting, result construction, and
-the common saving step are omitted.
-
-<puml src="diagrams/FindStudentsSequenceDiagram.puml" width="850" />
-
-### Listing mission submissions
-
-`ListMissionsCommandParser` accepts optional, nonrepeatable `m/` and `s/`
-prefixes. Blank arguments produce `ListMissionCatalogueCommand`. Otherwise,
-a mission ID selects one mission, and an optional status restricts results
-to Submitted or Overdue. A status without a mission ID queries all missions.
-Malformed mission IDs, unsupported statuses, duplicate prefixes, and
-unexpected preamble text cause a `ParseException`.
-
-`ListMissionsCommand` stores optional mission and status selections.
-A specified mission is resolved before generating results; a nonexistent
-mission causes a `CommandException`. Without a mission selection, the
-command obtains all missions in ascending numeric ID order.
-
-The command obtains the current local date once using an injected `Clock`.
-`MissionSubmissionStatusEnum#from(...)` determines each student's status:
-
-* A recorded submission is Submitted, regardless of the deadline.
-* A missing submission is Overdue when the deadline is before the local date.
-* Otherwise, a missing submission is Not submitted.
-
-Missions due today are not overdue. Normal execution uses the computer's
-local time zone; tests inject a fixed clock for deterministic boundary checks.
-
-Both query forms share the same row-building logic and inspect only
-`Model#getFilteredStudentList()`. The optional status filter selects
-matching rows without changing the model's student filter.
-
-Rows include displayed student indexes, names, studio groups, and statuses.
-All-mission queries also include mission details and order rows by mission
-ID, then displayed student order. A student may appear in multiple rows
-while retaining the same displayed index.
-
-Separate messages distinguish an empty mission catalogue, an empty student
-list, and no matching statuses. Student records, mission definitions,
-submission records, and the current student filter remain unchanged.
-Command equality includes both the mission and status selections.
-
-### Listing mission summaries
-
-For bare `listmissions`, `ListMissionsCommandParser` creates a
-`ListMissionCatalogueCommand`.
-
-The command reads `Model#getMissionList()` and sorts the output by numeric
-mission ID without changing stored catalogue order. Every mission appears
-regardless of the current student filter.
-
-For each mission, it counts recorded submissions within
-`Model#getFilteredStudentList()` using
-`MissionSubmissions#hasSubmission(...)`. It displays `Submitted: X/Y`,
-where X is the submitted count and Y is the filtered student count.
-Hidden students contribute to neither count. An empty filtered list
-produces `0/0`.
-
-The command obtains the local date once per execution from an injected
-`Clock` and evaluates deadlines using `Mission#isPastDeadline(...)`.
-`Messages#format(Mission, boolean)` adds `Deadline passed` inside the
-due-date parentheses when the deadline is before that date. Missions due
-today are not labelled. The label is independent of submission counts.
-
-Normal execution uses `Clock.systemDefaultZone()`; tests inject a fixed
-clock for deterministic deadline checks.
-
-An empty catalogue returns `No missions configured.` Student records,
-mission definitions, submission records, and the student filter remain
-unchanged. Rerunning the command recalculates counts and deadline labels.
-
-The query preserves the displayed student filter and does not modify
-student records, mission definitions, or recorded submissions.
-
-**Design rationale:** Statuses are derived from recorded submissions and
-the current date rather than stored separately. This avoids stale overdue
-flags when a deadline is edited or the date changes. Filtering report rows
-instead of the student list preserves displayed indexes for subsequent
-commands.
-
-The following diagram shows `listmissions m/M01` for an existing mission.
-The parser creates an unfiltered single-mission query. Status derivation
-and row formatting are summarized in a note; parser construction,
-validation, result construction, and the common saving step are omitted.
-
-<puml src="diagrams/ListMissionStatusesSequenceDiagram.puml" width="850" />
 --------------------------------------------------------------------------------------------------------------------
 
 ## **Documentation, logging, testing, dev-ops**
