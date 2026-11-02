@@ -65,16 +65,17 @@ public final class RegisteredNotes {
     }
 
     /**
-     * Returns the registered notes whose text is a near-match with the given text.
+     * Returns the indexes of the registered notes whose text is a near-match with the given text.
      *
      * @param text Note text to check.
-     * @return List of registered notes whose text is a near-match with the given text.
+     * @return List of index of the registered notes whose text is a near-match with the given text.
      * @throws NullPointerException If the text is {@code null}.
      */
     public List<Index> getNearMatchingNoteIndexes(String text) {
         requireNonNull(text);
         return IntStream.range(0, registeredNotes.size())
-                .filter(x -> registeredNotes.get(x).hasNoteText(text)).mapToObj(Index::fromZeroBased).toList();
+                .filter(x -> registeredNotes.get(x).hasNearMatchingNoteText(text))
+                .mapToObj(Index::fromZeroBased).toList();
     }
 
     /**

@@ -58,7 +58,7 @@ public final class Note {
      * @return True if matching note text has been registered.
      * @throws NullPointerException If the text is {@code null}.
      */
-    public boolean hasNoteText(String text) {
+    public boolean hasNearMatchingNoteText(String text) {
         requireNonNull(text);
         return normalize(noteText).equals(normalize(text));
     }
