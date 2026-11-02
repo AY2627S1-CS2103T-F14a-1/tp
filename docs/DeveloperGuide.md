@@ -328,6 +328,7 @@ mission definitions, submission records, and the student filter remain
 unchanged. Rerunning the command recalculates counts and deadline labels.
 
 The query changes only the displayed student filter. It does not modify student records, mission definitions, or recorded submissions.
+
 --------------------------------------------------------------------------------------------------------------------
 
 ## **Documentation, logging, testing, dev-ops**
