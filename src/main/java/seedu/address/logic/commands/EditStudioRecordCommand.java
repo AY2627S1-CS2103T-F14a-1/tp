@@ -7,7 +7,9 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_STUDIO_EFFORT;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_WEEK;
 
 import java.util.Objects;
+import java.util.logging.Logger;
 
+import seedu.address.commons.core.LogsCenter;
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.commands.exceptions.CommandException;
@@ -35,6 +37,8 @@ public class EditStudioRecordCommand extends Command {
             + "Example: " + COMMAND_WORD + " " + PREFIX_INDEX + "1 " + PREFIX_WEEK + "3 " + PREFIX_STUDIO_EFFORT + "30";
     public static final String MESSAGE_WEEK_NOT_RECORDED =
             "%1$s’s studio for studio week %2$d was not already recorded. No changes made.";
+
+    private static final Logger logger = LogsCenter.getLogger(EditStudioRecordCommand.class);
 
     private final Index targetIndex;
     private final int week;
@@ -72,11 +76,15 @@ public class EditStudioRecordCommand extends Command {
         RegisteredStudioRecords registeredStudioRecords = studentToUpdate.getRegisteredStudioRecords();
 
         if (!registeredStudioRecords.hasStudioRecord(week)) {
+            logger.fine("Studio-record edit skipped: week " + week
+                    + " is not recorded at displayed student index " + targetIndex.getOneBased() + ".");
             return new CommandResult(String.format(MESSAGE_WEEK_NOT_RECORDED, studentToUpdate.getName(), week),
                     studentToUpdate);
         }
 
         if (registeredStudioRecords.hasMatchingStudioRecord(week, studioRecord)) {
+            logger.fine("Studio-record edit skipped: week " + week
+                    + " is unchanged at displayed student index " + targetIndex.getOneBased() + ".");
             return new CommandResult(String.format(MESSAGE_ALREADY_RECORDED, studentToUpdate.getName(), week),
                     studentToUpdate);
         }
@@ -84,6 +92,8 @@ public class EditStudioRecordCommand extends Command {
         Student updatedStudent = studentToUpdate.withRegisteredStudioRecords(
                 registeredStudioRecords.editStudioRecord(week, studioRecord));
         model.setStudent(studentToUpdate, updatedStudent);
+        logger.info("Edited studio record for week " + week
+                + " at displayed student index " + targetIndex.getOneBased() + ".");
         return new CommandResult(String.format(MESSAGE_SUCCESS, studentToUpdate.getName(), week), updatedStudent);
     }
 

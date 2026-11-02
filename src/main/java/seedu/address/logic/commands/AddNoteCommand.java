@@ -5,6 +5,9 @@ import static java.util.Objects.requireNonNull;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_INDEX;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NOTE_TEXT;
 
+import java.util.logging.Logger;
+
+import seedu.address.commons.core.LogsCenter;
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.commands.exceptions.CommandException;
@@ -35,6 +38,8 @@ public class AddNoteCommand extends Command {
             "%1$s already has the maximum of %2$d notes. No changes made.";
     public static final String MESSAGE_WARNING_MATCHING_TEXT = "%1$s has a matching note text.";
 
+    private static final Logger logger = LogsCenter.getLogger(AddNoteCommand.class);
+
     private final Index targetIndex;
     private final Note note;
 
@@ -62,12 +67,15 @@ public class AddNoteCommand extends Command {
         try {
             updatedNotes = registeredNotes.withNote(note);
         } catch (IllegalStateException exception) {
+            logger.fine("Note addition rejected: maximum note count reached at displayed student index "
+                    + targetIndex.getOneBased() + ".");
             return new CommandResult(String.format(
                     MESSAGE_MAXIMUM_NOTES_REACHED, studentToUpdate.getName(), RegisteredNotes.MAX_NOTE_INDEX),
                     studentToUpdate);
         }
         Student updatedStudent = studentToUpdate.withRegisteredNotes(updatedNotes);
         model.setStudent(studentToUpdate, updatedStudent);
+        logger.info("Added note at displayed student index " + targetIndex.getOneBased() + ".");
         CommandResult result = new CommandResult(
                 String.format(MESSAGE_SUCCESS, studentToUpdate.getName()), updatedStudent);
         if (hasMatchingNoteText) {

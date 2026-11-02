@@ -7,7 +7,9 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_STUDIO_EFFORT;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_WEEK;
 
 import java.util.Objects;
+import java.util.logging.Logger;
 
+import seedu.address.commons.core.LogsCenter;
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.commands.exceptions.CommandException;
@@ -35,6 +37,8 @@ public class AddStudioRecordCommand extends Command {
             "Added %1$s's studio record for studio week %2$d.";
     public static final String MESSAGE_ALREADY_RECORDED =
             "%1$s’s studio has already been recorded for studio week %2$d. No changes made.";
+
+    private static final Logger logger = LogsCenter.getLogger(AddStudioRecordCommand.class);
 
     private final Index targetIndex;
     private final int week;
@@ -73,6 +77,8 @@ public class AddStudioRecordCommand extends Command {
         RegisteredStudioRecords registeredStudioRecords = studentToUpdate.getRegisteredStudioRecords();
 
         if (registeredStudioRecords.hasStudioRecord(week)) {
+            logger.fine("Studio-record addition skipped: week " + week
+                    + " is already recorded at displayed student index " + targetIndex.getOneBased() + ".");
             return new CommandResult(String.format(MESSAGE_ALREADY_RECORDED, studentToUpdate.getName(), week),
                     studentToUpdate);
         }
@@ -80,6 +86,8 @@ public class AddStudioRecordCommand extends Command {
         Student updatedStudent = studentToUpdate.withRegisteredStudioRecords(
                 registeredStudioRecords.withStudioRecord(week, studioRecord));
         model.setStudent(studentToUpdate, updatedStudent);
+        logger.info("Added studio record for week " + week
+                + " at displayed student index " + targetIndex.getOneBased() + ".");
         return new CommandResult(String.format(MESSAGE_SUCCESS, studentToUpdate.getName(), week), updatedStudent);
     }
 
