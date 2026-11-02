@@ -6,9 +6,10 @@ start
 :Check for the stored address book file;
 if () then ([file exists])
     :Read JSON and build storage representations;
-    note right
-        Jackson creates a JsonAdaptedStudent for each saved student
-        using the @JsonCreator tagged constructor.
+    note left
+        Jackson creates a JsonAdaptedStudent
+        for each saved student using the
+        @JsonCreator tagged constructor.
     end note
     if () then ([reading and deserialization succeed])
         :Validate and rebuild the address book;
