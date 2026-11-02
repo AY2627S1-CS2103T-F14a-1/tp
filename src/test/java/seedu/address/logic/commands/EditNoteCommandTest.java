@@ -95,7 +95,8 @@ public class EditNoteCommandTest {
         assertEquals(String.format(EditNoteCommand.MESSAGE_SUCCESS, studentToUpdate.getName(), 2),
                 result.getFeedbackToUser());
         assertEquals(List.of(String.format(
-                EditNoteCommand.MESSAGE_WARNING_MATCHING_TEXT, studentToUpdate.getName(), "[1]")), result.getWarnings());
+                EditNoteCommand.MESSAGE_WARNING_MATCHING_TEXT,
+                studentToUpdate.getName(), "[1]")), result.getWarnings());
         assertEquals(expectedStudent, model.getFilteredStudentList().get(INDEX_FIRST_STUDENT.getZeroBased()));
     }
 

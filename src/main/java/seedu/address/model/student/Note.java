@@ -15,6 +15,10 @@ public final class Note {
     public static final String MESSAGE_CONSTRAINTS =
             "Notes should only contain alphanumeric characters, punctuation, and spaces, should not be blank, "
                     + "and be less than or equal to " + Note.MAX_NOTE_LENGTH + " characters";
+    /**
+     * Regex matching one or more consecutive Unicode whitespace characters.
+     */
+    public static final String WHITESPACE_RUN_REGEX = "(?U)\\s+";
 
     /*
      * The first character of the text must not be a whitespace,
@@ -75,7 +79,7 @@ public final class Note {
     private static String normalize(String text) {
         requireNonNull(text);
         return text.strip()
-                .replaceAll("(?U)\\s+", " ")
+                .replaceAll(WHITESPACE_RUN_REGEX, " ")
                 .toLowerCase(Locale.ROOT);
     }
 
