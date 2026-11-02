@@ -431,6 +431,13 @@ and row formatting are summarized in a note; parser construction,
 validation, result construction, and the common saving step are omitted.
 
 <puml src="diagrams/ListMissionStatusesSequenceDiagram.puml" width="850" />
+
+### Tracking mastery checks for a student
+
+Each `MasteryCheck` attributed to a `Student` is stored in `RegisteredMasteryChecks` using a hashmap of the mastery check number to the associated `MasteryCheck` object. It is up to `RegisteredMasteryChecks` to handle operations on mastery checks via the input number.
+
+This implementation guarantees that mastery checks under the same student will have unique numbers to identify them by. Note that since hashmaps allow overwriting of old values associated with a key, the developer should check whether there is an existing mastery check with a number before updating the internal hashmap with a `put`.
+
 --------------------------------------------------------------------------------------------------------------------
 
 ## **Documentation, logging, testing, dev-ops**
@@ -463,26 +470,30 @@ validation, result construction, and the common saving step are omitted.
 
 Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unlikely to have) - `*`
 
-| Priority | As a …                         | I want to …                                                              | So that I can…                                                                       |
-|----------|--------------------------------|--------------------------------------------------------------------------|--------------------------------------------------------------------------------------|
-| `* * *`  | TA                             | add a new student to a studio group                                      | start tracking them from day one at the start of the semester                        |
-| `* * *`  | TA                             | delete a student from a studio group                                     | keep my records accurate with adjustments to the student roster |
-| `* * *`  | TA                             | search for a student by name                                             | quickly find them without scrolling through the whole list                           |
-| `* * *`  | TA                             | edit a student's information                                             | keep my records accurate when their information changes                              |
-| `* * *`  | TA                             | add a note for a given student of mine                                    | tailor my teaching to their specific need                              |
-| `* * *`  | TA                             | delete a note for a given student of mine                                    | keep my notes for each student accurate over time                              |
-| `* * *`  | TA                             | edit a note for a given student of mine                                    | make direct changes to a note that is still relevant                              |
-| `* * *`  | TA with multiple studio groups | see a combined view of all students across my groups                     | get a holistic view of my overall workload                                           |
-| `* * *`  | TA                             | add or delete shared missions                                           | manage the missions students need to complete                                        |
-| `* * *`  | TA                             | mark a student's mission submission                            | see who has submitted each mission                                                   |
-| `* * *`  | TA                             | unmark a student's mission submission                            | keep the mission submission record accurate if it was mistakenly marked                        |
-| `* * *`  | TA                             | record a student's mark for a given assessment                           | keep their performance data alongside other student records                          |
-| `* * *`  | TA with multiple studio groups | see which studio group a student belongs to                              | avoid mixing up students across studio groups                                        |
-| `* * *`  | TA                             | add a student's record for a weekly studio                           | keep track of their weekly performance in one place                          |
-| `* * *`  | TA                             | delete a student's record for a weekly studio                           | keep the studio record accurate if it was mistakenly added                          |
-| `* * *`  | TA                             | edit a student's record for a weekly studio                           | edit the student's effort score directly if I changed my mind                          |
-| `* *`    | TA                             | view a summary of a student's studio records, participation, and submissions | understand their overall engagement without checking multiple records                |
-| `* * *`  | TA                             | list submission statuses for a selected mission and filter overdue records | identify students who may need a submission reminder |
+| Priority | As a …                         | I want to …                                                                  | So that I can…                                                          |
+|----------|--------------------------------|------------------------------------------------------------------------------|-------------------------------------------------------------------------|
+| `* * *`  | TA                             | add a new student to a studio group                                          | start tracking them from day one at the start of the semester           |
+| `* * *`  | TA                             | delete a student from a studio group                                         | keep my records accurate with adjustments to the student roster         |
+| `* * *`  | TA                             | search for a student by name                                                 | quickly find them without scrolling through the whole list              |
+| `* * *`  | TA                             | edit a student's information                                                 | keep my records accurate when their information changes                 |
+| `* * *`  | TA                             | add a note for a given student of mine                                       | tailor my teaching to their specific need                               |
+| `* * *`  | TA                             | delete a note for a given student of mine                                    | keep my notes for each student accurate over time                       |
+| `* * *`  | TA                             | edit a note for a given student of mine                                      | make direct changes to a note that is still relevant                    |
+| `* * *`  | TA                             | add a mastery check appointment for a given student                          | stay aware of irregular appointment times with students                 |
+| `* * *`  | TA                             | delete a mastery check appointment for a given student                       | remove an appointment with inaccurate timing                            |
+| `* * *`  | TA                             | mark a mastery check appointment for a given student                         | easily see my students' progress in mastery checks                      |
+| `* * *`  | TA                             | unmark a mastery check appointment for a given student                       | keep the mastery check record accurate if it was mistakenly marked      |
+| `* * *`  | TA with multiple studio groups | see a combined view of all students across my groups                         | get a holistic view of my overall workload                              |
+| `* * *`  | TA                             | add or delete shared missions                                                | manage the missions students need to complete                           |
+| `* * *`  | TA                             | mark a student's mission submission                                          | see who has submitted each mission                                      |
+| `* * *`  | TA                             | unmark a student's mission submission                                        | keep the mission submission record accurate if it was mistakenly marked |
+| `* `     | TA                             | record a student's mark for a given assessment                               | keep their performance data alongside other student records             |
+| `* * *`  | TA with multiple studio groups | see which studio group a student belongs to                                  | avoid mixing up students across studio groups                           |
+| `* * *`  | TA                             | add a student's record for a weekly studio                                   | keep track of their weekly performance in one place                     |
+| `* * *`  | TA                             | delete a student's record for a weekly studio                                | keep the studio record accurate if it was mistakenly added              |
+| `* * *`  | TA                             | edit a student's record for a weekly studio                                  | edit the student's effort score directly if I changed my mind           |
+| `* *`    | TA                             | view a summary of a student's studio records, participation, and submissions | understand their overall engagement without checking multiple records   |
+| `* * *`  | TA                             | list submission statuses for a selected mission and filter overdue records   | identify students who may need a submission reminder                    |
 
 The user stories above represent the main intended functionality and selected future enhancements of the application. Other user stories may be considered as the project develops.
 
@@ -772,6 +783,134 @@ submission records, or the current student filter.
     * 3c1. AvengerHub warns the tutor. 
   
       Use case resumes at step 4.
+
+**Use case: Add mastery check**
+
+**MSS**
+
+1. Tutor requests to list students.
+2. AvengerHub shows the list of students.
+3. Tutor requests to add a mastery check appointment for a specific student in the list and provides the required details.
+4. AvengerHub creates the mastery check with the supplied number and date-time, saves it, and confirms success with those details.
+
+    Use case ends.
+
+**Extensions**
+
+* 2a. The list is empty.
+
+  Use case ends.
+
+* 3a. The tutor provides invalid or incomplete details.
+
+    * 3a1. AvengerHub shows an error message and leaves the records unchanged.
+
+      Use case resumes from step 3.
+
+* 3b. A mastery check with the same number already exists for the student.
+
+    * 3b1. AvengerHub informs the tutor that a mastery check already exists with that number and leaves the records unchanged.
+
+      Use case ends.
+
+**Use case: Delete mastery check**
+
+**MSS**
+
+1. Tutor requests to list students.
+2. AvengerHub shows the list of students.
+3. Tutor requests to delete a mastery check appointment for a specific student in the list and provides the required details.
+4. AvengerHub removes the mastery check with the supplied number from that student, saves the updated records, and confirms success.
+
+   Use case ends.
+
+**Extensions**
+
+* 2a. The list is empty.
+
+  Use case ends.
+
+* 3a. The tutor provides invalid or incomplete details.
+
+    * 3a1. AvengerHub shows an error message and leaves the records unchanged.
+
+      Use case resumes from step 3.
+
+* 3b. A mastery check with the supplied number does not exist for the student.
+
+    * 3b1. AvengerHub informs the tutor that there is no mastery check with that number and leaves the records unchanged.
+
+      Use case ends.
+
+**Use case: Mark mastery check**
+
+**MSS**
+
+1. Tutor requests to list students.
+2. AvengerHub shows the list of students.
+3. Tutor requests to mark a mastery check appointment as completed for a specific student in the list and provides the required details.
+4. AvengerHub marks the mastery check with the supplied number as completed for that student, saves the updated records, and confirms success.
+
+   Use case ends.
+
+**Extensions**
+
+* 2a. The list is empty.
+
+  Use case ends.
+
+* 3a. The tutor provides invalid or incomplete details.
+
+    * 3a1. AvengerHub shows an error message and leaves the records unchanged.
+
+      Use case resumes from step 3.
+
+* 3b. A mastery check with the supplied number does not exist for the student.
+
+    * 3b1. AvengerHub informs the tutor that there is no mastery check with that number and leaves the records unchanged.
+
+      Use case ends.
+
+* 3c. A mastery check with the supplied number for the student is already marked complete.
+
+    * 3b1. AvengerHub informs the tutor that the mastery check with that number is already marked complete and leaves the records unchanged.
+
+      Use case ends.
+
+**Use case: Unmark mastery check**
+
+**MSS**
+
+1. Tutor requests to list students.
+2. AvengerHub shows the list of students.
+3. Tutor requests to mark a mastery check appointment as incomplete for a specific student in the list and provides the required details.
+4. AvengerHub marks the mastery check with the supplied number as incomplete for that student, saves the updated records, and confirms success.
+
+   Use case ends.
+
+**Extensions**
+
+* 2a. The list is empty.
+
+  Use case ends.
+
+* 3a. The tutor provides invalid or incomplete details.
+
+    * 3a1. AvengerHub shows an error message and leaves the records unchanged.
+
+      Use case resumes from step 3.
+
+* 3b. A mastery check with the supplied number does not exist for the student.
+
+    * 3b1. AvengerHub informs the tutor that there is no mastery check with that number and leaves the records unchanged.
+
+      Use case ends.
+
+* 3c. A mastery check with the supplied number for the student is already incomplete.
+
+    * 3b1. AvengerHub informs the tutor that the mastery check with that number is already incomplete and leaves the records unchanged.
+
+      Use case ends.
 
 **Use case: Add mission**
 
