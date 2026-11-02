@@ -51,6 +51,7 @@
         "storage-component": "Storage component",
         "common-classes": "Common classes",
         "implementation": "Implementation",
+        "parsing-workflow": "Parsing workflow",
         "adding-a-mission": "Adding a mission",
         "deleting-a-mission": "Deleting a mission",
         "marking-and-unmarking-mission-submissions": "Marking and unmarking mission submissions",
