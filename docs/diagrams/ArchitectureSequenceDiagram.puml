@@ -9,19 +9,17 @@ Participant ":Logic" as logic LOGIC_COLOR
 Participant ":Model" as model MODEL_COLOR
 Participant ":Storage" as storage STORAGE_COLOR
 
-user -[USER_COLOR]> ui : "view id/1"
-activate ui USER_COLOR
+user -[USER_COLOR]> ui : "addstudent ..."
+activate ui UI_COLOR
 
-ui -[UI_COLOR]> logic : execute("view id/1")
+ui -[UI_COLOR]> logic : execute(command)
 activate logic LOGIC_COLOR
 
-logic -[LOGIC_COLOR]> model : getFilteredStudentList()
+logic -[LOGIC_COLOR]> model : addStudent(student)
 activate model MODEL_COLOR
 
-model -[MODEL_COLOR]-> logic : displayed student list
+model -[MODEL_COLOR]-> logic : student added
 deactivate model
-
-logic -[LOGIC_COLOR]> logic : Get student at index 1
 
 logic -[LOGIC_COLOR]> storage : saveAddressBook(addressBook)
 activate storage STORAGE_COLOR
@@ -35,13 +33,16 @@ deactivate storage
 storage --[STORAGE_COLOR]> logic
 deactivate storage
 
-logic --[LOGIC_COLOR]> ui : CommandResult(student)
+logic --[LOGIC_COLOR]> ui : CommandResult
 deactivate logic
 
-ui -[UI_COLOR]> ui : Select student in left panel
-ui -[UI_COLOR]> ui : Display profile on right panel
+ui -[UI_COLOR]> ui : update student list
+activate ui UI_COLOR_T1
 
-ui --[UI_COLOR]> user : Show student profile
+ui --[UI_COLOR]> ui
+deactivate ui
+
+ui --[UI_COLOR]> user : show success message
 deactivate ui
 
 @enduml

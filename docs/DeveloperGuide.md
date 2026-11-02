@@ -56,7 +56,8 @@ The bulk of the app's work is done by the following four components:
 
 **How the architecture components interact with each other**
 
-The *Sequence Diagram* below shows how the components interact with each other for the scenario where the user issues the command `view id/1`.
+The *Sequence Diagram* below shows how the components interact with each other for the scenario where the user
+issues a valid `addstudent` command.
 
 <puml src="diagrams/ArchitectureSequenceDiagram.puml" width="574" />
 
@@ -997,6 +998,26 @@ student filter remain unchanged throughout this use case.
 Deadlines are inclusive: missions due today are not overdue. The current
 date follows the computer's local date and time zone. Recorded submissions
 are excluded, regardless of when they were recorded.
+
+**Use case: List mastery checks**
+
+**MSS**
+
+1. Tutor requests to display all students or a filtered set of students.
+2. AvengerHub displays the requested student list.
+3. Tutor enters `listmc`.
+4. AvengerHub displays all mastery checks after the current date and time
+   for the students currently shown.
+5. AvengerHub orders the mastery checks chronologically.
+
+   Use case ends.
+
+**Extensions**
+
+* 4a. There are no upcoming mastery checks for the students currently shown.
+    * 4a1. AvengerHub informs the Tutor that there are no upcoming mastery checks.
+
+  Use case ends.
 
 ### Non-Functional Requirements
 
