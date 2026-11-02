@@ -1,0 +1,49 @@
+@startuml
+!include style.puml
+skinparam ArrowFontStyle plain
+
+box Logic LOGIC_COLOR_T1
+participant ":LogicManager" as L LOGIC_COLOR
+participant ":AddressBookParser" as A LOGIC_COLOR
+participant ":EditMissionCommandParser" as P LOGIC_COLOR
+participant "c:EditMissionCommand" as C LOGIC_COLOR
+end box
+
+box Model MODEL_COLOR_T1
+participant "m:Model" as M MODEL_COLOR
+end box
+
+[-> L : execute("editmission m/M01 n/New Runes")
+L -> A : parseCommand(...)
+A -> P : parse(" m/M01 n/New Runes")
+
+note over P
+Validate arguments and create a descriptor
+containing the replacement name.
+end note
+
+create C
+P -> C : EditMissionCommand(missionId, descriptor)
+C --> P
+P --> A : c
+A --> L : c
+
+L -> C : execute(m)
+C -> M : findMission(missionId)
+M --> C : Optional containing original mission
+
+note over C
+Construct the replacement with the original
+ID and deadline, and the requested name.
+end note
+
+C -> M : hasMissionName("New Runes")
+M --> C : false
+C -> M : setMission(original, replacement)
+M --> C
+C -> M : getMissionList()
+M --> C : missions
+C --> L : CommandResult
+[<-- L : CommandResult
+
+@enduml

@@ -18,6 +18,7 @@
 Notable uses of AI:
 
 * ChatGPT Codex was used by @BrianLim35 to assist with writing test cases, guide documentation, and input validation.
+* ChatGPT Codex was used by @plutonaruto to help with writing test cases, review and identify any inconsistencies in documentation as well as suggest validation improvements.
 
 --------------------------------------------------------------------------------------------------------------------
 
@@ -255,11 +256,82 @@ The corresponding unmarking sequence uses `execute("unmarkmission id/1 m/M03")` 
 
 <puml src="diagrams/UnmarkMissionSubmissionSequenceDiagram.puml" width="1000" />
 
+### Editing a mission
+
+For `editmission m/MISSION_ID [n/NAME] [d/DEADLINE]`,
+`AddressBookParser` delegates to `EditMissionCommandParser`. The parser
+requires one mission ID and at least one replacement field. It rejects
+unexpected preamble text, repeated prefixes, blank values, and invalid
+mission IDs or deadlines.
+
+The parser stores validated replacement fields in an
+`EditMissionDescriptor`. `EditMissionCommand` makes a defensive copy of
+this descriptor so that subsequent changes to the original descriptor
+cannot alter the command.
+
+During execution, the command resolves the existing mission and constructs
+a replacement retaining its ID and any unspecified fields. A replacement
+name must not duplicate another mission's name, ignoring case and
+whitespace differences. Keeping the mission's own name is allowed,
+including changing only its letter case.
+
+If the replacement equals the original mission, the command returns
+no-change feedback. Otherwise, it calls `Model#setMission(...)`.
+`MissionCatalogue` validates the replacement and preserves its position
+in the catalogue. Student records, submission records, and the current
+student filter remain unchanged.
+
+**Design rationale:** Mission IDs remain stable because student submission
+records refer to these IDs. Replacing the immutable mission allows its name
+and deadline to change without rewriting submission records. The optional
+descriptor fields distinguish omitted values from requested replacements.
+
+The following diagram shows a successful name-only edit of M01 to a name
+not used by another mission. Validation, formatting, logging, result
+construction, and the common saving step are omitted. The model is shown
+as a single participant.
+
+<puml src="diagrams/EditMissionSequenceDiagram.puml" width="850" />
+
 ### Saving mission changes
 
 After any of these commands returns successfully, `LogicManager` calls `Storage.saveAddressBook` with the current address book before returning the result to the UI. The saved data contains the mission catalogue and each student's submitted mission IDs. This preserves additions, deletions, and submission changes across restarts. Successful no-change mark/unmark requests also trigger saving.
 
 Parsing and command-validation failures exit before the saving step. If saving itself fails, `LogicManager` reports a `CommandException`; the in-memory change has already occurred and is not rolled back. On loading, storage validates the catalogue and requires saved submission IDs to refer to existing missions.
+
+### Finding students
+
+`FindCommandParser` separates the name portion from repeated `g/`
+studio-group filters. Name alternatives must appear before group filters.
+It splits the name portion at commas and rejects empty alternatives,
+including leading, trailing, and consecutive commas.
+
+`NameContainsKeywordsPredicate` performs case-insensitive partial-name
+matching. Every whitespace-separated keyword within an alternative must
+match; any comma-separated alternative may satisfy the name condition.
+Repeated identical keywords require separate, non-overlapping occurrences.
+Different keywords are matched independently.
+
+Studio-group filters use exact matches, with repeated groups combined
+using OR. When both name alternatives and studio groups are supplied, the
+parser combines the name and group predicates using AND.
+
+`FindCommand#execute(...)` replaces the model's student-list predicate and
+reports the number of matching students. Searching does not modify stored
+student records, mission definitions, or submission records.
+
+**Design rationale:** Spaces allow the tutor to narrow a search using
+multiple parts of a name, while commas express alternatives in one
+command. Predicate composition keeps the name and studio-group matching
+rules separate. The filtered list also provides the displayed indexes
+used by subsequent student commands.
+
+The diagram shows `find alex, brian g/1A`. The parser builds a predicate
+matching either name alternative within group 1A. Predicate construction
+is summarized in a note; validation, formatting, result construction, and
+the common saving step are omitted.
+
+<puml src="diagrams/FindStudentsSequenceDiagram.puml" width="850" />
 
 ### Listing mission submissions
 
@@ -276,7 +348,7 @@ mission causes a `CommandException`. Without a mission selection, the
 command obtains all missions in ascending numeric ID order.
 
 The command obtains the current local date once using an injected `Clock`.
-`MissionSubmissionStatus#from(...)` determines each student's status:
+`MissionSubmissionStatusEnum#from(...)` determines each student's status:
 
 * A recorded submission is Submitted, regardless of the deadline.
 * A missing submission is Overdue when the deadline is before the local date.
@@ -328,7 +400,21 @@ An empty catalogue returns `No missions configured.` Student records,
 mission definitions, submission records, and the student filter remain
 unchanged. Rerunning the command recalculates counts and deadline labels.
 
-The query changes only the displayed student filter. It does not modify student records, mission definitions, or recorded submissions.
+**Design rationale:** Statuses are derived from recorded submissions and
+the current date rather than stored separately. This avoids stale overdue
+flags when a deadline is edited or the date changes. Filtering report rows
+instead of the student list preserves displayed indexes for subsequent
+commands.
+
+The following diagram shows `listmissions m/M01` for an existing mission.
+The parser creates an unfiltered single-mission query. Status derivation
+and row formatting are summarized in a note; parser construction,
+validation, result construction, and the common saving step are omitted.
+
+<puml src="diagrams/ListMissionStatusesSequenceDiagram.puml" width="850" />
+
+The query preserves the displayed student filter and does not modify
+student records, mission definitions, or recorded submissions.
 --------------------------------------------------------------------------------------------------------------------
 
 ## **Documentation, logging, testing, dev-ops**

@@ -1,0 +1,40 @@
+@startuml
+!include style.puml
+skinparam ArrowFontStyle plain
+
+box Logic LOGIC_COLOR_T1
+participant ":LogicManager" as L LOGIC_COLOR
+participant ":AddressBookParser" as A LOGIC_COLOR
+participant ":FindCommandParser" as P LOGIC_COLOR
+participant "c:FindCommand" as C LOGIC_COLOR
+end box
+
+box Model MODEL_COLOR_T1
+participant "m:Model" as M MODEL_COLOR
+end box
+
+[-> L : execute("find alex, brian g/1A")
+L -> A : parseCommand(...)
+A -> P : parse(" alex, brian g/1A")
+
+note over P
+Build a predicate:
+(name matches alex OR brian)
+AND (studio group equals 1A).
+end note
+
+create C
+P -> C : FindCommand(predicate)
+C --> P
+P --> A : c
+A --> L : c
+
+L -> C : execute(m)
+C -> M : updateFilteredStudentList(predicate)
+M --> C
+C -> M : getFilteredStudentList()
+M --> C : matching students
+C --> L : CommandResult containing match count
+[<-- L : CommandResult
+
+@enduml
