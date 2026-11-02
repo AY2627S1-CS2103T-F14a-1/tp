@@ -385,8 +385,7 @@ today are not labelled. The label is independent of submission counts.
 Normal execution uses `Clock.systemDefaultZone()`; tests inject a fixed
 clock for deterministic deadline checks.
 
-An empty catalogue returns `No m
-issions configured.` Student records,
+An empty catalogue returns `No missions configured.` Student records,
 mission definitions, submission records, and the student filter remain
 unchanged. Rerunning the command recalculates counts and deadline labels.
 
