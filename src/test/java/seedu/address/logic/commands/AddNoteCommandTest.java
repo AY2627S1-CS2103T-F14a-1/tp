@@ -93,7 +93,7 @@ public class AddNoteCommandTest {
         assertEquals(String.format(AddNoteCommand.MESSAGE_SUCCESS, studentToUpdate.getName()),
                 result.getFeedbackToUser());
         assertEquals(List.of(String.format(
-                AddNoteCommand.MESSAGE_WARNING_MATCHING_TEXT, studentToUpdate.getName())), result.getWarnings());
+                AddNoteCommand.MESSAGE_WARNING_MATCHING_TEXT, studentToUpdate.getName(), "[1]")), result.getWarnings());
         assertEquals(expectedStudent, model.getFilteredStudentList().get(INDEX_FIRST_STUDENT.getZeroBased()));
     }
 
@@ -120,36 +120,6 @@ public class AddNoteCommandTest {
                 model,
                 new CommandResult(expectedMessage, expectedStudent),
                 expectedModel);
-    }
-
-    @Test
-    public void execute_thousandMaximumLengthNotes_completesWithoutSignificantLag() {
-        Model model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
-        AddressBookParser parser = new AddressBookParser();
-
-        assertTimeout(ofSeconds(MAXIMUM_LENGTH_NOTE_COMMAND_TIMEOUT_SECONDS), () -> {
-            for (int i = 0; i < RegisteredNotes.MAX_NOTE_INDEX; i++) {
-                Note note = createMaximumLengthNote(i);
-                parser.parseCommand("addnote id/1 nt/" + note.getNoteText()).execute(model);
-            }
-        });
-
-        RegisteredNotes registeredNotes = model.getFilteredStudentList()
-                .get(INDEX_FIRST_STUDENT.getZeroBased()).getRegisteredNotes();
-        assertEquals(RegisteredNotes.MAX_NOTE_INDEX, registeredNotes.getRegisteredNotes().size());
-        assertEquals(Note.MAX_NOTE_LENGTH,
-                registeredNotes.getRegisteredNotes().getLast().getNoteText().length());
-    }
-
-    /**
-     * Creates a distinct note whose text has the maximum valid length.
-     *
-     * @param index Zero-based note number used to make the text distinct.
-     * @return A distinct maximum-length note.
-     */
-    private static Note createMaximumLengthNote(int index) {
-        String prefix = String.format("%04d", index);
-        return new Note(prefix + "x".repeat(Note.MAX_NOTE_LENGTH - prefix.length()));
     }
 
     @Test

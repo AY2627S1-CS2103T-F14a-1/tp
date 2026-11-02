@@ -3,6 +3,8 @@ package seedu.address.model.student;
 import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.AppUtil.checkArgument;
 
+import java.util.Locale;
+
 /**
  * Represents a note for a Student in the address book.
  * Guarantees: immutable; is valid as declared in {@link #isValidNoteText(String)}
@@ -47,6 +49,34 @@ public final class Note {
      */
     public static boolean isValidNoteText(String test) {
         return test.matches(VALIDATION_REGEX) && test.length() <= MAX_NOTE_LENGTH;
+    }
+
+    /**
+     * Returns whether the note's text is a near-match with the given text.
+     *
+     * @param text Note text to check.
+     * @return True if matching note text has been registered.
+     * @throws NullPointerException If the text is {@code null}.
+     */
+    public boolean hasNoteText(String text) {
+        requireNonNull(text);
+        return normalize(noteText).equals(normalize(text));
+    }
+
+    /**
+     * Normalizes note text for comparison. Ignores capitalization and
+     * treats each run of whitespace—including spaces, tabs, and line breaks—as
+     * a single space. Leading and trailing whitespace is removed.
+     *
+     * @param text The note text to normalize.
+     * @return The normalized note text.
+     * @throws NullPointerException If the text is {@code null}.
+     */
+    private static String normalize(String text) {
+        requireNonNull(text);
+        return text.strip()
+                .replaceAll("(?U)\\s+", " ")
+                .toLowerCase(Locale.ROOT);
     }
 
     @Override
