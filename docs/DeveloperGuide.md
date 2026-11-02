@@ -18,8 +18,10 @@
 Notable uses of AI:
 
 * ChatGPT Codex was used by @BrianLim35 to assist with writing test cases, guide documentation, and input validation.
+* ChatGPT Codex was used by @zRayhhh to generate most tests and assist with documentation and code refactoring.
 * ChatGPT Codex was used by @plutonaruto to help with writing test cases, review and identify any inconsistencies in documentation as well as suggest validation improvements.
 * ChatGPT Codex was used by @nuggettowin to generate most non-GUI tests, and studio record and note representation in the UI.
+* ChatGPT Codex was used by @EthanJoshLeong to generate test cases, to refine the CSS files used by the UI and improve the overall visual consistency of the UI.
 
 --------------------------------------------------------------------------------------------------------------------
 
@@ -139,6 +141,7 @@ Here are the other classes in `Logic` (omitted from the class diagram above) tha
 How the parsing works:
 * When called upon to parse a user command, the `AddressBookParser` class creates an `XYZCommandParser` (`XYZ` is a placeholder for the specific command name, e.g., `AddStudentCommandParser`). The parser uses the other classes shown above to parse the user command and create an `XYZCommand` object (e.g., `AddStudentCommand`). The `AddressBookParser` returns that object as a `Command` object.
 * All `XYZCommandParser` classes, such as `AddStudentCommandParser` and `DeleteStudentCommandParser`, implement the `Parser` interface so they can be treated similarly where appropriate, for example during testing.
+* The `XYZComponentParserUtil` refers to the `parser.util` class that the `XYZCommandParser` relies on for input validation.
 * Simpler `XYZCommandParser` classes, such as `DeleteStudentCommandParser`, do not require use of its component's parser util class (e.g., `StudentParserUtil`), as there are no component specific strings to parse.
 
 
@@ -194,8 +197,8 @@ The component a developer is most likely to interact with is `JsonAdaptedStudent
 
 We illustrate the involvement of `JsonAdaptedStudent` in both load and save scenarios as such:
 
-<puml src="diagrams/LoadAdaptedStudentActivityDiagram.puml" width="800" />
-<puml src="diagrams/SaveAdaptedStudentActivityDiagram.puml" width="600" />
+<puml src="diagrams/LoadAdaptedStudentActivityDiagram.puml" width="1000" />
+<puml src="diagrams/SaveAdaptedStudentActivityDiagram.puml" width="750" />
 
 ### Common classes
 
@@ -206,6 +209,31 @@ Classes used by multiple components are in the `seedu.address.commons` package.
 ## **Implementation**
 
 This section describes some noteworthy details on how certain features are implemented.
+
+### Parsing workflow
+
+When adding a command, the developer must also create a parser for that command. This section covers the general structure for command parsers.
+
+We describe here 3 command parsing archetypes of different complexity:
+1. **Simple**: a command such as `list` that requires no arguments and hence no additional parsing;
+2. **Standard**: a command such as `addmc` that requires a certain number of mandatory arguments;
+3. **Complex**: a command such as `find` or `edit` that have optional arguments.
+
+**Simple** commands are self-explanatory, so we omit them from discussion.
+
+Both **Standard** and **Complex** commands generally follow the same structure:
+1. Use the relevant `ArgumentStructureValidator` method to tokenize the user input line. This catches missing or malformed prefixes, as well as prefixes with empty values following them, such as in `edit id/`.
+2. Extract values from the `ArgumentMultimap` returned in [1]:
+* 2a. **Standard** command: all prefixes are expected to be present, so use `ArgumentMultimap#getRequiredValue` and pass the obtained value through the relevant `XYZParserUtil` method.
+* 2b. **Complex** command: some prefixes may be optional, so first check whether the prefix is present before getting. Pass the obtained value through the relevant `XYZParserUtil` method.
+3. Return a new `XYZCommand` with the relevant values.
+4. Wrap the parsing in a `try-catch` block to append usage messages.
+
+For reference, we recommend checking out the implementations:
+* **Standard**: `AddMissionCommandParser`
+* **Complex**: `EditStudentCommandParser`
+
+Other commands like `FindCommand` do not use the `Prefix` system and hence may be implemented in different ways.
 
 ### Adding a mission
 
@@ -405,6 +433,13 @@ and row formatting are summarized in a note; parser construction,
 validation, result construction, and the common saving step are omitted.
 
 <puml src="diagrams/ListMissionStatusesSequenceDiagram.puml" width="850" />
+
+### Tracking mastery checks for a student
+
+Each `MasteryCheck` attributed to a `Student` is stored in `RegisteredMasteryChecks` using a hashmap of the mastery check number to the associated `MasteryCheck` object. It is up to `RegisteredMasteryChecks` to handle operations on mastery checks via the input number.
+
+This implementation guarantees that mastery checks under the same student will have unique numbers to identify them by. Note that since hashmaps allow overwriting of old values associated with a key, the developer should check whether there is an existing mastery check with a number before updating the internal hashmap with a `put`.
+
 --------------------------------------------------------------------------------------------------------------------
 
 ## **Documentation, logging, testing, dev-ops**
@@ -437,26 +472,30 @@ validation, result construction, and the common saving step are omitted.
 
 Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unlikely to have) - `*`
 
-| Priority | As a …                         | I want to …                                                              | So that I can…                                                                       |
-|----------|--------------------------------|--------------------------------------------------------------------------|--------------------------------------------------------------------------------------|
-| `* * *`  | TA                             | add a new student to a studio group                                      | start tracking them from day one at the start of the semester                        |
-| `* * *`  | TA                             | delete a student from a studio group                                     | keep my records accurate with adjustments to the student roster |
-| `* * *`  | TA                             | search for a student by name                                             | quickly find them without scrolling through the whole list                           |
-| `* * *`  | TA                             | edit a student's information                                             | keep my records accurate when their information changes                              |
-| `* * *`  | TA                             | add a note for a given student of mine                                    | tailor my teaching to their specific need                              |
-| `* * *`  | TA                             | delete a note for a given student of mine                                    | keep my notes for each student accurate over time                              |
-| `* * *`  | TA                             | edit a note for a given student of mine                                    | make direct changes to a note that is still relevant                              |
-| `* * *`  | TA with multiple studio groups | see a combined view of all students across my groups                     | get a holistic view of my overall workload                                           |
-| `* * *`  | TA                             | add or delete shared missions                                           | manage the missions students need to complete                                        |
-| `* * *`  | TA                             | mark a student's mission submission                            | see who has submitted each mission                                                   |
-| `* * *`  | TA                             | unmark a student's mission submission                            | keep the mission submission record accurate if it was mistakenly marked                        |
-| `* * *`  | TA                             | record a student's mark for a given assessment                           | keep their performance data alongside other student records                          |
-| `* * *`  | TA with multiple studio groups | see which studio group a student belongs to                              | avoid mixing up students across studio groups                                        |
-| `* * *`  | TA                             | add a student's record for a weekly studio                           | keep track of their weekly performance in one place                          |
-| `* * *`  | TA                             | delete a student's record for a weekly studio                           | keep the studio record accurate if it was mistakenly added                          |
-| `* * *`  | TA                             | edit a student's record for a weekly studio                           | edit the student's effort score directly if I changed my mind                          |
-| `* *`    | TA                             | view a summary of a student's studio records, participation, and submissions | understand their overall engagement without checking multiple records                |
-| `* * *`  | TA                             | list submission statuses for a selected mission and filter overdue records | identify students who may need a submission reminder |
+| Priority | As a …                         | I want to …                                                                  | So that I can…                                                          |
+|----------|--------------------------------|------------------------------------------------------------------------------|-------------------------------------------------------------------------|
+| `* * *`  | TA                             | add a new student to a studio group                                          | start tracking them from day one at the start of the semester           |
+| `* * *`  | TA                             | delete a student from a studio group                                         | keep my records accurate with adjustments to the student roster         |
+| `* * *`  | TA                             | search for a student by name                                                 | quickly find them without scrolling through the whole list              |
+| `* * *`  | TA                             | edit a student's information                                                 | keep my records accurate when their information changes                 |
+| `* * *`  | TA                             | add a note for a given student of mine                                       | tailor my teaching to their specific need                               |
+| `* * *`  | TA                             | delete a note for a given student of mine                                    | keep my notes for each student accurate over time                       |
+| `* * *`  | TA                             | edit a note for a given student of mine                                      | make direct changes to a note that is still relevant                    |
+| `* * *`  | TA                             | add a mastery check appointment for a given student                          | stay aware of irregular appointment times with students                 |
+| `* * *`  | TA                             | delete a mastery check appointment for a given student                       | remove an appointment with inaccurate timing                            |
+| `* * *`  | TA                             | mark a mastery check appointment for a given student                         | easily see my students' progress in mastery checks                      |
+| `* * *`  | TA                             | unmark a mastery check appointment for a given student                       | keep the mastery check record accurate if it was mistakenly marked      |
+| `* * *`  | TA with multiple studio groups | see a combined view of all students across my groups                         | get a holistic view of my overall workload                              |
+| `* * *`  | TA                             | add or delete shared missions                                                | manage the missions students need to complete                           |
+| `* * *`  | TA                             | mark a student's mission submission                                          | see who has submitted each mission                                      |
+| `* * *`  | TA                             | unmark a student's mission submission                                        | keep the mission submission record accurate if it was mistakenly marked |
+| `* `     | TA                             | record a student's mark for a given assessment                               | keep their performance data alongside other student records             |
+| `* * *`  | TA with multiple studio groups | see which studio group a student belongs to                                  | avoid mixing up students across studio groups                           |
+| `* * *`  | TA                             | add a student's record for a weekly studio                                   | keep track of their weekly performance in one place                     |
+| `* * *`  | TA                             | delete a student's record for a weekly studio                                | keep the studio record accurate if it was mistakenly added              |
+| `* * *`  | TA                             | edit a student's record for a weekly studio                                  | edit the student's effort score directly if I changed my mind           |
+| `* *`    | TA                             | view a summary of a student's studio records, participation, and submissions | understand their overall engagement without checking multiple records   |
+| `* * *`  | TA                             | list submission statuses for a selected mission and filter overdue records   | identify students who may need a submission reminder                    |
 
 The user stories above represent the main intended functionality and selected future enhancements of the application. Other user stories may be considered as the project develops.
 
@@ -746,6 +785,134 @@ submission records, or the current student filter.
     * 3c1. AvengerHub warns the tutor. 
   
       Use case resumes at step 4.
+
+**Use case: Add mastery check**
+
+**MSS**
+
+1. Tutor requests to list students.
+2. AvengerHub shows the list of students.
+3. Tutor requests to add a mastery check appointment for a specific student in the list and provides the required details.
+4. AvengerHub creates the mastery check with the supplied number and date-time, saves it, and confirms success with those details.
+
+    Use case ends.
+
+**Extensions**
+
+* 2a. The list is empty.
+
+  Use case ends.
+
+* 3a. The tutor provides invalid or incomplete details.
+
+    * 3a1. AvengerHub shows an error message and leaves the records unchanged.
+
+      Use case resumes from step 3.
+
+* 3b. A mastery check with the same number already exists for the student.
+
+    * 3b1. AvengerHub informs the tutor that a mastery check already exists with that number and leaves the records unchanged.
+
+      Use case ends.
+
+**Use case: Delete mastery check**
+
+**MSS**
+
+1. Tutor requests to list students.
+2. AvengerHub shows the list of students.
+3. Tutor requests to delete a mastery check appointment for a specific student in the list and provides the required details.
+4. AvengerHub removes the mastery check with the supplied number from that student, saves the updated records, and confirms success.
+
+   Use case ends.
+
+**Extensions**
+
+* 2a. The list is empty.
+
+  Use case ends.
+
+* 3a. The tutor provides invalid or incomplete details.
+
+    * 3a1. AvengerHub shows an error message and leaves the records unchanged.
+
+      Use case resumes from step 3.
+
+* 3b. A mastery check with the supplied number does not exist for the student.
+
+    * 3b1. AvengerHub informs the tutor that there is no mastery check with that number and leaves the records unchanged.
+
+      Use case ends.
+
+**Use case: Mark mastery check**
+
+**MSS**
+
+1. Tutor requests to list students.
+2. AvengerHub shows the list of students.
+3. Tutor requests to mark a mastery check appointment as completed for a specific student in the list and provides the required details.
+4. AvengerHub marks the mastery check with the supplied number as completed for that student, saves the updated records, and confirms success.
+
+   Use case ends.
+
+**Extensions**
+
+* 2a. The list is empty.
+
+  Use case ends.
+
+* 3a. The tutor provides invalid or incomplete details.
+
+    * 3a1. AvengerHub shows an error message and leaves the records unchanged.
+
+      Use case resumes from step 3.
+
+* 3b. A mastery check with the supplied number does not exist for the student.
+
+    * 3b1. AvengerHub informs the tutor that there is no mastery check with that number and leaves the records unchanged.
+
+      Use case ends.
+
+* 3c. A mastery check with the supplied number for the student is already marked complete.
+
+    * 3b1. AvengerHub informs the tutor that the mastery check with that number is already marked complete and leaves the records unchanged.
+
+      Use case ends.
+
+**Use case: Unmark mastery check**
+
+**MSS**
+
+1. Tutor requests to list students.
+2. AvengerHub shows the list of students.
+3. Tutor requests to mark a mastery check appointment as incomplete for a specific student in the list and provides the required details.
+4. AvengerHub marks the mastery check with the supplied number as incomplete for that student, saves the updated records, and confirms success.
+
+   Use case ends.
+
+**Extensions**
+
+* 2a. The list is empty.
+
+  Use case ends.
+
+* 3a. The tutor provides invalid or incomplete details.
+
+    * 3a1. AvengerHub shows an error message and leaves the records unchanged.
+
+      Use case resumes from step 3.
+
+* 3b. A mastery check with the supplied number does not exist for the student.
+
+    * 3b1. AvengerHub informs the tutor that there is no mastery check with that number and leaves the records unchanged.
+
+      Use case ends.
+
+* 3c. A mastery check with the supplied number for the student is already incomplete.
+
+    * 3b1. AvengerHub informs the tutor that the mastery check with that number is already incomplete and leaves the records unchanged.
+
+      Use case ends.
 
 **Use case: Add mission**
 
