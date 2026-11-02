@@ -295,31 +295,32 @@ This implementation guarantees that mastery checks under the same student will h
 
 Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unlikely to have) - `*`
 
-| Priority | As a …                         | I want to …                                                                  | So that I can…                                                          |
-|----------|--------------------------------|------------------------------------------------------------------------------|-------------------------------------------------------------------------|
-| `* * *`  | TA                             | add a new student to a studio group                                          | start tracking them from day one at the start of the semester           |
-| `* * *`  | TA                             | delete a student from a studio group                                         | keep my records accurate with adjustments to the student roster         |
-| `* * *`  | TA                             | search for a student by name                                                 | quickly find them without scrolling through the whole list              |
-| `* * *`  | TA                             | edit a student's information                                                 | keep my records accurate when their information changes                 |
-| `* * *`  | TA                             | add a note for a given student of mine                                       | tailor my teaching to their specific need                               |
-| `* * *`  | TA                             | delete a note for a given student of mine                                    | keep my notes for each student accurate over time                       |
-| `* * *`  | TA                             | edit a note for a given student of mine                                      | make direct changes to a note that is still relevant                    |
-| `* * *`  | TA                             | add a mastery check appointment for a given student                          | stay aware of irregular appointment times with students                 |
-| `* * *`  | TA                             | delete a mastery check appointment for a given student                       | remove an appointment with inaccurate timing                            |
-| `* * *`  | TA                             | mark a mastery check appointment for a given student                         | easily see my students' progress in mastery checks                      |
-| `* * *`  | TA                             | unmark a mastery check appointment for a given student                       | keep the mastery check record accurate if it was mistakenly marked      |
-| `* * *`  | TA with multiple studio groups | see a combined view of all students across my groups                         | get a holistic view of my overall workload                              |
-| `* * *`  | TA                             | add shared missions                                                      | make new missions available for students to complete                                |
-| `* * *`  | TA                             | delete shared missions                                                   | remove missions that students no longer need to complete                            || `* * *`  | TA                             | mark a student's mission submission                                          | see who has submitted each mission                                      |
-| `* * *`  | TA                             | unmark a student's mission submission                                        | keep the mission submission record accurate if it was mistakenly marked |
-| `*`      | TA with multiple studio groups | view a graph of mission submissions across tutorial groups        | compare submission progress between my groups                                         |
-| `* `     | TA                             | record a student's mark for a given assessment                               | keep their performance data alongside other student records             |
-| `* * *`  | TA with multiple studio groups | see which studio group a student belongs to                                  | avoid mixing up students across studio groups                           |
-| `* * *`  | TA                             | add a student's record for a weekly studio                                   | keep track of their weekly performance in one place                     |
-| `* * *`  | TA                             | delete a student's record for a weekly studio                                | keep the studio record accurate if it was mistakenly added              |
-| `* * *`  | TA                             | edit a student's record for a weekly studio                                  | edit the student's effort score directly if I changed my mind           |
-| `* *`    | TA                             | view a summary of a student's studio records, participation, and submissions | understand their overall engagement without checking multiple records   |
-| `* * *`  | TA                             | list submission statuses for a selected mission and filter overdue records   | identify students who may need a submission reminder                    |
+| Priority | As a …                          | I want to …                                                                   | So that I can…                                                          |
+|----------|---------------------------------|-------------------------------------------------------------------------------|-------------------------------------------------------------------------|
+| `* * *`  | TA                              | add a new student to a studio group                                           | start tracking them from day one at the start of the semester           |
+| `* * *`  | TA                              | delete a student from a studio group                                          | keep my records accurate with adjustments to the student roster         |
+| `* * *`  | TA                              | search for a student by name                                                  | quickly find them without scrolling through the whole list              |
+| `* * *`  | TA                              | edit a student's information                                                  | keep my records accurate when their information changes                 |
+| `* * *`  | TA                              | add a note for a given student of mine                                        | tailor my teaching to their specific need                               |
+| `* * *`  | TA                              | delete a note for a given student of mine                                     | keep my notes for each student accurate over time                       |
+| `* * *`  | TA                              | edit a note for a given student of mine                                       | make direct changes to a note that is still relevant                    |
+| `* * *`  | TA                              | add a mastery check appointment for a given student                           | stay aware of irregular appointment times with students                 |
+| `* * *`  | TA                              | delete a mastery check appointment for a given student                        | remove an appointment with inaccurate timing                            |
+| `* * *`  | TA                              | mark a mastery check appointment for a given student                          | easily see my students' progress in mastery checks                      |
+| `* * *`  | TA                              | unmark a mastery check appointment for a given student                        | keep the mastery check record accurate if it was mistakenly marked      |
+| `* * *`  | TA with multiple studio groups | see a combined view of all students across my groups                          | get a holistic view of my overall workload                              |
+| `* * *`  | TA                              | add shared missions                                                           | make new missions available for students to complete                    |
+| `* * *`  | TA                              | delete shared missions                                                        | remove missions that students no longer need to complete                |
+| `* * *`  | TA                              | mark a student's mission submission                                           | see who has submitted each mission                                      |
+| `* * *`  | TA                              | unmark a student's mission submission                                         | keep the mission submission record accurate if it was mistakenly marked |
+| `*`      | TA with multiple studio groups | view a graph of mission submissions across tutorial groups                   | compare submission progress between my groups                           |
+| `* `     | TA                              | record a student's mark for a given assessment                                | keep their performance data alongside other student records             |
+| `* * *`  | TA with multiple studio groups | see which studio group a student belongs to                                   | avoid mixing up students across studio groups                           |
+| `* * *`  | TA                              | add a student's record for a weekly studio                                    | keep track of their weekly performance in one place                     |
+| `* * *`  | TA                              | delete a student's record for a weekly studio                                 | keep the studio record accurate if it was mistakenly added              |
+| `* * *`  | TA                              | edit a student's record for a weekly studio                                   | edit the student's effort score directly if I changed my mind           |
+| `* *`    | TA                              | view a summary of a student's studio records, participation, and submissions  | understand their overall engagement without checking multiple records   |
+| `* * *`  | TA                              | list submission statuses for a selected mission and filter overdue records    | identify students who may need a submission reminder                    |
 
 The user stories above represent the main intended functionality and selected future enhancements of the application. Other user stories may be considered as the project develops.
 
