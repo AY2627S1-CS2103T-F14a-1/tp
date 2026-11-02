@@ -345,70 +345,85 @@ Adds a numbered mastery check appointment for a student.
 
 Format: `addmc id/INDEX num/NUMBER dt/DATE-TIME`
 
-* `INDEX` must be a positive integer identifying a student in the **currently displayed list**, including `find` results.
-* `NUMBER` must be an integer from **1 to 2147483647**, inclusive. Numbers are unique within each student's appointments.
-* `DATE-TIME` must be a real date and 24-hour time in `YYYY-MM-DD|HH:mm` format, such as `2026-10-20|13:30`.
-  The current year is filled in automatically. Impossible dates, `24:00`, and times with seconds are rejected.
-* Supply `id/`, `num/`, and `dt/` exactly once each, in any letter case and in any order. Do not put text before the first prefix.
-* New mastery checks show **Not completed**. Adding an existing number leaves its time and status unchanged.
-* Any invalid input produces an error without changing records.
-
-All four mastery check commands use the same `INDEX` and `NUMBER` rules. They preserve other student records
-and the current list filter. Changes are saved automatically and retained after restart.
-Run `view id/INDEX` to inspect the Number, Appointment time, and Status columns.
+* Adds a mastery check for the student at the specified `INDEX` with the specified `NUMBER` at `DATE-TIME`.
+* The index refers to the index number shown in the displayed student list and **must be a positive integer** 1, 2, 3, ...
+* The number must be an integer from **1 to 2147483647**, inclusive. Numbers are unique within each student's mastery check appointments.
+* The date-time must be a real date and 24-hour time in `YYYY-MM-DD|HH:mm` format, such as `2026-10-20|13:30`. Impossible dates/times like `24:00`, and times with seconds are rejected.
+* New mastery checks show "Not completed".
+* If a mastery check was already recorded under the same number, adding a new mastery check with that number will leave the records unchanged.
 
 Example: 
 
-`addmc id/1 num/2 dt/2026-10-27|13:30`, followed by `view id/1`, shows mastery check 2 at `27 October 2026, 13:30` as Not completed.
+`addmc id/1 num/2 dt/2026-10-27|13:30`, followed by `view id/1`, shows mastery check 2 at `27 October 2026, 13:30` as "Not completed" in the Mastery Checks table.
+
+For example, if the first student is Alice Pauline and she has no mastery checks numbered 2, the above command displays:
+
+```text
+Added Alice Pauline's mastery check 2 at 27 October 2026, 13:30.
+```
 
 ### Deleting a mastery check: `delmc`
 
-Removes a numbered mastery check appointment for a student, including its completion status.
+Removes a numbered mastery check appointment for a student.
 
 Format: `delmc id/INDEX num/NUMBER`
 
-* `INDEX` must be a positive integer identifying a student in the **currently displayed list**, including `find` results.
-* `NUMBER` must be an integer from **1 to 2147483647**, inclusive. Numbers are unique within each student's appointments.
-* Supply the `id/` and `num/` prefixes exactly once, in any letter case. Do not put text before the first prefix.
-* If the number is not registered for that student, the command reports that no changes were made.
-* Other mastery check appointments and the student remain in the address book.
-* Any invalid input produces an error without changing records.
+* Deletes a mastery check for the student at the specified `INDEX` with the specified `NUMBER`
+* The index refers to the index number shown in the displayed student list and **must be a positive integer** 1, 2, 3, ...
+* The number must be an integer from **1 to 2147483647**, inclusive. Numbers are unique within each student's mastery check appointments.
+* If no mastery check of that number had been added, the records remain unchanged.
 
 Example: 
 
 `delmc id/1 num/2` removes mastery check 2 from the first displayed student, if registered.
 
+For example, if the first student is Alice Pauline and she has a mastery check numbered 2, the above command displays:
+
+```text
+Removed Alice Pauline's mastery check numbered 2.
+```
+
 ### Marking a mastery check as completed: `markmc`
 
-Marks an existing mastery check appointment as **Completed** without changing its appointment time.
+Marks an existing mastery check appointment as "Completed".
 
 Format: `markmc id/INDEX num/NUMBER`
 
-* `INDEX` must be a positive integer identifying a student in the **currently displayed list**, including `find` results.
-* `NUMBER` must be an integer from **1 to 2147483647**, inclusive. Numbers are unique within each student's appointments.
-* Supply the `id/` and `num/` prefixes exactly once, in any letter case. Do not put text before the first prefix.
-* Marking an already completed mastery check reports that no changes were made.
-* Any invalid input produces an error without changing records.
+* Marks a mastery check with the specified `NUMBER` as completed for the student at the specified `INDEX`.
+* The index refers to the index number shown in the displayed student list and **must be a positive integer** 1, 2, 3, ...
+* The number must be an integer from **1 to 2147483647**, inclusive. Numbers are unique within each student's mastery check appointments.
+* If the mastery check is already completed, the records remain unchanged.
 
 Example: 
 
-`markmc id/1 num/2`, followed by `view id/1`, shows mastery check 2 as Completed.
+`markmc id/1 num/2`, followed by `view id/1`, shows mastery check 2 as "Completed" in the Mastery Checks table.
+
+For example, if the first student is Alice Pauline and she has a mastery check numbered 2, the above command displays:
+
+```text
+Marked Alice Pauline's mastery check 2 as completed.
+```
 
 ### Unmarking a mastery check as completed: `unmarkmc`
 
-Changes an existing mastery check appointment's status to **Not completed** without deleting it or changing its time.
+Marks an existing mastery check appointment as "Not completed".
 
 Format: `unmarkmc id/INDEX num/NUMBER`
 
-* `INDEX` must be a positive integer identifying a student in the **currently displayed list**, including `find` results.
-* `NUMBER` must be an integer from **1 to 2147483647**, inclusive. Numbers are unique within each student's appointments.
-* Uses the same index, number, and registration rules as `markmc`. 
-* Unmarking a mastery check that is already incomplete reports that no changes were made. 
-* Any invalid input produces an error without changing records.
+* Marks a mastery check with the specified `NUMBER` as **not** completed for the student at the specified `INDEX`.
+* The index refers to the index number shown in the displayed student list and **must be a positive integer** 1, 2, 3, ...
+* The number must be an integer from **1 to 2147483647**, inclusive. Numbers are unique within each student's mastery check appointments.
+* If the mastery check is originally not completed, the records remain unchanged.
 
 Example: 
 
-`unmarkmc id/1 num/2`, followed by `view id/1`, shows appointment 2 as Not completed.
+`unmarkmc id/1 num/2`, followed by `view id/1`, shows mastery check 2 as "Not completed" in the Mastery Checks table.
+
+For example, if the first student is Alice Pauline and she has a mastery check numbered 2, the above command displays:
+
+```text
+Marked Alice Pauline's mastery check 2 as incomplete.
+```
 
 ### Listing Upcoming Mastery Checks: `listmc`
 

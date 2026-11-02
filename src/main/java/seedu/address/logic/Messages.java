@@ -10,6 +10,7 @@ public class Messages {
 
     public static final String MESSAGE_MISSION_NOT_FOUND = "Mission %1$s does not exist.";
     public static final String MESSAGE_DUPLICATE_MISSION = "This mission already exists in the mission list.";
+    public static final String MESSAGE_MISSING_ARGUMENTS = "Prefix %1$s is missing its argument.";
 
     public static final String MESSAGE_UNKNOWN_COMMAND = "Unknown command.";
     public static final String MESSAGE_INVALID_COMMAND = "Invalid command format!";
