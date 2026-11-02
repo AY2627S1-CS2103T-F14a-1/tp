@@ -26,9 +26,10 @@ HiddenOutside ..> AddressBookParser
 AddressBookParser .down.> XYZCommandParser: <<create>>
 
 XYZCommandParser ..> XYZCommand : <<create>>
-AddressBookParser ..> Command : <<use>>
+AddressBookParser .right.> Command : <<use>>
 XYZCommandParser .up.|> Parser
 XYZCommandParser .left.> XYZComponentParserUtil
+note bottom of XYZComponentParserUtil: eg. NoteParserUtil, \nMissionParserUtil, etc
 XYZCommandParser ..> ArgumentMultimap
 XYZCommandParser ..> ArgumentTokenizer
 XYZCommandParser ..> ArgumentStructureValidator
