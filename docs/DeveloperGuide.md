@@ -18,6 +18,7 @@
 Notable uses of AI:
 
 * ChatGPT Codex was used by @BrianLim35 to assist with writing test cases, guide documentation, and input validation.
+* ChatGPT Codex was used by @zRayhhh to generate most tests and assist with documentation and code refactoring.
 * ChatGPT Codex was used by @nuggettowin to generate most non-GUI tests, and studio record and note representation in the UI.
 
 --------------------------------------------------------------------------------------------------------------------
