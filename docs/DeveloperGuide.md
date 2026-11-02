@@ -18,6 +18,7 @@
 Notable uses of AI:
 
 * ChatGPT Codex was used by @BrianLim35 to assist with writing test cases, guide documentation, and input validation.
+* ChatGPT Codex was used by @nuggettowin to generate most non-GUI tests, and studio record and note representation in the UI.
 
 --------------------------------------------------------------------------------------------------------------------
 
@@ -136,10 +137,8 @@ Here are the other classes in `Logic` (omitted from the class diagram above) tha
 How the parsing works:
 * When called upon to parse a user command, the `AddressBookParser` class creates an `XYZCommandParser` (`XYZ` is a placeholder for the specific command name, e.g., `AddStudentCommandParser`). The parser uses the other classes shown above to parse the user command and create an `XYZCommand` object (e.g., `AddStudentCommand`). The `AddressBookParser` returns that object as a `Command` object.
 * All `XYZCommandParser` classes, such as `AddStudentCommandParser` and `DeleteStudentCommandParser`, implement the `Parser` interface so they can be treated similarly where appropriate, for example during testing.
+* Simpler `XYZCommandParser` classes, such as `DeleteStudentCommandParser`, do not require use of its component's parser util class (e.g., `StudentParserUtil`), as there are no component specific strings to parse.
 
-The studio-record parsers share argument-structure validation through `ArgumentStructureValidator` and value parsing through `ParserUtil`. They use the same `parseWeek(...)` helper, while the add and edit parsers also use `parseEffortScore(...)`. The following simplified class diagram shows the classes used by `AddStudioRecordCommandParser`:
-
-<puml src="diagrams/AddStudioRecordParserClasses.puml" width="600"/>
 
 ### Model component
 **API** : [`Model.java`](https://github.com/AY2627S1-CS2103T-F14a-1/tp/blob/master/src/main/java/seedu/address/model/Model.java)
@@ -338,7 +337,7 @@ mission definitions, or recorded submissions.
 
 **Target user profile**:
 
-* serves as tutor for CS1101S tutorial(s)
+* serves as tutor for the National University of Singapore's CS1101S course.
 * has a need to manage students across one or more tutorial groups assigned to them
 * has a need to keep track of administrative information relevant to conducting and managing their tutorials
 * prefers desktop apps over other types of applications
@@ -356,15 +355,21 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 | Priority | As a …                         | I want to …                                                              | So that I can…                                                                       |
 |----------|--------------------------------|--------------------------------------------------------------------------|--------------------------------------------------------------------------------------|
 | `* * *`  | TA                             | add a new student to a studio group                                      | start tracking them from day one at the start of the semester                        |
-| `* * *`  | TA                             | delete a student from a studio group                                     | keep my records accurate if a student drops the module or when a new semester begins |
+| `* * *`  | TA                             | delete a student from a studio group                                     | keep my records accurate with adjustments to the student roster |
 | `* * *`  | TA                             | search for a student by name                                             | quickly find them without scrolling through the whole list                           |
 | `* * *`  | TA                             | edit a student's information                                             | keep my records accurate when their information changes                              |
+| `* * *`  | TA                             | add a note for a given student of mine                                    | tailor my teaching to their specific need                              |
+| `* * *`  | TA                             | delete a note for a given student of mine                                    | keep my notes for each student accurate over time                              |
+| `* * *`  | TA                             | edit a note for a given student of mine                                    | make direct changes to a note that is still relevant                              |
 | `* * *`  | TA with multiple studio groups | see a combined view of all students across my groups                     | get a holistic view of my overall workload                                           |
-| `* * *`  | TA                             | mark a student as present or absent for a studio                  | maintain an accurate studio record                                                   |
 | `* * *`  | TA                             | add or delete shared missions                                           | manage the missions students need to complete                                        |
-| `* * *`  | TA                             | mark or unmark a student's mission submission                            | see who has submitted each mission                                                   |
+| `* * *`  | TA                             | mark a student's mission submission                            | see who has submitted each mission                                                   |
+| `* * *`  | TA                             | unmark a student's mission submission                            | keep the mission submission record accurate if it was mistakenly marked                        |
 | `* * *`  | TA                             | record a student's mark for a given assessment                           | keep their performance data alongside other student records                          |
 | `* * *`  | TA with multiple studio groups | see which studio group a student belongs to                              | avoid mixing up students across studio groups                                        |
+| `* * *`  | TA                             | add a student's record for a weekly studio                           | keep track of their weekly performance in one place                          |
+| `* * *`  | TA                             | delete a student's record for a weekly studio                           | keep the studio record accurate if it was mistakenly added                          |
+| `* * *`  | TA                             | edit a student's record for a weekly studio                           | edit the student's effort score directly if I changed my mind                          |
 | `* *`    | TA                             | view a summary of a student's studio records, participation, and submissions | understand their overall engagement without checking multiple records                |
 | `* * *`  | TA                             | list submission statuses for a selected mission and filter overdue records | identify students who may need a submission reminder |
 
@@ -485,14 +490,14 @@ submission records, or the current student filter.
 
       Use case resumes at step 3.
 
-**Use case: Mark studio record**
+**Use case: Add studio record**
 
 **MSS**
 
-1. Tutor requests to list students.
-2. AvengerHub shows the list of students.
-3. Tutor requests to mark a specific student in the list as present for a specified tutorial week.
-4. AvengerHub marks the selected student as present for the specified week and confirms success.
+1. Tutor opens AvengerHub.
+2. AvengerHub shows a list of students.
+3. Tutor requests to add a week's studio record for a specific student in the list.
+4. AvengerHub adds the studio record for the student.
 
    Use case ends.
 
@@ -508,20 +513,20 @@ submission records, or the current student filter.
 
       Use case resumes from step 3.
 
-* 3b. The selected student is already marked present for the specified week.
+* 3b. The selected student's studio record is already registered for the specified week.
 
-    * 3b1. AvengerHub informs the tutor that the student is already marked present and leaves the records unchanged.
+    * 3b1. AvengerHub informs the tutor and leaves the records unchanged.
 
       Use case ends.
 
-**Use case: Unmark studio record**
+**Use case: Delete studio record**
 
 **MSS**
 
-1. Tutor requests to list students.
+1. Tutor opens AvengerHub.
 2. AvengerHub shows the list of students.
-3. Tutor requests to mark a specific student in the list as absent for a specified tutorial week.
-4. AvengerHub marks the selected student as absent for the specified week and confirms success.
+3. Tutor requests to delete a week's studio record for a specific student in the list.
+4. AvengerHub deletes the studio record for the student.
 
    Use case ends.
 
@@ -537,11 +542,125 @@ submission records, or the current student filter.
 
       Use case resumes from step 3.
 
-* 3b. The selected student is already absent for the specified week.
+* 3b. The selected student's studio record is already absent for the specified week.
 
-    * 3b1. AvengerHub informs the tutor that the student is already absent and leaves the records unchanged.
+    * 3b1. AvengerHub informs the tutor and leaves the records unchanged.
 
       Use case ends.
+
+**Use case: Edit studio record**
+
+**MSS**
+
+1. Tutor opens AvengerHub.
+2. AvengerHub shows a list of students.
+3. Tutor requests to edit a week's studio record for a specific student in the list.
+4. AvengerHub edits the studio record for the student.
+
+   Use case ends.
+
+**Extensions**
+
+* 2a. The list is empty.
+
+  Use case ends.
+
+* 3a. The tutor provides invalid or incomplete details.
+
+    * 3a1. AvengerHub shows an error message and leaves the records unchanged.
+
+      Use case resumes from step 3.
+
+* 3b. The selected student's studio record does not exist for the specified week.
+
+    * 3b1. AvengerHub informs the tutor and leaves the records unchanged.
+
+      Use case ends.
+
+* 3c. The selected student's studio record exists and has the same details as the tutor's intended edit.
+
+    * 3b1. AvengerHub informs the tutor and leaves the records unchanged.
+
+      Use case ends.
+
+**Use case: Add note**
+
+**MSS**
+
+1. Tutor opens AvengerHub.
+2. AvengerHub shows a list of students.
+3. Tutor requests to add a note for a specific student in the list.
+4. AvengerHub adds the note for the student.
+
+**Extensions**
+
+* 2a. The list is empty.
+
+  Use case ends.
+
+* 3a. The tutor provides invalid or incomplete details.
+
+    * 3a1. AvengerHub shows an error message and leaves the note records unchanged.
+
+      Use case resumes from step 3.
+
+* 3b. The selected student cannot support any more notes.
+
+    * 3b1. AvengerHub informs the tutor and leaves the note records unchanged.
+
+      Use case ends.
+
+* 3c. The selected student already has a note with identical content.
+
+    * 3c1. AvengerHub warns the tutor. Use case resumes at step 4.
+
+**Use case: Delete note**
+
+**MSS**
+
+1. Tutor opens AvengerHub.
+2. AvengerHub shows a list of students.
+3. Tutor requests to delete a note for a specific student in the list.
+4. AvengerHub deletes the note for the student.
+
+**Extensions**
+
+* 2a. The list is empty.
+
+  Use case ends.
+
+* 3a. The tutor provides invalid or incomplete details.
+
+    * 3a1. AvengerHub shows an error message and leaves the note records unchanged.
+
+      Use case resumes from step 3.
+
+**Use case: Edit note**
+
+**MSS**
+
+1. Tutor opens AvengerHub.
+2. AvengerHub shows a list of students.
+3. Tutor requests to edit a note for a specific student in the list.
+4. AvengerHub edits the note for the student.
+
+**Extensions**
+
+* 2a. The list is empty.
+
+  Use case ends.
+
+* 3a. The tutor provides invalid or incomplete details.
+
+    * 3a1. AvengerHub shows an error message and leaves the note records unchanged.
+
+      Use case resumes from step 3.
+
+* 3c. The selected student already has a note with identical content.
+
+    * 3c1. AvengerHub warns the tutor. 
+  
+      Use case resumes at step 4.
 
 **Use case: Add mission**
 
@@ -798,20 +917,18 @@ are excluded, regardless of when they were recorded.
 ### Non-Functional Requirements
 
 1. Should work on any _mainstream OS_ as long as it has Java `25` or above installed.
-2. Should start within 5 seconds on an _average university student's desktop_.
-3. Should behave consistently when launched from IDE, command line, or by double-clicking the jar file.
-4. Should be able to hold up to 1000 students without noticeable sluggishness (no more than 2 seconds delay) in performance for typical usage.
+2. Should start within 10 seconds on an _average university student's desktop_.
+3. Should behave consistently when launched from command line.
+4. Should be able to hold up to 1000 students without noticeable sluggishness (no more than 3 seconds delay) in performance for typical usage.
 5. A user with _above average typing speed_ for regular English text (i.e. not code, not system admin commands) should be able to accomplish most of the tasks faster using commands than using the mouse.
-6. GUI should be _usable_ from screen resolutions 1280x720 and higher and screen scales of 100%, 125%, and 150%.
+6. GUI should be _usable_ from screen resolutions 1280x720 and higher.
 7. No additional installer should be required for the software.
 8. Should be _usable_ without Internet access.
 9. Character encoding for data saved to disk should be UTF-8.
-10. Commands and error messages should use consistent terminology and clearly identify the invalid field or input.
-11. Dates, times, and identifiers should be displayed in a consistent and unambiguous format.
-12. All commands should be typed into a single interface.
-13. Records should be preserved after closing and reopening the application.
-14. Should retain previously saved data even if an operation fails.
-15. If a stored record is invalid, the system logs the loading error and starts with an empty address book. The saved file remains unchanged until a command executes successfully.
+10. All commands should be typed into a single interface.
+11. Records should be preserved after closing and reopening the application.
+12. Should retain previously saved data even if an operation fails.
+13. If a stored record is invalid, the system logs the loading error and starts with an empty address book. The saved file remains unchanged until a command executes successfully.
 
 ### Glossary
 
@@ -821,9 +938,11 @@ are excluded, regardless of when they were recorded.
 * **AvengerHub**: The name of the application.
 * **Tutor**: The TAs (teaching assistants) in the CS1101S course that handle the tutorial sessions. Also known as "Avengers" by the course.
 * **Mission**: The CS1101S term for homework assignments. A mission submission usually happens via the course website.
+* **Studio**: The CS1101S term for tutorials.
 * **Studio group**: The CS1101S term for tutorial groups.
 * **Studio week**: Equivalent to a tutorial week. They are numbered weeks of the term.
 * **Studio effort**: The score given by an Avenger to students for each studio.
+* **Studio record**: The record of a student's attendance and effort for a given studio week.
 * **Mastery check/Mastery check appointment**: A CS1101S assessment where the tutor conducts an oral interview with a pair of students to ensure they have understood the course content. The date and time of the assessment is decided jointly by the students and the tutor.
 * **Record(s)**: The list of all student information. This is saved on the disk and exists in memory as well when the application is running.
 * **Mission catalogue**: The list of missions, visible and standard across all students.
