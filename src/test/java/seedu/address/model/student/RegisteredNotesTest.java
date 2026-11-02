@@ -189,6 +189,8 @@ public class RegisteredNotesTest {
     @Test
     public void isValidNoteIndex_boundaryAndOutOfRangeIndexes_returnsExpectedValidity() {
         assertTrue(RegisteredNotes.isValidNoteIndex(Index.fromOneBased(1)));
+        assertTrue(RegisteredNotes.isValidNoteIndex(Index.fromOneBased(50)));
+        assertTrue(RegisteredNotes.isValidNoteIndex(Index.fromOneBased(RegisteredNotes.MAX_NOTE_INDEX - 1)));
         assertTrue(RegisteredNotes.isValidNoteIndex(Index.fromOneBased(RegisteredNotes.MAX_NOTE_INDEX)));
         assertFalse(RegisteredNotes.isValidNoteIndex(
                 Index.fromOneBased(RegisteredNotes.MAX_NOTE_INDEX + 1)));
