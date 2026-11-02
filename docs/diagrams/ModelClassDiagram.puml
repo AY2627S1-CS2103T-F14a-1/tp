@@ -5,31 +5,38 @@ skinparam arrowColor MODEL_COLOR
 skinparam classBackgroundColor MODEL_COLOR
 
 Package Model as ModelPackage <<Rectangle>> {
-Class I #FFFFFF
-Class "<<interface>>\nReadOnlyAddressBook" as ReadOnlyAddressBook
-Class "<<interface>>\nReadOnlyUserPrefs" as ReadOnlyUserPrefs
-Class "<<interface>>\nModel" as Model
-Class AddressBook
-Class ModelManager
-Class UserPrefs
-Class UniqueStudentList
-Class Student
-Class Name
-Class MatriculationNumber
-Class Phone
-Class Email
-Class Tag
-Class StudioGroup
-Class RegisteredStudioRecords
-Class StudioRecord
-Class RegisteredMasteryChecks
-Class MasteryCheck
-Class RegisteredNotes
-Class Note
-Class MissionSubmissions
-Class MissionCatalogue
-Class Mission
-Class MissionId
+    Class I #FFFFFF
+    Class "<<interface>>\nReadOnlyAddressBook" as ReadOnlyAddressBook
+    Class "<<interface>>\nReadOnlyUserPrefs" as ReadOnlyUserPrefs
+    Class "<<interface>>\nModel" as Model
+    Class AddressBook
+    Class ModelManager
+    Class UserPrefs
+    Class UniqueStudentList
+    Class Student
+
+    together {
+        Class Name
+        Class MatriculationNumber
+        Class Phone
+        Class Email
+        Class Tag
+        Class StudioGroup
+    }
+
+    together {
+        Class RegisteredStudioRecords
+        Class RegisteredMasteryChecks
+        Class RegisteredNotes
+        Class MissionSubmissions
+    }
+
+    Class StudioRecord
+    Class MasteryCheck
+    Class Note
+    Class MissionCatalogue
+    Class Mission
+    Class MissionId
 }
 
 Class HiddenOutside #FFFFFF
@@ -38,8 +45,8 @@ HiddenOutside ..> Model
 AddressBook .up.|> ReadOnlyAddressBook
 ModelManager .up.|> Model
 Model .right.> ReadOnlyUserPrefs
-Model .left.> ReadOnlyAddressBook
-ModelManager -left-> "1" AddressBook
+Model .right.> ReadOnlyAddressBook
+ModelManager -right-> "1" AddressBook
 ModelManager -right-> "1" UserPrefs
 UserPrefs .up.|> ReadOnlyUserPrefs
 
@@ -69,27 +76,27 @@ MissionSubmissions -down-> "*" MissionId
 RegisteredStudioRecords *--> "0..14" StudioRecord
 RegisteredNotes *-down-> "0..1000" Note
 
-' Top-level layout
-ReadOnlyAddressBook -[hidden]right-> Model
-Model -[hidden]right-> ReadOnlyUserPrefs
-AddressBook -[hidden]right-> ModelManager
-ModelManager -[hidden]right-> UserPrefs
+' Preserve the upper section's relative arrangement.
+Model -[hidden]right-> ReadOnlyAddressBook
+ReadOnlyAddressBook -[hidden]right-> ReadOnlyUserPrefs
+ModelManager -[hidden]right-> AddressBook
+AddressBook -[hidden]right-> UserPrefs
+UniqueStudentList -[hidden]right-> MissionCatalogue
+Mission -[hidden]down-> Student
 
-' Student attributes ordering
-MissionSubmissions -[hidden]right-> Name
-Name -[hidden]right-> Phone
-Name -[hidden]right-> MatriculationNumber
-MatriculationNumber -[hidden]right-> Phone
-Phone -[hidden]right-> Email
-Email -[hidden]right-> Tag
-Tag -[hidden]right-> StudioGroup
-StudioGroup -[hidden]right-> RegisteredStudioRecords
-RegisteredStudioRecords -[hidden]right-> RegisteredMasteryChecks
-RegisteredMasteryChecks -[hidden]right-> RegisteredNotes
+' Stack basic student fields vertically.
+Name -[hidden]down-> MatriculationNumber
+MatriculationNumber -[hidden]down-> Phone
+Phone -[hidden]down-> Email
+Email -[hidden]down-> Tag
+Tag -[hidden]down-> StudioGroup
 
-' Bottom row ordering
-MissionId -[hidden]right-> StudioRecord
-StudioRecord -[hidden]right-> MasteryCheck
-MasteryCheck -[hidden]right-> Note
+' Stack activity containers vertically.
+RegisteredStudioRecords -[hidden]down-> RegisteredMasteryChecks
+RegisteredMasteryChecks -[hidden]down-> RegisteredNotes
+RegisteredNotes -[hidden]down-> MissionSubmissions
+
+' Keep the two columns alongside each other.
+Name -[hidden]right-> RegisteredStudioRecords
 
 @enduml
