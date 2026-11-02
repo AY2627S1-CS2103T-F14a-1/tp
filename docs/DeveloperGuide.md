@@ -396,9 +396,13 @@ today are not labelled. The label is independent of submission counts.
 Normal execution uses `Clock.systemDefaultZone()`; tests inject a fixed
 clock for deterministic deadline checks.
 
-An empty catalogue returns `No missions configured.` Student records,
+An empty catalogue returns `No m
+issions configured.` Student records,
 mission definitions, submission records, and the student filter remain
 unchanged. Rerunning the command recalculates counts and deadline labels.
+
+The query preserves the displayed student filter and does not modify
+student records, mission definitions, or recorded submissions.
 
 **Design rationale:** Statuses are derived from recorded submissions and
 the current date rather than stored separately. This avoids stale overdue
@@ -412,9 +416,6 @@ and row formatting are summarized in a note; parser construction,
 validation, result construction, and the common saving step are omitted.
 
 <puml src="diagrams/ListMissionStatusesSequenceDiagram.puml" width="850" />
-
-The query preserves the displayed student filter and does not modify
-student records, mission definitions, or recorded submissions.
 --------------------------------------------------------------------------------------------------------------------
 
 ## **Documentation, logging, testing, dev-ops**
