@@ -202,6 +202,7 @@ public class MainWindow extends UiPart<Stage> {
         ObservableList<Student> displayedStudents =
                 logic.getFilteredStudentList();
 
+        //ChatGPT was used to refine the listener to update the student details panel when the displayed student is updated in the list.
         displayedStudents.addListener(
                 (ListChangeListener<Student>) change -> {
                     Student displayedStudent =
