@@ -11,19 +11,19 @@ end box
 box Model MODEL_COLOR_T1
 participant "m:Model" as M MODEL_COLOR
 end box
-[-> L : execute("markmission id/1 m/M03")
+[-> L : execute(...)
 activate L
-L -> A : parseCommand("markmission id/1 m/M03")
+L -> A : parseCommand(...)
 activate A
 create P
 A -> P
 activate P
 P --> A
 deactivate P
-A -> P : parse("id/1 m/M03")
+A -> P : parse(...)
 activate P
 create C
-P -> C : MarkMissionCommand(targetIndex, missionId)
+P -> C : MarkMissionCommand(...)
 activate C
 C --> P
 deactivate C
@@ -33,9 +33,9 @@ P -[hidden]-> A
 destroy P
 A --> L : c
 deactivate A
-L -> C : execute(m)
+L -> C : execute(...)
 activate C
-C -> M : findMission(missionId)
+C -> M : findMission(...)
 activate M
 M --> C : mission present
 deactivate M
@@ -49,12 +49,12 @@ note over C
   Check submission state; if needed, copy the student
   with the submitted mission ID added.
 end note
-C -> M : setStudent(studentToUpdate, updatedStudent)
+C -> M : setStudent(...)
 activate M
 M --> C
 deactivate M
 create R
-C -> R : CommandResult(feedback)
+C -> R : CommandResult(...)
 activate R
 R --> C
 deactivate R
