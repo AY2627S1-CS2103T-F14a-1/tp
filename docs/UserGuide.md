@@ -298,7 +298,7 @@ Format: `addnote id/INDEX nt/TEXT`
 * The index refers to the index number shown in the displayed student list.
 * The index **must be a positive integer** 1, 2, 3, ...
 * The text should only contain alphanumeric characters and spaces, should not be blank, and be less than or equal to 1000 characters.
-* A student can have up to 10 notes.
+* A student can have up to 100 notes.
 * Indexes of notes with potentially duplicate text will be shown as a warning, but the note will still be added. This is to provide more flexibility for tutors.
 * When checking for duplicate note texts, AvengerHub will ignore capitalization and treats each run of whitespace-including spaces and text as a single space. Leading and trailing whitespace will also be ignored.
 * The current list filter stays active.

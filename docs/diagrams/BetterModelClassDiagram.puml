@@ -25,7 +25,7 @@ Student *--> "1" MissionSubmissions
 Student *--> "1" RegisteredMasteryChecks
 RegisteredMasteryChecks *-down-> "*" MasteryCheck
 Student *--> "1" RegisteredNotes
-RegisteredNotes *-down-> "*" Note
+RegisteredNotes *-down-> "0..100" Note
 
 Name -[hidden]right-> Phone
 Name -[hidden]right-> MatriculationNumber
