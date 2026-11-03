@@ -313,14 +313,14 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 | `* * *`  | TA                              | delete shared missions                                                        | remove missions that students no longer need to complete                |
 | `* * *`  | TA                              | mark a student's mission submission                                           | see who has submitted each mission                                      |
 | `* * *`  | TA                              | unmark a student's mission submission                                         | keep the mission submission record accurate if it was mistakenly marked |
-| `*`      | TA with multiple studio groups | view a graph of mission submissions across tutorial groups                   | compare submission progress between my groups                           |
-| `* `     | TA                              | record a student's mark for a given assessment                                | keep their performance data alongside other student records             |
 | `* * *`  | TA with multiple studio groups | see which studio group a student belongs to                                   | avoid mixing up students across studio groups                           |
 | `* * *`  | TA                              | add a student's record for a weekly studio                                    | keep track of their weekly performance in one place                     |
 | `* * *`  | TA                              | delete a student's record for a weekly studio                                 | keep the studio record accurate if it was mistakenly added              |
 | `* * *`  | TA                              | edit a student's record for a weekly studio                                   | edit the student's effort score directly if I changed my mind           |
-| `* *`    | TA                              | view a summary of a student's studio records, participation, and submissions  | understand their overall engagement without checking multiple records   |
 | `* * *`  | TA                              | list submission statuses for a selected mission and filter overdue records    | identify students who may need a submission reminder                    |
+| `* *`    | TA                              | view a summary of a student's studio records, participation, and submissions  | understand their overall engagement without checking multiple records   |
+| `*`      | TA with multiple studio groups | view a graph of mission submissions across tutorial groups                   | compare submission progress between my groups                           |
+| `* `     | TA                              | record a student's mark for a given assessment                                | keep their performance data alongside other student records             |
 
 The user stories above represent the main intended functionality and selected future enhancements of the application. Other user stories may be considered as the project develops.
 
