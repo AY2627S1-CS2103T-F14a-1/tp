@@ -14,6 +14,8 @@ import seedu.address.model.AddressBook;
 
 public class StatusBarFooterTest extends GuiUnitTest {
 
+    //@@author nuggettowin-reused
+    //Reused from AB4
     public static final Path STUB_SAVE_LOCATION = Paths.get("Stub");
     private static final Path RELATIVE_PATH = Paths.get(".");
 
@@ -41,5 +43,5 @@ public class StatusBarFooterTest extends GuiUnitTest {
     private void assertStatusBarContent(String expectedSaveLocation) {
         assertEquals(expectedSaveLocation, statusBarFooterHandle.getSaveLocation());
     }
-
+    //@@author
 }

@@ -26,6 +26,8 @@ import seedu.address.model.student.StudioGroup;
 
 public class StudentListPanelTest extends GuiUnitTest {
 
+    //@@author nuggettowin-reused
+    //Reused from AB4
     private static final ObservableList<Student> TYPICAL_STUDENTS =
             FXCollections.observableList(getTypicalStudents());
 
@@ -92,6 +94,7 @@ public class StudentListPanelTest extends GuiUnitTest {
         }
         return backingList;
     }
+    //@@author
 
     @Test
     public void constructor_setsStudentListItems() {

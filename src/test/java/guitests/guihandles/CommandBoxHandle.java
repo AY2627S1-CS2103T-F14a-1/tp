@@ -9,6 +9,8 @@ import javafx.scene.input.KeyCode;
  */
 public class CommandBoxHandle extends NodeHandle<TextField> {
 
+    //@@author nuggettowin-reused
+    //Reused from AB4
     public static final String COMMAND_INPUT_FIELD_ID = "#commandTextField";
 
     public CommandBoxHandle(TextField commandBoxNode) {
@@ -39,4 +41,5 @@ public class CommandBoxHandle extends NodeHandle<TextField> {
     public ObservableList<String> getStyleClass() {
         return getRootNode().getStyleClass();
     }
+    //@@author
 }

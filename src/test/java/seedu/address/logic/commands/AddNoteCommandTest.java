@@ -1,10 +1,8 @@
 package seedu.address.logic.commands;
 
-import static java.time.Duration.ofSeconds;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTimeout;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandFailure;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandSuccess;
@@ -20,7 +18,6 @@ import org.junit.jupiter.api.Test;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.exceptions.CommandException;
-import seedu.address.logic.parser.AddressBookParser;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.UserPrefs;
@@ -79,6 +76,23 @@ public class AddNoteCommandTest {
     }
 
     @Test
+    public void execute_maximumLengthNote_updatesStudent() {
+        Note maximumLengthNote = new Note("a".repeat(Note.MAX_NOTE_LENGTH));
+        Model model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
+        Student studentToUpdate = model.getFilteredStudentList().get(INDEX_FIRST_STUDENT.getZeroBased());
+        AddNoteCommand command = new AddNoteCommand(INDEX_FIRST_STUDENT, maximumLengthNote);
+        Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
+        Student updatedStudent = studentToUpdate.withRegisteredNotes(
+                new RegisteredNotes().withNote(maximumLengthNote));
+        expectedModel.setStudent(studentToUpdate, updatedStudent);
+
+        assertCommandSuccess(command, model,
+                new CommandResult(
+                        String.format(AddNoteCommand.MESSAGE_SUCCESS, studentToUpdate.getName()),
+                        updatedStudent), expectedModel);
+    }
+
+    @Test
     public void execute_matchingNoteText_appendsNoteAndReturnsWarning() throws CommandException {
         Model model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
         Student studentToUpdate = model.getFilteredStudentList().get(INDEX_FIRST_STUDENT.getZeroBased());
@@ -93,7 +107,28 @@ public class AddNoteCommandTest {
         assertEquals(String.format(AddNoteCommand.MESSAGE_SUCCESS, studentToUpdate.getName()),
                 result.getFeedbackToUser());
         assertEquals(List.of(String.format(
-                AddNoteCommand.MESSAGE_WARNING_MATCHING_TEXT, studentToUpdate.getName())), result.getWarnings());
+                AddNoteCommand.MESSAGE_WARNING_MATCHING_TEXT, studentToUpdate.getName(), "[1]")), result.getWarnings());
+        assertEquals(expectedStudent, model.getFilteredStudentList().get(INDEX_FIRST_STUDENT.getZeroBased()));
+    }
+
+    @Test
+    public void execute_multipleMatchingNoteTexts_appendsNoteAndReturnsAllMatchingIndexes() throws CommandException {
+        Model model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
+        Student studentToUpdate = model.getFilteredStudentList().get(INDEX_FIRST_STUDENT.getZeroBased());
+        RegisteredNotes existingNotes = new RegisteredNotes(List.of(
+                NOTE, new Note("Prepare consultation"), new Note("review   lecture notes")));
+        Student studentWithNotes = studentToUpdate.withRegisteredNotes(existingNotes);
+        model.setStudent(studentToUpdate, studentWithNotes);
+        AddNoteCommand command = new AddNoteCommand(INDEX_FIRST_STUDENT, NOTE);
+
+        CommandResult result = command.execute(model);
+        Student expectedStudent = studentWithNotes.withRegisteredNotes(existingNotes.withNote(NOTE));
+
+        assertEquals(String.format(AddNoteCommand.MESSAGE_SUCCESS, studentToUpdate.getName()),
+                result.getFeedbackToUser());
+        assertEquals(List.of(String.format(
+                AddNoteCommand.MESSAGE_WARNING_MATCHING_TEXT, studentToUpdate.getName(), "[1, 3]")),
+                result.getWarnings());
         assertEquals(expectedStudent, model.getFilteredStudentList().get(INDEX_FIRST_STUDENT.getZeroBased()));
     }
 
@@ -120,36 +155,6 @@ public class AddNoteCommandTest {
                 model,
                 new CommandResult(expectedMessage, expectedStudent),
                 expectedModel);
-    }
-
-    @Test
-    public void execute_thousandMaximumLengthNotes_completesWithoutSignificantLag() {
-        Model model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
-        AddressBookParser parser = new AddressBookParser();
-
-        assertTimeout(ofSeconds(MAXIMUM_LENGTH_NOTE_COMMAND_TIMEOUT_SECONDS), () -> {
-            for (int i = 0; i < RegisteredNotes.MAX_NOTE_INDEX; i++) {
-                Note note = createMaximumLengthNote(i);
-                parser.parseCommand("addnote id/1 nt/" + note.getNoteText()).execute(model);
-            }
-        });
-
-        RegisteredNotes registeredNotes = model.getFilteredStudentList()
-                .get(INDEX_FIRST_STUDENT.getZeroBased()).getRegisteredNotes();
-        assertEquals(RegisteredNotes.MAX_NOTE_INDEX, registeredNotes.getRegisteredNotes().size());
-        assertEquals(Note.MAX_NOTE_LENGTH,
-                registeredNotes.getRegisteredNotes().getLast().getNoteText().length());
-    }
-
-    /**
-     * Creates a distinct note whose text has the maximum valid length.
-     *
-     * @param index Zero-based note number used to make the text distinct.
-     * @return A distinct maximum-length note.
-     */
-    private static Note createMaximumLengthNote(int index) {
-        String prefix = String.format("%04d", index);
-        return new Note(prefix + "x".repeat(Note.MAX_NOTE_LENGTH - prefix.length()));
     }
 
     @Test

@@ -50,6 +50,22 @@ public class NoteTest {
     }
 
     @Test
+    public void hasNearMatchingNoteText_caseAndWhitespaceDifferences_returnsTrue() {
+        Note note = new Note("Review lecture notes");
+
+        assertTrue(note.hasNearMatchingNoteText("review lecture notes"));
+        assertTrue(note.hasNearMatchingNoteText("  REVIEW\tlecture\nnotes  "));
+    }
+
+    @Test
+    public void hasNearMatchingNoteText_differentOrNullText_returnsFalseOrThrowsException() {
+        Note note = new Note("Review lecture notes");
+
+        assertFalse(note.hasNearMatchingNoteText("Review tutorial notes"));
+        assertThrows(NullPointerException.class, () -> note.hasNearMatchingNoteText(null));
+    }
+
+    @Test
     public void equals_sameAndDifferentText_returnsExpectedEquality() {
         Note note = new Note("Review lecture");
 

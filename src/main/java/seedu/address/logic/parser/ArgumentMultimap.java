@@ -1,5 +1,7 @@
 package seedu.address.logic.parser;
 
+import static seedu.address.logic.Messages.MESSAGE_MISSING_ARGUMENTS;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,7 +20,6 @@ import seedu.address.logic.parser.exceptions.ParseException;
  */
 public class ArgumentMultimap {
 
-    private static final String missingArgumentString = "Prefix %1$s is missing its argument.";
     /** Prefixes mapped to their respective arguments */
     private final Map<Prefix, List<String>> argMultimap = new HashMap<>();
 
@@ -55,7 +56,7 @@ public class ArgumentMultimap {
     public String getRequiredValue(Prefix prefix) throws ParseException {
         List<String> values = getAllValues(prefix);
         if (values.isEmpty() || values.getLast().isBlank()) {
-            throw new ParseException(String.format(missingArgumentString, prefix));
+            throw new ParseException(String.format(MESSAGE_MISSING_ARGUMENTS, prefix));
         }
         return values.getLast();
     }

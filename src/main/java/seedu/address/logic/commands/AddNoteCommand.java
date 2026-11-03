@@ -5,6 +5,7 @@ import static java.util.Objects.requireNonNull;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_INDEX;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NOTE_TEXT;
 
+import java.util.List;
 import java.util.logging.Logger;
 
 import seedu.address.commons.core.LogsCenter;
@@ -36,7 +37,8 @@ public class AddNoteCommand extends Command {
             "Added %1$s's note.";
     public static final String MESSAGE_MAXIMUM_NOTES_REACHED =
             "%1$s already has the maximum of %2$d notes. No changes made.";
-    public static final String MESSAGE_WARNING_MATCHING_TEXT = "%1$s has a matching note text.";
+    public static final String MESSAGE_WARNING_MATCHING_TEXT = "%1$s's note(s) with the following index(es) "
+            + "may already contain the same note text: %2$s";
 
     private static final Logger logger = LogsCenter.getLogger(AddNoteCommand.class);
 
@@ -61,7 +63,7 @@ public class AddNoteCommand extends Command {
 
         Student studentToUpdate = getStudentAtDisplayedIndex(model, targetIndex);
         RegisteredNotes registeredNotes = studentToUpdate.getRegisteredNotes();
-        boolean hasMatchingNoteText = registeredNotes.hasNoteText(note.getNoteText());
+        List<Index> nearMatchingNotes = registeredNotes.getNearMatchingNoteIndexes(note.getNoteText());
 
         RegisteredNotes updatedNotes;
         try {
@@ -78,9 +80,9 @@ public class AddNoteCommand extends Command {
         logger.info("Added note at displayed student index " + targetIndex.getOneBased() + ".");
         CommandResult result = new CommandResult(
                 String.format(MESSAGE_SUCCESS, studentToUpdate.getName()), updatedStudent);
-        if (hasMatchingNoteText) {
-            return result.withWarning(
-                    String.format(MESSAGE_WARNING_MATCHING_TEXT, studentToUpdate.getName()));
+        if (!nearMatchingNotes.isEmpty()) {
+            return result.withWarning(String.format(MESSAGE_WARNING_MATCHING_TEXT, studentToUpdate.getName(),
+                    nearMatchingNotes.stream().map(Index::getOneBased).toList()));
         }
         return result;
     }

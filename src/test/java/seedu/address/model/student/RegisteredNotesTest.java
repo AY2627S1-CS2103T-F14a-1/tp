@@ -49,8 +49,8 @@ public class RegisteredNotesTest {
     public void constructor_tooManyNotes_throwsIllegalArgumentException() {
         List<Note> notes = Collections.nCopies(RegisteredNotes.MAX_NOTE_INDEX + 1, FIRST_NOTE);
 
-        IllegalArgumentException exception = assertThrows(
-                IllegalArgumentException.class, () -> new RegisteredNotes(notes));
+        IllegalStateException exception = assertThrows(
+                IllegalStateException.class, () -> new RegisteredNotes(notes));
         assertEquals(RegisteredNotes.MESSAGE_CONSTRAINTS, exception.getMessage());
     }
 
@@ -154,12 +154,14 @@ public class RegisteredNotesTest {
     }
 
     @Test
-    public void hasNoteText_matchingAbsentOrNullText_returnsExpectedResult() {
-        RegisteredNotes registeredNotes = new RegisteredNotes(List.of(FIRST_NOTE));
+    public void getNearMatchingNoteIndexes_multipleAndNoMatches_returnsExpectedIndexes() {
+        RegisteredNotes registeredNotes = new RegisteredNotes(List.of(
+                FIRST_NOTE, SECOND_NOTE, new Note("review   lecture")));
 
-        assertTrue(registeredNotes.hasNoteText(FIRST_NOTE.getNoteText()));
-        assertFalse(registeredNotes.hasNoteText(SECOND_NOTE.getNoteText()));
-        assertThrows(NullPointerException.class, () -> registeredNotes.hasNoteText(null));
+        assertEquals(List.of(Index.fromOneBased(1), Index.fromOneBased(3)),
+                registeredNotes.getNearMatchingNoteIndexes(" REVIEW\tLECTURE "));
+        assertTrue(registeredNotes.getNearMatchingNoteIndexes("Prepare consultation").isEmpty());
+        assertThrows(NullPointerException.class, () -> registeredNotes.getNearMatchingNoteIndexes(null));
     }
 
     @Test

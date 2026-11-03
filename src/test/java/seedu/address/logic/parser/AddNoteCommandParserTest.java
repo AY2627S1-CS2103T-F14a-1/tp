@@ -30,10 +30,13 @@ public class AddNoteCommandParserTest {
         AddNoteCommand expected = new AddNoteCommand(INDEX_FIRST_STUDENT, new Note("Review lecture notes"));
         AddNoteCommand punctuationExpected = new AddNoteCommand(
                 INDEX_FIRST_STUDENT, new Note("Don't forget: chapter 2!"));
+        AddNoteCommand maximumLengthExpected = new AddNoteCommand(
+                INDEX_FIRST_STUDENT, new Note("a".repeat(Note.MAX_NOTE_LENGTH)));
 
         assertParseSuccess(parser, "id/1 nt/Review lecture notes", expected);
         assertParseSuccess(parser, " nt/ Review lecture notes id/ 1 ", expected);
         assertParseSuccess(parser, "id/1 nt/Don't forget: chapter 2!", punctuationExpected);
+        assertParseSuccess(parser, "id/1 nt/" + "a".repeat(Note.MAX_NOTE_LENGTH), maximumLengthExpected);
     }
 
     @Test
