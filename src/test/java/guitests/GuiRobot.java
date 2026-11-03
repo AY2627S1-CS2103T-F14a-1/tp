@@ -14,6 +14,8 @@ import javafx.stage.Stage;
  */
 public class GuiRobot extends FxRobot {
 
+    //@@author nuggettowin-reused
+    //Reused from AB4
     private static final int PAUSE_FOR_HUMAN_DELAY_MILLISECONDS = 50;
     private static final int DEFAULT_WAIT_FOR_EVENT_TIMEOUT_MILLISECONDS = 5000;
 
@@ -119,4 +121,5 @@ public class GuiRobot extends FxRobot {
      */
     private class EventTimeoutException extends RuntimeException {
     }
+    //@@author
 }

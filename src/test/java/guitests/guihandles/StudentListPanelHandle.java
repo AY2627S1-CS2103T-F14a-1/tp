@@ -10,6 +10,9 @@ import seedu.address.model.student.Student;
  * Provides a handle for {@code StudentListPanel} containing the list of {@code StudentCard}.
  */
 public class StudentListPanelHandle extends NodeHandle<ListView<Student>> {
+
+    //@@author nuggettowin-reused
+    //Reused from AB4
     public static final String STUDENT_LIST_VIEW_ID = "#studentListView";
 
     private static final String CARD_PANE_ID = "#cardPane";
@@ -56,4 +59,5 @@ public class StudentListPanelHandle extends NodeHandle<ListView<Student>> {
     private Set<Node> getAllCardNodes() {
         return guiRobot.lookup(CARD_PANE_ID).queryAll();
     }
+    //@@author
 }

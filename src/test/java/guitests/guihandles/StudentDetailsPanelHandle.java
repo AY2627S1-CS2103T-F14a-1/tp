@@ -7,10 +7,12 @@ import javafx.scene.Node;
  */
 public class StudentDetailsPanelHandle extends NodeHandle<Node> {
 
+    //@@author nuggettowin-reused
+    //Reused from AB4
     public static final String STUDENT_DETAILS_PANEL_ID = "#studentDetailsScrollPane";
 
     public StudentDetailsPanelHandle(Node studentDetailsPanelNode) {
         super(studentDetailsPanelNode);
     }
-
+    //@@author
 }

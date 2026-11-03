@@ -235,6 +235,7 @@ For example, if the first student is Amy Bee and her week 3 studio record is not
 Added Amy Bee's studio record for studio week 3.
 ```
 
+![result for adding a studio record](images/addStudioRecordResult.png)
 ### Deleting studio records: `delstudiorecord`
 
 Removes a student's attendance record and effort score for a studio week. The student remains in the address book.
@@ -287,20 +288,23 @@ Edited Amy Bee's studio record for studio week 3.
 
 ### Adding a student note: `addnote`
 
-Adds a note for an existing student in the address book.
+Adds a simple note for an existing student in the address book.
 
 Format: `addnote id/INDEX nt/TEXT`
 
 * Adds a note with text `TEXT` for the student at the specified `INDEX`.
 * The index refers to the index number shown in the displayed student list.
 * The index **must be a positive integer** 1, 2, 3, ...
-* The text should only contain alphanumeric characters and spaces, should not be blank, and be less than or equal to 1000 characters.
-* A student can have up to 10 notes.
+* The text should only contain alphanumeric characters, punctuation, and spaces, should not be blank, and be less than or equal to 1000 characters.
+* A student can have up to 100 notes.
+* Indexes of notes with potentially duplicate text will be shown as a warning, but the note will still be added. This is to provide more flexibility for tutors.
+* When checking for duplicate note texts, AvengerHub will ignore capitalization and treats each run of whitespace-including spaces and text as a single space. Leading and trailing whitespace will also be ignored.
 * The current list filter stays active.
 
 Examples:
 *  `addnote id/1 nt/hello` Adds a note with text `hello` for the 1st student.
 
+![result for adding a note](images/addNoteResult.png)
 
 ### Deleting a student note: `delnote`
 
@@ -331,8 +335,10 @@ Format: `editnote id/INDEX ni/NOTE_INDEX nt/TEXT`
 * The index **must be a positive integer** 1, 2, 3, ...
 * The note index refers to the index number shown in the list of notes for a given student in the display panel.
 * The note index must be an integer from 1 to 10, inclusive.
-* The text should only contain alphanumeric characters and spaces, should not be blank, and be less than or equal to 1000 characters.
+* The text should only contain alphanumeric characters, punctuation, and spaces, should not be blank, and be less than or equal to 1000 characters.
 * If the note index doesn't match any existing notes for the given student, or matches the existing text, the notes will be unchanged.
+* Indexes of notes with potentially duplicate text will be shown as a warning, but the note will still be added. This is to provide more flexibility for tutors.
+* When checking for duplicate note texts, AvengerHub will ignore capitalization and treats each run of whitespace-including spaces and text as a single space. Leading and trailing whitespace will also be ignored.
 * The current list filter stays active.
 
 Examples:
@@ -426,18 +432,16 @@ Marked Alice Pauline's mastery check 2 as incomplete.
 
 ### Listing Upcoming Mastery Checks: `listmc`
 
-Lists all upcoming mastery-check appointments for students in the
+Lists all upcoming mastery check appointments for students in the
 currently filtered student list.
 
-Only appointments after the current date and time are shown. Results are
-sorted chronologically.
-
-Any arguments provided after `listmc` are ignored.
-
-`listmc` is a read-only command. It does not change student data,
-mastery-check records, or the current filter.
-
 Format: `listmc`
+
+* Only appointments after the current date and time are shown. Results are
+sorted chronologically.
+* Any arguments provided after `listmc` are ignored.
+* `listmc` is a read-only command. It does not change student data,
+mastery-check records, or the current filter.
 
 Example output:
 ```text
@@ -450,6 +454,8 @@ If there are no upcoming mastery checks:
 ```text
 No upcoming mastery checks in the current student list.
 ```
+
+![result for listing mastery checks](images/listMcResult.png)
 
 ### Adding a mission: `addmission`
 
@@ -675,35 +681,41 @@ in the search results. Recheck indexes whenever the displayed list changes.
 
 1. **When using multiple screens**, if you move the application to a secondary screen, and later switch to using only the primary screen, the GUI will open off-screen. The remedy is to delete the `preferences.json` file created by the application before running the application again.
 2. **If you minimize the Help Window** and then run the `help` command (or use the `Help` menu, or the keyboard shortcut `F1`) again, the original Help Window will remain minimized, and no new Help Window will appear. The remedy is to manually restore the minimized Help Window.
+3. **On some Linux desktop environments**, the application window may be
+   resizable below the minimum width and height specified by the application.
+   This is caused by differences in how JavaFX and the Linux window manager
+   enforce window-size constraints. The remedy is to manually restore the
+   window to a larger size.
 
 --------------------------------------------------------------------------------------------------------------------
 
 ## Command summary
 
-Action     | Format, Examples                                                                                                                                                                                          
------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-**Add student**    | `addstudent n/NAME mtc/MATRICULATION_NUMBER p/PHONE_NUMBER e/EMAIL [t/TAG]... g/STUDIO_GROUP` <br> e.g., `addstudent n/James Ho mtc/A0205429T p/22224444 e/jamesho@example.com  t/smart t/talkative g/1A` 
-**Delete student** | `delstudent id/INDEX`<br> e.g., `delstudent id/3`                                                                                                                                                         
-**View student** | `view id/INDEX`<br> e.g., `view id/1`                                                                                                                                                                     
-**Edit student**   | `editstudent id/INDEX [n/NAME] [mtc/MATRICULATION_NUMBER] [p/PHONE_NUMBER] [e/EMAIL] [t/TAG]... [g/STUDIO_GROUP]`<br> e.g.,`editstudent id/2 n/James Lee e/jameslee@example.com g/1A`                     
-**Add studio record** | `addstudiorecord id/INDEX w/WEEK ef/EFFORT`<br> e.g., `addstudiorecord id/1 w/3 ef/30`                                                                                                                    
-**Delete studio record** | `delstudiorecord id/INDEX w/WEEK`<br> e.g., `delstudiorecord id/1 w/3`                                                                                                                                    
-**Edit studio record** | `editstudiorecord id/INDEX w/WEEK ef/EFFORT`<br> e.g., `editstudiorecord id/1 w/3 ef/30`                                                                                                                  
-**Add note** | `addnote id/INDEX nt/TEXT`<br> e.g., `addnote id/1 nt/hello`                                                                                                                                              
-**Delete note** | `delnote id/INDEX ni/NOTE_INDEX`<br> e.g., `delnote id/1 ni/1`                                                                                                                                            
-**Edit note** | `editnote id/INDEX ni/NOTE_INDEX nt/TEXT`<br> e.g., `editnote id/1 ni/1 nt/hello`                                                                                                                         
-**Add mastery check** | `addmc id/INDEX num/NUMBER dt/DATE-TIME`<br> e.g., `addmc id/1 num/2 dt/2026-09-29\|23:59`                                                                                                                
-**Delete mastery check** | `delmc id/INDEX num/NUMBER`<br> e.g. `delmc id/1 num/2`                                                                                                                                                   
-**Mark mastery check** | `markmc id/INDEX num/NUMBER`<br> e.g. `markmc id/1 num/2`                                                                                                                                                 
-**Unmark mastery check** | `unmarkmc id/INDEX num/NUMBER`<br> e.g. `unmarkmc id/1 num/2`                                                                                                                                             
-**Add mission** | `addmission m/MISSION_ID n/NAME d/DEADLINE`<br> e.g., `addmission m/M01 n/Rune Reading d/2026-10-20`                                                                                                      
-**Delete mission** | `delmission m/MISSION_ID`<br> e.g., `delmission m/M03`                                                                                                                                                    
-**Record mission submission** | `markmission id/INDEX m/MISSION_ID`<br> e.g., `markmission id/1 m/M01`                                                                                                                                    
-**Remove mission submission** | `unmarkmission id/INDEX m/MISSION_ID`<br> e.g., `unmarkmission id/1 m/M01`                                                                                                                                
-**Edit mission** | `editmission m/MISSION_ID [n/NAME] [d/DEADLINE]`<br> e.g., `editmission m/M01 n/Rune Reading d/2026-10-22`                                                                                                
-**List missions and statuses** | `listmissions [m/MISSION_ID] [s/STATUS]`<br> `STATUS`: `submitted` or `overdue`<br> e.g., `listmissions`, `listmissions m/M01`, `listmissions s/overdue`                                                  
-**Clear**  | `clear`                                                                                                                                                                                                   
-**Find**   | `find [NAME_WORDS [, MORE_NAME_WORDS]...] [g/STUDIO_GROUP]...`<br> e.g., `find James Jake`                                                                                                                
-**List**   | `list`                                                                                                                                                                                                    
-**Help**   | `help`                                                                                                                                                                                                    
-**Exit**   | `exit`                                                                                                                                                                                                    
+Action | Format, Examples
+-----------|-------------------------------------------------------------------------------------------------------------------------------------------
+**Add student** | `addstudent n/NAME mtc/MATRICULATION_NUMBER p/PHONE_NUMBER e/EMAIL [t/TAG]... g/STUDIO_GROUP` <br> e.g., `addstudent n/James Ho mtc/A0205429T p/22224444 e/jamesho@example.com t/smart t/talkative g/1A`
+**Delete student** | `delstudent id/INDEX`<br> e.g., `delstudent id/3`
+**Find** | `find [NAME_WORDS [, MORE_NAME_WORDS]...] [g/STUDIO_GROUP]...`<br> e.g., `find James Jake g/1A`
+**View student** | `view id/INDEX`<br> e.g., `view id/1`
+**Edit student** | `editstudent id/INDEX [n/NAME] [mtc/MATRICULATION_NUMBER] [p/PHONE_NUMBER] [e/EMAIL] [t/TAG]... [g/STUDIO_GROUP]`<br> e.g., `editstudent id/2 n/James Lee e/jameslee@example.com g/1A`
+**Add studio record** | `addstudiorecord id/INDEX w/WEEK ef/EFFORT`<br> e.g., `addstudiorecord id/1 w/3 ef/30`
+**Delete studio record** | `delstudiorecord id/INDEX w/WEEK`<br> e.g., `delstudiorecord id/1 w/3`
+**Edit studio record** | `editstudiorecord id/INDEX w/WEEK ef/EFFORT`<br> e.g., `editstudiorecord id/1 w/3 ef/30`
+**Add note** | `addnote id/INDEX nt/TEXT`<br> e.g., `addnote id/1 nt/hello`
+**Delete note** | `delnote id/INDEX ni/NOTE_INDEX`<br> e.g., `delnote id/1 ni/1`
+**Edit note** | `editnote id/INDEX ni/NOTE_INDEX nt/TEXT`<br> e.g., `editnote id/1 ni/1 nt/hello`
+**Add mastery check** | `addmc id/INDEX num/NUMBER dt/DATE-TIME`<br> e.g., `addmc id/1 num/2 dt/2026-09-29\|23:59`
+**Delete mastery check** | `delmc id/INDEX num/NUMBER`<br> e.g., `delmc id/1 num/2`
+**Mark mastery check** | `markmc id/INDEX num/NUMBER`<br> e.g., `markmc id/1 num/2`
+**Unmark mastery check** | `unmarkmc id/INDEX num/NUMBER`<br> e.g., `unmarkmc id/1 num/2`
+**List mastery checks** | `listmc`
+**Add mission** | `addmission m/MISSION_ID n/NAME d/DEADLINE`<br> e.g., `addmission m/M01 n/Rune Reading d/2026-10-20`
+**Delete mission** | `delmission m/MISSION_ID`<br> e.g., `delmission m/M03`
+**Record mission submission** | `markmission id/INDEX m/MISSION_ID`<br> e.g., `markmission id/1 m/M01`
+**Remove mission submission** | `unmarkmission id/INDEX m/MISSION_ID`<br> e.g., `unmarkmission id/1 m/M01`
+**Edit mission** | `editmission m/MISSION_ID [n/NAME] [d/DEADLINE]`<br> e.g., `editmission m/M01 n/Rune Reading d/2026-10-22`
+**List missions and statuses** | `listmissions [m/MISSION_ID] [s/STATUS]`<br> `STATUS`: `submitted` or `overdue`<br> e.g., `listmissions`, `listmissions m/M01`, `listmissions s/overdue`
+**Clear** | `clear`
+**List** | `list`
+**Help** | `help`
+**Exit** | `exit`
