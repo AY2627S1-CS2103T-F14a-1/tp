@@ -239,6 +239,7 @@ For example, if the first student is Amy Bee and her week 3 studio record is not
 Added Amy Bee's studio record for studio week 3.
 ```
 
+![result for adding a studio record](images/addStudioRecordResult.png)
 ### Deleting studio records: `delstudiorecord`
 
 Removes a student's attendance record and effort score for a studio week. The student remains in the address book.
@@ -305,6 +306,7 @@ Format: `addnote id/INDEX nt/TEXT`
 Examples:
 *  `addnote id/1 nt/hello` Adds a note with text `hello` for the 1st student.
 
+![result for adding a note](images/addNoteResult.png)
 
 ### Deleting a student note: `delnote`
 

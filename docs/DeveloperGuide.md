@@ -1008,8 +1008,9 @@ are excluded, regardless of when they were recorded.
 
 ### Glossary
 
-* **Mainstream OS**: Windows, Linux, Unix, or macOS
-* **Private student detail**: A student detail that is not meant to be shared with others
+* **CS1101S**: The National University of Singapore's Programming Methodology course.
+* **Mainstream OS**: Windows, Linux, Unix, or macOS.
+* **Private student detail**: A student detail that is not meant to be shared with others.
 * **Matriculation number**: The NUS-supplied number that uniquely identifies a student, starting with the letter A, followed by 7 digits, and ending with another uppercase letter from A-Z. Example: A0123456B.
 * **AvengerHub**: The name of the application.
 * **Tutor**: The TAs (teaching assistants) in the CS1101S course that handle the tutorial sessions. Also known as "Avengers" by the course.
@@ -1030,7 +1031,7 @@ are excluded, regardless of when they were recorded.
   * CPU: Intel Core i5/Ryzen 5/M-series Apple chip equivalent
   * RAM: 8GB
   * GPU: Integrated graphics
-  * We expect the application to be stored in a SSD. Loading times may be worse with HDDs.
+  * We expect the application to be stored in a SSD. Loading times may be worse with HDDs
 * **Above average typing speed**: Sustained >=80 WPM with a sequence of random words.
 
 --------------------------------------------------------------------------------------------------------------------
