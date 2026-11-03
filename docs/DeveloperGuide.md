@@ -451,7 +451,7 @@ The user stories above represent the main intended functionality and selected fu
 
     * 3a1. AvengerHub shows an error message and leaves the records unchanged.
 
-      Use case resumes from step 3.
+      Use case resumes at step 3.
 
 * 3b. The selected student's studio record is already registered for the specified week.
 
@@ -480,7 +480,7 @@ The user stories above represent the main intended functionality and selected fu
 
     * 3a1. AvengerHub shows an error message and leaves the records unchanged.
 
-      Use case resumes from step 3.
+      Use case resumes at step 3.
 
 * 3b. The selected student's studio record is already absent for the specified week.
 
@@ -509,7 +509,7 @@ The user stories above represent the main intended functionality and selected fu
 
     * 3a1. AvengerHub shows an error message and leaves the records unchanged.
 
-      Use case resumes from step 3.
+      Use case resumes at step 3.
 
 * 3b. The selected student's studio record does not exist for the specified week.
 
@@ -532,6 +532,8 @@ The user stories above represent the main intended functionality and selected fu
 3. Tutor requests to add a note for a specific student in the list.
 4. AvengerHub adds the note for the student.
 
+   Use case ends.
+
 **Extensions**
 
 * 2a. The list is empty.
@@ -542,7 +544,7 @@ The user stories above represent the main intended functionality and selected fu
 
     * 3a1. AvengerHub shows an error message and leaves the note records unchanged.
 
-      Use case resumes from step 3.
+      Use case resumes at step 3.
 
 * 3b. The selected student cannot support any more notes.
 
@@ -553,6 +555,7 @@ The user stories above represent the main intended functionality and selected fu
 * 3c. The selected student has a note with potentially the same content.
 
     * 3c1. AvengerHub warns the tutor. 
+  
     Use case resumes at step 4.
 
 **Use case: Delete note**
@@ -564,6 +567,8 @@ The user stories above represent the main intended functionality and selected fu
 3. Tutor requests to delete a note for a specific student in the list.
 4. AvengerHub deletes the note for the student.
 
+   Use case ends.
+
 **Extensions**
 
 * 2a. The list is empty.
@@ -574,7 +579,7 @@ The user stories above represent the main intended functionality and selected fu
 
     * 3a1. AvengerHub shows an error message and leaves the note records unchanged.
 
-      Use case resumes from step 3.
+      Use case resumes at step 3.
 
 **Use case: Edit note**
 
@@ -585,6 +590,8 @@ The user stories above represent the main intended functionality and selected fu
 3. Tutor requests to edit a note for a specific student in the list.
 4. AvengerHub edits the note for the student.
 
+   Use case ends.
+
 **Extensions**
 
 * 2a. The list is empty.
@@ -595,7 +602,7 @@ The user stories above represent the main intended functionality and selected fu
 
     * 3a1. AvengerHub shows an error message and leaves the note records unchanged.
 
-      Use case resumes from step 3.
+      Use case resumes at step 3.
 
 * 3c. The selected student has a note with potentially the same content.
 
@@ -624,7 +631,7 @@ The user stories above represent the main intended functionality and selected fu
 
     * 3a1. AvengerHub shows an error message and leaves the records unchanged.
 
-      Use case resumes from step 3.
+      Use case resumes at step 3.
 
 * 3b. A mastery check with the same number already exists for the student.
 
@@ -653,7 +660,7 @@ The user stories above represent the main intended functionality and selected fu
 
     * 3a1. AvengerHub shows an error message and leaves the records unchanged.
 
-      Use case resumes from step 3.
+      Use case resumes at step 3.
 
 * 3b. A mastery check with the supplied number does not exist for the student.
 
@@ -682,7 +689,7 @@ The user stories above represent the main intended functionality and selected fu
 
     * 3a1. AvengerHub shows an error message and leaves the records unchanged.
 
-      Use case resumes from step 3.
+      Use case resumes at step 3.
 
 * 3b. A mastery check with the supplied number does not exist for the student.
 
@@ -717,7 +724,7 @@ The user stories above represent the main intended functionality and selected fu
 
     * 3a1. AvengerHub shows an error message and leaves the records unchanged.
 
-      Use case resumes from step 3.
+      Use case resumes at step 3.
 
 * 3b. A mastery check with the supplied number does not exist for the student.
 
@@ -746,13 +753,13 @@ The user stories above represent the main intended functionality and selected fu
 
     * 1a1. AvengerHub shows an error message and leaves the records unchanged.
 
-      Use case resumes from step 1.
+      Use case resumes at step 1.
 
 * 1b. A mission with the same name or supplied ID already exists.
 
     * 1b1. AvengerHub informs the tutor that the mission name or ID is already in use and leaves the records unchanged.
 
-      Use case resumes from step 1.
+      Use case resumes at step 1.
 
 **Use case: Delete mission**
 
@@ -770,13 +777,13 @@ The user stories above represent the main intended functionality and selected fu
 
     * 1a1. AvengerHub shows an error message and leaves the records unchanged.
 
-      Use case resumes from step 1.
+      Use case resumes at step 1.
 
 * 1b. No mission with the specified ID exists.
 
     * 1b1. AvengerHub informs the tutor that the mission does not exist and leaves the records unchanged.
 
-      Use case resumes from step 1.
+      Use case resumes at step 1.
 
 **Use case: Edit mission**
 
@@ -794,14 +801,14 @@ The user stories above represent the main intended functionality and selected fu
 
     * 1a1. AvengerHub shows an error message and leaves the records unchanged.
 
-      Use case resumes from step 1.
+      Use case resumes at step 1.
 
 * 1b. No mission with the specified ID exists.
 
     * 1b1. AvengerHub informs the tutor that the mission does not exist and
       leaves the records unchanged.
 
-      Use case resumes from step 1.
+      Use case resumes at step 1.
 
 * 1c. The replacement name matches another mission's name, ignoring case
   and whitespace differences.
@@ -809,7 +816,7 @@ The user stories above represent the main intended functionality and selected fu
     * 1c1. AvengerHub informs the tutor that the mission name already exists
       and leaves the records unchanged.
 
-      Use case resumes from step 1.
+      Use case resumes at step 1.
 
 * 2a. The supplied values do not change the mission's name or deadline.
 
@@ -838,7 +845,7 @@ The user stories above represent the main intended functionality and selected fu
 
     * 3a1. AvengerHub shows an error message and leaves the records unchanged.
 
-      Use case resumes from step 3.
+      Use case resumes at step 3.
 
 * 3b. A mission submission record already exists for the selected student and mission.
 
@@ -867,7 +874,7 @@ The user stories above represent the main intended functionality and selected fu
 
     * 3a1. AvengerHub shows an error message and leaves the records unchanged.
 
-      Use case resumes from step 3.
+      Use case resumes at step 3.
 
 * 3b. No mission submission record exists for the selected student and mission.
 
@@ -917,14 +924,14 @@ and the current student filter remain unchanged.
     * 3a1. AvengerHub shows an error message and leaves the records and current
       student filter unchanged.
 
-      Use case resumes from step 3.
+      Use case resumes at step 3.
 
 * 3b. No mission with the specified ID exists.
 
     * 3b1. AvengerHub informs the tutor that the mission does not exist and
       leaves the records and current student filter unchanged.
 
-      Use case resumes from step 3.
+      Use case resumes at step 3.
 
 * 4a. No submission statuses match the selected status filter.
 
