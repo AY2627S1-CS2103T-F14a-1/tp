@@ -2,6 +2,7 @@
 skin rose
 skinparam ActivityFontSize 15
 skinparam ArrowFontSize 12
+title Load students from the JSON address book
 start
 :Check for the stored address book file;
 if () then ([file exists])
