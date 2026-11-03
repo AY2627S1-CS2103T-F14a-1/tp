@@ -8,6 +8,8 @@ import javafx.stage.Stage;
  */
 public class HelpWindowHandle extends StageHandle {
 
+    //@@author nuggettowin-reused
+    //Reused from AB4
     public static final String HELP_WINDOW_TITLE = "Help";
 
     public HelpWindowHandle(Stage helpWindowStage) {
@@ -20,4 +22,5 @@ public class HelpWindowHandle extends StageHandle {
     public static boolean isWindowPresent() {
         return new GuiRobot().isWindowShown(HELP_WINDOW_TITLE);
     }
+    //@@author
 }
