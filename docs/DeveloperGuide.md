@@ -1048,9 +1048,9 @@ Run this workflow in a fresh working directory. Start the app and enter
    Expected: The command reports that Amy Bee was added. The student list
    contains one student in studio group 1A.
 
-1. Enter `addstudent n/Amy Bee mtc/A0123456D p/98765432 e/amy@example.com g/1A`,
+1. Enter `addstudent n/Someone Else mtc/A0123456D p/98765432 e/amy@example.com g/1A`,
    then `list`.
-   Expected: The command reports that the student already exists. The list
+   Expected: The command reports that a student with the same matriculation number already exists. The list
    still contains only Amy Bee.
 
 1. Enter `editstudent id/1 p/91234567 e/amybee@example.com`, then
@@ -1282,6 +1282,39 @@ addstudent n/Amy Bee mtc/A0123456D p/98765432 e/amy@example.com g/1A
    Expected: The first 98 commands create notes 3 through 100. The final
    command reports that Amy Bee already has the maximum of 100 notes and makes
    no changes. The profile still lists exactly 100 notes.
+
+### Mastery checks
+
+Run this workflow independently in a fresh working directory. Start the app,
+enter `clear`, then create a student:
+
+```text
+addstudent n/Amy Bee mtc/A0123456D p/98765432 e/amy@example.com g/1A
+```
+
+1. Enter `addmc id/1 num/1 dt/2026-10-20|12:30`.
+   Expected: The command reports that the mastery check was added. The profile lists a mastery check numbered 1 with appointment time `20 october 2026, 12:30` as "Not Completed".
+2. Enter `markmc id/1 num/1`.
+   Expected: The command reports that the mastery check has been marked complete. The profile shows the same mastery check as in [1] has been marked as "Completed".
+3. Enter `unmarkmc id/1 num/1`.
+   Expected: The command reports that the mastery check has been marked incomplete. The profile shows the same mastery check as in [1] and [2] has been marked as "Not completed".
+4. Enter `delmc id/1 num/1`.
+   Expected: The command reports that the mastery check was removed. The profile shows "No mastery checks registered."
+
+Additional testing:
+
+**Commands executed with no changes made**
+1. Add an arbitrary mastery check, then add another mastery check with the same number.
+2. Add an arbitrary mastery check, then unmark it.
+3. Add an arbitrary mastery check, mark it, then mark it again.
+4. Delete a mastery check with a number that has not been recorded.
+
+**Error handling**
+1. Add an arbitrary mastery check with a wrongly-formatted date-time, eg. `dt/2026-10-30T14:30`. Expected: The command is rejected for invalid datetime formatting.
+2. Add an arbitrary mastery check with an impossible date, eg. `dt/2026-13-39|12:30`. Expected: The command is rejected for invalid date value.
+3. Add an arbitrary mastery check with an impossible time, eg. `dt/2026-11-03|25:00`. Expected: The command is rejected for invalid time value.
+4. Mark a mastery check with a number that has not been recorded. Expected: The command is rejected for attempting to modify a mastery check that does not exist.
+5. Unmark a mastery check with a number that has not been recorded. Expected: Same as in [4].
 
 ### Saving data and clearing records
 
