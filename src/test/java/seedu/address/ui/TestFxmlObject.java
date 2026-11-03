@@ -40,5 +40,4 @@ public class TestFxmlObject {
 
         return Objects.equals(text, otherTestFxmlObject.text);
     }
-
 }

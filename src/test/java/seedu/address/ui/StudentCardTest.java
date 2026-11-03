@@ -13,6 +13,8 @@ import seedu.address.testutil.StudentBuilder;
 
 public class StudentCardTest extends GuiUnitTest {
 
+    //@@author nuggettowin-reused
+    //Reused from AB4
     @Test
     public void display() {
         // no tags
@@ -63,4 +65,5 @@ public class StudentCardTest extends GuiUnitTest {
         // verify student details are displayed correctly
         assertCardDisplaysStudent(expectedStudent, studentCardHandle);
     }
+    //@@author
 }

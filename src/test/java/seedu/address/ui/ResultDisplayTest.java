@@ -38,6 +38,8 @@ public class ResultDisplayTest extends GuiUnitTest {
     private ResultDisplay resultDisplay;
     private ResultDisplayHandle resultDisplayHandle;
 
+    //@@author nuggettowin-reused
+    //Reused from AB4
     @BeforeEach
     public void setUp() {
         resultDisplay = new ResultDisplay();
@@ -79,6 +81,7 @@ public class ResultDisplayTest extends GuiUnitTest {
         assertFalse(warningLabel.isManaged());
         assertEquals("", warningLabel.getText());
     }
+    //@@author
 
     private static GridPane getMissionTable(StudentDetailsPanel panel) {
         new Scene(panel.getRoot());

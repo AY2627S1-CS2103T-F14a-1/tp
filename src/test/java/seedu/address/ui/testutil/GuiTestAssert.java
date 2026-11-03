@@ -10,10 +10,13 @@ import seedu.address.model.student.Student;
  */
 public class GuiTestAssert {
 
+    //@@author nuggettowin-reused
+    //Reused from AB4
     /**
      * Asserts that {@code actualCard} displays the details of {@code expectedStudent}.
      */
     public static void assertCardDisplaysStudent(Student expectedStudent, StudentCardHandle actualCard) {
         assertEquals(expectedStudent.getName().fullName, actualCard.getName());
     }
+    //@@author
 }

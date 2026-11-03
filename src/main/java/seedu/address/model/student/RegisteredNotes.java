@@ -36,14 +36,17 @@ public final class RegisteredNotes {
      *
      * @param registeredNotes Registered notes.
      * @throws NullPointerException If the list or any note is {@code null}.
-     * @throws IllegalArgumentException If there are too many notes or any note text is invalid.
+     * @throws IllegalStateException If there are too many notes or any note text is invalid.
      */
     public RegisteredNotes(List<Note> registeredNotes) {
         requireAllNonNull(registeredNotes);
 
         List<Note> copiedNotes = new ArrayList<>(registeredNotes);
 
-        checkArgument(registeredNotes.size() <= MAX_NOTE_INDEX, RegisteredNotes.MESSAGE_CONSTRAINTS);
+        if (registeredNotes.size() > MAX_NOTE_INDEX) {
+            throw new IllegalStateException(MESSAGE_CONSTRAINTS);
+        }
+
         for (Note note : copiedNotes) {
             checkArgument(isValidNoteText(note.getNoteText()), Note.MESSAGE_CONSTRAINTS);
         }

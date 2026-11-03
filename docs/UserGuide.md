@@ -130,10 +130,7 @@ Format: `view id/INDEX`
   including results from `find`.
 * The index must be a positive integer identifying a displayed student.
 * The profile displays the student's name, studio group, phone number,
-  email address, tags, studio records, missions, mastery checks, and notes.
-* Mission statuses are `Submitted` or `Not submitted`, based on the records
-  maintained in AvengerHub.
-* An empty mission catalogue displays `No missions configured.`
+  email address, tags, studio records, mission submissions, mastery checks, and notes.
 * Viewing preserves student records, submission records, and the current filter.
 * Missing, invalid, or out-of-range indexes produce an error without changing
   stored records.
@@ -169,7 +166,8 @@ Examples:
 
 ### Locating students by name: `find`
 
-Finds students whose names contain any of the given keywords.
+Finds students whose names match all keywords within at least one
+comma-separated alternative, optionally restricted to studio groups.
 
 Format: `find [NAME_WORDS [, MORE_NAME_WORDS]...] [g/STUDIO_GROUP]...`
 
@@ -238,6 +236,7 @@ For example, if the first student is Amy Bee and her week 3 studio record is not
 Added Amy Bee's studio record for studio week 3.
 ```
 
+![result for adding a studio record](images/addStudioRecordResult.png)
 ### Deleting studio records: `delstudiorecord`
 
 Removes a student's attendance record and effort score for a studio week. The student remains in the address book.
@@ -297,7 +296,7 @@ Format: `addnote id/INDEX nt/TEXT`
 * Adds a note with text `TEXT` for the student at the specified `INDEX`.
 * The index refers to the index number shown in the displayed student list.
 * The index **must be a positive integer** 1, 2, 3, ...
-* The text should only contain alphanumeric characters and spaces, should not be blank, and be less than or equal to 1000 characters.
+* The text should only contain alphanumeric characters, punctuation, and spaces, should not be blank, and be less than or equal to 1000 characters.
 * A student can have up to 100 notes.
 * Indexes of notes with potentially duplicate text will be shown as a warning, but the note will still be added. This is to provide more flexibility for tutors.
 * When checking for duplicate note texts, AvengerHub will ignore capitalization and treats each run of whitespace-including spaces and text as a single space. Leading and trailing whitespace will also be ignored.
@@ -306,6 +305,7 @@ Format: `addnote id/INDEX nt/TEXT`
 Examples:
 *  `addnote id/1 nt/hello` Adds a note with text `hello` for the 1st student.
 
+![result for adding a note](images/addNoteResult.png)
 
 ### Deleting a student note: `delnote`
 
@@ -336,7 +336,7 @@ Format: `editnote id/INDEX ni/NOTE_INDEX nt/TEXT`
 * The index **must be a positive integer** 1, 2, 3, ...
 * The note index refers to the index number shown in the list of notes for a given student in the display panel.
 * The note index must be an integer from 1 to 10, inclusive.
-* The text should only contain alphanumeric characters and spaces, should not be blank, and be less than or equal to 1000 characters.
+* The text should only contain alphanumeric characters, punctuation, and spaces, should not be blank, and be less than or equal to 1000 characters.
 * If the note index doesn't match any existing notes for the given student, or matches the existing text, the notes will be unchanged.
 * Indexes of notes with potentially duplicate text will be shown as a warning, but the note will still be added. This is to provide more flexibility for tutors.
 * When checking for duplicate note texts, AvengerHub will ignore capitalization and treats each run of whitespace-including spaces and text as a single space. Leading and trailing whitespace will also be ignored.
@@ -351,70 +351,85 @@ Adds a numbered mastery check appointment for a student.
 
 Format: `addmc id/INDEX num/NUMBER dt/DATE-TIME`
 
-* `INDEX` must be a positive integer identifying a student in the **currently displayed list**, including `find` results.
-* `NUMBER` must be an integer from **1 to 2147483647**, inclusive. Numbers are unique within each student's appointments.
-* `DATE-TIME` must be a real date and 24-hour time in `YYYY-MM-DD|HH:mm` format, such as `2026-10-20|13:30`.
-  The current year is filled in automatically. Impossible dates, `24:00`, and times with seconds are rejected.
-* Supply `id/`, `num/`, and `dt/` exactly once each, in any letter case and in any order. Do not put text before the first prefix.
-* New mastery checks show **Not completed**. Adding an existing number leaves its time and status unchanged.
-* Any invalid input produces an error without changing records.
-
-All four mastery check commands use the same `INDEX` and `NUMBER` rules. They preserve other student records
-and the current list filter. Changes are saved automatically and retained after restart.
-Run `view id/INDEX` to inspect the Number, Appointment time, and Status columns.
+* Adds a mastery check for the student at the specified `INDEX` with the specified `NUMBER` at `DATE-TIME`.
+* The index refers to the index number shown in the displayed student list and **must be a positive integer** 1, 2, 3, ...
+* The number must be an integer from **1 to 2147483647**, inclusive. Numbers are unique within each student's mastery check appointments.
+* The date-time must be a real date and 24-hour time in `YYYY-MM-DD|HH:mm` format, such as `2026-10-20|13:30`. Impossible dates/times like `24:00`, and times with seconds are rejected.
+* New mastery checks show "Not completed".
+* If a mastery check was already recorded under the same number, adding a new mastery check with that number will leave the records unchanged.
 
 Example: 
 
-`addmc id/1 num/2 dt/2026-10-27|13:30`, followed by `view id/1`, shows mastery check 2 at `27 October 2026, 13:30` as Not completed.
+`addmc id/1 num/2 dt/2026-10-27|13:30`, followed by `view id/1`, shows mastery check 2 at `27 October 2026, 13:30` as "Not completed" in the Mastery Checks table.
+
+For example, if the first student is Alice Pauline and she has no mastery checks numbered 2, the above command displays:
+
+```text
+Added Alice Pauline's mastery check 2 at 27 October 2026, 13:30.
+```
 
 ### Deleting a mastery check: `delmc`
 
-Removes a numbered mastery check appointment for a student, including its completion status.
+Removes a numbered mastery check appointment for a student.
 
 Format: `delmc id/INDEX num/NUMBER`
 
-* `INDEX` must be a positive integer identifying a student in the **currently displayed list**, including `find` results.
-* `NUMBER` must be an integer from **1 to 2147483647**, inclusive. Numbers are unique within each student's appointments.
-* Supply the `id/` and `num/` prefixes exactly once, in any letter case. Do not put text before the first prefix.
-* If the number is not registered for that student, the command reports that no changes were made.
-* Other mastery check appointments and the student remain in the address book.
-* Any invalid input produces an error without changing records.
+* Deletes a mastery check for the student at the specified `INDEX` with the specified `NUMBER`
+* The index refers to the index number shown in the displayed student list and **must be a positive integer** 1, 2, 3, ...
+* The number must be an integer from **1 to 2147483647**, inclusive. Numbers are unique within each student's mastery check appointments.
+* If no mastery check of that number had been added, the records remain unchanged.
 
 Example: 
 
 `delmc id/1 num/2` removes mastery check 2 from the first displayed student, if registered.
 
+For example, if the first student is Alice Pauline and she has a mastery check numbered 2, the above command displays:
+
+```text
+Removed Alice Pauline's mastery check numbered 2.
+```
+
 ### Marking a mastery check as completed: `markmc`
 
-Marks an existing mastery check appointment as **Completed** without changing its appointment time.
+Marks an existing mastery check appointment as "Completed".
 
 Format: `markmc id/INDEX num/NUMBER`
 
-* `INDEX` must be a positive integer identifying a student in the **currently displayed list**, including `find` results.
-* `NUMBER` must be an integer from **1 to 2147483647**, inclusive. Numbers are unique within each student's appointments.
-* Supply the `id/` and `num/` prefixes exactly once, in any letter case. Do not put text before the first prefix.
-* Marking an already completed mastery check reports that no changes were made.
-* Any invalid input produces an error without changing records.
+* Marks a mastery check with the specified `NUMBER` as completed for the student at the specified `INDEX`.
+* The index refers to the index number shown in the displayed student list and **must be a positive integer** 1, 2, 3, ...
+* The number must be an integer from **1 to 2147483647**, inclusive. Numbers are unique within each student's mastery check appointments.
+* If the mastery check is already completed, the records remain unchanged.
 
 Example: 
 
-`markmc id/1 num/2`, followed by `view id/1`, shows mastery check 2 as Completed.
+`markmc id/1 num/2`, followed by `view id/1`, shows mastery check 2 as "Completed" in the Mastery Checks table.
+
+For example, if the first student is Alice Pauline and she has a mastery check numbered 2, the above command displays:
+
+```text
+Marked Alice Pauline's mastery check 2 as completed.
+```
 
 ### Unmarking a mastery check as completed: `unmarkmc`
 
-Changes an existing mastery check appointment's status to **Not completed** without deleting it or changing its time.
+Marks an existing mastery check appointment as "Not completed".
 
 Format: `unmarkmc id/INDEX num/NUMBER`
 
-* `INDEX` must be a positive integer identifying a student in the **currently displayed list**, including `find` results.
-* `NUMBER` must be an integer from **1 to 2147483647**, inclusive. Numbers are unique within each student's appointments.
-* Uses the same index, number, and registration rules as `markmc`. 
-* Unmarking a mastery check that is already incomplete reports that no changes were made. 
-* Any invalid input produces an error without changing records.
+* Marks a mastery check with the specified `NUMBER` as **not** completed for the student at the specified `INDEX`.
+* The index refers to the index number shown in the displayed student list and **must be a positive integer** 1, 2, 3, ...
+* The number must be an integer from **1 to 2147483647**, inclusive. Numbers are unique within each student's mastery check appointments.
+* If the mastery check is originally not completed, the records remain unchanged.
 
 Example: 
 
-`unmarkmc id/1 num/2`, followed by `view id/1`, shows appointment 2 as Not completed.
+`unmarkmc id/1 num/2`, followed by `view id/1`, shows mastery check 2 as "Not completed" in the Mastery Checks table.
+
+For example, if the first student is Alice Pauline and she has a mastery check numbered 2, the above command displays:
+
+```text
+Marked Alice Pauline's mastery check 2 as incomplete.
+```
 
 ### Listing Upcoming Mastery Checks: `listmc`
 
@@ -455,18 +470,23 @@ Format: `addmission m/MISSION_ID n/NAME d/DEADLINE`
 * Deadlines must be real dates in `YYYY-MM-DD` format. Past dates are allowed.
 * IDs are chosen manually. Reusing a deleted ID does not restore its submissions.
 * Successful additions are saved automatically; rejected commands leave data unchanged.
+* Missing or invalid fields show an error. Duplicate IDs or names are rejected.
 
 Example: `addmission m/M01 n/Rune Reading d/2026-10-20`
 
-Missing or invalid fields show an error. Duplicate IDs or names are rejected.
+Execution of the above example adds the mission and displays:
+
+```text
+New mission added: M01 · Rune Reading (Due: 2026-10-20).
+```
 
 ![result for adding a mission](images/addMissionResult.png)
 
 ### Deleting a mission: `delmission`
 
-Format: `delmission m/MISSION_ID`
+Deletes a mission and its submission records from every student.
 
-Example: `delmission m/M03`
+Format: `delmission m/MISSION_ID`
 
 * Use exactly one `m/` prefix. Prefixes and mission IDs are case-insensitive; for example,
   `m/m03` identifies `M03`.
@@ -479,9 +499,18 @@ Example: `delmission m/M03`
   will not be restored.
 * Unknown or invalid IDs leave data unchanged.
 
-![result for deleting a mission](images/delMissionResult.png)
+Example: `delmission m/M01`
+
+For example, if mission M01 is named Rune Reading and is due 2026-10-20,
+`delmission m/M01` deletes the mission and displays:
+
+```text
+Deleted mission: M01 · Rune Reading (Due: 2026-10-20).
+```
 
 ### Recording a mission submission: `markmission`
+
+Marks a student's mission as submitted.
 
 Format: `markmission id/INDEX m/MISSION_ID`
 
@@ -496,12 +525,20 @@ Format: `markmission id/INDEX m/MISSION_ID`
 * Other students, other submissions, studio records, and the current student filter are preserved.
 * Records are maintained manually. Not submitted means no submission is recorded in AvengerHub.
 
-Example: `markmission id/1 m/M01`, followed by `view id/1`, displays M01 as Submitted.
-An unknown mission ID or invalid command leaves existing records unchanged. Malformed arguments display an error with command usage. A positive index that does not identify a student in the currently displayed list is rejected during execution with an index error followed by the command's usage; check the current list and use an index shown there. The same applies to `unmarkmission`.
+Example: `markmission id/1 m/M01`
+
+For example, if the first student is Amy Bee and mission M01 is configured,
+`markmission id/1 m/M01` marks mission M01 as submitted for Amy Bee, and displays:
+
+```text
+Added Amy Bee's mission submission for mission M01.
+```
 
 ![result for marking a mission](images/markMissionResult.png)
 
 ### Removing a submission record: `unmarkmission`
+
+Removes a student's recorded mission submission.
 
 Format: `unmarkmission id/INDEX m/MISSION_ID`
 
@@ -511,7 +548,12 @@ Format: `unmarkmission id/INDEX m/MISSION_ID`
 
 Example: `unmarkmission id/1 m/M01`, followed by `view id/1`, displays M01 as Not submitted.
 
-![result for unmarking a mission](images/unmarkMissionResult.png)
+For example, if the first student is Amy Bee and mission M01 is configured,
+`unmarkmission id/1 m/M01` marks mission M01 as not submitted for Amy Bee, and displays:
+
+```text
+Removed Amy Bee's mission submission for mission M01.
+```
 
 ### Editing a mission: `editmission`
 
@@ -557,7 +599,7 @@ Format: `listmissions [m/MISSION_ID] [s/STATUS]`
   submissions across all missions.
 * When both prefixes are supplied, applies the status filter to the selected mission.
 
-Without a mission ID:
+Without arguments (`listmissions`):
 
 * Lists all missions in ascending numeric ID order, showing each mission's
   ID, name, deadline, and submitted/total student count.

@@ -7,6 +7,8 @@ import javafx.stage.Stage;
  */
 public class MainWindowHandle extends StageHandle {
 
+    //@@author nuggettowin-reused
+    //Reused from AB4
     private final StudentListPanelHandle personListPanel;
     private final ResultDisplayHandle resultDisplay;
     private final CommandBoxHandle commandBox;
@@ -48,4 +50,5 @@ public class MainWindowHandle extends StageHandle {
     public MainMenuHandle getMainMenu() {
         return mainMenu;
     }
+    //@@author
 }
