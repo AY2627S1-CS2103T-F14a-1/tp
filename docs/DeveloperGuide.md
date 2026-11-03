@@ -519,7 +519,7 @@ The user stories above represent the main intended functionality and selected fu
 
 * 3c. The selected student's studio record exists and has the same details as the tutor's intended edit.
 
-    * 3b1. AvengerHub informs the tutor and leaves the records unchanged.
+    * 3c1. AvengerHub informs the tutor and leaves the records unchanged.
 
       Use case ends.
 
