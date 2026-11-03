@@ -36,7 +36,7 @@ Use one student and configure one mission with that student marked as submitted.
 
 ## Notes stress tests
 
-Use an isolated dataset containing one student with no notes. Prepare 1,000
+Use an isolated dataset containing one student with no notes. Prepare 100
 distinct `addnote id/1 nt/TEXT` commands, where each `TEXT` is exactly 1,000
 valid characters. Record the time from submitting each command until its
 success feedback appears. Close other resource-intensive applications before
@@ -44,9 +44,9 @@ testing so that unrelated system load does not distort the observations.
 
 | ID | Steps | Expected result |
 | --- | --- | --- |
-| NOTE-STRESS-001 | Submit all 1,000 prepared commands in order. After the final command, run `view id/1`. | Every command completes without noticeable input lag. The profile contains exactly 1,000 notes in insertion order, and each note retains all 1,000 characters. |
-| NOTE-STRESS-002 | While viewing student 1, drag the profile scrollbar continuously from top to bottom and back to the top. Repeat using the mouse wheel or trackpad. | Scrolling remains responsive, the viewport follows the input without visible freezes, and notes 1 and 1,000 are reachable. |
-| NOTE-STRESS-003 | Exit and restart the application, run `view id/1`, then repeat NOTE-STRESS-002. | Startup restores all 1,000 notes unchanged and scrolling remains responsive after reload. |
+| NOTE-STRESS-001 | Submit all 100 prepared commands in order. After the final command, run `view id/1`. | Every command completes without noticeable input lag. The profile contains exactly 100 notes in insertion order, and each note retains all 1,000 characters. |
+| NOTE-STRESS-002 | While viewing student 1, drag the profile scrollbar continuously from top to bottom and back to the top. Repeat using the mouse wheel or trackpad. | Scrolling remains responsive, the viewport follows the input without visible freezes, and notes 1 and 100 are reachable. |
+| NOTE-STRESS-003 | Exit and restart the application, run `view id/1`, then repeat NOTE-STRESS-002. | Startup restores all 100 notes unchanged and scrolling remains responsive after reload. |
 
 ## Edit-note command regression
 
@@ -81,6 +81,8 @@ unchanged.
 | NOTE-ADD-006 | Run `addnote id/1`, then `addnote id/1 nt/Valid nt/Other`, viewing student 1 after each command. | The missing-`nt/` and duplicate-`nt/` messages appear respectively. No note is added. |
 | NOTE-ADD-007 | Run `addnote id/3 nt/Invalid index`, then view both students. | Invalid-student-index feedback appears; neither student changes. |
 | NOTE-ADD-008 | Restart after NOTE-ADD-002 and view student 1. | Both notes and their insertion order are restored unchanged. |
+| NOTE-ADD-009 | Run `addnote id/1 nt/TEXT`, where `TEXT` contains exactly 1,000 valid characters, then view student 1. Run the command again with 1,001 valid characters, then view student 1. | The 1,000-character note is added unchanged. The 1,001-character command displays the note-text constraint message; the list and saved data remain unchanged after that rejection. |
+| NOTE-ADD-010 | Starting with no notes, add 100 valid notes to student 1. Run one further valid `addnote` command, then view student 1. | The 100th note is added. The 101st command reports that the maximum of 100 notes has been reached; all existing notes and saved data remain unchanged. |
 
 ## Delete-note command regression
 

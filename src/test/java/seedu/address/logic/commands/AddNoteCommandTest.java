@@ -76,6 +76,23 @@ public class AddNoteCommandTest {
     }
 
     @Test
+    public void execute_maximumLengthNote_updatesStudent() {
+        Note maximumLengthNote = new Note("a".repeat(Note.MAX_NOTE_LENGTH));
+        Model model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
+        Student studentToUpdate = model.getFilteredStudentList().get(INDEX_FIRST_STUDENT.getZeroBased());
+        AddNoteCommand command = new AddNoteCommand(INDEX_FIRST_STUDENT, maximumLengthNote);
+        Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
+        Student updatedStudent = studentToUpdate.withRegisteredNotes(
+                new RegisteredNotes().withNote(maximumLengthNote));
+        expectedModel.setStudent(studentToUpdate, updatedStudent);
+
+        assertCommandSuccess(command, model,
+                new CommandResult(
+                        String.format(AddNoteCommand.MESSAGE_SUCCESS, studentToUpdate.getName()),
+                        updatedStudent), expectedModel);
+    }
+
+    @Test
     public void execute_matchingNoteText_appendsNoteAndReturnsWarning() throws CommandException {
         Model model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
         Student studentToUpdate = model.getFilteredStudentList().get(INDEX_FIRST_STUDENT.getZeroBased());
