@@ -434,7 +434,7 @@ The user stories above represent the main intended functionality and selected fu
 
 **MSS**
 
-1. Tutor opens AvengerHub.
+1. Tutor requests to list students.
 2. AvengerHub shows a list of students.
 3. Tutor requests to add a week's studio record for a specific student in the list.
 4. AvengerHub adds the studio record for the student.
@@ -463,7 +463,7 @@ The user stories above represent the main intended functionality and selected fu
 
 **MSS**
 
-1. Tutor opens AvengerHub.
+1. Tutor requests to list students.
 2. AvengerHub shows the list of students.
 3. Tutor requests to delete a week's studio record for a specific student in the list.
 4. AvengerHub deletes the studio record for the student.
@@ -492,7 +492,7 @@ The user stories above represent the main intended functionality and selected fu
 
 **MSS**
 
-1. Tutor opens AvengerHub.
+1. Tutor requests to list students.
 2. AvengerHub shows a list of students.
 3. Tutor requests to edit a week's studio record for a specific student in the list.
 4. AvengerHub edits the studio record for the student.
@@ -527,7 +527,7 @@ The user stories above represent the main intended functionality and selected fu
 
 **MSS**
 
-1. Tutor opens AvengerHub.
+1. Tutor requests to list students.
 2. AvengerHub shows a list of students.
 3. Tutor requests to add a note for a specific student in the list.
 4. AvengerHub adds the note for the student.
@@ -562,7 +562,7 @@ The user stories above represent the main intended functionality and selected fu
 
 **MSS**
 
-1. Tutor opens AvengerHub.
+1. Tutor requests to list students.
 2. AvengerHub shows a list of students.
 3. Tutor requests to delete a note for a specific student in the list.
 4. AvengerHub deletes the note for the student.
@@ -585,7 +585,7 @@ The user stories above represent the main intended functionality and selected fu
 
 **MSS**
 
-1. Tutor opens AvengerHub.
+1. Tutor requests to list students.
 2. AvengerHub shows a list of students.
 3. Tutor requests to edit a note for a specific student in the list.
 4. AvengerHub edits the note for the student.
