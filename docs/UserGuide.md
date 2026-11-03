@@ -89,7 +89,8 @@ Adds a student to the address book.
 
 Format: `addstudent n/NAME mtc/MATRICULATION_NUMBER p/PHONE_NUMBER e/EMAIL [t/TAG]... g/STUDIO_GROUP`
 
-* `MATRICULATION_NUMBER` is that supplied by NUS for every student, starting with A followed by seven digits, then an uppercase letter from A-Z. This must be unique for each student, otherwise the command will be rejected.
+* `MATRICULATION_NUMBER` is that supplied by NUS for every student, starting with A followed by seven digits, then an uppercase letter from A-Z. 
+* **Matriculation number must be unique for each student**, otherwise the command will be rejected.
 
 <box type="tip" seamless>
 
