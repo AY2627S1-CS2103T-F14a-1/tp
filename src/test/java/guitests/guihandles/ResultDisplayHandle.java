@@ -7,6 +7,8 @@ import javafx.scene.control.Label;
  */
 public class ResultDisplayHandle extends NodeHandle<Label> {
 
+    //@@author nuggettowin-reused
+    //Reused from AB4
     public static final String RESULT_DISPLAY_ID = "#resultDisplay";
 
     public ResultDisplayHandle(Label resultDisplayNode) {
@@ -19,4 +21,5 @@ public class ResultDisplayHandle extends NodeHandle<Label> {
     public String getText() {
         return getRootNode().getText();
     }
+    //@@author
 }

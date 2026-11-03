@@ -12,6 +12,9 @@ import seedu.address.ui.UiPart;
  * Provides an isolated stage to test an individual {@code UiPart}.
  */
 public class UiPartExtension extends StageExtension {
+
+    //@@author nuggettowin-reused
+    //Reused from AB4
     private static final String[] CSS_FILES = {"view/DarkTheme.css", "view/Extensions.css"};
 
     public void setUiPart(final UiPart<? extends Parent> uiPart) {
@@ -26,4 +29,5 @@ public class UiPartExtension extends StageExtension {
             throw new AssertionError("Timeout should not happen.", te);
         }
     }
+    //@@author
 }

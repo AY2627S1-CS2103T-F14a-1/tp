@@ -14,6 +14,8 @@ import seedu.address.ui.testutil.UiPartExtension;
  */
 public abstract class GuiUnitTest {
 
+    //@@author nuggettowin-reused
+    //Reused from AB4
     @RegisterExtension
     public final UiPartExtension uiPartExtension = new UiPartExtension();
 
@@ -29,4 +31,5 @@ public abstract class GuiUnitTest {
         Optional<T> node = guiRobot.from(rootNode).lookup(query).tryQuery();
         return node.orElseThrow(NodeNotFoundException::new);
     }
+    //@@author
 }
