@@ -41,7 +41,8 @@ public class AddStudentCommand extends Command {
             + PREFIX_STUDIO_GROUP + "1A";
 
     public static final String MESSAGE_SUCCESS = "New student added: %1$s";
-    public static final String MESSAGE_DUPLICATE_STUDENT = "This student already exists in the address book.";
+    public static final String MESSAGE_DUPLICATE_STUDENT = "A student with the same matriculation number "
+            + "already exists in the address book.";
 
     private final Student toAdd;
 

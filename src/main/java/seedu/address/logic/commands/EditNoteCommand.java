@@ -7,6 +7,10 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_INDEX;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NOTE_INDEX;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NOTE_TEXT;
 
+import java.util.List;
+import java.util.logging.Logger;
+
+import seedu.address.commons.core.LogsCenter;
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.commands.exceptions.CommandException;
@@ -27,7 +31,9 @@ public class EditNoteCommand extends Command {
     public static final String MESSAGE_SAME_NOTE =
             "%1$s’s note with index %2$d is already the same. No changes made.";
     public static final String MESSAGE_SUCCESS =
-            "Edited %1$s's note with index %2$d.";
+            "Edited %1$s's note at index %2$d.";
+    public static final String MESSAGE_WARNING_MATCHING_TEXT = "%1$s's note(s) with the following index(es) "
+            + "may already contain the same note text: %2$s";
     public static final String MESSAGE_USAGE = COMMAND_WORD
             + ": Edits a registered note for the selected student.\n"
             + "Parameters: " + PREFIX_INDEX + "INDEX " + PREFIX_NOTE_INDEX + "NOTE_INDEX " + PREFIX_NOTE_TEXT + "TEXT\n"
@@ -38,6 +44,8 @@ public class EditNoteCommand extends Command {
             + "be less than or equal to " + Note.MAX_NOTE_LENGTH + " characters.\n"
             + "Example: " + COMMAND_WORD + " " + PREFIX_INDEX + "1 "
             + PREFIX_NOTE_INDEX + "3 " + PREFIX_NOTE_TEXT + "hello";
+
+    private static final Logger logger = LogsCenter.getLogger(EditNoteCommand.class);
 
     private final Index targetIndex;
     private final Index noteIndex;
@@ -64,21 +72,33 @@ public class EditNoteCommand extends Command {
         Student studentToUpdate = getStudentAtDisplayedIndex(model, targetIndex);
         RegisteredNotes registeredNotes = studentToUpdate.getRegisteredNotes();
         if (!registeredNotes.hasNote(noteIndex)) {
+            logger.fine("Note edit rejected: note index " + noteIndex.getOneBased()
+                    + " is not recorded at displayed student index " + targetIndex.getOneBased() + ".");
             throw new CommandException(MESSAGE_INDEX_NOT_RECORDED);
         }
 
         if (registeredNotes.hasMatchingNote(noteIndex, updatedNote)) {
+            logger.fine("Note edit skipped: note index " + noteIndex.getOneBased()
+                    + " is unchanged at displayed student index " + targetIndex.getOneBased() + ".");
             return new CommandResult(String.format(MESSAGE_SAME_NOTE,
                     studentToUpdate.getName(), noteIndex.getOneBased()), studentToUpdate);
         }
 
+        List<Index> nearMatchingNotes = registeredNotes.getNearMatchingNoteIndexes(updatedNote.getNoteText());
         Student updatedStudent = studentToUpdate.withRegisteredNotes(
                 registeredNotes.editNote(noteIndex, updatedNote));
         model.setStudent(studentToUpdate, updatedStudent);
-        return new CommandResult(String.format(MESSAGE_SUCCESS,
+        logger.info("Edited note index " + noteIndex.getOneBased()
+                + " at displayed student index " + targetIndex.getOneBased() + ".");
+        CommandResult result = new CommandResult(String.format(MESSAGE_SUCCESS,
                 studentToUpdate.getName(),
                 noteIndex.getOneBased()),
                 updatedStudent);
+        if (!nearMatchingNotes.isEmpty()) {
+            return result.withWarning(String.format(MESSAGE_WARNING_MATCHING_TEXT, studentToUpdate.getName(),
+                    nearMatchingNotes.stream().map(Index::getOneBased).toList()));
+        }
+        return result;
     }
 
     @Override

@@ -78,7 +78,7 @@ The sections below give more details of each component.
 
 The **API** of this component is specified in [`Ui.java`](https://github.com/AY2627S1-CS2103T-F14a-1/tp/blob/master/src/main/java/seedu/address/ui/Ui.java)
 
-<puml src="diagrams/UiClassDiagram.puml" alt="Structure of the UI Component"/>
+<puml src="diagrams/UiClassDiagram.puml" alt="Structure of the UI Component" width="1500"/>
 
 The UI consists of a `MainWindow` and its parts: `CommandBox`, `ResultDisplay`, `StudentListPanel`, `StudentDetailsPanel`, `StatusBarFooter`, and `HelpWindow`. These classes inherit from `UiPart`, which loads their JavaFX layouts.
 
@@ -118,7 +118,7 @@ Here's a (partial) class diagram of the `Logic` component:
 
 The sequence diagram below illustrates the interactions within the `Logic` component, taking `execute("delstudent id/1")` API call as an example.
 
-<puml src="diagrams/DeleteSequenceDiagram.puml" alt="Interactions Inside the Logic Component for the `delstudent id/1` Command" />
+<puml src="diagrams/DeleteSequenceDiagram.puml" alt="Interactions Inside the Logic Component for the `delstudent id/1` Command" width="1000"/>
 
 <box type="info" seamless>
 
@@ -148,38 +148,27 @@ How the parsing works:
 ### Model component
 **API** : [`Model.java`](https://github.com/AY2627S1-CS2103T-F14a-1/tp/blob/master/src/main/java/seedu/address/model/Model.java)
 
-<puml src="diagrams/ModelClassDiagram.puml" width="850" />
+<puml src="diagrams/ModelClassDiagram.puml" width="1650" />
 
 The `Model` component,
 
-* stores the address book data: students in a `UniqueStudentList` and shared missions in a `MissionCatalogue`.
+* stores address book data: students in a `UniqueStudentList` and shared missions in a `MissionCatalogue`.
 * maintains a filtered student list, exposed as an unmodifiable `ObservableList<Student>` for the UI to observe.
 * stores user preferences in `UserPrefs`, exposed as `ReadOnlyUserPrefs`.
 * does not depend on the other components.
-
-Each student has one `RegisteredStudioRecords` object containing an immutable
-map from studio weeks 0 through 13 to `StudioRecord` objects. Each recorded
-week has one record containing a non-negative effort score. The week is the map
-key; the presence of a record indicates attendance, even when its effort score
-is zero. Weeks without a record are displayed as absent with an effort score
-of zero. Each student also has one `RegisteredNotes` object containing at most
-1,000 notes, one `RegisteredMasteryChecks` object containing numbered
-appointments, and one `MissionSubmissions` object containing zero or more
-submitted mission IDs. The notes list and mastery-check registration map are
-unmodifiable; mastery-check appointment objects retain mutable completion
-status. The `1` multiplicities count the per-student containers, not the
-records inside them.
-
-Composition diamonds show conceptual ownership of student records and mission
-definitions; immutable values may be reused internally when records are
-replaced. Submission IDs reference shared mission definitions rather than
-owning them.
+* maintains the following records for each student:
+  * `RegisteredStudioRecords` contains an immutable map from studio weeks 0 through 13 to `StudioRecord` objects.
+  * `RegisteredNotes` contains at most 100 notes.
+  * `RegisteredMasteryChecks` contains numbered appointments. Its registration map is unmodifiable, while appointment objects retain mutable completion status.
+  * `MissionSubmissions` contains zero or more submitted mission IDs.
+* represents conceptual ownership with composition diamonds. Immutable values may be reused internally when records are replaced, and submission IDs reference shared mission definitions rather than owning them.
+* uses `1` multiplicities to count per-student containers, not the records inside them.
 
 <box type="info" seamless>
 
 **Note:** The diagram below illustrates a possible alternative for managing tags. Currently, each `Student` stores its own set of tags, and `AddressBook` has no `UniqueTagList`. In the alternative, `AddressBook` would store one `Tag` object per unique tag in a central `UniqueTagList`, and students would reference those shared tags. Student details, including registered notes, are shown to illustrate the surrounding model; only tag ownership differs from the current design. The mission catalogue is omitted for clarity.
 
-<puml src="diagrams/BetterModelClassDiagram.puml" width="800" />
+<puml src="diagrams/BetterModelClassDiagram.puml" width="1400" height="500" />
 </box>
 
 ### Storage component
@@ -197,7 +186,7 @@ The component a developer is most likely to interact with is `JsonAdaptedStudent
 
 We illustrate the involvement of `JsonAdaptedStudent` in both load and save scenarios as such:
 
-<puml src="diagrams/LoadAdaptedStudentActivityDiagram.puml" width="1000" />
+<puml src="diagrams/LoadAdaptedStudentActivityDiagram.puml" width="1800" />
 <puml src="diagrams/SaveAdaptedStudentActivityDiagram.puml" width="750" />
 
 ### Common classes
@@ -235,204 +224,39 @@ For reference, we recommend checking out the implementations:
 
 Other commands like `FindCommand` do not use the `Prefix` system and hence may be implemented in different ways.
 
-### Adding a mission
+### Mission implementation
 
-`AddressBookParser` passes the input to `AddMissionCommandParser`, which creates an `AddMissionCommand` from the parsed mission details.
+Mission commands share a common parser-command-model flow:
 
-When executed, `AddMissionCommand` checks that the mission ID and name are unused, calls `Model#addMission(...)`, and returns a success message in a `CommandResult`.
+* `AddressBookParser` routes each input to the matching parser, which validates
+  its arguments and creates a command.
+* The command applies the requested operation through `Model` and returns a
+  `CommandResult`.
+* Catalogue commands add, edit, or delete missions through the model.
+  `MissionCatalogue` enforces unique mission IDs and names when adding or
+  restoring saved data, and validates the complete catalogue before replacing
+  its state. Mission IDs are supplied by the user and remain stable when a
+  mission is edited, so student submission records continue to refer to the
+  same mission. Deleting a mission also removes its submission records from
+  students.
+* Submission commands resolve the mission and the selected student from the
+  currently displayed student list. They add or remove the mission ID in that
+  student's submissions and update the student through `Model#setStudent(...)`
+  when the submission state changes.
+* After a mission command succeeds, `LogicManager` saves the current address
+  book before returning the result to the UI. Successful no-change mark or
+  unmark requests are saved as well. The saved data includes the mission
+  catalogue and each student's submitted mission IDs. Parsing and
+  command-validation failures exit before saving; if saving fails,
+  `LogicManager` reports a `CommandException`, but does not roll back the
+  in-memory change. On loading, storage validates the catalogue and requires
+  saved submission IDs to refer to existing missions.
 
-`MissionCatalogue` also enforces unique IDs and names when adding and restoring saved data,
-so callers cannot bypass this rule by accessing the model directly. Restoration validates the
-complete replacement before changing catalogue state. Mission IDs are supplied by the user and
-stored with each mission.
-
-The sequence diagram below illustrates the successful interaction flow for adding a mission. Call arguments are abbreviated as `...` for readability.
+The following sequence diagram illustrates representative mission flows for
+adding a mission. Call arguments are
+abbreviated as `...` for readability.
 
 <puml src="diagrams/AddMissionSequenceDiagram.puml" width="1000" />
-
-### Deleting a mission
-
-`AddressBookParser` passes the input to `DeleteMissionCommandParser`, which creates a `DeleteMissionCommand` for the requested mission.
-
-When executed, `DeleteMissionCommand` checks that the mission exists, calls `Model#deleteMission(...)`, and returns a `CommandResult` identifying the deleted mission. The model also removes that mission's submission records from all students.
-
-The sequence diagram below illustrates the successful interaction flow for deleting a mission. Call arguments are abbreviated as `...` for readability.
-
-<puml src="diagrams/DeleteMissionSequenceDiagram.puml" width="1000" />
-
-### Marking and unmarking mission submissions
-
-`AddressBookParser` delegates each input to its matching parser, which creates a `MarkMissionCommand` or `UnmarkMissionCommand`.
-
-Each command checks that the mission exists, retrieves the displayed students, and selects the student at the requested index. Marking adds the mission ID to the student's submissions; unmarking removes it. If the submission state needs to change, the command updates the student through `Model#setStudent(...)`, then returns a `CommandResult`.
-
-The sequence diagram below illustrates marking a mission submission when the mission and student exist and the submission is not yet recorded. Call arguments are abbreviated as `...` for readability.
-
-<puml src="diagrams/MissionSubmissionSequenceDiagram.puml" width="1000" />
-
-The corresponding unmarking sequence illustrates removing a recorded mission submission. Call arguments are abbreviated as `...` for readability.
-
-<puml src="diagrams/UnmarkMissionSubmissionSequenceDiagram.puml" width="1000" />
-
-### Editing a mission
-
-For `editmission m/MISSION_ID [n/NAME] [d/DEADLINE]`,
-`AddressBookParser` delegates to `EditMissionCommandParser`. The parser
-requires one mission ID and at least one replacement field. It rejects
-unexpected preamble text, repeated prefixes, blank values, and invalid
-mission IDs or deadlines.
-
-The parser stores validated replacement fields in an
-`EditMissionDescriptor`. `EditMissionCommand` makes a defensive copy of
-this descriptor so that subsequent changes to the original descriptor
-cannot alter the command.
-
-During execution, the command resolves the existing mission and constructs
-a replacement retaining its ID and any unspecified fields. A replacement
-name must not duplicate another mission's name, ignoring case and
-whitespace differences. Keeping the mission's own name is allowed,
-including changing only its letter case.
-
-If the replacement equals the original mission, the command returns
-no-change feedback. Otherwise, it calls `Model#setMission(...)`.
-`MissionCatalogue` validates the replacement and preserves its position
-in the catalogue. Student records, submission records, and the current
-student filter remain unchanged.
-
-**Design rationale:** Mission IDs remain stable because student submission
-records refer to these IDs. Replacing the immutable mission allows its name
-and deadline to change without rewriting submission records. The optional
-descriptor fields distinguish omitted values from requested replacements.
-
-The following diagram shows a successful name-only edit of M01 to a name
-not used by another mission. Validation, formatting, logging, result
-construction, and the common saving step are omitted. The model is shown
-as a single participant.
-
-<puml src="diagrams/EditMissionSequenceDiagram.puml" width="850" />
-
-### Saving mission changes
-
-After any of these commands returns successfully, `LogicManager` calls `Storage.saveAddressBook` with the current address book before returning the result to the UI. The saved data contains the mission catalogue and each student's submitted mission IDs. This preserves additions, deletions, and submission changes across restarts. Successful no-change mark/unmark requests also trigger saving.
-
-Parsing and command-validation failures exit before the saving step. If saving itself fails, `LogicManager` reports a `CommandException`; the in-memory change has already occurred and is not rolled back. On loading, storage validates the catalogue and requires saved submission IDs to refer to existing missions.
-
-### Finding students
-
-`FindCommandParser` separates the name portion from repeated `g/`
-studio-group filters. Name alternatives must appear before group filters.
-It splits the name portion at commas and rejects empty alternatives,
-including leading, trailing, and consecutive commas.
-
-`NameContainsKeywordsPredicate` performs case-insensitive partial-name
-matching. Every whitespace-separated keyword within an alternative must
-match; any comma-separated alternative may satisfy the name condition.
-Repeated identical keywords require separate, non-overlapping occurrences.
-Different keywords are matched independently.
-
-Studio-group filters use exact matches, with repeated groups combined
-using OR. When both name alternatives and studio groups are supplied, the
-parser combines the name and group predicates using AND.
-
-`FindCommand#execute(...)` replaces the model's student-list predicate and
-reports the number of matching students. Searching does not modify stored
-student records, mission definitions, or submission records.
-
-**Design rationale:** Spaces allow the tutor to narrow a search using
-multiple parts of a name, while commas express alternatives in one
-command. Predicate composition keeps the name and studio-group matching
-rules separate. The filtered list also provides the displayed indexes
-used by subsequent student commands.
-
-The diagram shows `find alex, brian g/1A`. The parser builds a predicate
-matching either name alternative within group 1A. Predicate construction
-is summarized in a note; validation, formatting, result construction, and
-the common saving step are omitted.
-
-<puml src="diagrams/FindStudentsSequenceDiagram.puml" width="850" />
-
-### Listing mission submissions
-
-`ListMissionsCommandParser` accepts optional, nonrepeatable `m/` and `s/`
-prefixes. Blank arguments produce `ListMissionCatalogueCommand`. Otherwise,
-a mission ID selects one mission, and an optional status restricts results
-to Submitted or Overdue. A status without a mission ID queries all missions.
-Malformed mission IDs, unsupported statuses, duplicate prefixes, and
-unexpected preamble text cause a `ParseException`.
-
-`ListMissionsCommand` stores optional mission and status selections.
-A specified mission is resolved before generating results; a nonexistent
-mission causes a `CommandException`. Without a mission selection, the
-command obtains all missions in ascending numeric ID order.
-
-The command obtains the current local date once using an injected `Clock`.
-`MissionSubmissionStatusEnum#from(...)` determines each student's status:
-
-* A recorded submission is Submitted, regardless of the deadline.
-* A missing submission is Overdue when the deadline is before the local date.
-* Otherwise, a missing submission is Not submitted.
-
-Missions due today are not overdue. Normal execution uses the computer's
-local time zone; tests inject a fixed clock for deterministic boundary checks.
-
-Both query forms share the same row-building logic and inspect only
-`Model#getFilteredStudentList()`. The optional status filter selects
-matching rows without changing the model's student filter.
-
-Rows include displayed student indexes, names, studio groups, and statuses.
-All-mission queries also include mission details and order rows by mission
-ID, then displayed student order. A student may appear in multiple rows
-while retaining the same displayed index.
-
-Separate messages distinguish an empty mission catalogue, an empty student
-list, and no matching statuses. Student records, mission definitions,
-submission records, and the current student filter remain unchanged.
-Command equality includes both the mission and status selections.
-
-### Listing mission summaries
-
-For bare `listmissions`, `ListMissionsCommandParser` creates a
-`ListMissionCatalogueCommand`.
-
-The command reads `Model#getMissionList()` and sorts the output by numeric
-mission ID without changing stored catalogue order. Every mission appears
-regardless of the current student filter.
-
-For each mission, it counts recorded submissions within
-`Model#getFilteredStudentList()` using
-`MissionSubmissions#hasSubmission(...)`. It displays `Submitted: X/Y`,
-where X is the submitted count and Y is the filtered student count.
-Hidden students contribute to neither count. An empty filtered list
-produces `0/0`.
-
-The command obtains the local date once per execution from an injected
-`Clock` and evaluates deadlines using `Mission#isPastDeadline(...)`.
-`Messages#format(Mission, boolean)` adds `Deadline passed` inside the
-due-date parentheses when the deadline is before that date. Missions due
-today are not labelled. The label is independent of submission counts.
-
-Normal execution uses `Clock.systemDefaultZone()`; tests inject a fixed
-clock for deterministic deadline checks.
-
-An empty catalogue returns `No missions configured.` Student records,
-mission definitions, submission records, and the student filter remain
-unchanged. Rerunning the command recalculates counts and deadline labels.
-
-The query preserves the displayed student filter and does not modify
-student records, mission definitions, or recorded submissions.
-
-**Design rationale:** Statuses are derived from recorded submissions and
-the current date rather than stored separately. This avoids stale overdue
-flags when a deadline is edited or the date changes. Filtering report rows
-instead of the student list preserves displayed indexes for subsequent
-commands.
-
-The following diagram shows `listmissions m/M01` for an existing mission.
-The parser creates an unfiltered single-mission query. Status derivation
-and row formatting are summarized in a note; parser construction,
-validation, result construction, and the common saving step are omitted.
-
-<puml src="diagrams/ListMissionStatusesSequenceDiagram.puml" width="850" />
 
 ### Tracking mastery checks for a student
 
@@ -457,7 +281,7 @@ This implementation guarantees that mastery checks under the same student will h
 
 **Target user profile**:
 
-* serves as tutor for the National University of Singapore's CS1101S course.
+* serves as tutor for the National University of Singapore's CS1101S course
 * has a need to manage students across one or more tutorial groups assigned to them
 * has a need to keep track of administrative information relevant to conducting and managing their tutorials
 * prefers desktop apps over other types of applications
@@ -472,30 +296,32 @@ This implementation guarantees that mastery checks under the same student will h
 
 Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unlikely to have) - `*`
 
-| Priority | As a …                         | I want to …                                                                  | So that I can…                                                          |
-|----------|--------------------------------|------------------------------------------------------------------------------|-------------------------------------------------------------------------|
-| `* * *`  | TA                             | add a new student to a studio group                                          | start tracking them from day one at the start of the semester           |
-| `* * *`  | TA                             | delete a student from a studio group                                         | keep my records accurate with adjustments to the student roster         |
-| `* * *`  | TA                             | search for a student by name                                                 | quickly find them without scrolling through the whole list              |
-| `* * *`  | TA                             | edit a student's information                                                 | keep my records accurate when their information changes                 |
-| `* * *`  | TA                             | add a note for a given student of mine                                       | tailor my teaching to their specific need                               |
-| `* * *`  | TA                             | delete a note for a given student of mine                                    | keep my notes for each student accurate over time                       |
-| `* * *`  | TA                             | edit a note for a given student of mine                                      | make direct changes to a note that is still relevant                    |
-| `* * *`  | TA                             | add a mastery check appointment for a given student                          | stay aware of irregular appointment times with students                 |
-| `* * *`  | TA                             | delete a mastery check appointment for a given student                       | remove an appointment with inaccurate timing                            |
-| `* * *`  | TA                             | mark a mastery check appointment for a given student                         | easily see my students' progress in mastery checks                      |
-| `* * *`  | TA                             | unmark a mastery check appointment for a given student                       | keep the mastery check record accurate if it was mistakenly marked      |
-| `* * *`  | TA with multiple studio groups | see a combined view of all students across my groups                         | get a holistic view of my overall workload                              |
-| `* * *`  | TA                             | add or delete shared missions                                                | manage the missions students need to complete                           |
-| `* * *`  | TA                             | mark a student's mission submission                                          | see who has submitted each mission                                      |
-| `* * *`  | TA                             | unmark a student's mission submission                                        | keep the mission submission record accurate if it was mistakenly marked |
-| `* `     | TA                             | record a student's mark for a given assessment                               | keep their performance data alongside other student records             |
-| `* * *`  | TA with multiple studio groups | see which studio group a student belongs to                                  | avoid mixing up students across studio groups                           |
-| `* * *`  | TA                             | add a student's record for a weekly studio                                   | keep track of their weekly performance in one place                     |
-| `* * *`  | TA                             | delete a student's record for a weekly studio                                | keep the studio record accurate if it was mistakenly added              |
-| `* * *`  | TA                             | edit a student's record for a weekly studio                                  | edit the student's effort score directly if I changed my mind           |
-| `* *`    | TA                             | view a summary of a student's studio records, participation, and submissions | understand their overall engagement without checking multiple records   |
-| `* * *`  | TA                             | list submission statuses for a selected mission and filter overdue records   | identify students who may need a submission reminder                    |
+| Priority | As a …                          | I want to …                                                                   | So that I can…                                                          |
+|----------|---------------------------------|-------------------------------------------------------------------------------|-------------------------------------------------------------------------|
+| `* * *`  | TA                              | add a new student to a studio group                                           | start tracking them from day one at the start of the semester           |
+| `* * *`  | TA                              | delete a student from a studio group                                          | keep my records accurate with adjustments to the student roster         |
+| `* * *`  | TA                              | search for a student by name                                                  | quickly find them without scrolling through the whole list              |
+| `* * *`  | TA                              | edit a student's information                                                  | keep my records accurate when their information changes                 |
+| `* * *`  | TA                              | add a note for a given student of mine                                        | tailor my teaching to their specific need                               |
+| `* * *`  | TA                              | delete a note for a given student of mine                                     | keep my notes for each student accurate over time                       |
+| `* * *`  | TA                              | edit a note for a given student of mine                                       | make direct changes to a note that is still relevant                    |
+| `* * *`  | TA                              | add a mastery check appointment for a given student                           | stay aware of irregular appointment times with students                 |
+| `* * *`  | TA                              | delete a mastery check appointment for a given student                        | remove an appointment with inaccurate timing                            |
+| `* * *`  | TA                              | mark a mastery check appointment for a given student                          | easily see my students' progress in mastery checks                      |
+| `* * *`  | TA                              | unmark a mastery check appointment for a given student                        | keep the mastery check record accurate if it was mistakenly marked      |
+| `* * *`  | TA with multiple studio groups | see a combined view of all students across my groups                          | get a holistic view of my overall workload                              |
+| `* * *`  | TA                              | add shared missions                                                           | make new missions available for students to complete                    |
+| `* * *`  | TA                              | delete shared missions                                                        | remove missions that students no longer need to complete                |
+| `* * *`  | TA                              | mark a student's mission submission                                           | see who has submitted each mission                                      |
+| `* * *`  | TA                              | unmark a student's mission submission                                         | keep the mission submission record accurate if it was mistakenly marked |
+| `* * *`  | TA with multiple studio groups | see which studio group a student belongs to                                   | avoid mixing up students across studio groups                           |
+| `* * *`  | TA                              | add a student's record for a weekly studio                                    | keep track of their weekly performance in one place                     |
+| `* * *`  | TA                              | delete a student's record for a weekly studio                                 | keep the studio record accurate if it was mistakenly added              |
+| `* * *`  | TA                              | edit a student's record for a weekly studio                                   | edit the student's effort score directly if I changed my mind           |
+| `* * *`  | TA                              | list submission statuses for a selected mission and filter overdue records    | identify students who may need a submission reminder                    |
+| `* *`    | TA                              | view a summary of a student's studio records, participation, and submissions  | understand their overall engagement without checking multiple records   |
+| `*`      | TA with multiple studio groups | view a graph of mission submissions across tutorial groups                   | compare submission progress between my groups                           |
+| `* `     | TA                              | record a student's mark for a given assessment                                | keep their performance data alongside other student records             |
 
 The user stories above represent the main intended functionality and selected future enhancements of the application. Other user stories may be considered as the project develops.
 
@@ -526,6 +352,29 @@ The user stories above represent the main intended functionality and selected fu
 
       Use case resumes at step 1.
 
+
+**Use case: Delete student record**
+
+**MSS**
+
+1. Tutor requests to view or search student records.
+2. AvengerHub displays the corresponding student records.
+3. Tutor selects a student record to delete.
+4. AvengerHub deletes the student record and confirms success.
+
+   Use case ends.
+
+**Extensions**
+
+* 2a. No student records are displayed.
+
+  Use case ends.
+
+* 3a. The student selection is invalid or incomplete.
+
+    * 3a1. AvengerHub explains the error.
+
+      Use case resumes at step 3.
 
 **Use case: Edit student record**
 
@@ -563,8 +412,7 @@ The user stories above represent the main intended functionality and selected fu
 1. Tutor requests to display all students or a filtered set of students.
 2. AvengerHub displays the requested student list.
 3. Tutor enters `view id/INDEX`, using the student's index in the displayed list.
-4. AvengerHub displays the selected student's profile, including contact
-   details, studio group, tags, and mission submission statuses.
+4. AvengerHub displays the selected student's profile details.
 
    Use case ends.
 
@@ -581,44 +429,13 @@ The user stories above represent the main intended functionality and selected fu
 
       Use case resumes at step 3.
 
-* 4a. No missions are configured.
 
-    * 4a1. AvengerHub displays the student's profile with
-      `No missions configured.` in the mission section.
-
-      Use case ends.
-
-Viewing a profile does not modify student details, mission definitions,
-submission records, or the current student filter.
-
-**Use case: Delete student record**
-
-**MSS**
-
-1. Tutor requests to view or search student records.
-2. AvengerHub displays the corresponding student records.
-3. Tutor selects a student record to delete.
-4. AvengerHub deletes the student record and confirms success.
-
-   Use case ends.
-
-**Extensions**
-
-* 2a. No student records are displayed.
-
-  Use case ends.
-
-* 3a. The student selection is invalid or incomplete.
-
-    * 3a1. AvengerHub explains the error.
-
-      Use case resumes at step 3.
 
 **Use case: Add studio record**
 
 **MSS**
 
-1. Tutor opens AvengerHub.
+1. Tutor requests to list students.
 2. AvengerHub shows a list of students.
 3. Tutor requests to add a week's studio record for a specific student in the list.
 4. AvengerHub adds the studio record for the student.
@@ -635,7 +452,7 @@ submission records, or the current student filter.
 
     * 3a1. AvengerHub shows an error message and leaves the records unchanged.
 
-      Use case resumes from step 3.
+      Use case resumes at step 3.
 
 * 3b. The selected student's studio record is already registered for the specified week.
 
@@ -643,11 +460,34 @@ submission records, or the current student filter.
 
       Use case ends.
 
+**Use case: Find students**
+
+**MSS**
+
+1. Tutor provides search criteria for student names or studio groups.
+2. AvengerHub displays the matching students.
+
+   Use case ends.
+
+**Extensions**
+
+* 1a. The supplied criteria are invalid or incomplete.
+
+    * 1a1. AvengerHub explains the error.
+
+      Use case resumes at step 1.
+
+* 2a. No students match the criteria.
+
+    * 2a1. AvengerHub displays an empty student list.
+
+      Use case ends.
+
 **Use case: Delete studio record**
 
 **MSS**
 
-1. Tutor opens AvengerHub.
+1. Tutor requests to list students.
 2. AvengerHub shows the list of students.
 3. Tutor requests to delete a week's studio record for a specific student in the list.
 4. AvengerHub deletes the studio record for the student.
@@ -664,7 +504,7 @@ submission records, or the current student filter.
 
     * 3a1. AvengerHub shows an error message and leaves the records unchanged.
 
-      Use case resumes from step 3.
+      Use case resumes at step 3.
 
 * 3b. The selected student's studio record is already absent for the specified week.
 
@@ -676,7 +516,7 @@ submission records, or the current student filter.
 
 **MSS**
 
-1. Tutor opens AvengerHub.
+1. Tutor requests to list students.
 2. AvengerHub shows a list of students.
 3. Tutor requests to edit a week's studio record for a specific student in the list.
 4. AvengerHub edits the studio record for the student.
@@ -693,7 +533,7 @@ submission records, or the current student filter.
 
     * 3a1. AvengerHub shows an error message and leaves the records unchanged.
 
-      Use case resumes from step 3.
+      Use case resumes at step 3.
 
 * 3b. The selected student's studio record does not exist for the specified week.
 
@@ -703,7 +543,7 @@ submission records, or the current student filter.
 
 * 3c. The selected student's studio record exists and has the same details as the tutor's intended edit.
 
-    * 3b1. AvengerHub informs the tutor and leaves the records unchanged.
+    * 3c1. AvengerHub informs the tutor and leaves the records unchanged.
 
       Use case ends.
 
@@ -711,10 +551,12 @@ submission records, or the current student filter.
 
 **MSS**
 
-1. Tutor opens AvengerHub.
+1. Tutor requests to list students.
 2. AvengerHub shows a list of students.
 3. Tutor requests to add a note for a specific student in the list.
 4. AvengerHub adds the note for the student.
+
+   Use case ends.
 
 **Extensions**
 
@@ -726,7 +568,7 @@ submission records, or the current student filter.
 
     * 3a1. AvengerHub shows an error message and leaves the note records unchanged.
 
-      Use case resumes from step 3.
+      Use case resumes at step 3.
 
 * 3b. The selected student cannot support any more notes.
 
@@ -734,18 +576,22 @@ submission records, or the current student filter.
 
       Use case ends.
 
-* 3c. The selected student already has a note with identical content.
+* 3c. The selected student has a note with potentially the same content.
 
-    * 3c1. AvengerHub warns the tutor. Use case resumes at step 4.
+    * 3c1. AvengerHub warns the tutor. 
+  
+    Use case resumes at step 4.
 
 **Use case: Delete note**
 
 **MSS**
 
-1. Tutor opens AvengerHub.
+1. Tutor requests to list students.
 2. AvengerHub shows a list of students.
 3. Tutor requests to delete a note for a specific student in the list.
 4. AvengerHub deletes the note for the student.
+
+   Use case ends.
 
 **Extensions**
 
@@ -757,16 +603,18 @@ submission records, or the current student filter.
 
     * 3a1. AvengerHub shows an error message and leaves the note records unchanged.
 
-      Use case resumes from step 3.
+      Use case resumes at step 3.
 
 **Use case: Edit note**
 
 **MSS**
 
-1. Tutor opens AvengerHub.
+1. Tutor requests to list students.
 2. AvengerHub shows a list of students.
 3. Tutor requests to edit a note for a specific student in the list.
 4. AvengerHub edits the note for the student.
+
+   Use case ends.
 
 **Extensions**
 
@@ -778,9 +626,9 @@ submission records, or the current student filter.
 
     * 3a1. AvengerHub shows an error message and leaves the note records unchanged.
 
-      Use case resumes from step 3.
+      Use case resumes at step 3.
 
-* 3c. The selected student already has a note with identical content.
+* 3c. The selected student has a note with potentially the same content.
 
     * 3c1. AvengerHub warns the tutor. 
   
@@ -807,7 +655,7 @@ submission records, or the current student filter.
 
     * 3a1. AvengerHub shows an error message and leaves the records unchanged.
 
-      Use case resumes from step 3.
+      Use case resumes at step 3.
 
 * 3b. A mastery check with the same number already exists for the student.
 
@@ -836,7 +684,7 @@ submission records, or the current student filter.
 
     * 3a1. AvengerHub shows an error message and leaves the records unchanged.
 
-      Use case resumes from step 3.
+      Use case resumes at step 3.
 
 * 3b. A mastery check with the supplied number does not exist for the student.
 
@@ -865,7 +713,7 @@ submission records, or the current student filter.
 
     * 3a1. AvengerHub shows an error message and leaves the records unchanged.
 
-      Use case resumes from step 3.
+      Use case resumes at step 3.
 
 * 3b. A mastery check with the supplied number does not exist for the student.
 
@@ -875,7 +723,7 @@ submission records, or the current student filter.
 
 * 3c. A mastery check with the supplied number for the student is already marked complete.
 
-    * 3b1. AvengerHub informs the tutor that the mastery check with that number is already marked complete and leaves the records unchanged.
+    * 3c1. AvengerHub informs the tutor that the mastery check with that number is already marked complete and leaves the records unchanged.
 
       Use case ends.
 
@@ -900,7 +748,7 @@ submission records, or the current student filter.
 
     * 3a1. AvengerHub shows an error message and leaves the records unchanged.
 
-      Use case resumes from step 3.
+      Use case resumes at step 3.
 
 * 3b. A mastery check with the supplied number does not exist for the student.
 
@@ -910,7 +758,7 @@ submission records, or the current student filter.
 
 * 3c. A mastery check with the supplied number for the student is already incomplete.
 
-    * 3b1. AvengerHub informs the tutor that the mastery check with that number is already incomplete and leaves the records unchanged.
+    * 3c1. AvengerHub informs the tutor that the mastery check with that number is already incomplete and leaves the records unchanged.
 
       Use case ends.
 
@@ -949,13 +797,13 @@ submission records, or the current student filter.
 
     * 1a1. AvengerHub shows an error message and leaves the records unchanged.
 
-      Use case resumes from step 1.
+      Use case resumes at step 1.
 
 * 1b. A mission with the same name or supplied ID already exists.
 
     * 1b1. AvengerHub informs the tutor that the mission name or ID is already in use and leaves the records unchanged.
 
-      Use case resumes from step 1.
+      Use case resumes at step 1.
 
 **Use case: Delete mission**
 
@@ -973,48 +821,44 @@ submission records, or the current student filter.
 
     * 1a1. AvengerHub shows an error message and leaves the records unchanged.
 
-      Use case resumes from step 1.
+      Use case resumes at step 1.
 
 * 1b. No mission with the specified ID exists.
 
     * 1b1. AvengerHub informs the tutor that the mission does not exist and leaves the records unchanged.
 
-      Use case resumes from step 1.
+      Use case resumes at step 1.
 
 **Use case: Edit mission**
 
 **MSS**
 
-1. Tutor requests to edit a shared mission and provides the required details.
-2. AvengerHub updates the mission, saves the changes, and confirms success.
+1. Tutor specifies a mission and provides the details to update.
+2. AvengerHub updates the mission and confirms success.
 
    Use case ends.
 
 **Extensions**
 
-* 1a. The tutor provides invalid or incomplete details, including no
-  replacement fields.
+* 1a. The supplied details are invalid or incomplete.
 
-    * 1a1. AvengerHub shows an error message and leaves the records unchanged.
+    * 1a1. AvengerHub explains the error.
 
-      Use case resumes from step 1.
+      Use case resumes at step 1.
 
-* 1b. No mission with the specified ID exists.
+* 1b. The specified mission does not exist.
 
-    * 1b1. AvengerHub informs the tutor that the mission does not exist and
-      leaves the records unchanged.
+    * 1b1. AvengerHub informs the tutor that the mission does not exist.
 
-      Use case resumes from step 1.
+      Use case resumes at step 1.
 
-* 1c. The replacement name matches another mission's name, ignoring case
-  and whitespace differences.
+* 1c. The supplied name duplicates another mission's name.
 
-    * 1c1. AvengerHub informs the tutor that the mission name already exists
-      and leaves the records unchanged.
+    * 1c1. AvengerHub informs the tutor that the mission name already exists.
 
-      Use case resumes from step 1.
+      Use case resumes at step 1.
 
-* 2a. The supplied values do not change the mission's name or deadline.
+* 2a. The supplied details are unchanged.
 
     * 2a1. AvengerHub informs the tutor that no changes were made.
 
@@ -1026,7 +870,7 @@ submission records, or the current student filter.
 
 1. Tutor requests to list students.
 2. AvengerHub shows the list of students.
-3. Tutor requests to add a mission submission record for a specific student in the list for a specified mission ID.
+3. Tutor requests to add a mission submission record for a specific student.
 4. AvengerHub adds the selected student’s mission submission record for the specified mission and confirms success.
 
    Use case ends.
@@ -1041,7 +885,7 @@ submission records, or the current student filter.
 
     * 3a1. AvengerHub shows an error message and leaves the records unchanged.
 
-      Use case resumes from step 3.
+      Use case resumes at step 3.
 
 * 3b. A mission submission record already exists for the selected student and mission.
 
@@ -1055,7 +899,7 @@ submission records, or the current student filter.
 
 1. Tutor requests to list students.
 2. AvengerHub shows the list of students.
-3. Tutor requests to delete a mission submission record for a specific student in the list for a specified mission ID.
+3. Tutor requests to delete a mission submission record for a specific student.
 4. AvengerHub removes the selected student’s mission submission record for the specified mission and confirms success.
 
    Use case ends.
@@ -1070,7 +914,7 @@ submission records, or the current student filter.
 
     * 3a1. AvengerHub shows an error message and leaves the records unchanged.
 
-      Use case resumes from step 3.
+      Use case resumes at step 3.
 
 * 3b. No mission submission record exists for the selected student and mission.
 
@@ -1078,17 +922,29 @@ submission records, or the current student filter.
 
       Use case ends.
 
-**Use case: List all configured missions**
+**Use case: List missions and submission statuses**
 
 **MSS**
 
-1. Tutor requests the mission catalogue.
-2. AvengerHub displays all configured missions and their relevant details,
-   including submission counts for the current student list.
+1. Tutor requests mission summaries or submission statuses, optionally
+   specifying a mission and submission status.
+2. AvengerHub displays the requested information for the current student list.
 
    Use case ends.
 
 **Extensions**
+
+* 1a. The supplied details are invalid or incomplete.
+
+    * 1a1. AvengerHub explains the error.
+
+      Use case resumes at step 1.
+
+* 1b. The specified mission does not exist.
+
+    * 1b1. AvengerHub informs the tutor that the mission does not exist.
+
+      Use case resumes at step 1.
 
 * 2a. No missions are configured.
 
@@ -1096,95 +952,17 @@ submission records, or the current student filter.
 
       Use case ends.
 
-The catalogue includes all configured missions regardless of the current
-student filter. Student records, mission definitions, submission records,
-and the current student filter remain unchanged.
+* 2b. Submission statuses are requested, but the current student list is empty.
 
-**Use case: List specific mission submissions**
-
-**MSS**
-
-1. Tutor requests to display all students or a filtered set of students.
-2. AvengerHub displays the requested student list.
-3. Tutor requests submission statuses for a specified mission, optionally
-   filtering by submitted or overdue status.
-4. AvengerHub displays matching students and their submission statuses,
-   using their indexes in the current student list.
-
-   Use case ends.
-
-**Extensions**
-
-* 3a. The tutor provides invalid or incomplete details.
-
-    * 3a1. AvengerHub shows an error message and leaves the records and current
-      student filter unchanged.
-
-      Use case resumes from step 3.
-
-* 3b. No mission with the specified ID exists.
-
-    * 3b1. AvengerHub informs the tutor that the mission does not exist and
-      leaves the records and current student filter unchanged.
-
-      Use case resumes from step 3.
-
-* 4a. No submission statuses match the selected status filter.
-
-    * 4a1. AvengerHub informs the tutor that no submissions match the
-      selected status.
+    * 2b1. AvengerHub informs the tutor that no students are displayed.
 
       Use case ends.
 
-* 4b. The current student list is empty.
+* 2c. No submission statuses match the requested criteria.
 
-    * 4b1. AvengerHub informs the tutor that no students are in the
-      current student list.
-
-      Use case ends.
-
-Student records, mission definitions, submission records, and the current
-student filter remain unchanged throughout this use case.
-
-**Use case: List overdue mission submissions**
-
-**MSS**
-
-1. Tutor requests to display all students or a filtered set of students.
-2. AvengerHub displays the requested student list.
-3. Tutor requests to list overdue mission submissions.
-4. AvengerHub displays each missing submission whose mission deadline is
-   before today's local date, restricted to students in the current list.
-   Each result identifies the student using their displayed index and
-   includes the mission's ID, name, and deadline.
-
-   Use case ends.
-
-**Extensions**
-
-* 4a. No overdue submissions exist within the current student list.
-
-    * 4a1. AvengerHub informs the tutor that no overdue submissions exist
-      within the current student list.
+    * 2c1. AvengerHub informs the tutor that no matching submissions were found.
 
       Use case ends.
-
-* 4b. The current student list is empty.
-
-    * 4b1. AvengerHub informs the tutor that no students are in the
-      current student list.
-
-      Use case ends.
-
-* 4c. No missions are configured.
-
-    * 4c1. AvengerHub informs the tutor that no missions are configured.
-
-      Use case ends.
-
-Deadlines are inclusive: missions due today are not overdue. The current
-date follows the computer's local date and time zone. Recorded submissions
-are excluded, regardless of when they were recorded.
 
 ### Non-Functional Requirements
 
@@ -1204,8 +982,9 @@ are excluded, regardless of when they were recorded.
 
 ### Glossary
 
-* **Mainstream OS**: Windows, Linux, Unix, or macOS
-* **Private student detail**: A student detail that is not meant to be shared with others
+* **CS1101S**: The National University of Singapore's Programming Methodology course.
+* **Mainstream OS**: Windows, Linux, Unix, or macOS.
+* **Private student detail**: A student detail that is not meant to be shared with others.
 * **Matriculation number**: The NUS-supplied number that uniquely identifies a student, starting with the letter A, followed by 7 digits, and ending with another uppercase letter from A-Z. Example: A0123456B.
 * **AvengerHub**: The name of the application.
 * **Tutor**: The TAs (teaching assistants) in the CS1101S course that handle the tutorial sessions. Also known as "Avengers" by the course.
@@ -1226,7 +1005,7 @@ are excluded, regardless of when they were recorded.
   * CPU: Intel Core i5/Ryzen 5/M-series Apple chip equivalent
   * RAM: 8GB
   * GPU: Integrated graphics
-  * We expect the application to be stored in a SSD. Loading times may be worse with HDDs.
+  * We expect the application to be stored in a SSD. Loading times may be worse with HDDs
 * **Above average typing speed**: Sustained >=80 WPM with a sequence of random words.
 
 --------------------------------------------------------------------------------------------------------------------
@@ -1259,13 +1038,92 @@ testers are expected to do more *exploratory* testing.
    from the same folder.
    Expected: The window size and position are restored.
 
-### Student records and filtering
+### Student records
 
-To be added
+Run this workflow in a fresh working directory. Start the app and enter
+`clear`.
 
-### Student activity and profile
+1. Enter `addstudent n/Amy Bee mtc/A0123456D p/98765432 e/amy@example.com g/1A`,
+   then `list`.
+   Expected: The command reports that Amy Bee was added. The student list
+   contains one student in studio group 1A.
 
-To be added
+1. Enter `addstudent n/Someone Else mtc/A0123456D p/98765432 e/amy@example.com g/1A`,
+   then `list`.
+   Expected: The command reports that a student with the same matriculation number already exists. The list
+   still contains only Amy Bee.
+
+1. Enter `editstudent id/1 p/91234567 e/amybee@example.com`.
+   Expected: The command reports that Amy Bee was edited. The profile shows
+   phone number `91234567` and email address `amybee@example.com`.
+
+1. Enter `editstudent id/1`.
+   Expected: The command reports that at least one field is required. Amy
+   Bee's edited phone number and email address remain unchanged.
+
+1. Enter `delstudent id/1`.
+   Expected: The command reports that Amy Bee was deleted. The student list
+   is empty.
+
+1. Enter `delstudent id/1`.
+   Expected: The command reports that the index is invalid. The student list
+   remains empty.
+
+
+### Finding students
+
+Run this workflow independently in a disposable working directory.
+Launch the app, enter `clear`, then add these students in order:
+
+```text
+addstudent n/Alex Lee mtc/A0123456B p/98765432 e/alex.lee@example.com g/1A
+addstudent n/Alex Lim mtc/A0123457C p/98765433 e/alex.lim@example.com g/1B
+addstudent n/Brian Tan mtc/A0123458D p/98765434 e/brian.tan@example.com g/1B
+```
+
+1. Enter `find aLe`.
+   Expected: Alex Lee and Alex Lim appear, confirming case-insensitive
+   partial-name matching.
+
+1. Enter `find alex,`.
+   Expected: Invalid-command feedback appears. Alex Lee and Alex Lim
+   remain displayed.
+
+1. Enter `find lee alex`.
+   Expected: Only Alex Lee appears. All space-separated keywords must
+   match, regardless of their order.
+
+1. Enter `find g/`.
+   Expected: Studio-group validation feedback appears. Alex Lee remains
+   displayed.
+
+1. Enter `find alex, brian g/1B`.
+   Expected: Alex Lim and Brian Tan appear. Either name alternative may
+   match, but the studio group must also match. This search replaces
+   the previous search.
+
+1. Enter `find g/1b`.
+   Expected: Studio-group validation feedback appears because group
+   values are case-sensitive. Alex Lim and Brian Tan remain displayed.
+
+1. Enter `find g/1A g/1B`.
+   Expected: All three students appear because either studio group
+   may match.
+
+1. Enter `find`.
+   Expected: Invalid-command feedback appears. All three students
+   remain displayed.
+
+1. Enter `find alex alex`.
+   Expected: No students appear because neither Alex has two separate
+   occurrences of the keyword.
+
+1. Enter `find nobody`.
+   Expected: No students appear.
+
+1. Enter `list`.
+   Expected: All three students reappear in their original order,
+   with their details unchanged.
 
 ### Mission catalogue and submission reports
 
@@ -1327,6 +1185,134 @@ index 1.
    records are removed from every student. Enter
    `addmission m/M10 n/Manual Test Restored d/2026-12-01`.
    Expected: The ID can be reused, but prior submissions are not restored.
+
+### Studio records
+
+Run this workflow in a fresh working directory. Start the app, enter `clear`,
+then create a student:
+
+```text
+addstudent n/Amy Bee mtc/A0123456D p/98765432 e/amy@example.com g/1A
+```
+
+1. Enter `addstudiorecord id/1 w/3 ef/30`.
+   Expected: The command reports that Amy Bee's studio record for week 3 was
+   added. The profile shows week 3 as attended with effort score 30.
+
+1. Enter `addstudiorecord id/1 w/3 ef/20`.
+   Expected: The command reports that the week 3 record already exists and
+   makes no changes. The profile still shows effort score 30 for week 3.
+
+1. Enter `editstudiorecord id/1 w/3 ef/40`.
+   Expected: The command reports that the record was edited. The profile shows
+   week 3 as attended with effort score 40.
+
+1. Enter `editstudiorecord id/1 w/3 ef/40`.
+   Expected: The command reports that the week 3 record is already the same
+   and makes no changes. The profile still shows effort score 40.
+
+1. Enter `editstudiorecord id/1 w/4 ef/40`.
+   Expected: The command reports that no week 4 record exists and makes no
+   changes. Week 4 remains absent with effort score 0.
+
+1. Enter `delstudiorecord id/1 w/3`.
+   Expected: The command reports that the week 3 record was removed. The
+   profile shows week 3 as absent with effort score 0.
+
+1. Enter `delstudiorecord id/1 w/3`.
+   Expected: The command reports that week 3 is already not recorded and
+   makes no changes. The profile still shows week 3 as absent with effort
+   score 0.
+
+1. Enter `addstudiorecord id/1 w/14 ef/30`, followed by
+   `addstudiorecord id/1 w/3 ef/-1`.
+   Expected: Both commands show validation feedback and leave all studio
+   records unchanged.
+
+### Notes
+
+Run this workflow independently in a fresh working directory. Start the app,
+enter `clear`, then create a student:
+
+```text
+addstudent n/Amy Bee mtc/A0123456D p/98765432 e/amy@example.com g/1A
+```
+
+1. Enter `addnote id/1 nt/Needs help with recursion`.
+   Expected: The command reports that the note was added. The profile lists
+   `Needs help with recursion` as note 1.
+
+1. Enter `editnote id/1 ni/1 nt/Understands recursion`.
+   Expected: The command reports that note 1 was edited. The profile lists
+   `Understands recursion` as note 1.
+
+1. Enter `editnote id/1 ni/2 nt/Should not be added`.
+   Expected: The command reports that note 2 does not exist and makes no
+   changes. Note 1 remains `Understands recursion`.
+
+1. Enter `delnote id/1 ni/1`.
+   Expected: The command reports that note 1 was deleted. The profile no
+   longer lists the note.
+
+1. Enter `delnote id/1 ni/1`.
+   Expected: The command reports that note 1 does not exist and makes no
+   changes. The profile still contains no notes.
+
+1. Enter `addnote id/1 nt/`, followed by `addnote id/2 nt/Valid note`.
+   Expected: Both commands show validation feedback and leave the note list
+   unchanged.
+
+1. Enter `addnote id/1 nt/First note`, then `addnote id/1 nt/First note`.
+   Expected: Both notes are added, and the second command also warns that Amy
+   Bee has matching note text. The profile lists two notes with the same text.
+
+1. Add notes 3 through 100, then attempt to add a 101st note. For each note
+   from 3 through 100, enter `addnote id/1 nt/Note <number>`, replacing
+   `<number>` with the note number. Then enter `addnote id/1 nt/Note 101`:
+
+   ```text
+   addnote id/1 nt/Note 3
+   ...
+   addnote id/1 nt/Note 100
+   addnote id/1 nt/Note 101
+   ```
+
+   Expected: The first 98 commands create notes 3 through 100. The final
+   command reports that Amy Bee already has the maximum of 100 notes and makes
+   no changes. The profile still lists exactly 100 notes.
+
+### Mastery checks
+
+Run this workflow independently in a fresh working directory. Start the app,
+enter `clear`, then create a student:
+
+```text
+addstudent n/Amy Bee mtc/A0123456D p/98765432 e/amy@example.com g/1A
+```
+
+1. Enter `addmc id/1 num/1 dt/2026-10-20|12:30`.
+   Expected: The command reports that the mastery check was added. The profile lists a mastery check numbered 1 with appointment time `20 october 2026, 12:30` as "Not Completed".
+2. Enter `markmc id/1 num/1`.
+   Expected: The command reports that the mastery check has been marked complete. The profile shows the same mastery check as in [1] has been marked as "Completed".
+3. Enter `unmarkmc id/1 num/1`.
+   Expected: The command reports that the mastery check has been marked incomplete. The profile shows the same mastery check as in [1] and [2] has been marked as "Not completed".
+4. Enter `delmc id/1 num/1`.
+   Expected: The command reports that the mastery check was removed. The profile shows "No mastery checks registered."
+
+Additional testing:
+
+**Commands executed with no changes made**
+1. Add an arbitrary mastery check, then add another mastery check with the same number.
+2. Add an arbitrary mastery check, then unmark it.
+3. Add an arbitrary mastery check, mark it, then mark it again.
+4. Delete a mastery check with a number that has not been recorded.
+
+**Error handling**
+1. Add an arbitrary mastery check with a wrongly-formatted date-time, eg. `dt/2026-10-30T14:30`. Expected: The command is rejected for invalid datetime formatting.
+2. Add an arbitrary mastery check with an impossible date, eg. `dt/2026-13-39|12:30`. Expected: The command is rejected for invalid date value.
+3. Add an arbitrary mastery check with an impossible time, eg. `dt/2026-11-03|25:00`. Expected: The command is rejected for invalid time value.
+4. Mark a mastery check with a number that has not been recorded. Expected: The command is rejected for attempting to modify a mastery check that does not exist.
+5. Unmark a mastery check with a number that has not been recorded. Expected: Same as in [4].
 
 ### Saving data and clearing records
 

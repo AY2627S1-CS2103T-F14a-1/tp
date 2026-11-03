@@ -154,12 +154,14 @@ public class RegisteredNotesTest {
     }
 
     @Test
-    public void hasNoteText_matchingAbsentOrNullText_returnsExpectedResult() {
-        RegisteredNotes registeredNotes = new RegisteredNotes(List.of(FIRST_NOTE));
+    public void getNearMatchingNoteIndexes_multipleAndNoMatches_returnsExpectedIndexes() {
+        RegisteredNotes registeredNotes = new RegisteredNotes(List.of(
+                FIRST_NOTE, SECOND_NOTE, new Note("review   lecture")));
 
-        assertTrue(registeredNotes.hasNoteText(FIRST_NOTE.getNoteText()));
-        assertFalse(registeredNotes.hasNoteText(SECOND_NOTE.getNoteText()));
-        assertThrows(NullPointerException.class, () -> registeredNotes.hasNoteText(null));
+        assertEquals(List.of(Index.fromOneBased(1), Index.fromOneBased(3)),
+                registeredNotes.getNearMatchingNoteIndexes(" REVIEW\tLECTURE "));
+        assertTrue(registeredNotes.getNearMatchingNoteIndexes("Prepare consultation").isEmpty());
+        assertThrows(NullPointerException.class, () -> registeredNotes.getNearMatchingNoteIndexes(null));
     }
 
     @Test

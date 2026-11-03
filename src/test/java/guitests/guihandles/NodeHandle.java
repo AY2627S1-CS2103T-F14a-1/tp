@@ -12,6 +12,9 @@ import javafx.scene.Node;
  * Provides access to a node in a JavaFx application for GUI testing purposes.
  */
 public abstract class NodeHandle<T extends Node> {
+
+    //@@author nuggettowin-reused
+    //Reused from AB4
     protected final GuiRobot guiRobot = new GuiRobot();
 
     private final T rootNode;
@@ -41,4 +44,5 @@ public abstract class NodeHandle<T extends Node> {
     public void click() {
         guiRobot.clickOn(rootNode);
     }
+    //@@author
 }

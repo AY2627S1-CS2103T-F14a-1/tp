@@ -8,6 +8,8 @@ import javafx.scene.control.Labeled;
  */
 public class StatusBarFooterHandle extends NodeHandle<Node> {
 
+    //@@author nuggettowin-reused
+    //Reused from AB4
     public static final String STATUS_BAR_PLACEHOLDER = "#statusbarPlaceholder";
 
     private static final String SAVE_LOCATION_STATUS_ID = "#saveLocationStatus";
@@ -29,4 +31,5 @@ public class StatusBarFooterHandle extends NodeHandle<Node> {
     public String getSaveLocation() {
         return saveLocationNode.getText();
     }
+    //@@author
 }

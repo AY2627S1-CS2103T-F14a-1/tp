@@ -28,16 +28,16 @@ package UI <<Rectangle>> {
     class StudentCard
 
     UiManager .left.|> Ui
-    UiManager -down-> "1" MainWindow
+    UiManager -down-> MainWindow
 
-    MainWindow *-down-> "1" CommandBox
-    MainWindow *-down-> "1" ResultDisplay
-    MainWindow *-down-> "1" StudentListPanel
-    MainWindow *-down-> "1" StudentDetailsPanel
-    MainWindow *-down-> "1" StatusBarFooter
-    MainWindow -down-> "1" HelpWindow
+    MainWindow *-down-> CommandBox
+    MainWindow *-down-> ResultDisplay
+    MainWindow *-down-> StudentListPanel
+    MainWindow *-down-> StudentDetailsPanel
+    MainWindow *-down-> StatusBarFooter
+    MainWindow -down-> HelpWindow
 
-    StudentListPanel -down-> "*" StudentCard
+    StudentListPanel -down-> StudentCard
 
     MainWindow -down-|> UiPart
     CommandBox -down-|> UiPart
