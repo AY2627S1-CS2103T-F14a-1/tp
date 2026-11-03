@@ -68,7 +68,7 @@ public class DeleteStudioRecordCommand extends Command {
         RegisteredStudioRecords registeredStudioRecords = studentToUpdate.getRegisteredStudioRecords();
 
         if (!registeredStudioRecords.hasStudioRecord(week)) {
-            logger.fine("Studio-record deletion skipped: week " + week
+            logger.fine("Studio record deletion skipped: week " + week
                     + " is not recorded at displayed student index " + targetIndex.getOneBased() + ".");
             return new CommandResult(String.format(MESSAGE_ALREADY_NOT_RECORDED, studentToUpdate.getName(), week),
                     studentToUpdate);

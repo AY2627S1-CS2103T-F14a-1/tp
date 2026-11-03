@@ -77,7 +77,7 @@ public class AddStudioRecordCommand extends Command {
         RegisteredStudioRecords registeredStudioRecords = studentToUpdate.getRegisteredStudioRecords();
 
         if (registeredStudioRecords.hasStudioRecord(week)) {
-            logger.fine("Studio-record addition skipped: week " + week
+            logger.fine("Studio record addition skipped: week " + week
                     + " is already recorded at displayed student index " + targetIndex.getOneBased() + ".");
             return new CommandResult(String.format(MESSAGE_ALREADY_RECORDED, studentToUpdate.getName(), week),
                     studentToUpdate);

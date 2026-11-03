@@ -76,14 +76,14 @@ public class EditStudioRecordCommand extends Command {
         RegisteredStudioRecords registeredStudioRecords = studentToUpdate.getRegisteredStudioRecords();
 
         if (!registeredStudioRecords.hasStudioRecord(week)) {
-            logger.fine("Studio-record edit skipped: week " + week
+            logger.fine("Studio record edit skipped: week " + week
                     + " is not recorded at displayed student index " + targetIndex.getOneBased() + ".");
             return new CommandResult(String.format(MESSAGE_WEEK_NOT_RECORDED, studentToUpdate.getName(), week),
                     studentToUpdate);
         }
 
         if (registeredStudioRecords.hasMatchingStudioRecord(week, studioRecord)) {
-            logger.fine("Studio-record edit skipped: week " + week
+            logger.fine("Studio record edit skipped: week " + week
                     + " is unchanged at displayed student index " + targetIndex.getOneBased() + ".");
             return new CommandResult(String.format(MESSAGE_ALREADY_RECORDED, studentToUpdate.getName(), week),
                     studentToUpdate);
