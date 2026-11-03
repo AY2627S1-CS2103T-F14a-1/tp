@@ -67,7 +67,7 @@ Student *--> "1" RegisteredNotes
 RegisteredMasteryChecks *-down-> "*" MasteryCheck
 MissionSubmissions -down-> "*" MissionId
 RegisteredStudioRecords *--> "0..14" StudioRecord
-RegisteredNotes *-down-> "0..1000" Note
+RegisteredNotes *-down-> "0..100" Note
 
 ' Top-level layout
 ReadOnlyAddressBook -[hidden]right-> Model

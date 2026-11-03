@@ -289,7 +289,7 @@ Edited Amy Bee's studio record for studio week 3.
 
 ### Adding a student note: `addnote`
 
-Adds a note for an existing student in the address book.
+Adds a simple note for an existing student in the address book.
 
 Format: `addnote id/INDEX nt/TEXT`
 
@@ -297,7 +297,9 @@ Format: `addnote id/INDEX nt/TEXT`
 * The index refers to the index number shown in the displayed student list.
 * The index **must be a positive integer** 1, 2, 3, ...
 * The text should only contain alphanumeric characters, punctuation, and spaces, should not be blank, and be less than or equal to 1000 characters.
-* A student can have up to 10 notes.
+* A student can have up to 100 notes.
+* Indexes of notes with potentially duplicate text will be shown as a warning, but the note will still be added. This is to provide more flexibility for tutors.
+* When checking for duplicate note texts, AvengerHub will ignore capitalization and treats each run of whitespace-including spaces and text as a single space. Leading and trailing whitespace will also be ignored.
 * The current list filter stays active.
 
 Examples:
@@ -336,6 +338,8 @@ Format: `editnote id/INDEX ni/NOTE_INDEX nt/TEXT`
 * The note index must be an integer from 1 to 10, inclusive.
 * The text should only contain alphanumeric characters, punctuation, and spaces, should not be blank, and be less than or equal to 1000 characters.
 * If the note index doesn't match any existing notes for the given student, or matches the existing text, the notes will be unchanged.
+* Indexes of notes with potentially duplicate text will be shown as a warning, but the note will still be added. This is to provide more flexibility for tutors.
+* When checking for duplicate note texts, AvengerHub will ignore capitalization and treats each run of whitespace-including spaces and text as a single space. Leading and trailing whitespace will also be ignored.
 * The current list filter stays active.
 
 Examples:

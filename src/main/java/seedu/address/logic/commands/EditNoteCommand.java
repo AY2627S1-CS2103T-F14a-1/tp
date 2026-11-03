@@ -7,6 +7,8 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_INDEX;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NOTE_INDEX;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NOTE_TEXT;
 
+import java.util.List;
+
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.commands.exceptions.CommandException;
@@ -28,6 +30,8 @@ public class EditNoteCommand extends Command {
             "%1$s’s note with index %2$d is already the same. No changes made.";
     public static final String MESSAGE_SUCCESS =
             "Edited %1$s's note with index %2$d.";
+    public static final String MESSAGE_WARNING_MATCHING_TEXT = "%1$s's note(s) with the following index(es) "
+            + "may already contain the same note text: %2$s";
     public static final String MESSAGE_USAGE = COMMAND_WORD
             + ": Edits a registered note for the selected student.\n"
             + "Parameters: " + PREFIX_INDEX + "INDEX " + PREFIX_NOTE_INDEX + "NOTE_INDEX " + PREFIX_NOTE_TEXT + "TEXT\n"
@@ -72,13 +76,19 @@ public class EditNoteCommand extends Command {
                     studentToUpdate.getName(), noteIndex.getOneBased()), studentToUpdate);
         }
 
+        List<Index> nearMatchingNotes = registeredNotes.getNearMatchingNoteIndexes(updatedNote.getNoteText());
         Student updatedStudent = studentToUpdate.withRegisteredNotes(
                 registeredNotes.editNote(noteIndex, updatedNote));
         model.setStudent(studentToUpdate, updatedStudent);
-        return new CommandResult(String.format(MESSAGE_SUCCESS,
+        CommandResult result = new CommandResult(String.format(MESSAGE_SUCCESS,
                 studentToUpdate.getName(),
                 noteIndex.getOneBased()),
                 updatedStudent);
+        if (!nearMatchingNotes.isEmpty()) {
+            return result.withWarning(String.format(MESSAGE_WARNING_MATCHING_TEXT, studentToUpdate.getName(),
+                    nearMatchingNotes.stream().map(Index::getOneBased).toList()));
+        }
+        return result;
     }
 
     @Override
