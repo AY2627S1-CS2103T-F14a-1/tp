@@ -305,6 +305,12 @@ Format: `addnote id/INDEX nt/TEXT`
 Examples:
 *  `addnote id/1 nt/hello` Adds a note with text `hello` for the 1st student.
 
+For example, if the first student is Amy Bee, `addnote id/1 nt/hello` displays:
+
+```text
+Added Amy Bee's note.
+```
+
 ![result for adding a note](images/addNoteResult.png)
 
 ### Deleting a student note: `delnote`
@@ -324,6 +330,11 @@ Format: `delnote id/INDEX ni/NOTE_INDEX`
 Examples:
 *  `delnote id/1 ni/1` Deletes the first note for the 1st student.
 
+For example, if the first student is Amy Bee and she has a note at note index 1, `delnote id/1 ni/1` displays:
+
+```text
+Added Amy Bee's note at index 1.
+```
 
 ### Editing a student note: `editnote`
 
@@ -343,7 +354,13 @@ Format: `editnote id/INDEX ni/NOTE_INDEX nt/TEXT`
 * The current list filter stays active.
 
 Examples:
-*  `editnote id/1 ni/1 nt/hello` Edits the first note, replacing its text with `hello` for the 1st student.
+*  `editnote id/1 ni/1 nt/hello!` Edits the first note, replacing its text with `hello` for the 1st student.
+
+For example, if the first student is Amy Bee and she has a note at note index 1, `editnote id/1 ni/1 nt/hello!` displays:
+
+```text
+Added Amy Bee's note at index 1.
+```
 
 ### Adding a mastery check: `addmc`
 

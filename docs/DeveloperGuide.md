@@ -1100,20 +1100,19 @@ Run this workflow in a fresh working directory. Start the app and enter
    Expected: The command reports that the student already exists. The list
    still contains only Amy Bee.
 
-1. Enter `editstudent id/1 p/91234567 e/amybee@example.com`, then
-   `view id/1`.
+1. Enter `editstudent id/1 p/91234567 e/amybee@example.com`.
    Expected: The command reports that Amy Bee was edited. The profile shows
    phone number `91234567` and email address `amybee@example.com`.
 
-1. Enter `editstudent id/1`, then `view id/1`.
+1. Enter `editstudent id/1`.
    Expected: The command reports that at least one field is required. Amy
    Bee's edited phone number and email address remain unchanged.
 
-1. Enter `delstudent id/1`, then `list`.
+1. Enter `delstudent id/1`.
    Expected: The command reports that Amy Bee was deleted. The student list
    is empty.
 
-1. Enter `delstudent id/1`, then `list`.
+1. Enter `delstudent id/1`.
    Expected: The command reports that the index is invalid. The student list
    remains empty.
 
@@ -1188,31 +1187,31 @@ then create a student:
 addstudent n/Amy Bee mtc/A0123456D p/98765432 e/amy@example.com g/1A
 ```
 
-1. Enter `addstudiorecord id/1 w/3 ef/30`, then `view id/1`.
+1. Enter `addstudiorecord id/1 w/3 ef/30`.
    Expected: The command reports that Amy Bee's studio record for week 3 was
    added. The profile shows week 3 as attended with effort score 30.
 
-1. Enter `addstudiorecord id/1 w/3 ef/20`, then `view id/1`.
+1. Enter `addstudiorecord id/1 w/3 ef/20`.
    Expected: The command reports that the week 3 record already exists and
    makes no changes. The profile still shows effort score 30 for week 3.
 
-1. Enter `editstudiorecord id/1 w/3 ef/40`, then `view id/1`.
+1. Enter `editstudiorecord id/1 w/3 ef/40`.
    Expected: The command reports that the record was edited. The profile shows
    week 3 as attended with effort score 40.
 
-1. Enter `editstudiorecord id/1 w/3 ef/40`, then `view id/1`.
+1. Enter `editstudiorecord id/1 w/3 ef/40`.
    Expected: The command reports that the week 3 record is already the same
    and makes no changes. The profile still shows effort score 40.
 
-1. Enter `editstudiorecord id/1 w/4 ef/40`, then `view id/1`.
+1. Enter `editstudiorecord id/1 w/4 ef/40``.
    Expected: The command reports that no week 4 record exists and makes no
    changes. Week 4 remains absent with effort score 0.
 
-1. Enter `delstudiorecord id/1 w/3`, then `view id/1`.
+1. Enter `delstudiorecord id/1 w/3`.
    Expected: The command reports that the week 3 record was removed. The
    profile shows week 3 as absent with effort score 0.
 
-1. Enter `delstudiorecord id/1 w/3`, then `view id/1`.
+1. Enter `delstudiorecord id/1 w/3`.
    Expected: The command reports that week 3 is already not recorded and
    makes no changes. The profile still shows week 3 as absent with effort
    score 0.
@@ -1231,23 +1230,23 @@ enter `clear`, then create a student:
 addstudent n/Amy Bee mtc/A0123456D p/98765432 e/amy@example.com g/1A
 ```
 
-1. Enter `addnote id/1 nt/Needs help with recursion`, then `view id/1`.
+1. Enter `addnote id/1 nt/Needs help with recursion`.
    Expected: The command reports that the note was added. The profile lists
    `Needs help with recursion` as note 1.
 
-1. Enter `editnote id/1 ni/1 nt/Understands recursion`, then `view id/1`.
+1. Enter `editnote id/1 ni/1 nt/Understands recursion`.
    Expected: The command reports that note 1 was edited. The profile lists
    `Understands recursion` as note 1.
 
-1. Enter `editnote id/1 ni/2 nt/Should not be added`, then `view id/1`.
+1. Enter `editnote id/1 ni/2 nt/Should not be added`.
    Expected: The command reports that note 2 does not exist and makes no
    changes. Note 1 remains `Understands recursion`.
 
-1. Enter `delnote id/1 ni/1`, then `view id/1`.
+1. Enter `delnote id/1 ni/1`.
    Expected: The command reports that note 1 was deleted. The profile no
    longer lists the note.
 
-1. Enter `delnote id/1 ni/1`, then `view id/1`.
+1. Enter `delnote id/1 ni/1`.
    Expected: The command reports that note 1 does not exist and makes no
    changes. The profile still contains no notes.
 
@@ -1255,8 +1254,7 @@ addstudent n/Amy Bee mtc/A0123456D p/98765432 e/amy@example.com g/1A
    Expected: Both commands show validation feedback and leave the note list
    unchanged.
 
-1. Enter `addnote id/1 nt/First note`, then `addnote id/1 nt/First note`,
-   followed by `view id/1`.
+1. Enter `addnote id/1 nt/First note`, then `addnote id/1 nt/First note`.
    Expected: Both notes are added, and the second command also warns that Amy
    Bee has matching note text. The profile lists two notes with the same text.
 

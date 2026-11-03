@@ -31,7 +31,7 @@ public class EditNoteCommand extends Command {
     public static final String MESSAGE_SAME_NOTE =
             "%1$s’s note with index %2$d is already the same. No changes made.";
     public static final String MESSAGE_SUCCESS =
-            "Edited %1$s's note with index %2$d.";
+            "Edited %1$s's note at index %2$d.";
     public static final String MESSAGE_WARNING_MATCHING_TEXT = "%1$s's note(s) with the following index(es) "
             + "may already contain the same note text: %2$s";
     public static final String MESSAGE_USAGE = COMMAND_WORD
