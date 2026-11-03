@@ -236,6 +236,7 @@ For example, if the first student is Amy Bee and her week 3 studio record is not
 Added Amy Bee's studio record for studio week 3.
 ```
 
+![result for adding a studio record](images/addStudioRecordResult.png)
 ### Deleting studio records: `delstudiorecord`
 
 Removes a student's attendance record and effort score for a studio week. The student remains in the address book.
@@ -295,13 +296,14 @@ Format: `addnote id/INDEX nt/TEXT`
 * Adds a note with text `TEXT` for the student at the specified `INDEX`.
 * The index refers to the index number shown in the displayed student list.
 * The index **must be a positive integer** 1, 2, 3, ...
-* The text should only contain alphanumeric characters and spaces, should not be blank, and be less than or equal to 1000 characters.
+* The text should only contain alphanumeric characters, punctuation, and spaces, should not be blank, and be less than or equal to 1000 characters.
 * A student can have up to 10 notes.
 * The current list filter stays active.
 
 Examples:
 *  `addnote id/1 nt/hello` Adds a note with text `hello` for the 1st student.
 
+![result for adding a note](images/addNoteResult.png)
 
 ### Deleting a student note: `delnote`
 
@@ -332,7 +334,7 @@ Format: `editnote id/INDEX ni/NOTE_INDEX nt/TEXT`
 * The index **must be a positive integer** 1, 2, 3, ...
 * The note index refers to the index number shown in the list of notes for a given student in the display panel.
 * The note index must be an integer from 1 to 10, inclusive.
-* The text should only contain alphanumeric characters and spaces, should not be blank, and be less than or equal to 1000 characters.
+* The text should only contain alphanumeric characters, punctuation, and spaces, should not be blank, and be less than or equal to 1000 characters.
 * If the note index doesn't match any existing notes for the given student, or matches the existing text, the notes will be unchanged.
 * The current list filter stays active.
 
