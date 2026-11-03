@@ -586,11 +586,10 @@ Format: `listmissions [m/MISSION_ID] [s/STATUS]`
 * Without arguments: shows all missions with IDs, names, deadlines, and
   `Submitted: X/Y` counts for the currently displayed students.
 * With `m/MISSION_ID`: shows displayed students' statuses for that mission.
-* With `s/STATUS`: shows matching student–mission pairs across all missions.
+* With `s/STATUS`: shows matching student–mission pairs across all missions, where STATUS is `submitted` or `overdue`.
 * With both: applies the status filter to the specified mission.
 
-* `STATUS` accepts `submitted` or `overdue`. Commands, prefixes, mission IDs,
-  and status values are case-insensitive. Supply each prefix at most once,
+* Commands, prefixes, mission IDs, and status values are case-insensitive. Supply each prefix at most once,
   in either order.
 * Counts and statuses include only currently displayed students. Run `list`
   first to include everyone.
