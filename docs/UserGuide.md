@@ -141,11 +141,13 @@ Examples:
 * `find Betsy Crowe`, followed by `view id/1`, displays the first student
   in those search results.
 
-For example, viewing Amy Lee displays the feedback:
+For example, viewing Alex Yeoh displays the feedback:
 
 ```text
-Showing profile of Amy Lee
+Showing profile of Alex Yeoh
 ```
+
+![result for 'view id/1'](images/viewId1.png)
 
 ### Editing a student: `editstudent`
 
@@ -194,6 +196,7 @@ Examples:
 * `find alex, david` matches `Alex Lee` and `David Li`.
 * `find alex, brian g/1A` matches Alex or Brian within studio group 1A.
 * `find g/1A g/1B` finds students in either studio group.
+  ![result for 'find Alex, David'](images/findAlexDavid.png)
 
 ### Deleting a student: `delstudent`
 
