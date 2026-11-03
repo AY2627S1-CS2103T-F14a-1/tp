@@ -487,6 +487,29 @@ The user stories above represent the main intended functionality and selected fu
       Use case resumes at step 1.
 
 
+**Use case: Delete student record**
+
+**MSS**
+
+1. Tutor requests to view or search student records.
+2. AvengerHub displays the corresponding student records.
+3. Tutor selects a student record to delete.
+4. AvengerHub deletes the student record and confirms success.
+
+   Use case ends.
+
+**Extensions**
+
+* 2a. No student records are displayed.
+
+  Use case ends.
+
+* 3a. The student selection is invalid or incomplete.
+
+    * 3a1. AvengerHub explains the error.
+
+      Use case resumes at step 3.
+
 **Use case: Edit student record**
 
 **MSS**
@@ -523,8 +546,7 @@ The user stories above represent the main intended functionality and selected fu
 1. Tutor requests to display all students or a filtered set of students.
 2. AvengerHub displays the requested student list.
 3. Tutor enters `view id/INDEX`, using the student's index in the displayed list.
-4. AvengerHub displays the selected student's profile, including contact
-   details, studio group, tags, and mission submission statuses.
+4. AvengerHub displays the selected student's profile details.
 
    Use case ends.
 
@@ -541,38 +563,7 @@ The user stories above represent the main intended functionality and selected fu
 
       Use case resumes at step 3.
 
-* 4a. No missions are configured.
 
-    * 4a1. AvengerHub displays the student's profile with
-      `No missions configured.` in the mission section.
-
-      Use case ends.
-
-Viewing a profile does not modify student details, mission definitions,
-submission records, or the current student filter.
-
-**Use case: Delete student record**
-
-**MSS**
-
-1. Tutor requests to view or search student records.
-2. AvengerHub displays the corresponding student records.
-3. Tutor selects a student record to delete.
-4. AvengerHub deletes the student record and confirms success.
-
-   Use case ends.
-
-**Extensions**
-
-* 2a. No student records are displayed.
-
-  Use case ends.
-
-* 3a. The student selection is invalid or incomplete.
-
-    * 3a1. AvengerHub explains the error.
-
-      Use case resumes at step 3.
 
 **Use case: Add studio record**
 
@@ -694,9 +685,10 @@ submission records, or the current student filter.
 
       Use case ends.
 
-* 3c. The selected student already has a note with identical content.
+* 3c. The selected student has a note with potentially the same content.
 
-    * 3c1. AvengerHub warns the tutor. Use case resumes at step 4.
+    * 3c1. AvengerHub warns the tutor. 
+    Use case resumes at step 4.
 
 **Use case: Delete note**
 
@@ -740,7 +732,7 @@ submission records, or the current student filter.
 
       Use case resumes from step 3.
 
-* 3c. The selected student already has a note with identical content.
+* 3c. The selected student has a note with potentially the same content.
 
     * 3c1. AvengerHub warns the tutor. 
   
@@ -1071,13 +1063,38 @@ testers are expected to do more *exploratory* testing.
    from the same folder.
    Expected: The window size and position are restored.
 
-### Student records and filtering
+### Student records
 
-To be added
+Run this workflow in a fresh working directory. Start the app and enter
+`clear`.
 
-### Student activity and profile
+1. Enter `addstudent n/Amy Bee mtc/A0123456D p/98765432 e/amy@example.com g/1A`,
+   then `list`.
+   Expected: The command reports that Amy Bee was added. The student list
+   contains one student in studio group 1A.
 
-To be added
+1. Enter `addstudent n/Amy Bee mtc/A0123456D p/98765432 e/amy@example.com g/1A`,
+   then `list`.
+   Expected: The command reports that the student already exists. The list
+   still contains only Amy Bee.
+
+1. Enter `editstudent id/1 p/91234567 e/amybee@example.com`, then
+   `view id/1`.
+   Expected: The command reports that Amy Bee was edited. The profile shows
+   phone number `91234567` and email address `amybee@example.com`.
+
+1. Enter `editstudent id/1`, then `view id/1`.
+   Expected: The command reports that at least one field is required. Amy
+   Bee's edited phone number and email address remain unchanged.
+
+1. Enter `delstudent id/1`, then `list`.
+   Expected: The command reports that Amy Bee was deleted. The student list
+   is empty.
+
+1. Enter `delstudent id/1`, then `list`.
+   Expected: The command reports that the index is invalid. The student list
+   remains empty.
+
 
 ### Mission catalogue and submission reports
 
@@ -1139,6 +1156,73 @@ index 1.
    records are removed from every student. Enter
    `addmission m/M10 n/Manual Test Restored d/2026-12-01`.
    Expected: The ID can be reused, but prior submissions are not restored.
+
+### Studio records
+
+Run this workflow in a fresh working directory. Start the app, enter `clear`,
+then create a student:
+
+```text
+addstudent n/Amy Bee mtc/A0123456D p/98765432 e/amy@example.com g/1A
+```
+
+1. Enter `addstudiorecord id/1 w/3 ef/30`, then `view id/1`.
+   Expected: The command reports that Amy Bee's studio record for week 3 was
+   added. The profile shows week 3 as attended with effort score 30.
+
+1. Enter `addstudiorecord id/1 w/3 ef/20`, then `view id/1`.
+   Expected: The command reports that the week 3 record already exists and
+   makes no changes. The profile still shows effort score 30 for week 3.
+
+1. Enter `editstudiorecord id/1 w/3 ef/40`, then `view id/1`.
+   Expected: The command reports that the record was edited. The profile shows
+   week 3 as attended with effort score 40.
+
+1. Enter `editstudiorecord id/1 w/4 ef/40`, then `view id/1`.
+   Expected: The command reports that no week 4 record exists and makes no
+   changes. Week 4 remains absent with effort score 0.
+
+1. Enter `delstudiorecord id/1 w/3`, then `view id/1`.
+   Expected: The command reports that the week 3 record was removed. The
+   profile shows week 3 as absent with effort score 0.
+
+1. Enter `addstudiorecord id/1 w/14 ef/30`, followed by
+   `addstudiorecord id/1 w/3 ef/-1`.
+   Expected: Both commands show validation feedback and leave all studio
+   records unchanged.
+
+### Notes
+
+Run this workflow independently in a fresh working directory. Start the app,
+enter `clear`, then create a student:
+
+```text
+addstudent n/Amy Bee mtc/A0123456D p/98765432 e/amy@example.com g/1A
+```
+
+1. Enter `addnote id/1 nt/Needs help with recursion`, then `view id/1`.
+   Expected: The command reports that the note was added. The profile lists
+   `Needs help with recursion` as note 1.
+
+1. Enter `editnote id/1 ni/1 nt/Understands recursion`, then `view id/1`.
+   Expected: The command reports that note 1 was edited. The profile lists
+   `Understands recursion` as note 1.
+
+1. Enter `editnote id/1 ni/2 nt/Should not be added`, then `view id/1`.
+   Expected: The command reports that note 2 does not exist and makes no
+   changes. Note 1 remains `Understands recursion`.
+
+1. Enter `delnote id/1 ni/1`, then `view id/1`.
+   Expected: The command reports that note 1 was deleted. The profile no
+   longer lists the note.
+
+1. Enter `delnote id/1 ni/1`, then `view id/1`.
+   Expected: The command reports that note 1 does not exist and makes no
+   changes. The profile still contains no notes.
+
+1. Enter `addnote id/1 nt/`, followed by `addnote id/2 nt/Valid note`.
+   Expected: Both commands show validation feedback and leave the note list
+   unchanged
 
 ### Saving data and clearing records
 
