@@ -63,6 +63,7 @@ notes and the saved data are unchanged.
 | NOTE-EDIT-005 | Run `editnote id/3 ni/1 nt/Unexpected`, then view both students. | Invalid-student-index feedback appears; neither student changes. |
 | NOTE-EDIT-006 | Run `editnote id/1 ni/1 ni/2 nt/Unexpected`, then view student 1. | Duplicate-`ni/` feedback appears. Both note texts and saved data remain unchanged. |
 | NOTE-EDIT-007 | Run `editnote id/1 ni/1 nt/Persisted update`, restart, and view student 1. | Index 1 retains `Persisted update`; index 2 and student 2 remain unchanged. |
+| NOTE-EDIT-008 | Give student 1 notes `Review lecture notes`, `Review`, and `review   lecture notes` at indexes 1–3. Run `editnote id/1 ni/2 nt/Review lecture notes`. | The success feedback is accompanied by a warning that potentially matching notes exist at indexes `[1, 3]`. Index 2 is updated and indexes 1 and 3 remain unchanged. |
 | NOTE-STORAGE-001 | Add two notes in order, exit the application, inspect the saved student record, restart, and view the same student. | The saved JSON stores `registeredNotes` as an ordered list of note-text strings. Both notes reappear in the same order with unchanged text. |
 
 ## Add-note command regression
@@ -83,6 +84,7 @@ unchanged.
 | NOTE-ADD-008 | Restart after NOTE-ADD-002 and view student 1. | Both notes and their insertion order are restored unchanged. |
 | NOTE-ADD-009 | Run `addnote id/1 nt/TEXT`, where `TEXT` contains exactly 1,000 valid characters, then view student 1. Run the command again with 1,001 valid characters, then view student 1. | The 1,000-character note is added unchanged. The 1,001-character command displays the note-text constraint message; the list and saved data remain unchanged after that rejection. |
 | NOTE-ADD-010 | Starting with no notes, add 100 valid notes to student 1. Run one further valid `addnote` command, then view student 1. | The 100th note is added. The 101st command reports that the maximum of 100 notes has been reached; all existing notes and saved data remain unchanged. |
+| NOTE-ADD-011 | Give student 1 notes `Review lecture notes`, `Prepare consultation`, and `review   lecture notes` at indexes 1–3. Run `addnote id/1 nt/Review lecture notes`. | The note is appended at index 4. The success feedback is accompanied by a warning that potentially matching notes exist at indexes `[1, 3]`; the first three notes remain unchanged. |
 
 ## Delete-note command regression
 

@@ -112,6 +112,27 @@ public class AddNoteCommandTest {
     }
 
     @Test
+    public void execute_multipleMatchingNoteTexts_appendsNoteAndReturnsAllMatchingIndexes() throws CommandException {
+        Model model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
+        Student studentToUpdate = model.getFilteredStudentList().get(INDEX_FIRST_STUDENT.getZeroBased());
+        RegisteredNotes existingNotes = new RegisteredNotes(List.of(
+                NOTE, new Note("Prepare consultation"), new Note("review   lecture notes")));
+        Student studentWithNotes = studentToUpdate.withRegisteredNotes(existingNotes);
+        model.setStudent(studentToUpdate, studentWithNotes);
+        AddNoteCommand command = new AddNoteCommand(INDEX_FIRST_STUDENT, NOTE);
+
+        CommandResult result = command.execute(model);
+        Student expectedStudent = studentWithNotes.withRegisteredNotes(existingNotes.withNote(NOTE));
+
+        assertEquals(String.format(AddNoteCommand.MESSAGE_SUCCESS, studentToUpdate.getName()),
+                result.getFeedbackToUser());
+        assertEquals(List.of(String.format(
+                AddNoteCommand.MESSAGE_WARNING_MATCHING_TEXT, studentToUpdate.getName(), "[1, 3]")),
+                result.getWarnings());
+        assertEquals(expectedStudent, model.getFilteredStudentList().get(INDEX_FIRST_STUDENT.getZeroBased()));
+    }
+
+    @Test
     public void execute_maximumNotesReached_reportsNoChangeAndPreservesModel() {
         Model model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
         Student studentToUpdate = model.getFilteredStudentList().get(INDEX_FIRST_STUDENT.getZeroBased());
