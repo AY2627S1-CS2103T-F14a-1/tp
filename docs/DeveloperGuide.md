@@ -1239,23 +1239,20 @@ addstudent n/Amy Bee mtc/A0123456D p/98765432 e/amy@example.com g/1A
    Expected: Both notes are added, and the second command also warns that Amy
    Bee has matching note text. The profile lists two notes with the same text.
 
-1. Add notes 3 through 10, then attempt to add an eleventh note:
+1. Add notes 3 through 100, then attempt to add a 101st note. For each note
+   from 3 through 100, enter `addnote id/1 nt/Note <number>`, replacing
+   `<number>` with the note number. Then enter `addnote id/1 nt/Note 101`:
 
    ```text
    addnote id/1 nt/Note 3
-   addnote id/1 nt/Note 4
-   addnote id/1 nt/Note 5
-   addnote id/1 nt/Note 6
-   addnote id/1 nt/Note 7
-   addnote id/1 nt/Note 8
-   addnote id/1 nt/Note 9
-   addnote id/1 nt/Note 10
-   addnote id/1 nt/Eleventh note
+   ...
+   addnote id/1 nt/Note 100
+   addnote id/1 nt/Note 101
    ```
 
-   Expected: The first eight commands create notes 3 through 10. The final
-   command reports that Amy Bee already has the maximum of 10 notes and makes
-   no changes. The profile still lists exactly 10 notes.
+   Expected: The first 98 commands create notes 3 through 100. The final
+   command reports that Amy Bee already has the maximum of 100 notes and makes
+   no changes. The profile still lists exactly 100 notes.
 
 ### Saving data and clearing records
 
