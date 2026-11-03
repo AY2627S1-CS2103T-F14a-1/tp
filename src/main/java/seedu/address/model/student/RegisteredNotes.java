@@ -8,6 +8,7 @@ import static seedu.address.model.student.Note.isValidNoteText;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import seedu.address.commons.core.index.Index;
 
@@ -17,7 +18,7 @@ import seedu.address.commons.core.index.Index;
  */
 public final class RegisteredNotes {
 
-    public static final int MAX_NOTE_INDEX = 1000;
+    public static final int MAX_NOTE_INDEX = 100;
     public static final String MESSAGE_CONSTRAINTS =
             "There must be " + MAX_NOTE_INDEX + " notes or fewer, with indexes between 1 and " + MAX_NOTE_INDEX;
 
@@ -67,15 +68,17 @@ public final class RegisteredNotes {
     }
 
     /**
-     * Returns whether a note with the same text has been registered.
+     * Returns the indexes of the registered notes whose text is a near-match with the given text.
      *
      * @param text Note text to check.
-     * @return True if matching note text has been registered.
+     * @return List of index of the registered notes whose text is a near-match with the given text.
      * @throws NullPointerException If the text is {@code null}.
      */
-    public boolean hasNoteText(String text) {
+    public List<Index> getNearMatchingNoteIndexes(String text) {
         requireNonNull(text);
-        return registeredNotes.contains(new Note(text));
+        return IntStream.range(0, registeredNotes.size())
+                .filter(x -> registeredNotes.get(x).hasNearMatchingNoteText(text))
+                .mapToObj(Index::fromZeroBased).toList();
     }
 
     /**

@@ -58,7 +58,8 @@ The bulk of the app's work is done by the following four components:
 
 **How the architecture components interact with each other**
 
-The *Sequence Diagram* below shows how the components interact with each other for the scenario where the user issues the command `view id/1`.
+The *Sequence Diagram* below shows how the components interact with each other for the scenario where the user
+issues a valid `addstudent` command.
 
 <puml src="diagrams/ArchitectureSequenceDiagram.puml" width="574" />
 
@@ -738,6 +739,26 @@ The user stories above represent the main intended functionality and selected fu
 
       Use case ends.
 
+**Use case: List mastery checks**
+
+**MSS**
+
+1. Tutor requests to display all students or a filtered set of students.
+2. AvengerHub displays the requested student list.
+3. Tutor enters `listmc`.
+4. AvengerHub displays all mastery checks after the current date and time
+   for the students currently shown.
+5. AvengerHub orders the mastery checks chronologically.
+
+   Use case ends.
+
+**Extensions**
+
+* 4a. There are no upcoming mastery checks for the students currently shown.
+    * 4a1. AvengerHub informs the Tutor that there are no upcoming mastery checks.
+
+      Use case ends.
+
 **Use case: Add mission**
 
 **MSS**
@@ -1239,23 +1260,20 @@ addstudent n/Amy Bee mtc/A0123456D p/98765432 e/amy@example.com g/1A
    Expected: Both notes are added, and the second command also warns that Amy
    Bee has matching note text. The profile lists two notes with the same text.
 
-1. Add notes 3 through 10, then attempt to add an eleventh note:
+1. Add notes 3 through 100, then attempt to add a 101st note. For each note
+   from 3 through 100, enter `addnote id/1 nt/Note <number>`, replacing
+   `<number>` with the note number. Then enter `addnote id/1 nt/Note 101`:
 
    ```text
    addnote id/1 nt/Note 3
-   addnote id/1 nt/Note 4
-   addnote id/1 nt/Note 5
-   addnote id/1 nt/Note 6
-   addnote id/1 nt/Note 7
-   addnote id/1 nt/Note 8
-   addnote id/1 nt/Note 9
-   addnote id/1 nt/Note 10
-   addnote id/1 nt/Eleventh note
+   ...
+   addnote id/1 nt/Note 100
+   addnote id/1 nt/Note 101
    ```
 
-   Expected: The first eight commands create notes 3 through 10. The final
-   command reports that Amy Bee already has the maximum of 10 notes and makes
-   no changes. The profile still lists exactly 10 notes.
+   Expected: The first 98 commands create notes 3 through 100. The final
+   command reports that Amy Bee already has the maximum of 100 notes and makes
+   no changes. The profile still lists exactly 100 notes.
 
 ### Mastery checks
 

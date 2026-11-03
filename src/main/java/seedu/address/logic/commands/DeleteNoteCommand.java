@@ -6,6 +6,9 @@ import static seedu.address.commons.util.AppUtil.checkArgument;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_INDEX;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NOTE_INDEX;
 
+import java.util.logging.Logger;
+
+import seedu.address.commons.core.LogsCenter;
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.commands.exceptions.CommandException;
@@ -33,6 +36,8 @@ public class DeleteNoteCommand extends Command {
             + "Example: " + COMMAND_WORD + " " + PREFIX_INDEX + "1 "
             + PREFIX_NOTE_INDEX + "3";
 
+    private static final Logger logger = LogsCenter.getLogger(DeleteNoteCommand.class);
+
     private final Index targetIndex;
     private final Index noteIndex;
 
@@ -56,12 +61,16 @@ public class DeleteNoteCommand extends Command {
         RegisteredNotes registeredNotes = studentToUpdate.getRegisteredNotes();
 
         if (!registeredNotes.hasNote(noteIndex)) {
+            logger.fine("Note deletion rejected: note index " + noteIndex.getOneBased()
+                    + " is not recorded at displayed student index " + targetIndex.getOneBased() + ".");
             throw new CommandException(MESSAGE_INDEX_NOT_RECORDED);
         }
 
         Student updatedStudent = studentToUpdate.withRegisteredNotes(
                 registeredNotes.withoutNote(noteIndex));
         model.setStudent(studentToUpdate, updatedStudent);
+        logger.info("Deleted note index " + noteIndex.getOneBased()
+                + " at displayed student index " + targetIndex.getOneBased() + ".");
         return new CommandResult(String.format(MESSAGE_SUCCESS, studentToUpdate.getName(), noteIndex.getOneBased()),
                 updatedStudent);
     }
