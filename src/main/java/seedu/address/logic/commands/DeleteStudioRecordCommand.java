@@ -6,7 +6,9 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_INDEX;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_WEEK;
 
 import java.util.Objects;
+import java.util.logging.Logger;
 
+import seedu.address.commons.core.LogsCenter;
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.commands.exceptions.CommandException;
@@ -34,6 +36,8 @@ public class DeleteStudioRecordCommand extends Command {
 
     public static final String MESSAGE_ALREADY_NOT_RECORDED =
             "%1$s’s studio record was already not marked for studio week %2$d. No changes made.";
+
+    private static final Logger logger = LogsCenter.getLogger(DeleteStudioRecordCommand.class);
 
     private final Index targetIndex;
     private final int week;
@@ -64,6 +68,8 @@ public class DeleteStudioRecordCommand extends Command {
         RegisteredStudioRecords registeredStudioRecords = studentToUpdate.getRegisteredStudioRecords();
 
         if (!registeredStudioRecords.hasStudioRecord(week)) {
+            logger.fine("Studio record deletion skipped: week " + week
+                    + " is not recorded at displayed student index " + targetIndex.getOneBased() + ".");
             return new CommandResult(String.format(MESSAGE_ALREADY_NOT_RECORDED, studentToUpdate.getName(), week),
                     studentToUpdate);
         }
@@ -71,6 +77,8 @@ public class DeleteStudioRecordCommand extends Command {
         Student updatedStudent = studentToUpdate.withRegisteredStudioRecords(
                 registeredStudioRecords.withoutStudioRecord(week));
         model.setStudent(studentToUpdate, updatedStudent);
+        logger.info("Deleted studio record for week " + week
+                + " at displayed student index " + targetIndex.getOneBased() + ".");
         return new CommandResult(String.format(MESSAGE_SUCCESS, studentToUpdate.getName(), week), updatedStudent);
     }
 
