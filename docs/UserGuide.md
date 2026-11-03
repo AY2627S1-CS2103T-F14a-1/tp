@@ -302,7 +302,7 @@ Format: `addnote id/INDEX nt/TEXT`
 * The text should only contain alphanumeric characters, punctuation, and spaces, should not be blank, and be less than or equal to 1000 characters.
 * A student can have up to 100 notes.
 * Indexes of notes with potentially duplicate text will be shown as a warning, but the note will still be added. This is to provide more flexibility for tutors.
-* When checking for duplicate note texts, AvengerHub will ignore capitalization and treats each run of whitespace-including spaces and text as a single space. Leading and trailing whitespace will also be ignored.
+* When checking for duplicate note texts, AvengerHub ignores capitalization and collapses repeated spaces. Leading and trailing spaces are also ignored.
 * The current list filter stays active.
 
 Examples:
@@ -353,7 +353,7 @@ Format: `editnote id/INDEX ni/NOTE_INDEX nt/TEXT`
 * The text should only contain alphanumeric characters, punctuation, and spaces, should not be blank, and be less than or equal to 1000 characters.
 * If the note index doesn't match any existing notes for the given student, or matches the existing text, the notes will be unchanged.
 * Indexes of notes with potentially duplicate text will be shown as a warning, but the note will still be edited. This is to provide more flexibility for tutors.
-* When checking for duplicate note texts, AvengerHub will ignore capitalization and treats each run of whitespace-including spaces and text as a single space. Leading and trailing whitespace will also be ignored.
+* When checking for duplicate note texts, AvengerHub ignores capitalization and collapses repeated spaces. Leading and trailing spaces are also ignored.
 * The current list filter stays active.
 
 Examples:

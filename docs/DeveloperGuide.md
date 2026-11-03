@@ -605,6 +605,12 @@ The user stories above represent the main intended functionality and selected fu
 
       Use case resumes at step 3.
 
+* 3b. The note does not exist for the student.
+
+    * 3b1. AvengerHub informs the tutor and leaves the note records unchanged.
+
+      Use case ends.
+
 **Use case: Edit note**
 
 **MSS**
@@ -627,6 +633,12 @@ The user stories above represent the main intended functionality and selected fu
     * 3a1. AvengerHub shows an error message and leaves the note records unchanged.
 
       Use case resumes at step 3.
+
+* 3b. The note does not exist for the student.
+
+    * 3b1. AvengerHub informs the tutor and leaves the note records unchanged.
+
+      Use case ends.
 
 * 3c. The selected student has a note with potentially the same content.
 
