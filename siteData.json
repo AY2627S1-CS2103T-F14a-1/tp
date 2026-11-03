@@ -63,9 +63,10 @@
         "glossary": "Glossary",
         "appendix-instructions-for-manual-testing": "Appendix: Instructions for manual testing",
         "launch-and-shutdown": "Launch and shutdown",
-        "student-records-and-filtering": "Student records and filtering",
-        "student-activity-and-profile": "Student activity and profile",
+        "student-records": "Student records",
         "mission-catalogue-and-submission-reports": "Mission catalogue and submission reports",
+        "studio-records": "Studio records",
+        "notes": "Notes",
         "saving-data-and-clearing-records": "Saving data and clearing records"
       },
       "headingKeywords": {}
