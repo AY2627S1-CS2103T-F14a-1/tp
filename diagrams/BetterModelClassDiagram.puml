@@ -20,7 +20,7 @@ Student *--> "1" Phone
 Student *--> "1" Email
 Student *--> "1" StudioGroup
 Student *--> "1" RegisteredStudioRecords
-RegisteredStudioRecords *--> "*" StudioRecord
+RegisteredStudioRecords *--> "0..14" StudioRecord
 Student *--> "1" MissionSubmissions
 Student *--> "1" RegisteredMasteryChecks
 RegisteredMasteryChecks *-down-> "*" MasteryCheck
