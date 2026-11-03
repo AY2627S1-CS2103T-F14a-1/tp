@@ -164,7 +164,7 @@ Examples:
 *  `editstudent id/1 p/91234567 e/johndoe@example.com` Edits the phone number and email address of the 1st student to be `91234567` and `johndoe@example.com` respectively.
 *  `editstudent id/2 n/Betsy Crower t/` Edits the name of the 2nd student to be `Betsy Crower` and clears all existing tags.
 
-### Locating students by name: `find`
+### Locating students by name or studio group: `find`
 
 Finds students whose names match all keywords within at least one
 comma-separated alternative, optionally restricted to studio groups.
@@ -194,7 +194,6 @@ Examples:
 * `find alex, david` matches `Alex Lee` and `David Li`.
 * `find alex, brian g/1A` matches Alex or Brian within studio group 1A.
 * `find g/1A g/1B` finds students in either studio group.
-  ![result for 'find alex, david'](images/findAlexDavidResult.png)
 
 ### Deleting a student: `delstudent`
 
@@ -585,88 +584,41 @@ Examples:
 
 ### Listing missions and submission statuses: `listmissions`
 
-Lists mission summaries or student submission statuses, optionally filtered
-by mission ID and status.
+Lists mission summaries or student submission statuses for the current
+student list.
 
 Format: `listmissions [m/MISSION_ID] [s/STATUS]`
 
-* The command word, `m/` prefix, and mission ID are case-insensitive.
-* Student records, submission records, mission definitions, and the current
-  student filter remain unchanged.
-* Without either argument, displays all mission summaries with submission counts.
-* With `m/MISSION_ID`, displays statuses for that mission.
-* With `s/submitted` or `s/overdue` but no mission ID, displays matching
-  submissions across all missions.
-* When both prefixes are supplied, applies the status filter to the selected mission.
+* Without arguments: shows all missions with IDs, names, deadlines, and
+  `Submitted: X/Y` counts for the currently displayed students.
+* With `m/MISSION_ID`: shows displayed students' statuses for that mission.
+* With `s/STATUS`: shows matching student–mission pairs across all missions, where STATUS is `submitted` or `overdue`.
+* With both: applies the status filter to the specified mission.
 
-Without arguments (`listmissions`):
-
-* Lists all missions in ascending numeric ID order, showing each mission's
-  ID, name, deadline, and submitted/total student count.
-* `Submitted: X/Y` means X of the Y currently displayed students have a
-  recorded submission for that mission.
-* All missions remain visible regardless of the student filter, but counts
-  include only currently displayed students.
-* An empty student list produces `Submitted: 0/0`.
-* Deadlines before the computer's current local date are labelled
-  `Deadline passed`, even if every student has submitted.
-  Missions due today are not labelled.
-* If no missions exist, displays `No missions configured.`
-
-With `m/MISSION_ID`:
-
-* Supply exactly one `m/` prefix and an existing mission ID.
-* Lists every currently displayed student's status for that mission,
-  including their displayed index, name, and studio group.
-* A recorded submission is `Submitted`, regardless of the deadline.
-* A missing submission is `Overdue` when the deadline is before the
-  computer's current local date; otherwise it is `Not submitted`.
+* Commands, prefixes, mission IDs, and status values are case-insensitive. Supply each prefix at most once,
+  in either order.
+* Counts and statuses include only currently displayed students. Run `list`
+  first to include everyone.
+* A recorded submission is **Submitted**. Otherwise, it is **Overdue** if
+  the deadline is before today's local date, or **Not submitted**.
   Missions due today are not overdue.
-* Students hidden by `find` are excluded.
-* Result numbers retain displayed student indexes. A result numbered `3`
-  can therefore be inspected using `view id/3`.
-* An empty student list produces `No students in the current student list.`
-* Statuses reflect recorded submissions; an absent record does not confirm
-  that a student has not actually submitted.
-* Optionally supply `s/submitted` or `s/overdue` to show only that status.
-  Status values are case-insensitive, and `m/` and `s/` may appear in either order.
-* Supply each prefix at most once. Empty or unsupported status values are rejected.
-* If students are displayed but none match the status filter, reports
-  `No submissions match the selected status.`
-
-With `s/STATUS` only:
-
-* Each row represents one student–mission pair and includes the mission's
-  ID, name, and deadline.
-* Rows are ordered by numeric mission ID, then displayed student order.
-* A student may appear more than once when multiple missions match.
-  Their index always refers to the left student list.
-* Only currently displayed students are included. Records and the student
-  filter remain unchanged.
-* If no missions exist, displays `No missions configured.`
-
-Run `list` first to include all students in counts and status results.
-Rerun `listmissions` with the desired arguments to refresh its output.
-
-Command results appear above the student panels. The results area grows
-with its content up to a height limit; scroll within it to read longer
-reports. Shorter feedback shrinks the area again, leaving more room for
-student details. Each new result starts at the top.
+* Mission summaries label past deadlines `Deadline passed`, regardless of
+  submission counts.
+* Results retain student-list indexes: use `view id/INDEX` to inspect a
+  student. Missions are ordered by numeric ID, then students by displayed order.
+* Empty results produce an explanatory message. Invalid arguments leave
+  records and the current filter unchanged.
+* The command preserves records and the student filter. Rerun it to refresh
+  results, and scroll the results area to read longer reports.
 
 Examples:
 
-* `listmissions` displays all missions with submitted/total counts for
-  the currently displayed students.
-* `find g/1A`, followed by `listmissions m/M01`, shows M01 statuses for
-  the currently displayed students in studio group 1A.
-* `listmissions m/M01 s/submitted` lists recorded M01 submissions among
-  currently displayed students.
-* `listmissions m/M01 s/overdue` lists currently displayed students missing
-  M01 after its deadline.
-* `listmissions s/submitted` shows recorded submissions across all missions
-  for currently displayed students.
-* `listmissions s/overdue` shows missing submissions whose deadlines have
-  passed across all missions for currently displayed students.
+* `listmissions` — mission summaries and submission counts.
+* `listmissions m/M01` — all displayed students' M01 statuses.
+* `listmissions m/M01 s/submitted` — displayed students with recorded M01 submissions.
+* `listmissions s/overdue` — overdue student–mission pairs across all missions.
+
+  ![result for 'listmissions m/m01'](images/listMissionsResult.png)
 
 ### Clearing all entries: `clear`
 
@@ -709,6 +661,16 @@ Failed commands do not save. A missing file instead loads the sample data.
 --------------------------------------------------------------------------------------------------------------------
 
 ## FAQ
+
+**Q: Do consecutive `find` commands narrow down the previous results?**  
+**A:** No. Each `find` searches all students and replaces the previous filter.
+Combine name keywords and studio groups in one command to narrow your search,
+for example `find alex g/1A`. Run `list` to display all students again.
+
+**Q: Which student index should I use after a search?**  
+**A:** Use the index shown in the current student list, not the student's
+position before searching. For example, `view id/1` displays the first student
+in the search results. Recheck indexes whenever the displayed list changes.
 
 **Q**: How do I transfer my data to another computer?<br>
 **A**: Install the app on the other computer. Either overwrite the data file it creates with the data file from your previous AvengerHub home folder, or create a `data` folder in the same directory as `avengerhub.jar` and place the data file in the `data` folder **before the first launch of the app**.

@@ -78,7 +78,7 @@ The sections below give more details of each component.
 
 The **API** of this component is specified in [`Ui.java`](https://github.com/AY2627S1-CS2103T-F14a-1/tp/blob/master/src/main/java/seedu/address/ui/Ui.java)
 
-<puml src="diagrams/UiClassDiagram.puml" alt="Structure of the UI Component"/>
+<puml src="diagrams/UiClassDiagram.puml" alt="Structure of the UI Component" width="1500"/>
 
 The UI consists of a `MainWindow` and its parts: `CommandBox`, `ResultDisplay`, `StudentListPanel`, `StudentDetailsPanel`, `StatusBarFooter`, and `HelpWindow`. These classes inherit from `UiPart`, which loads their JavaFX layouts.
 
@@ -118,7 +118,7 @@ Here's a (partial) class diagram of the `Logic` component:
 
 The sequence diagram below illustrates the interactions within the `Logic` component, taking `execute("delstudent id/1")` API call as an example.
 
-<puml src="diagrams/DeleteSequenceDiagram.puml" alt="Interactions Inside the Logic Component for the `delstudent id/1` Command" />
+<puml src="diagrams/DeleteSequenceDiagram.puml" alt="Interactions Inside the Logic Component for the `delstudent id/1` Command" width="1000"/>
 
 <box type="info" seamless>
 
@@ -148,7 +148,7 @@ How the parsing works:
 ### Model component
 **API** : [`Model.java`](https://github.com/AY2627S1-CS2103T-F14a-1/tp/blob/master/src/main/java/seedu/address/model/Model.java)
 
-<puml src="diagrams/ModelClassDiagram.puml" width="850" />
+<puml src="diagrams/ModelClassDiagram.puml" width="1650" />
 
 The `Model` component,
 
@@ -168,7 +168,7 @@ The `Model` component,
 
 **Note:** The diagram below illustrates a possible alternative for managing tags. Currently, each `Student` stores its own set of tags, and `AddressBook` has no `UniqueTagList`. In the alternative, `AddressBook` would store one `Tag` object per unique tag in a central `UniqueTagList`, and students would reference those shared tags. Student details, including registered notes, are shown to illustrate the surrounding model; only tag ownership differs from the current design. The mission catalogue is omitted for clarity.
 
-<puml src="diagrams/BetterModelClassDiagram.puml" width="800" />
+<puml src="diagrams/BetterModelClassDiagram.puml" width="1400" height="500" />
 </box>
 
 ### Storage component
@@ -186,7 +186,7 @@ The component a developer is most likely to interact with is `JsonAdaptedStudent
 
 We illustrate the involvement of `JsonAdaptedStudent` in both load and save scenarios as such:
 
-<puml src="diagrams/LoadAdaptedStudentActivityDiagram.puml" width="1000" />
+<puml src="diagrams/LoadAdaptedStudentActivityDiagram.puml" width="1800" />
 <puml src="diagrams/SaveAdaptedStudentActivityDiagram.puml" width="750" />
 
 ### Common classes
@@ -457,6 +457,29 @@ The user stories above represent the main intended functionality and selected fu
 * 3b. The selected student's studio record is already registered for the specified week.
 
     * 3b1. AvengerHub informs the tutor and leaves the records unchanged.
+
+      Use case ends.
+
+**Use case: Find students**
+
+**MSS**
+
+1. Tutor provides search criteria for student names or studio groups.
+2. AvengerHub displays the matching students.
+
+   Use case ends.
+
+**Extensions**
+
+* 1a. The supplied criteria are invalid or incomplete.
+
+    * 1a1. AvengerHub explains the error.
+
+      Use case resumes at step 1.
+
+* 2a. No students match the criteria.
+
+    * 2a1. AvengerHub displays an empty student list.
 
       Use case ends.
 
@@ -810,36 +833,32 @@ The user stories above represent the main intended functionality and selected fu
 
 **MSS**
 
-1. Tutor requests to edit a shared mission and provides the required details.
-2. AvengerHub updates the mission, saves the changes, and confirms success.
+1. Tutor specifies a mission and provides the details to update.
+2. AvengerHub updates the mission and confirms success.
 
    Use case ends.
 
 **Extensions**
 
-* 1a. The tutor provides invalid or incomplete details, including no
-  replacement fields.
+* 1a. The supplied details are invalid or incomplete.
 
-    * 1a1. AvengerHub shows an error message and leaves the records unchanged.
-
-      Use case resumes at step 1.
-
-* 1b. No mission with the specified ID exists.
-
-    * 1b1. AvengerHub informs the tutor that the mission does not exist and
-      leaves the records unchanged.
+    * 1a1. AvengerHub explains the error.
 
       Use case resumes at step 1.
 
-* 1c. The replacement name matches another mission's name, ignoring case
-  and whitespace differences.
+* 1b. The specified mission does not exist.
 
-    * 1c1. AvengerHub informs the tutor that the mission name already exists
-      and leaves the records unchanged.
+    * 1b1. AvengerHub informs the tutor that the mission does not exist.
 
       Use case resumes at step 1.
 
-* 2a. The supplied values do not change the mission's name or deadline.
+* 1c. The supplied name duplicates another mission's name.
+
+    * 1c1. AvengerHub informs the tutor that the mission name already exists.
+
+      Use case resumes at step 1.
+
+* 2a. The supplied details are unchanged.
 
     * 2a1. AvengerHub informs the tutor that no changes were made.
 
@@ -903,17 +922,29 @@ The user stories above represent the main intended functionality and selected fu
 
       Use case ends.
 
-**Use case: List all configured missions**
+**Use case: List missions and submission statuses**
 
 **MSS**
 
-1. Tutor requests the mission catalogue.
-2. AvengerHub displays all configured missions and their relevant details,
-   including submission counts for the current student list.
+1. Tutor requests mission summaries or submission statuses, optionally
+   specifying a mission and submission status.
+2. AvengerHub displays the requested information for the current student list.
 
    Use case ends.
 
 **Extensions**
+
+* 1a. The supplied details are invalid or incomplete.
+
+    * 1a1. AvengerHub explains the error.
+
+      Use case resumes at step 1.
+
+* 1b. The specified mission does not exist.
+
+    * 1b1. AvengerHub informs the tutor that the mission does not exist.
+
+      Use case resumes at step 1.
 
 * 2a. No missions are configured.
 
@@ -921,95 +952,17 @@ The user stories above represent the main intended functionality and selected fu
 
       Use case ends.
 
-The catalogue includes all configured missions regardless of the current
-student filter. Student records, mission definitions, submission records,
-and the current student filter remain unchanged.
+* 2b. Submission statuses are requested, but the current student list is empty.
 
-**Use case: List specific mission submissions**
-
-**MSS**
-
-1. Tutor requests to display all students or a filtered set of students.
-2. AvengerHub displays the requested student list.
-3. Tutor requests submission statuses for a specified mission, optionally
-   filtering by submitted or overdue status.
-4. AvengerHub displays matching students and their submission statuses,
-   using their indexes in the current student list.
-
-   Use case ends.
-
-**Extensions**
-
-* 3a. The tutor provides invalid or incomplete details.
-
-    * 3a1. AvengerHub shows an error message and leaves the records and current
-      student filter unchanged.
-
-      Use case resumes at step 3.
-
-* 3b. No mission with the specified ID exists.
-
-    * 3b1. AvengerHub informs the tutor that the mission does not exist and
-      leaves the records and current student filter unchanged.
-
-      Use case resumes at step 3.
-
-* 4a. No submission statuses match the selected status filter.
-
-    * 4a1. AvengerHub informs the tutor that no submissions match the
-      selected status.
+    * 2b1. AvengerHub informs the tutor that no students are displayed.
 
       Use case ends.
 
-* 4b. The current student list is empty.
+* 2c. No submission statuses match the requested criteria.
 
-    * 4b1. AvengerHub informs the tutor that no students are in the
-      current student list.
-
-      Use case ends.
-
-Student records, mission definitions, submission records, and the current
-student filter remain unchanged throughout this use case.
-
-**Use case: List overdue mission submissions**
-
-**MSS**
-
-1. Tutor requests to display all students or a filtered set of students.
-2. AvengerHub displays the requested student list.
-3. Tutor requests to list overdue mission submissions.
-4. AvengerHub displays each missing submission whose mission deadline is
-   before today's local date, restricted to students in the current list.
-   Each result identifies the student using their displayed index and
-   includes the mission's ID, name, and deadline.
-
-   Use case ends.
-
-**Extensions**
-
-* 4a. No overdue submissions exist within the current student list.
-
-    * 4a1. AvengerHub informs the tutor that no overdue submissions exist
-      within the current student list.
+    * 2c1. AvengerHub informs the tutor that no matching submissions were found.
 
       Use case ends.
-
-* 4b. The current student list is empty.
-
-    * 4b1. AvengerHub informs the tutor that no students are in the
-      current student list.
-
-      Use case ends.
-
-* 4c. No missions are configured.
-
-    * 4c1. AvengerHub informs the tutor that no missions are configured.
-
-      Use case ends.
-
-Deadlines are inclusive: missions due today are not overdue. The current
-date follows the computer's local date and time zone. Recorded submissions
-are excluded, regardless of when they were recorded.
 
 ### Non-Functional Requirements
 
@@ -1117,6 +1070,61 @@ Run this workflow in a fresh working directory. Start the app and enter
    Expected: The command reports that the index is invalid. The student list
    remains empty.
 
+
+### Finding students
+
+Run this workflow independently in a disposable working directory.
+Launch the app, enter `clear`, then add these students in order:
+
+```text
+addstudent n/Alex Lee mtc/A0123456B p/98765432 e/alex.lee@example.com g/1A
+addstudent n/Alex Lim mtc/A0123457C p/98765433 e/alex.lim@example.com g/1B
+addstudent n/Brian Tan mtc/A0123458D p/98765434 e/brian.tan@example.com g/1B
+```
+
+1. Enter `find aLe`.
+   Expected: Alex Lee and Alex Lim appear, confirming case-insensitive
+   partial-name matching.
+
+1. Enter `find alex,`.
+   Expected: Invalid-command feedback appears. Alex Lee and Alex Lim
+   remain displayed.
+
+1. Enter `find lee alex`.
+   Expected: Only Alex Lee appears. All space-separated keywords must
+   match, regardless of their order.
+
+1. Enter `find g/`.
+   Expected: Studio-group validation feedback appears. Alex Lee remains
+   displayed.
+
+1. Enter `find alex, brian g/1B`.
+   Expected: Alex Lim and Brian Tan appear. Either name alternative may
+   match, but the studio group must also match. This search replaces
+   the previous search.
+
+1. Enter `find g/1b`.
+   Expected: Studio-group validation feedback appears because group
+   values are case-sensitive. Alex Lim and Brian Tan remain displayed.
+
+1. Enter `find g/1A g/1B`.
+   Expected: All three students appear because either studio group
+   may match.
+
+1. Enter `find`.
+   Expected: Invalid-command feedback appears. All three students
+   remain displayed.
+
+1. Enter `find alex alex`.
+   Expected: No students appear because neither Alex has two separate
+   occurrences of the keyword.
+
+1. Enter `find nobody`.
+   Expected: No students appear.
+
+1. Enter `list`.
+   Expected: All three students reappear in their original order,
+   with their details unchanged.
 
 ### Mission catalogue and submission reports
 
