@@ -15,6 +15,8 @@ import javafx.stage.Stage;
 
 public class HelpWindowTest extends GuiUnitTest {
 
+    //@@author nuggettowin-reused
+    //Reused from AB4
     private HelpWindow helpWindow;
     private HelpWindowHandle helpWindowHandle;
 
@@ -69,4 +71,5 @@ public class HelpWindowTest extends GuiUnitTest {
         guiRobot.interact(helpWindow::focus);
         assertTrue(helpWindow.getRoot().isFocused());
     }
+    //@@author
 }

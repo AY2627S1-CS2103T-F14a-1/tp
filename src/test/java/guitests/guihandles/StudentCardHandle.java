@@ -8,6 +8,9 @@ import seedu.address.model.student.Student;
  * Provides a handle to a person card in the person list panel.
  */
 public class StudentCardHandle extends NodeHandle<Node> {
+
+    //@@author nuggettowin-reused
+    //Reused from AB4
     private static final String ID_FIELD_ID = "#id";
     private static final String NAME_FIELD_ID = "#name";
 
@@ -38,4 +41,5 @@ public class StudentCardHandle extends NodeHandle<Node> {
     public boolean equals(Student student) {
         return getName().equals(student.getName().fullName);
     }
+    //@@author
 }

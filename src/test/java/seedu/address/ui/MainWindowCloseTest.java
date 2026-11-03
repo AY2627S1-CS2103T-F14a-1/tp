@@ -25,6 +25,9 @@ import seedu.address.storage.StorageManager;
  * Contains tests for closing of the {@code MainWindow}.
  */
 public class MainWindowCloseTest extends GuiUnitTest {
+
+    //@@author nuggettowin-reused
+    //Reused from AB4
     @TempDir
     public Path temporaryFolder;
 
@@ -96,4 +99,5 @@ public class MainWindowCloseTest extends GuiUnitTest {
             guiRobot.clickOn("F1");
         }
     }
+    //@@author
 }
