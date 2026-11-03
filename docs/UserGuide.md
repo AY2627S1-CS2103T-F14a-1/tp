@@ -349,7 +349,7 @@ Format: `editnote id/INDEX ni/NOTE_INDEX nt/TEXT`
 * The note index must be an integer from 1 to 100, inclusive.
 * The text should only contain alphanumeric characters, punctuation, and spaces, should not be blank, and be less than or equal to 1000 characters.
 * If the note index doesn't match any existing notes for the given student, or matches the existing text, the notes will be unchanged.
-* Indexes of notes with potentially duplicate text will be shown as a warning, but the note will still be added. This is to provide more flexibility for tutors.
+* Indexes of notes with potentially duplicate text will be shown as a warning, but the note will still be edited. This is to provide more flexibility for tutors.
 * When checking for duplicate note texts, AvengerHub will ignore capitalization and treats each run of whitespace-including spaces and text as a single space. Leading and trailing whitespace will also be ignored.
 * The current list filter stays active.
 
