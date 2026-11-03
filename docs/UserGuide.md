@@ -323,7 +323,7 @@ Format: `delnote id/INDEX ni/NOTE_INDEX`
 * The index refers to the index number shown in the displayed student list.
 * The index **must be a positive integer** 1, 2, 3, ...
 * The note index refers to the index number shown in the list of notes for a given student in the display panel.
-* The note index must be an integer from 1 to 10, inclusive.
+* The note index must be an integer from 1 to 100, inclusive.
 * If the note index doesn't match any existing notes for the given student, the notes will be unchanged.
 * The current list filter stays active.
 
@@ -346,7 +346,7 @@ Format: `editnote id/INDEX ni/NOTE_INDEX nt/TEXT`
 * The index refers to the index number shown in the displayed student list.
 * The index **must be a positive integer** 1, 2, 3, ...
 * The note index refers to the index number shown in the list of notes for a given student in the display panel.
-* The note index must be an integer from 1 to 10, inclusive.
+* The note index must be an integer from 1 to 100, inclusive.
 * The text should only contain alphanumeric characters, punctuation, and spaces, should not be blank, and be less than or equal to 1000 characters.
 * If the note index doesn't match any existing notes for the given student, or matches the existing text, the notes will be unchanged.
 * Indexes of notes with potentially duplicate text will be shown as a warning, but the note will still be added. This is to provide more flexibility for tutors.
@@ -354,7 +354,7 @@ Format: `editnote id/INDEX ni/NOTE_INDEX nt/TEXT`
 * The current list filter stays active.
 
 Examples:
-*  `editnote id/1 ni/1 nt/hello!` Edits the first note, replacing its text with `hello` for the 1st student.
+*  `editnote id/1 ni/1 nt/hello!` Edits the first note, replacing its text with `hello!` for the 1st student.
 
 For example, if the first student is Amy Bee and she has a note at note index 1, `editnote id/1 ni/1 nt/hello!` displays:
 

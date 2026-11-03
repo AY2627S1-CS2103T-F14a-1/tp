@@ -158,7 +158,7 @@ The `Model` component,
 * does not depend on the other components.
 * maintains the following records for each student:
   * `RegisteredStudioRecords` contains an immutable map from studio weeks 0 through 13 to `StudioRecord` objects.
-  * `RegisteredNotes` contains at most 1,000 notes.
+  * `RegisteredNotes` contains at most 100 notes.
   * `RegisteredMasteryChecks` contains numbered appointments. Its registration map is unmodifiable, while appointment objects retain mutable completion status.
   * `MissionSubmissions` contains zero or more submitted mission IDs.
 * represents conceptual ownership with composition diamonds. Immutable values may be reused internally when records are replaced, and submission IDs reference shared mission definitions rather than owning them.
@@ -1203,7 +1203,7 @@ addstudent n/Amy Bee mtc/A0123456D p/98765432 e/amy@example.com g/1A
    Expected: The command reports that the week 3 record is already the same
    and makes no changes. The profile still shows effort score 40.
 
-1. Enter `editstudiorecord id/1 w/4 ef/40``.
+1. Enter `editstudiorecord id/1 w/4 ef/40`.
    Expected: The command reports that no week 4 record exists and makes no
    changes. Week 4 remains absent with effort score 0.
 
