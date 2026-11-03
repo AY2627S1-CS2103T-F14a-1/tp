@@ -1276,6 +1276,7 @@ addstudent n/Amy Bee mtc/A0123456D p/98765432 e/amy@example.com g/1A
    Expected: The command reports that the mastery check was removed. The profile shows "No mastery checks registered."
 
 Additional testing:
+
 **Commands executed with no changes made**
 1. Add an arbitrary mastery check, then add another mastery check with the same number.
 2. Add an arbitrary mastery check, then unmark it.
