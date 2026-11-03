@@ -1179,6 +1179,10 @@ addstudent n/Amy Bee mtc/A0123456D p/98765432 e/amy@example.com g/1A
    Expected: The command reports that the record was edited. The profile shows
    week 3 as attended with effort score 40.
 
+1. Enter `editstudiorecord id/1 w/3 ef/40`, then `view id/1`.
+   Expected: The command reports that the week 3 record is already the same
+   and makes no changes. The profile still shows effort score 40.
+
 1. Enter `editstudiorecord id/1 w/4 ef/40`, then `view id/1`.
    Expected: The command reports that no week 4 record exists and makes no
    changes. Week 4 remains absent with effort score 0.
@@ -1186,6 +1190,11 @@ addstudent n/Amy Bee mtc/A0123456D p/98765432 e/amy@example.com g/1A
 1. Enter `delstudiorecord id/1 w/3`, then `view id/1`.
    Expected: The command reports that the week 3 record was removed. The
    profile shows week 3 as absent with effort score 0.
+
+1. Enter `delstudiorecord id/1 w/3`, then `view id/1`.
+   Expected: The command reports that week 3 is already not recorded and
+   makes no changes. The profile still shows week 3 as absent with effort
+   score 0.
 
 1. Enter `addstudiorecord id/1 w/14 ef/30`, followed by
    `addstudiorecord id/1 w/3 ef/-1`.
@@ -1223,7 +1232,30 @@ addstudent n/Amy Bee mtc/A0123456D p/98765432 e/amy@example.com g/1A
 
 1. Enter `addnote id/1 nt/`, followed by `addnote id/2 nt/Valid note`.
    Expected: Both commands show validation feedback and leave the note list
-   unchanged
+   unchanged.
+
+1. Enter `addnote id/1 nt/First note`, then `addnote id/1 nt/First note`,
+   followed by `view id/1`.
+   Expected: Both notes are added, and the second command also warns that Amy
+   Bee has matching note text. The profile lists two notes with the same text.
+
+1. Add notes 3 through 10, then attempt to add an eleventh note:
+
+   ```text
+   addnote id/1 nt/Note 3
+   addnote id/1 nt/Note 4
+   addnote id/1 nt/Note 5
+   addnote id/1 nt/Note 6
+   addnote id/1 nt/Note 7
+   addnote id/1 nt/Note 8
+   addnote id/1 nt/Note 9
+   addnote id/1 nt/Note 10
+   addnote id/1 nt/Eleventh note
+   ```
+
+   Expected: The first eight commands create notes 3 through 10. The final
+   command reports that Amy Bee already has the maximum of 10 notes and makes
+   no changes. The profile still lists exactly 10 notes.
 
 ### Saving data and clearing records
 
