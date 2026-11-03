@@ -356,18 +356,19 @@ Format: `addmc id/INDEX num/NUMBER dt/DATE-TIME`
 * The index refers to the index number shown in the displayed student list and **must be a positive integer** 1, 2, 3, ...
 * The number must be an integer from **1 to 2147483647**, inclusive. Numbers are unique within each student's mastery check appointments.
 * The date-time must be a real date and 24-hour time in `YYYY-MM-DD|HH:mm` format, such as `2026-10-20|13:30`. Impossible dates/times like `24:00`, and times with seconds are rejected.
-* New mastery checks show "Not completed".
+* New mastery checks show "Not completed" in the Mastery Checks table.
 * If a mastery check was already recorded under the same number, adding a new mastery check with that number will leave the records unchanged.
 
 Example: 
 
-`addmc id/1 num/2 dt/2026-10-27|13:30`, followed by `view id/1`, shows mastery check 2 at `27 October 2026, 13:30` as "Not completed" in the Mastery Checks table.
+`addmc id/1 num/2 dt/2026-10-27|13:30` shows mastery check 2 at `27 October 2026, 13:30` as "Not completed" in the Mastery Checks table.
 
 For example, if the first student is Alice Pauline and she has no mastery checks numbered 2, the above command displays:
 
 ```text
 Added Alice Pauline's mastery check 2 at 27 October 2026, 13:30.
 ```
+![masteryChecks.png](images/masteryChecks.png)
 
 ### Deleting a mastery check: `delmc`
 
@@ -403,7 +404,7 @@ Format: `markmc id/INDEX num/NUMBER`
 
 Example: 
 
-`markmc id/1 num/2`, followed by `view id/1`, shows mastery check 2 as "Completed" in the Mastery Checks table.
+`markmc id/1 num/2` shows mastery check 2 as "Completed" in the Mastery Checks table.
 
 For example, if the first student is Alice Pauline and she has a mastery check numbered 2, the above command displays:
 
@@ -424,7 +425,7 @@ Format: `unmarkmc id/INDEX num/NUMBER`
 
 Example: 
 
-`unmarkmc id/1 num/2`, followed by `view id/1`, shows mastery check 2 as "Not completed" in the Mastery Checks table.
+`unmarkmc id/1 num/2` shows mastery check 2 as "Not completed" in the Mastery Checks table.
 
 For example, if the first student is Alice Pauline and she has a mastery check numbered 2, the above command displays:
 
