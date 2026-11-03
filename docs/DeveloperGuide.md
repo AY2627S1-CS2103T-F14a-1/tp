@@ -700,7 +700,7 @@ submission records, or the current student filter.
 
 * 3c. A mastery check with the supplied number for the student is already marked complete.
 
-    * 3b1. AvengerHub informs the tutor that the mastery check with that number is already marked complete and leaves the records unchanged.
+    * 3c1. AvengerHub informs the tutor that the mastery check with that number is already marked complete and leaves the records unchanged.
 
       Use case ends.
 
@@ -735,7 +735,7 @@ submission records, or the current student filter.
 
 * 3c. A mastery check with the supplied number for the student is already incomplete.
 
-    * 3b1. AvengerHub informs the tutor that the mastery check with that number is already incomplete and leaves the records unchanged.
+    * 3c1. AvengerHub informs the tutor that the mastery check with that number is already incomplete and leaves the records unchanged.
 
       Use case ends.
 
