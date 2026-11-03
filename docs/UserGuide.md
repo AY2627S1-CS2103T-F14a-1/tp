@@ -333,7 +333,7 @@ Examples:
 For example, if the first student is Amy Bee and she has a note at note index 1, `delnote id/1 ni/1` displays:
 
 ```text
-Added Amy Bee's note at index 1.
+Deleted Amy Bee's note at index 1.
 ```
 
 ### Editing a student note: `editnote`
@@ -359,7 +359,7 @@ Examples:
 For example, if the first student is Amy Bee and she has a note at note index 1, `editnote id/1 ni/1 nt/hello!` displays:
 
 ```text
-Added Amy Bee's note at index 1.
+Edited Amy Bee's note at index 1.
 ```
 
 ### Adding a mastery check: `addmc`
