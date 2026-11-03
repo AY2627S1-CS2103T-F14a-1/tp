@@ -932,7 +932,7 @@ submission records, or the current student filter.
 * 4a. There are no upcoming mastery checks for the students currently shown.
     * 4a1. AvengerHub informs the Tutor that there are no upcoming mastery checks.
 
-  Use case ends.
+      Use case ends.
 
 **Use case: Add mission**
 
